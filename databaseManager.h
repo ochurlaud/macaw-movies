@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QSqlQuery>
 #include <QVariant>
+#include <QSqlQueryModel>
 
 class DatabaseManager : public QObject
 {
@@ -15,8 +16,10 @@ class DatabaseManager : public QObject
         bool openDB();
         bool createTables();
         bool deleteDB();
-        QSqlQuery getMovie(QString, QVariant);
+        QSqlQuery getMovies(QString, QVariant);
+        QSqlQuery getAllMovies();
         QSqlError lastError();
+        QSqlQueryModel *createModel();
 
     private:
         QSqlDatabase db;
