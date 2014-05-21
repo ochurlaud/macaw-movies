@@ -3,6 +3,7 @@
 
 #include "DatabaseManager.h"
 
+#include <QApplication>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QtDebug>
@@ -11,13 +12,21 @@ class SettingsWindow : public QWidget
 {
     Q_OBJECT
 
-public:
-    explicit SettingsWindow(QWidget *parent = 0);
-    ~SettingsWindow();
+    public:
+        explicit SettingsWindow(QWidget *parent = 0);
+        ~SettingsWindow();
+        void closeEvent(QCloseEvent *event);
 
-private:
-    QVBoxLayout *mainLayout;
-    QPushButton *submitButton;
+
+    public slots:
+        bool applySetting();
+
+    signals:
+        void closed();
+
+    private:
+        QVBoxLayout *mainLayout;
+        QPushButton *submitButton;
 };
 
 #endif // SETTINGWINDOW_H

@@ -2,20 +2,26 @@
 
 Application::Application(int argc, char **argv) : QApplication(argc, argv)
 {
-    mainWindow.setFixedSize(800,600);
+    filesPath="totor";
+ //   mainWindow.setFixedSize(800,600);
 }
 
 Application::~Application()
 {
 }
 
-void Application::showMainWindow()
+/*void Application::showMainWindow()
 {
     mainWindow.show();
+}*/
+
+bool Application::setFilesPath(QString path)
+{
+    filesPath = path;
+    return true;
+}
+QString Application::getFilesPath()
+{
+    return filesPath;
 }
 
-void Application::showSettingsWindow()
-{
-    SettingsWindow *settingsWindow = new SettingsWindow;
-    settingsWindow->show();
-}

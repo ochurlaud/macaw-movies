@@ -3,8 +3,9 @@
 
 #include "DatabaseManager.h"
 #include "SettingsWindow.h"
+#include "Application.h"
 
-#include <QApplication>
+#include <QLabel>
 #include <QVBoxLayout>
 #include <QSqlQueryModel>
 #include <QTableView>
@@ -17,16 +18,18 @@ class MainWindow : public QWidget
 {
     Q_OBJECT
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    public:
+        explicit MainWindow(QWidget *parent = 0);
+        ~MainWindow();
 
-public slots:
+    public slots:
+        void setDodo(){qDebug()<< "dodo";}
+        void showSettingsWindow();
 
-private:
-    QPushButton *settingsButton;
-    QVBoxLayout *mainLayout;
-    QTableView *moviesList;
+    private:
+        QPushButton *settingsButton;
+        QVBoxLayout *mainLayout;
+        QTableView *moviesList;
 };
 
 #endif // MAINWINDOW_H

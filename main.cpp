@@ -9,6 +9,7 @@
 int main(int argc, char *argv[])
 {
     Application app(argc, argv);
+    MainWindow mainWindow;
 
     QDir directory("c:/Users/Olivier/Downloads/Movies");
     QFileInfoList list = directory.entryInfoList();
@@ -17,6 +18,7 @@ int main(int argc, char *argv[])
         qDebug() << QString(fileInfo.fileName());
     }
 
-    app.showMainWindow();
+    mainWindow.show();
+
     return app.exec();
 }

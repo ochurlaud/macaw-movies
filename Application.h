@@ -2,24 +2,22 @@
 #define APPLICATION_H
 
 #include <QApplication>
-#include "DatabaseManager.h"
 #include "MainWindow.h"
-#include "SettingsWindow.h"
 
 class Application : public QApplication
 {
+    Q_OBJECT
+
     public:
         Application(int, char**);
         ~Application();
         void showMainWindow();
-
-    public slots:
-        void setDodo(){qDebug()<< "dodo";}
-        void showSettingsWindow();
-
+        bool setFilesPath(QString path);
+        QString getFilesPath();
 
     private:
-        MainWindow mainWindow;
+    //    MainWindow mainWindow;
+        QString filesPath;
 };
 
 #endif // APPLICATION_H
