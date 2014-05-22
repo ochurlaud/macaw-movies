@@ -5,10 +5,12 @@
 #include "SettingsWindow.h"
 #include "Application.h"
 
-#include <QLabel>
+#include <QListWidget>
 #include <QVBoxLayout>
 #include <QSqlQueryModel>
 #include <QTableView>
+#include <QHeaderView>
+#include <QTextEdit>
 #include <QPushButton>
 #include <QtDebug>
 
@@ -28,8 +30,12 @@ class MainWindow : public QWidget
 
     private:
         QPushButton *settingsButton;
+        QHBoxLayout *hLayout;
         QVBoxLayout *mainLayout;
+        QTextEdit *searchEdit;
+        QListWidget *leftPannel;
         QTableView *moviesList;
+        QVector<QListWidgetItem*> moviesTitles;
 };
 
 #endif // MAINWINDOW_H

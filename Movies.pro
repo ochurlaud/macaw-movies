@@ -25,4 +25,5 @@ HEADERS  += \
     SettingsWindow.h
 
 FORMS    += \
-    MainWindow.ui
+    MainWindow.ui \
+    form.ui

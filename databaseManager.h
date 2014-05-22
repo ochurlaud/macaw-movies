@@ -18,8 +18,10 @@ class DatabaseManager : public QObject
         bool deleteDB();
         QSqlQuery getMovies(QString, QVariant);
         QSqlQuery getAllMovies();
+        QSqlQuery getAllTitles();
         QSqlError lastError();
         QSqlQueryModel *createModel();
+        QSqlQueryModel *createTitleModel();
 
     private:
         QSqlDatabase db;

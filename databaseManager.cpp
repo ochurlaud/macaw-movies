@@ -181,9 +181,19 @@ QSqlQuery DatabaseManager::getAllMovies()
 QSqlQueryModel *DatabaseManager::createModel()
 {
    QSqlQueryModel *model = new QSqlQueryModel;
-   model->setHeaderData(0, Qt::Horizontal, "Title");
-   model->setHeaderData(1, Qt::Horizontal, "Director");
-   model->setHeaderData(2, Qt::Horizontal, "Year");
+   model->setHeaderData(0, Qt::Horizontal, tr("rtle"));
+   model->setHeaderData(1, Qt::Horizontal, tr("Director"));
+   model->setHeaderData(2, Qt::Horizontal, tr("Year"));
 
    return model;
 }
+
+QSqlQuery DatabaseManager::getAllTitles()
+{
+    QSqlQuery query;
+    query.prepare("SELECT title || ifnull(' (' || year || ')','') as value FROM movies");
+    query.exec();
+
+    return query;
+}
+

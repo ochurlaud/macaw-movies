@@ -1,11 +1,15 @@
 #ifndef SETTINGWINDOW_H
 #define SETTINGWINDOW_H
 
+#include "Application.h"
 #include "DatabaseManager.h"
 
-#include <QApplication>
-#include <QVBoxLayout>
+#include <QCloseEvent>
+#include <QFileDialog>
+#include <QLabel>
+#include <QLineEdit>
 #include <QPushButton>
+#include <QVBoxLayout>
 #include <QtDebug>
 
 class SettingsWindow : public QWidget
@@ -19,14 +23,20 @@ class SettingsWindow : public QWidget
 
 
     public slots:
-        bool applySetting();
+        void applySetting();
+        void browseFilesPathDialog();
 
     signals:
         void closed();
 
     private:
-        QVBoxLayout *mainLayout;
+        QLabel *filesPathLabel;
+        QLineEdit *filesPathEdit;
+        QPushButton *filesPathSearchButton;
         QPushButton *submitButton;
+        QVBoxLayout *mainLayout;
+        QHBoxLayout *filesPathLayout;
+
 };
 
 #endif // SETTINGWINDOW_H

@@ -1,33 +1,46 @@
 #include "SettingsWindow.h"
-#include <QSettings>
-#include <QCloseEvent>
+
 SettingsWindow::SettingsWindow(QWidget *parent) : QWidget(parent)
 {
     setFixedSize(400,300);
     setWindowTitle("Settings");
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout = new QVBoxLayout(this);
+    filesPathLayout = new QHBoxLayout;
 
-    QPushButton *submitButton = new QPushButton("Submit", this);
+    filesPathLabel = new QLabel("Files path");
+    filesPathEdit = new QLineEdit;
+    filesPathEdit->setText("tttt");
+    filesPathSearchButton = new QPushButton("Browse");
+    QObject::connect(filesPathSearchButton, SIGNAL(clicked()), this, SLOT(browseFilesPathDialog()));
+
+
+    submitButton = new QPushButton("Submit", this);
     QObject::connect(submitButton, SIGNAL(clicked()), this, SLOT(applySetting()));
 
-    //mainLayout->addWidget(pathInput);
+    mainLayout->addLayout(filesPathLayout);
     mainLayout->addWidget(submitButton);
+    filesPathLayout->addWidget(filesPathLabel);
+    filesPathLayout->addWidget(filesPathEdit);
+    filesPathLayout->addWidget(filesPathSearchButton);
 }
 
 SettingsWindow::~SettingsWindow()
 {
 }
 
-bool SettingsWindow::applySetting()
+void SettingsWindow::applySetting()
 {
-QSettings settings("tutu", "tto");
-settings.setValue("FilePath", "toto");
-
+    Application *app = qobject_cast<Application *>(qApp);
+    app->setFilesPath(filesPathEdit->text());
     close();
-
-    return true;
+    qDebug()<< app->getFilesPath();
 }
 
+void SettingsWindow::browseFilesPathDialog()
+{
+    QString folder = QFileDialog::getExistingDirectory(this);
+    filesPathEdit->setText(folder);
+}
 void SettingsWindow::closeEvent(QCloseEvent *event)
 {
   emit closed();
