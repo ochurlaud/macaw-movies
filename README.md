@@ -28,7 +28,6 @@ vLangues disponibles sur le fichier
 * Writer
 * Star 1, star 2, star 3 , star 4, etc (I)
 * Producteur (I)
-
 * Musique par
 * Site officiel
 * Box office
