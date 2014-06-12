@@ -2,7 +2,7 @@
 
 Application::Application(int argc, char **argv) : QApplication(argc, argv)
 {
-    filesPath="totor";
+    m_filesPath="totor";
  //   mainWindow.setFixedSize(800,600);
 }
 
@@ -17,11 +17,11 @@ Application::~Application()
 
 bool Application::setFilesPath(QString path)
 {
-    filesPath = path;
+    m_filesPath = path;
     return true;
 }
 QString Application::getFilesPath()
 {
-    return filesPath;
+    return m_filesPath;
 }
 

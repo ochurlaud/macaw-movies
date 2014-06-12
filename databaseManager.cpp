@@ -10,7 +10,7 @@
 DatabaseManager::DatabaseManager()
 {
     openDB();
-    if(db.tables().isEmpty())
+    if(m_db.tables().isEmpty())
     {
         createTables();
     }
@@ -24,28 +24,28 @@ DatabaseManager::DatabaseManager()
  */
 bool DatabaseManager::openDB()
 {
-    db = QSqlDatabase::addDatabase("QSQLITE");
+    m_db = QSqlDatabase::addDatabase("QSQLITE");
 
   #ifdef Q_OS_LINUX
     // NOTE: We have to store database file into user home folder in Linux
     QString path(QDir::home().path());
     path.append(QDir::separator()).append("my.db.sqlite");
     path = QDir::toNativeSeparators(path);
-    db.setDatabaseName(path);
+    m_db.setDatabaseName(path);
   #else
     // NOTE: File exists in the application private folder, in Symbian Qt implementation
-    db.setDatabaseName("my.db.sqlite");
+    m_db.setDatabaseName("my.db.sqlite");
   #endif
 
     // Open databasee
-    return db.open();
+    return m_db.open();
 }
 
 QSqlError DatabaseManager::lastError()
 {
     // If opening database has failed user can ask
     // error description by QSqlError::text()
-    return db.lastError();
+    return m_db.lastError();
 }
 
 /**
@@ -57,7 +57,7 @@ QSqlError DatabaseManager::lastError()
 bool DatabaseManager::deleteDB()
 {
     // Close database
-    db.close();
+    m_db.close();
 
     #ifdef Q_OS_LINUX
     // NOTE: We have to store database file into user home folder in Linux
@@ -80,11 +80,11 @@ bool DatabaseManager::deleteDB()
 bool DatabaseManager::createTables()
 {
     // Create table "movies"
-    bool ret = false;
-    if (db.isOpen())
+    bool l_ret = false;
+    if (m_db.isOpen())
     {
-        QSqlQuery query;
-        ret = query.exec("CREATE TABLE movies("
+        QSqlQuery l_query;
+        l_ret = l_query.exec("CREATE TABLE movies("
                   "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                   "title VARCHAR(50), "
                   "original_title VARCHAR(50), "
@@ -98,51 +98,9 @@ bool DatabaseManager::createTables()
                   "colored BOOLEAN, "
                   "format VARCHAR(10) "
                   ")");
-
-/*       Et bien l’idéal serait d’être en capacité de récupérer les infos directement dans un truc genre IMDB et l’injecter dans ton outil (comme c’est fait avec gracenote pour Itunes).
-
-        http://fr.wikipedia.org/wiki/Liste_de_bases_de_données_cinématographiques_de_l'Internet (plein de choix….)
-
-        —>  voir ici pour une base gratuite avec des apis http://www.bdfci.info/apis/
-
-        Ainsi, on aurait tout plein d’infos super intéressante :
-        Titre original (I)
-        Titre Francais (I)
-        Date de sortie (I)
-        Typr fr film (Drame, Romance, Science Fiction, etc (choix multiples) (I)
-        Director (I)
-        Pays
-        Description, résumé
-        Chemin vers les fichers film et sous titre (plusieurs fichiers dans le cas d’un truc avec partie 1 et partie 2)
-        Durée (a récupérer sur le fichier)
-        Langues disponibles sur le fichier
-        Couleur/NB
-        Format (16/9, 4/3, etc) (a récupérer sur le fichier)
-        Taille de l’image (620x420, 1920x1080 ou autre) (a récupérer sur le fichier)
-        Affiche du film.
-        Writer
-        Star 1, star 2, star 3 , star 4,  etc (I)
-        Producteur (I)
-
-        Musique par :
-        Site officiel
-        Box office :
-            budget
-            Gains lors de la sortie
-            Nb de spectateurs lors de la mise ne exploitation
-        Prix : Oscar, lion, etc (plusieurs possibilités) et pour qui (acteur, actrice, producteur, réalisateur, writer, etc) (I)
-        lieux de tournage : Paris, New york, plusieurs saisies possibles.
-
-        Complément pour les videos TV :
-        Saison,
-        Episode,
-        Identifiant d’épisode
-
-
-        La où j’ai mis (I) c’est que ce la doit être un index de tri ou de recherche.
-*/
     }
-    return ret;
+
+    return l_ret;
 }
 
 /**
@@ -155,12 +113,12 @@ bool DatabaseManager::createTables()
  */
 QSqlQuery DatabaseManager::getMovies(QString parameter_name, QVariant parameter_value)
 {
-    QSqlQuery query;
-    query.prepare("SELECT * FROM movies WHERE " + parameter_name + "=:parameter_value");
-    query.bindValue(":parameter_value", parameter_value);
-    query.exec();
+    QSqlQuery l_query;
+    l_query.prepare("SELECT * FROM movies WHERE " + parameter_name + "=:parameter_value");
+    l_query.bindValue(":parameter_value", parameter_value);
+    l_query.exec();
 
-    return query;
+    return l_query;
 }
 
 /**
@@ -171,29 +129,29 @@ QSqlQuery DatabaseManager::getMovies(QString parameter_name, QVariant parameter_
  */
 QSqlQuery DatabaseManager::getAllMovies()
 {
-    QSqlQuery query;
-    query.prepare("SELECT title, director, year FROM movies");
-    query.exec();
+    QSqlQuery l_query;
+    l_query.prepare("SELECT title, director, year FROM movies");
+    l_query.exec();
 
-    return query;
+    return l_query;
 }
 
 QSqlQueryModel *DatabaseManager::createModel()
 {
-   QSqlQueryModel *model = new QSqlQueryModel;
-   model->setHeaderData(0, Qt::Horizontal, tr("rtle"));
-   model->setHeaderData(1, Qt::Horizontal, tr("Director"));
-   model->setHeaderData(2, Qt::Horizontal, tr("Year"));
+   QSqlQueryModel *l_model = new QSqlQueryModel;
+   l_model->setHeaderData(0, Qt::Horizontal, tr("rtle"));
+   l_model->setHeaderData(1, Qt::Horizontal, tr("Director"));
+   l_model->setHeaderData(2, Qt::Horizontal, tr("Year"));
 
-   return model;
+   return l_model;
 }
 
 QSqlQuery DatabaseManager::getAllTitles()
 {
-    QSqlQuery query;
-    query.prepare("SELECT title || ifnull(' (' || year || ')','') as value FROM movies");
-    query.exec();
+    QSqlQuery l_query;
+    l_query.prepare("SELECT title || ifnull(' (' || year || ')','') as value FROM movies");
+    l_query.exec();
 
-    return query;
+    return l_query;
 }
 

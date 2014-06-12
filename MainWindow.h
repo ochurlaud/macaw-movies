@@ -29,13 +29,13 @@ class MainWindow : public QWidget
         void showSettingsWindow();
 
     private:
-        QPushButton *settingsButton;
-        QHBoxLayout *hLayout;
-        QVBoxLayout *mainLayout;
-        QTextEdit *searchEdit;
-        QListWidget *leftPannel;
-        QTableView *moviesList;
-        QVector<QListWidgetItem*> moviesTitles;
+        QPushButton *m_settingsButton;
+        QHBoxLayout *m_hLayout;
+        QVBoxLayout *m_mainLayout;
+        QTextEdit *m_searchEdit;
+        QListWidget *m_leftPannel;
+        QTableView *m_moviesList;
+        QVector<QListWidgetItem*> m_moviesTitles;
 };
 
 #endif // MAINWINDOW_H

@@ -4,40 +4,40 @@
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
     setFixedSize(800,600);
-    mainLayout = new QVBoxLayout(this);
-    hLayout = new QHBoxLayout;
-    DatabaseManager databaseManager;
+    m_mainLayout = new QVBoxLayout(this);
+    m_hLayout = new QHBoxLayout;
+    DatabaseManager l_databaseManager;
 
-    // leftPannel : list of movies or realisators or ...
-    leftPannel = new QListWidget;
-    QSqlQuery titlesRequest = databaseManager.getAllTitles();
+    // m_leftPannel : list of movies or realisators or ...
+    m_leftPannel = new QListWidget;
+    QSqlQuery l_titlesRequest = l_databaseManager.getAllTitles();
     int i(0);
-    while(titlesRequest.next())
+    while(l_titlesRequest.next())
     {
-        QString title = titlesRequest.value(0).toString();
-        moviesTitles.push_back(new QListWidgetItem(title));
-        leftPannel->insertItem(i, moviesTitles[i]);
+        QString l_title = l_titlesRequest.value(0).toString();
+        m_moviesTitles.push_back(new QListWidgetItem(l_title));
+        m_leftPannel->insertItem(i, m_moviesTitles[i]);
         i++;
     }
-    leftPannel->setMaximumWidth(this->width()*.3);
+    m_leftPannel->setMaximumWidth(this->width()*.3);
 
-    // movieList : central list. Would be great to be able to how it looks like
-    moviesList = new QTableView;
-    QSqlQueryModel *modelMoviesList = new QSqlQueryModel;
-    modelMoviesList = databaseManager.createModel();
-    modelMoviesList->setQuery(databaseManager.getAllMovies());
-    moviesList->setModel(modelMoviesList);
-    moviesList->setShowGrid(false);
-    moviesList->verticalHeader()->hide();
-    moviesList->setAlternatingRowColors(true);
+    // m_movieList : central list. Would be great to be able to how it looks like
+    m_moviesList = new QTableView;
+    QSqlQueryModel *l_modelMoviesList = new QSqlQueryModel;
+    l_modelMoviesList = l_databaseManager.createModel();
+    l_modelMoviesList->setQuery(l_databaseManager.getAllMovies());
+    m_moviesList->setModel(l_modelMoviesList);
+    m_moviesList->setShowGrid(false);
+    m_moviesList->verticalHeader()->hide();
+    m_moviesList->setAlternatingRowColors(true);
 
-    settingsButton = new QPushButton("Settings");
-    QObject::connect(settingsButton, SIGNAL(clicked()), this, SLOT(showSettingsWindow()));
+    m_settingsButton = new QPushButton("Settings");
+    QObject::connect(m_settingsButton, SIGNAL(clicked()), this, SLOT(showSettingsWindow()));
 
-    mainLayout->addWidget(settingsButton);
-    mainLayout->addLayout(hLayout);
-    hLayout->addWidget(leftPannel);
-    hLayout->addWidget(moviesList);
+    m_mainLayout->addWidget(m_settingsButton);
+    m_mainLayout->addLayout(m_hLayout);
+    m_hLayout->addWidget(m_leftPannel);
+    m_hLayout->addWidget(m_moviesList);
 }
 
 MainWindow::~MainWindow()
@@ -46,7 +46,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::showSettingsWindow()
 {
-    SettingsWindow *settingsWindow = new SettingsWindow;
-    settingsWindow->show();
-    QObject::connect(settingsWindow,SIGNAL(closed()), this, SLOT(update()));
+    SettingsWindow *l_settingsWindow = new SettingsWindow;
+    l_settingsWindow->show();
+    QObject::connect(l_settingsWindow,SIGNAL(closed()), this, SLOT(update()));
 }

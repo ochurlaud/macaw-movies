@@ -4,24 +4,23 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QWidget(parent)
 {
     setFixedSize(400,300);
     setWindowTitle("Settings");
-    mainLayout = new QVBoxLayout(this);
-    filesPathLayout = new QHBoxLayout;
+    m_mainLayout = new QVBoxLayout(this);
+    m_filesPathLayout = new QHBoxLayout;
 
-    filesPathLabel = new QLabel("Files path");
-    filesPathEdit = new QLineEdit;
-    filesPathEdit->setText("tttt");
-    filesPathSearchButton = new QPushButton("Browse");
-    QObject::connect(filesPathSearchButton, SIGNAL(clicked()), this, SLOT(browseFilesPathDialog()));
+    m_filesPathLabel = new QLabel("Files path");
+    m_filesPathEdit = new QLineEdit;
+    m_filesPathEdit->setText("tttt");
+    m_filesPathSearchButton = new QPushButton("Browse");
+    QObject::connect(m_filesPathSearchButton, SIGNAL(clicked()), this, SLOT(browseFilesPathDialog()));
 
+    m_submitButton = new QPushButton("Submit", this);
+    QObject::connect(m_submitButton, SIGNAL(clicked()), this, SLOT(applySetting()));
 
-    submitButton = new QPushButton("Submit", this);
-    QObject::connect(submitButton, SIGNAL(clicked()), this, SLOT(applySetting()));
-
-    mainLayout->addLayout(filesPathLayout);
-    mainLayout->addWidget(submitButton);
-    filesPathLayout->addWidget(filesPathLabel);
-    filesPathLayout->addWidget(filesPathEdit);
-    filesPathLayout->addWidget(filesPathSearchButton);
+    m_mainLayout->addLayout(m_filesPathLayout);
+    m_mainLayout->addWidget(m_submitButton);
+    m_filesPathLayout->addWidget(m_filesPathLabel);
+    m_filesPathLayout->addWidget(m_filesPathEdit);
+    m_filesPathLayout->addWidget(m_filesPathSearchButton);
 }
 
 SettingsWindow::~SettingsWindow()
@@ -30,16 +29,16 @@ SettingsWindow::~SettingsWindow()
 
 void SettingsWindow::applySetting()
 {
-    Application *app = qobject_cast<Application *>(qApp);
-    app->setFilesPath(filesPathEdit->text());
+    Application *l_app = qobject_cast<Application *>(qApp);
+    l_app->setFilesPath(m_filesPathEdit->text());
     close();
-    qDebug()<< app->getFilesPath();
+    qDebug()<< l_app->getFilesPath();
 }
 
 void SettingsWindow::browseFilesPathDialog()
 {
-    QString folder = QFileDialog::getExistingDirectory(this);
-    filesPathEdit->setText(folder);
+    QString l_folder = QFileDialog::getExistingDirectory(this);
+    m_filesPathEdit->setText(l_folder);
 }
 void SettingsWindow::closeEvent(QCloseEvent *event)
 {

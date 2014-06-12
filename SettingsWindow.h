@@ -30,12 +30,12 @@ class SettingsWindow : public QWidget
         void closed();
 
     private:
-        QLabel *filesPathLabel;
-        QLineEdit *filesPathEdit;
-        QPushButton *filesPathSearchButton;
-        QPushButton *submitButton;
-        QVBoxLayout *mainLayout;
-        QHBoxLayout *filesPathLayout;
+        QLabel *m_filesPathLabel;
+        QLineEdit *m_filesPathEdit;
+        QPushButton *m_filesPathSearchButton;
+        QPushButton *m_submitButton;
+        QVBoxLayout *m_mainLayout;
+        QHBoxLayout *m_filesPathLayout;
 
 };
 

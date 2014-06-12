@@ -8,17 +8,17 @@
 
 int main(int argc, char *argv[])
 {
-    Application app(argc, argv);
-    MainWindow mainWindow;
+    Application l_app(argc, argv);
+    MainWindow l_mainWindow;
 
-    QDir directory("c:/Users/Olivier/Downloads/Movies");
-    QFileInfoList list = directory.entryInfoList();
-    for (int i = 0; i < list.size(); ++i) {
-        QFileInfo fileInfo = list.at(i);
-        qDebug() << QString(fileInfo.fileName());
+    QDir l_directory("c:/Users/Olivier/Downloads/Movies");
+    QFileInfoList l_list = l_directory.entryInfoList();
+    for (int i = 0; i < l_list.size(); ++i) {
+        QFileInfo l_fileInfo = l_list.at(i);
+        qDebug() << QString(l_fileInfo.fileName());
     }
 
-    mainWindow.show();
+    l_mainWindow.show();
 
-    return app.exec();
+    return l_app.exec();
 }

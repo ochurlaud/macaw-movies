@@ -17,7 +17,7 @@ class Application : public QApplication
 
     private:
     //    MainWindow mainWindow;
-        QString filesPath;
+        QString m_filesPath;
 };
 
 #endif // APPLICATION_H
