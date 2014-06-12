@@ -3,6 +3,34 @@ movie-project
 
 Movies organizer. Qt/C++/Sqlite
 
+Explain here what it is about
+
+1. Rules of the coding
+2. Presentation of the project
+
+1. Rules of the coding
+======================
+ - English is used for all names (class, function, variable…)
+ - Abreviations are not tolerated anywhere in the code. All names must be as explicit as possible
+ - members start with m_
+ - local variables start with l_
+ - function parameter names do not have a specific prefix
+ - global variables are prohibited (please contact the dev coordinator if this is necessary in your case)
+ - function names do not have a prefix, start with a lowercase character and use upper case characters for each new word (no underscore)
+ - curly brackets always stand alone on new lines
+ - if / else blocks always have curly brackets, even if only one call is to be done
+ - blank line before calling return
+ - blank line before two logical blocs
+
+I've seen people who additionally do this (INRIA), is it relevant ? To be discussed
+ - Class names start with C
+ - template names start with T
+ - interface names start with I (as with pure abstract classes of an API)
+ - variable names are prefixed with their type : b for boolean, s for string, r for references, o for objects, i16 for signed 16 bits integers, uint64 for unsigned 64 bits integers or float80 for 80 bits floats…
+
+2. Presentation of the project
+==============================
+TO BE TRANSLATED:
 Mail de mon pere selon ce qu'il faudrait (synthétise bien le CDC)
 
 L’idéal serait d’être en capacité de récupérer les infos directement dans un truc genre IMDB et l’injecter dans ton outil (comme c’est fait avec gracenote pour Itunes).
