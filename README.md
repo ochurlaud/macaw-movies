@@ -1,4 +1,4 @@
-# movie-project
+# Movie-Project
 
 Movies organizer. Qt/C++/Sqlite
 
