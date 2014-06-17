@@ -4,10 +4,10 @@ Movies organizer. Qt/C++/Sqlite
 
 *Explain here what it is about*
 
-1. Rules of the coding
+1. Rules for coding
 2. Presentation of the project
 
-## 1. Rules of the coding
+## 1. Rules for coding
 
  - English is used for all names (class, function, variable…)
  - Abreviations are not tolerated anywhere in the code. All names must be as explicit as possible
