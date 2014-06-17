@@ -46,6 +46,6 @@ HEADERS  += \
 FORMS    += \
 
 OTHER_FILES += \
-    .gitignore \
-    COPYING \
-    README.md
+    ../.gitignore \
+    ../COPYING \
+    ../README.md
