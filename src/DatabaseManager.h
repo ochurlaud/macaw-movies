@@ -21,12 +21,8 @@
 #define DATABASEMANAGER_H
 
 #include <QObject>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QFile>
-#include <QSqlQuery>
-#include <QVariant>
-#include <QSqlQueryModel>
+#include <QtCore>
+#include <QtSql>
 
 class DatabaseManager : public QObject
 {

@@ -23,12 +23,8 @@
 #include "Application.h"
 #include "DatabaseManager.h"
 
-#include <QCloseEvent>
-#include <QFileDialog>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QVBoxLayout>
+#include <QtGui>
+
 #include <QtDebug>
 
 class SettingsWindow : public QWidget

@@ -24,13 +24,9 @@
 #include "SettingsWindow.h"
 #include "Application.h"
 
-#include <QListWidget>
-#include <QVBoxLayout>
-#include <QSqlQueryModel>
-#include <QTableView>
-#include <QHeaderView>
-#include <QTextEdit>
-#include <QPushButton>
+#include <QtSql>
+#include <QtGui>
+
 #include <QtDebug>
 
 
