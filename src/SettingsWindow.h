@@ -24,6 +24,7 @@
 #include "DatabaseManager.h"
 
 #include <QtGui>
+#include <QtWidgets>
 
 #include <QtDebug>
 

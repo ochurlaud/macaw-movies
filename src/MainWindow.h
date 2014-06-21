@@ -26,6 +26,7 @@
 
 #include <QtSql>
 #include <QtGui>
+#include <QtWidgets>
 
 #include <QtDebug>
 
