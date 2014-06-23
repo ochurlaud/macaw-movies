@@ -21,6 +21,9 @@
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
+    Application *l_app = qobject_cast<Application *>(qApp);
+    qDebug() << l_app->getFilesPath();
+    setWindowTitle(l_app->getFilesPath());
     setFixedSize(800,600);
     m_mainLayout = new QVBoxLayout(this);
     m_hLayout = new QHBoxLayout;
@@ -66,5 +69,18 @@ void MainWindow::showSettingsWindow()
 {
     SettingsWindow *l_settingsWindow = new SettingsWindow;
     l_settingsWindow->show();
-    QObject::connect(l_settingsWindow,SIGNAL(closed()), this, SLOT(update()));
+    QObject::connect(l_settingsWindow,SIGNAL(closed()), this, SLOT(setDodo()));
+}
+
+void MainWindow::setDodo()
+{
+    Application *l_app = qobject_cast<Application *>(qApp);
+    QString l_directoryName = l_app->getFilesPath();
+    QDirIterator l_path(l_directoryName, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
+    while (l_path.hasNext()) {
+        // Replace here the qDebug by an INSERT request
+        // Could be cheacked before whether a row with same *path* exists
+        qDebug()<< l_path.fileInfo().fileName() << "|" << l_path.fileInfo().size();
+        l_path.next();
+    }
 }

@@ -34,6 +34,7 @@ class DatabaseManager : public QObject
         QSqlQuery getMovies(QString, QVariant);
         QSqlQuery getAllMovies();
         QSqlQuery getAllTitles();
+        QSqlQuery insertNewTitle();
         QSqlError lastError();
         QSqlQueryModel *createModel();
         QSqlQueryModel *createTitleModel();

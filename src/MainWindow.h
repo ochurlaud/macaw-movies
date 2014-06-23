@@ -41,7 +41,7 @@ class MainWindow : public QWidget
         ~MainWindow();
 
     public slots:
-        void setDodo(){qDebug()<< "dodo";}
+        void setDodo();
         void showSettingsWindow();
 
     private:

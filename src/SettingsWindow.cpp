@@ -26,9 +26,10 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QWidget(parent)
     m_mainLayout = new QVBoxLayout(this);
     m_filesPathLayout = new QHBoxLayout;
 
+    Application *l_app = qobject_cast<Application *>(qApp);
     m_filesPathLabel = new QLabel("Files path");
     m_filesPathEdit = new QLineEdit;
-    m_filesPathEdit->setText("tttt");
+    m_filesPathEdit->setText(l_app->getFilesPath());
     m_filesPathSearchButton = new QPushButton("Browse");
     QObject::connect(m_filesPathSearchButton, SIGNAL(clicked()), this, SLOT(browseFilesPathDialog()));
 
@@ -51,7 +52,6 @@ void SettingsWindow::applySetting()
     Application *l_app = qobject_cast<Application *>(qApp);
     l_app->setFilesPath(m_filesPathEdit->text());
     close();
-    qDebug()<< l_app->getFilesPath();
 }
 
 void SettingsWindow::browseFilesPathDialog()

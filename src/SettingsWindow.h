@@ -52,7 +52,6 @@ class SettingsWindow : public QWidget
         QPushButton *m_submitButton;
         QVBoxLayout *m_mainLayout;
         QHBoxLayout *m_filesPathLayout;
-
 };
 
 #endif // SETTINGWINDOW_H
