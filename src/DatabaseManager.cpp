@@ -68,6 +68,20 @@ QSqlError DatabaseManager::lastError()
 }
 
 /**
+ * @brief DatabaseManager::closeDB
+ * Closes the database.
+ *
+ * @return bool
+ */
+bool DatabaseManager::closeDB()
+{
+    // Close database
+    m_db.close();
+
+    return true;
+}
+
+/**
  * @brief DatabaseManager::deleteDB
  * Deletes the database.
  *
@@ -149,7 +163,7 @@ QSqlQuery DatabaseManager::getMovies(QString parameter_name, QVariant parameter_
 QSqlQuery DatabaseManager::getAllMovies()
 {
     QSqlQuery l_query;
-    l_query.prepare("SELECT title, director, year FROM movies");
+    l_query.prepare("SELECT title, director, year, format, file_path FROM movies");
     l_query.exec();
 
     return l_query;
@@ -158,9 +172,7 @@ QSqlQuery DatabaseManager::getAllMovies()
 QSqlQueryModel *DatabaseManager::createModel()
 {
    QSqlQueryModel *l_model = new QSqlQueryModel;
-   l_model->setHeaderData(0, Qt::Horizontal, tr("rtle"));
-   l_model->setHeaderData(1, Qt::Horizontal, tr("Director"));
-   l_model->setHeaderData(2, Qt::Horizontal, tr("Year"));
+
 
    return l_model;
 }
@@ -174,3 +186,44 @@ QSqlQuery DatabaseManager::getAllTitles()
     return l_query;
 }
 
+bool DatabaseManager::insertNewTitle(QStringList value)
+{
+    if (value.size() % 2 == 1)
+    {
+        return false;
+    }
+
+    QString request = "INSERT into movies (";
+
+    // Even elements are names of fields
+    for (int i = 0 ; i < value.size()-1 ; i=i+2)
+    {
+        request += value.at(i);
+        if (i != value.size()-2)
+        {
+            request += ", ";
+        }
+    }
+
+    request += ") VALUES (";
+
+    // Odd elements are values of fields
+    for (int i = 1 ; i < value.size() ; i=i+2)
+    {
+        request += "'" + value.at(i) + "'";
+        if (i != value.size()-1)
+        {
+            request += ", ";
+        }
+    }
+    request += ")";
+
+
+    QSqlQuery l_query;
+    l_query.prepare(request);
+    l_query.exec();
+
+    qDebug()<< "******\n" + request;
+
+    return true;
+}

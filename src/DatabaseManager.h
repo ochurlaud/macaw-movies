@@ -30,11 +30,12 @@ class DatabaseManager : public QObject
         DatabaseManager();
         bool openDB();
         bool createTables();
+        bool closeDB();
         bool deleteDB();
         QSqlQuery getMovies(QString, QVariant);
         QSqlQuery getAllMovies();
         QSqlQuery getAllTitles();
-        QSqlQuery insertNewTitle();
+        bool insertNewTitle(QStringList);
         QSqlError lastError();
         QSqlQueryModel *createModel();
         QSqlQueryModel *createTitleModel();

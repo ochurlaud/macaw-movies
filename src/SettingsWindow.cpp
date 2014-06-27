@@ -19,12 +19,13 @@
 
 #include "SettingsWindow.h"
 
-SettingsWindow::SettingsWindow(QWidget *parent) : QWidget(parent)
+SettingsWindow::SettingsWindow(QDialog *parent) : QDialog(parent)
 {
-    setFixedSize(400,300);
+    resize(400,300);
     setWindowTitle("Settings");
     m_mainLayout = new QVBoxLayout(this);
     m_filesPathLayout = new QHBoxLayout;
+    m_filesPathMessage = new QLabel("");
 
     Application *l_app = qobject_cast<Application *>(qApp);
     m_filesPathLabel = new QLabel("Files path");
@@ -33,10 +34,11 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QWidget(parent)
     m_filesPathSearchButton = new QPushButton("Browse");
     QObject::connect(m_filesPathSearchButton, SIGNAL(clicked()), this, SLOT(browseFilesPathDialog()));
 
-    m_submitButton = new QPushButton("Submit", this);
+    m_submitButton = new QPushButton("Submit");
     QObject::connect(m_submitButton, SIGNAL(clicked()), this, SLOT(applySetting()));
 
     m_mainLayout->addLayout(m_filesPathLayout);
+    m_mainLayout->addWidget(m_filesPathMessage);
     m_mainLayout->addWidget(m_submitButton);
     m_filesPathLayout->addWidget(m_filesPathLabel);
     m_filesPathLayout->addWidget(m_filesPathEdit);
@@ -49,14 +51,22 @@ SettingsWindow::~SettingsWindow()
 
 void SettingsWindow::applySetting()
 {
-    Application *l_app = qobject_cast<Application *>(qApp);
-    l_app->setFilesPath(m_filesPathEdit->text());
-    close();
+    if(QDir(m_filesPathEdit->text()).exists())
+    {
+        Application *l_app = qobject_cast<Application *>(qApp);
+        l_app->setFilesPath(m_filesPathEdit->text());
+        close();
+    }
+    else
+    {
+        m_filesPathEdit->setText("");
+        m_filesPathMessage->setText("Choose an existant path");
+    }
 }
 
 void SettingsWindow::browseFilesPathDialog()
 {
-    QString l_folder = QFileDialog::getExistingDirectory(this);
+    QString l_folder = QFileDialog::getExistingDirectory();
     m_filesPathEdit->setText(l_folder);
 }
 void SettingsWindow::closeEvent(QCloseEvent *event)

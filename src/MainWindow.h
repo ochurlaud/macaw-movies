@@ -45,6 +45,8 @@ class MainWindow : public QWidget
         void showSettingsWindow();
 
     private:
+        void fillLeftPannel();
+        void fillMoviesList();
         QPushButton *m_settingsButton;
         QHBoxLayout *m_hLayout;
         QVBoxLayout *m_mainLayout;

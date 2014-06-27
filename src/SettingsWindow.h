@@ -28,12 +28,12 @@
 
 #include <QtDebug>
 
-class SettingsWindow : public QWidget
+class SettingsWindow : public QDialog
 {
     Q_OBJECT
 
     public:
-        explicit SettingsWindow(QWidget *parent = 0);
+        explicit SettingsWindow(QDialog *parent = 0);
         ~SettingsWindow();
         void closeEvent(QCloseEvent *event);
 
@@ -47,6 +47,7 @@ class SettingsWindow : public QWidget
 
     private:
         QLabel *m_filesPathLabel;
+        QLabel *m_filesPathMessage;
         QLineEdit *m_filesPathEdit;
         QPushButton *m_filesPathSearchButton;
         QPushButton *m_submitButton;

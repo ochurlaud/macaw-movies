@@ -27,27 +27,15 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     setFixedSize(800,600);
     m_mainLayout = new QVBoxLayout(this);
     m_hLayout = new QHBoxLayout;
-    DatabaseManager l_databaseManager;
 
     // m_leftPannel : list of movies or realisators or ...
     m_leftPannel = new QListWidget;
-    QSqlQuery l_titlesRequest = l_databaseManager.getAllTitles();
-    int i(0);
-    while(l_titlesRequest.next())
-    {
-        QString l_title = l_titlesRequest.value(0).toString();
-        m_moviesTitles.push_back(new QListWidgetItem(l_title));
-        m_leftPannel->insertItem(i, m_moviesTitles[i]);
-        i++;
-    }
+    fillLeftPannel();
     m_leftPannel->setMaximumWidth(this->width()*.3);
 
     // m_movieList : central list. Would be great to be able to how it looks like
     m_moviesList = new QTableView;
-    QSqlQueryModel *l_modelMoviesList = new QSqlQueryModel;
-    l_modelMoviesList = l_databaseManager.createModel();
-    l_modelMoviesList->setQuery(l_databaseManager.getAllMovies());
-    m_moviesList->setModel(l_modelMoviesList);
+    fillMoviesList();
     m_moviesList->setShowGrid(false);
     m_moviesList->verticalHeader()->hide();
     m_moviesList->setAlternatingRowColors(true);
@@ -68,6 +56,7 @@ MainWindow::~MainWindow()
 void MainWindow::showSettingsWindow()
 {
     SettingsWindow *l_settingsWindow = new SettingsWindow;
+    l_settingsWindow->setModal(true);
     l_settingsWindow->show();
     QObject::connect(l_settingsWindow,SIGNAL(closed()), this, SLOT(setDodo()));
 }
@@ -77,10 +66,51 @@ void MainWindow::setDodo()
     Application *l_app = qobject_cast<Application *>(qApp);
     QString l_directoryName = l_app->getFilesPath();
     QDirIterator l_path(l_directoryName, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
-    while (l_path.hasNext()) {
-        // Replace here the qDebug by an INSERT request
-        // Could be cheacked before whether a row with same *path* exists
-        qDebug()<< l_path.fileInfo().fileName() << "|" << l_path.fileInfo().size();
-        l_path.next();
+    DatabaseManager l_databaseManager;
+    {
+        while (l_path.hasNext()) {
+            l_path.next();
+
+            // Replace here the qDebug by an INSERT request
+            // Could be cheacked before whether a row with same *path* exists
+            QStringList l_value;
+            l_value << "title" << l_path.fileInfo().baseName()
+                    << "file_path" << l_path.fileInfo().absoluteFilePath()
+                    << "format" << l_path.fileInfo().suffix();
+            l_databaseManager.insertNewTitle(l_value);
+        }
     }
+    fillLeftPannel();
+    fillMoviesList();
+    l_databaseManager.closeDB();
+}
+
+void MainWindow::fillLeftPannel()
+{
+    DatabaseManager l_databaseManager;
+
+    {
+        QSqlQuery l_titlesRequest = l_databaseManager.getAllTitles();
+        int i(0);
+        while(l_titlesRequest.next())
+        {
+            QString l_title = l_titlesRequest.value(0).toString();
+            m_moviesTitles.push_back(new QListWidgetItem(l_title));
+            m_leftPannel->insertItem(i, m_moviesTitles[i]);
+            i++;
+        }
+    }
+    l_databaseManager.closeDB();
+}
+
+void MainWindow::fillMoviesList()
+{
+    DatabaseManager l_databaseManager;
+    {
+        QSqlQueryModel *l_modelMoviesList = new QSqlQueryModel;
+        l_modelMoviesList = l_databaseManager.createModel();
+        l_modelMoviesList->setQuery(l_databaseManager.getAllMovies());
+        m_moviesList->setModel(l_modelMoviesList);
+    }
+    l_databaseManager.closeDB();
 }
