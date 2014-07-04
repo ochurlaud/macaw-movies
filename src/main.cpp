@@ -37,11 +37,7 @@ int main(int argc, char *argv[])
         qDebug() << QString(l_fileInfo.fileName());
     }
 
-    qDebug("coucou");
-
     l_mainWindow.show();
-
-    qDebug("!coucou!");
 
     return l_app.exec();
 }

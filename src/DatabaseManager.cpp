@@ -29,7 +29,7 @@
 DatabaseManager::DatabaseManager()
 {
     openDB();
-    if(m_db.tables().isEmpty())
+    if (m_db.tables().isEmpty())
     {
         createTables();
     }
@@ -43,7 +43,15 @@ DatabaseManager::DatabaseManager()
  */
 bool DatabaseManager::openDB()
 {
-    m_db = QSqlDatabase::addDatabase("QSQLITE");
+
+    if (QSqlDatabase::contains("Movies-database"))
+    {
+        m_db = QSqlDatabase::database("Movies-database");
+    }
+    else
+    {
+        m_db = QSqlDatabase::addDatabase("QSQLITE", "Movies-database");
+    }
 
   #ifdef Q_OS_LINUX
     // NOTE: We have to store database file into user home folder in Linux
@@ -114,9 +122,10 @@ bool DatabaseManager::createTables()
 {
     // Create table "movies"
     bool l_ret = false;
+
     if (m_db.isOpen())
     {
-        QSqlQuery l_query;
+        QSqlQuery l_query(m_db);
         l_ret = l_query.exec("CREATE TABLE movies("
                   "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                   "title VARCHAR(50), "
@@ -146,7 +155,7 @@ bool DatabaseManager::createTables()
  */
 QSqlQuery DatabaseManager::getMovies(QString parameter_name, QVariant parameter_value)
 {
-    QSqlQuery l_query;
+    QSqlQuery l_query(m_db);
     l_query.prepare("SELECT * FROM movies WHERE " + parameter_name + "=:parameter_value");
     l_query.bindValue(":parameter_value", parameter_value);
     l_query.exec();
@@ -162,7 +171,7 @@ QSqlQuery DatabaseManager::getMovies(QString parameter_name, QVariant parameter_
  */
 QSqlQuery DatabaseManager::getAllMovies()
 {
-    QSqlQuery l_query;
+    QSqlQuery l_query(m_db);
     l_query.prepare("SELECT title, director, year, format, file_path FROM movies");
     l_query.exec();
 
@@ -179,7 +188,7 @@ QSqlQueryModel *DatabaseManager::createModel()
 
 QSqlQuery DatabaseManager::getAllTitles()
 {
-    QSqlQuery l_query;
+    QSqlQuery l_query(m_db);
     l_query.prepare("SELECT title || ifnull(' (' || year || ')','') as value FROM movies");
     l_query.exec();
 
@@ -219,7 +228,7 @@ bool DatabaseManager::insertNewTitle(QStringList value)
     request += ")";
 
 
-    QSqlQuery l_query;
+    QSqlQuery l_query(m_db);
     l_query.prepare(request);
     l_query.exec();
 

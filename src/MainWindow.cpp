@@ -22,7 +22,6 @@
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
     Application *l_app = qobject_cast<Application *>(qApp);
-    qDebug() << l_app->getFilesPath();
     setWindowTitle(l_app->getFilesPath());
     setFixedSize(800,600);
     m_mainLayout = new QVBoxLayout(this);
@@ -67,18 +66,15 @@ void MainWindow::setDodo()
     QString l_directoryName = l_app->getFilesPath();
     QDirIterator l_path(l_directoryName, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
     DatabaseManager l_databaseManager;
-    {
-        while (l_path.hasNext()) {
-            l_path.next();
+    while (l_path.hasNext()) {
+        l_path.next();
 
-            // Replace here the qDebug by an INSERT request
-            // Could be cheacked before whether a row with same *path* exists
-            QStringList l_value;
-            l_value << "title" << l_path.fileInfo().baseName()
-                    << "file_path" << l_path.fileInfo().absoluteFilePath()
-                    << "format" << l_path.fileInfo().suffix();
-            l_databaseManager.insertNewTitle(l_value);
-        }
+        // Could be cheacked before whether a row with same *path* exists
+        QStringList l_value;
+        l_value << "title" << l_path.fileInfo().baseName()
+                << "file_path" << l_path.fileInfo().absoluteFilePath()
+                << "format" << l_path.fileInfo().suffix();
+        l_databaseManager.insertNewTitle(l_value);
     }
     fillLeftPannel();
     fillMoviesList();
@@ -88,19 +84,15 @@ void MainWindow::setDodo()
 void MainWindow::fillLeftPannel()
 {
     DatabaseManager l_databaseManager;
-
+    QSqlQuery l_titlesRequest = l_databaseManager.getAllTitles();
+    int i(0);
+    while(l_titlesRequest.next())
     {
-        QSqlQuery l_titlesRequest = l_databaseManager.getAllTitles();
-        int i(0);
-        while(l_titlesRequest.next())
-        {
-            QString l_title = l_titlesRequest.value(0).toString();
-            m_moviesTitles.push_back(new QListWidgetItem(l_title));
-            m_leftPannel->insertItem(i, m_moviesTitles[i]);
-            i++;
-        }
+        QString l_title = l_titlesRequest.value(0).toString();
+        m_moviesTitles.push_back(new QListWidgetItem(l_title));
+        m_leftPannel->insertItem(i, m_moviesTitles[i]);
+        i++;
     }
-    l_databaseManager.closeDB();
 }
 
 void MainWindow::fillMoviesList()
@@ -112,5 +104,4 @@ void MainWindow::fillMoviesList()
         l_modelMoviesList->setQuery(l_databaseManager.getAllMovies());
         m_moviesList->setModel(l_modelMoviesList);
     }
-    l_databaseManager.closeDB();
 }
