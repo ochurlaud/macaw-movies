@@ -3,4 +3,4 @@ build-*
 Movies.pro.user
 Movies.pro.user.*
 src/Movies.pro.user
-
+moc_*

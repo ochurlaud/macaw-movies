@@ -56,12 +56,12 @@ bool DatabaseManager::openDB()
   #ifdef Q_OS_LINUX
     // NOTE: We have to store database file into user home folder in Linux
     QString path(QDir::home().path());
-    path.append(QDir::separator()).append("my.db.sqlite");
+    path.append(QDir::separator()).append("movie-project.sqlite");
     path = QDir::toNativeSeparators(path);
     m_db.setDatabaseName(path);
   #else
     // NOTE: File exists in the application private folder, in Symbian Qt implementation
-    m_db.setDatabaseName("my.db.sqlite");
+    m_db.setDatabaseName("movie-project.sqlite");
   #endif
 
     // Open databasee
@@ -103,12 +103,12 @@ bool DatabaseManager::deleteDB()
     #ifdef Q_OS_LINUX
     // NOTE: We have to store database file into user home folder in Linux
     QString path(QDir::home().path());
-    path.append(QDir::separator()).append("my.db.sqlite");
+    path.append(QDir::separator()).append("movie-project.sqlite");
     path = QDir::toNativeSeparators(path);
     return QFile::remove(path);
     #else
     // Remove created database binary file
-    return QFile::remove("my.db.sqlite");
+    return QFile::remove("movie-project.sqlite");
     #endif
 }
 
@@ -126,7 +126,7 @@ bool DatabaseManager::createTables()
     if (m_db.isOpen())
     {
         QSqlQuery l_query(m_db);
-        l_ret = l_query.exec("CREATE TABLE movies("
+        l_ret = l_query.exec("CREATE TABLE IF NOT EXISTS movies("
                   "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                   "title VARCHAR(50), "
                   "original_title VARCHAR(50), "
@@ -140,6 +140,12 @@ bool DatabaseManager::createTables()
                   "colored BOOLEAN, "
                   "format VARCHAR(10) "
                   ")");
+        l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS config("
+                                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                                      "movies_path VARCHAR(255) )");
+
+        l_ret = l_ret && l_query.exec("INSERT INTO config (movies_path) VALUES ('path')");
+
     }
 
     return l_ret;
@@ -235,4 +241,48 @@ bool DatabaseManager::insertNewTitle(QStringList value)
     qDebug()<< "******\n" + request;
 
     return true;
+}
+
+/**
+ *
+ * @brief save the movies' directory
+ *
+ * @param moviePath a QString containing the path to the movies directory
+ *
+ * @return true if the config hav been updated correctly
+ *
+ */
+bool DatabaseManager::saveMoviesPath(QString moviePath)
+{
+    //TODO : is this test really usefull ? this value "sould" be validate before...
+    if(moviePath.isEmpty())
+    {
+        return false;
+    }
+    else if (!QDir(moviePath).exists())
+    {
+        return false;
+    }
+
+
+    QSqlQuery query(m_db);
+    query.prepare("UPDATE config SET movies_path = :path WHERE id = 1");
+    query.bindValue(":path", moviePath);
+
+    return query.exec();
+
+
+}
+
+QString DatabaseManager::getMoviesPath()
+{
+    QSqlQuery query(m_db);
+    query.prepare("SELECT movies_path FROM config WHERE id = 1");
+
+    query.exec();
+
+    query.first();
+    QString result = query.value(0).toString();
+    qDebug()<<result;
+    return result;
 }

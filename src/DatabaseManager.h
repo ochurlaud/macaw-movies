@@ -39,6 +39,8 @@ class DatabaseManager : public QObject
         QSqlError lastError();
         QSqlQueryModel *createModel();
         QSqlQueryModel *createTitleModel();
+        bool saveMoviesPath(QString moviePath);
+        QString getMoviesPath();
 
     private:
         QSqlDatabase m_db;
