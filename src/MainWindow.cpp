@@ -21,8 +21,8 @@
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
-    Application *l_app = qobject_cast<Application *>(qApp);
-    setWindowTitle(l_app->getFilesPath());
+    m_app = qobject_cast<Application *>(qApp);
+    setWindowTitle(m_app->getFilesPath());
     setFixedSize(800,600);
     m_mainLayout = new QVBoxLayout(this);
     m_hLayout = new QHBoxLayout;
@@ -62,10 +62,9 @@ void MainWindow::showSettingsWindow()
 
 void MainWindow::setDodo()
 {
-    Application *l_app = qobject_cast<Application *>(qApp);
-    QString l_directoryName = l_app->getFilesPath();
+    QString l_directoryName = m_app->getFilesPath();
     QDirIterator l_path(l_directoryName, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
-    DatabaseManager l_databaseManager;
+
     while (l_path.hasNext()) {
         l_path.next();
 
@@ -74,17 +73,17 @@ void MainWindow::setDodo()
         l_value << "title" << l_path.fileInfo().baseName()
                 << "file_path" << l_path.fileInfo().absoluteFilePath()
                 << "format" << l_path.fileInfo().suffix();
-        l_databaseManager.insertNewTitle(l_value);
+        m_app->getDataBaseManager()->insertNewTitle(l_value);
+
     }
     fillLeftPannel();
     fillMoviesList();
-    l_databaseManager.closeDB();
 }
 
 void MainWindow::fillLeftPannel()
 {
-    DatabaseManager l_databaseManager;
-    QSqlQuery l_titlesRequest = l_databaseManager.getAllTitles();
+
+    QSqlQuery l_titlesRequest = m_app->getDataBaseManager()->getAllTitles();
     int i(0);
     while(l_titlesRequest.next())
     {
@@ -97,11 +96,8 @@ void MainWindow::fillLeftPannel()
 
 void MainWindow::fillMoviesList()
 {
-    DatabaseManager l_databaseManager;
-    {
-        QSqlQueryModel *l_modelMoviesList = new QSqlQueryModel;
-        l_modelMoviesList = l_databaseManager.createModel();
-        l_modelMoviesList->setQuery(l_databaseManager.getAllMovies());
-        m_moviesList->setModel(l_modelMoviesList);
-    }
+    QSqlQueryModel * l_modelMoviesList = new QSqlQueryModel;
+    l_modelMoviesList = m_app->getDataBaseManager()->createModel();
+    l_modelMoviesList->setQuery(m_app->getDataBaseManager()->getAllMovies());
+    m_moviesList->setModel(l_modelMoviesList);
 }

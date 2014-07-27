@@ -21,23 +21,21 @@
 
 SettingsWindow::SettingsWindow(QDialog *parent) : QDialog(parent)
 {
-    DatabaseManager l_databaseManager;
+    m_app = qobject_cast<Application *>(qApp);
     resize(400,300);
     setWindowTitle("Settings");
     m_mainLayout = new QVBoxLayout(this);
     m_filesPathLayout = new QHBoxLayout;
     m_filesPathMessage = new QLabel("");
 
-    Application *l_app = qobject_cast<Application *>(qApp);
     m_filesPathLabel = new QLabel("Files path");
     m_filesPathEdit = new QLineEdit;
-    m_filesPathEdit->setText(l_app->getFilesPath());
+    m_filesPathEdit->setText(m_app->getFilesPath());
     m_filesPathSearchButton = new QPushButton("Browse");
     QObject::connect(m_filesPathSearchButton, SIGNAL(clicked()), this, SLOT(browseFilesPathDialog()));
 
     m_knownPathList = new QListView;
-    l_databaseManager.initPathModel();
-    m_knownPathList->setModel(l_databaseManager.getMoviesPathModel());
+    m_knownPathList->setModel(m_app->getDataBaseManager()->getMoviesPathModel());
 
     m_submitButton = new QPushButton("Submit");
     QObject::connect(m_submitButton, SIGNAL(clicked()), this, SLOT(applySetting()));

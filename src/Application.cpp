@@ -21,9 +21,9 @@
 
 Application::Application(int argc, char **argv) : QApplication(argc, argv)
 {
-    DatabaseManager l_databasemanager;
+    m_dbManager = new DatabaseManager();
 
-    m_filesPath = l_databasemanager.getMoviesPath().at(0);
+    m_filesPath = m_dbManager->getMoviesPath().at(0);
 
  //   mainWindow.setFixedSize(800,600);
 }
@@ -40,8 +40,7 @@ Application::~Application()
 bool Application::setFilesPath(QString path)
 {
     m_filesPath = path;
-    DatabaseManager l_databasemanager;
-    l_databasemanager.saveMoviesPath(this->m_filesPath);
+    m_dbManager->saveMoviesPath(this->m_filesPath);
     return true;
 }
 QString Application::getFilesPath()

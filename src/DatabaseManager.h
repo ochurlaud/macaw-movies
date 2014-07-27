@@ -42,9 +42,6 @@ class DatabaseManager : public QObject
         bool saveMoviesPath(QString moviePath);
         QStringList getMoviesPath();
         QStringListModel* getMoviesPathModel() {return this->m_moviesPathModel;}
-        void initPathModel(); //this is a temp function, it is a workaround to initialise the model witch list all the paths to movies.
-                              // The solution will be that DatabaseManager is a member of Application
-
 
     private:
         QSqlDatabase m_db;

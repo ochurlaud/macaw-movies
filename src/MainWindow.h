@@ -20,7 +20,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "DatabaseManager.h"
 #include "SettingsWindow.h"
 #include "Application.h"
 
@@ -30,7 +29,7 @@
 
 #include <QtDebug>
 
-
+class Application;
 
 class MainWindow : public QWidget
 {
@@ -54,6 +53,7 @@ class MainWindow : public QWidget
         QListWidget *m_leftPannel;
         QTableView *m_moviesList;
         QVector<QListWidgetItem*> m_moviesTitles;
+        Application * m_app;
 };
 
 #endif // MAINWINDOW_H

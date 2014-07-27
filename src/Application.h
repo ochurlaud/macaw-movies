@@ -22,6 +22,7 @@
 
 #include <QApplication>
 #include "MainWindow.h"
+#include "DatabaseManager.h"
 
 class Application : public QApplication
 {
@@ -33,10 +34,12 @@ class Application : public QApplication
         void showMainWindow();
         bool setFilesPath(QString path);
         QString getFilesPath();
+        DatabaseManager * getDataBaseManager() {return this->m_dbManager;}
 
     private:
     //    MainWindow mainWindow;
         QString m_filesPath;
+        DatabaseManager * m_dbManager;
 };
 
 #endif // APPLICATION_H

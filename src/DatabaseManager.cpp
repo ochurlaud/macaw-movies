@@ -296,8 +296,3 @@ QStringList DatabaseManager::getMoviesPath()
 
     return result;
 }
-
-void DatabaseManager::initPathModel()
-{
-    this->getMoviesPath();
-}

@@ -21,12 +21,13 @@
 #define SETTINGWINDOW_H
 
 #include "Application.h"
-#include "DatabaseManager.h"
 
 #include <QtGui>
 #include <QtWidgets>
 
 #include <QtDebug>
+
+class Application;
 
 class SettingsWindow : public QDialog
 {
@@ -54,6 +55,7 @@ class SettingsWindow : public QDialog
         QVBoxLayout *m_mainLayout;
         QHBoxLayout *m_filesPathLayout;
         QListView * m_knownPathList;
+        Application * m_app;
 };
 
 #endif // SETTINGWINDOW_H
