@@ -40,7 +40,7 @@ class DatabaseManager : public QObject
         QSqlQueryModel *createModel();
         QSqlQueryModel *createTitleModel();
         bool saveMoviesPath(QString moviePath);
-        QString getMoviesPath();
+        QStringList getMoviesPath();
 
     private:
         QSqlDatabase m_db;

@@ -144,7 +144,7 @@ bool DatabaseManager::createTables()
                                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                                       "movies_path VARCHAR(255) )");
 
-        l_ret = l_ret && l_query.exec("INSERT INTO config (movies_path) VALUES ('path')");
+        //l_ret = l_ret && l_query.exec("INSERT INTO config (movies_path) VALUES ('path')");
 
     }
 
@@ -254,7 +254,7 @@ bool DatabaseManager::insertNewTitle(QStringList value)
  */
 bool DatabaseManager::saveMoviesPath(QString moviePath)
 {
-    //TODO : is this test really usefull ? this value "sould" be validate before...
+    //TODO : is this test really usefull ? this value "sould" be validated before...
     if(moviePath.isEmpty())
     {
         return false;
@@ -266,7 +266,7 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
 
 
     QSqlQuery query(m_db);
-    query.prepare("UPDATE config SET movies_path = :path WHERE id = 1");
+    query.prepare("INSERT INTO config (movies_path) VALUES (:path)");
     query.bindValue(":path", moviePath);
 
     return query.exec();
@@ -274,15 +274,22 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
 
 }
 
-QString DatabaseManager::getMoviesPath()
+QStringList DatabaseManager::getMoviesPath()
 {
     QSqlQuery query(m_db);
-    query.prepare("SELECT movies_path FROM config WHERE id = 1");
+    query.prepare("SELECT movies_path FROM config");
 
     query.exec();
 
-    query.first();
-    QString result = query.value(0).toString();
+    QStringList result;
+
+    while(query.next())
+    {
+        qDebug()<<query.value(0).toString();
+        result.append(query.value(0).toString());
+    }
+
     qDebug()<<result;
+
     return result;
 }

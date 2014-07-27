@@ -23,7 +23,7 @@ Application::Application(int argc, char **argv) : QApplication(argc, argv)
 {
     DatabaseManager l_databasemanager;
 
-    m_filesPath = l_databasemanager.getMoviesPath();
+    m_filesPath = l_databasemanager.getMoviesPath().at(0);
 
  //   mainWindow.setFixedSize(800,600);
 }
