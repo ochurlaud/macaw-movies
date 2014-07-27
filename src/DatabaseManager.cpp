@@ -33,6 +33,8 @@ DatabaseManager::DatabaseManager()
     {
         createTables();
     }
+
+    m_moviesPathModel = new QStringListModel();
 }
 
 /**
@@ -271,7 +273,6 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
 
     return query.exec();
 
-
 }
 
 QStringList DatabaseManager::getMoviesPath()
@@ -291,5 +292,12 @@ QStringList DatabaseManager::getMoviesPath()
 
     qDebug()<<result;
 
+    m_moviesPathModel->setStringList(result);
+
     return result;
+}
+
+void DatabaseManager::initPathModel()
+{
+    this->getMoviesPath();
 }

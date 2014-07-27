@@ -53,6 +53,7 @@ class SettingsWindow : public QDialog
         QPushButton *m_submitButton;
         QVBoxLayout *m_mainLayout;
         QHBoxLayout *m_filesPathLayout;
+        QListView * m_knownPathList;
 };
 
 #endif // SETTINGWINDOW_H
