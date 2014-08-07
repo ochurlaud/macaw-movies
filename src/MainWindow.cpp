@@ -29,12 +29,19 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     setWindowTitle(m_app->getAppName());
     setFixedSize(800,600);
     m_mainLayout = new QVBoxLayout(this);
+    m_SecondaryLayout = new QHBoxLayout;
     m_hLayout = new QHBoxLayout;
+    m_button_layout = new QVBoxLayout;
+
 
     // m_leftPannel : list of movies or realisators or ...
-    m_leftPannel = new QListWidget;
-    fillLeftPannel();
-    m_leftPannel->setMaximumWidth(this->width()*.3);
+    m_leftPannel1 = new QPushButton("Films");
+    m_leftPannel2 = new QPushButton("Tags");
+    m_leftPannel3 = new QPushButton("Director");
+    m_leftPannel4 = new QPushButton("To Watch");
+    m_leftPannel5 = new QPushButton("Playlist");
+    //fillLeftPannel();
+    //m_leftPannel->setMaximumWidth(this->width()*.3);
 
     // m_movieList : central list. Would be great to be able to choose how it looks like
     m_moviesList = new QTableView;
@@ -47,9 +54,16 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     QObject::connect(m_settingsButton, SIGNAL(clicked()), this, SLOT(showSettingsWindow()));
 
     m_mainLayout->addWidget(m_settingsButton);
-    m_mainLayout->addLayout(m_hLayout);
-    m_hLayout->addWidget(m_leftPannel);
+    m_mainLayout->addLayout(m_SecondaryLayout);
+    m_SecondaryLayout->addLayout(m_button_layout);
+    m_SecondaryLayout->addLayout(m_hLayout);
+    m_button_layout->addWidget(m_leftPannel1);
+    m_button_layout->addWidget(m_leftPannel2);
+    m_button_layout->addWidget(m_leftPannel3);
+    m_button_layout->addWidget(m_leftPannel4);
+    m_button_layout->addWidget(m_leftPannel5);
     m_hLayout->addWidget(m_moviesList);
+
 }
 
 
@@ -101,22 +115,48 @@ void MainWindow::updateApp()
     fillMoviesList();
 }
 
+void MainWindow::ButtonPushed(QString ButtonName)
+{
+    // Should change the central panel according to the button pressed
+    if (ButtonName=="Films")
+    {
+        fillMoviesList();
+    }
+    if (ButtonName=="Tags")
+    {
+        fillTagsList();
+    }
+    if (ButtonName=="Director")
+    {
+        fillDirectorList();
+    }
+    if (ButtonName=="To Watch")
+    {
+        fillToWatchList();
+    }
+    if (ButtonName=="Playlist")
+    {
+        fillPlaylist();
+    }
+}
+
+
 /**
  * @brief Reads the database and fills the left pannel of the window.
  */
-void MainWindow::fillLeftPannel()
-{
+//void MainWindow::fillLeftPannel()
+//{
 
-    QSqlQuery l_titlesRequest = m_app->getDatabaseManager()->getAllTitles();
-    int i(0);
-    while(l_titlesRequest.next())
-    {
-        QString l_title = l_titlesRequest.value(0).toString();
-        m_moviesTitles.push_back(new QListWidgetItem(l_title));
-        m_leftPannel->insertItem(i, m_moviesTitles[i]);
-        i++;
-    }
-}
+//    QSqlQuery l_titlesRequest = m_app->getDatabaseManager()->getAllTitles();
+//    int i(0);
+//    while(l_titlesRequest.next())
+//    {
+//        QString l_title = l_titlesRequest.value(0).toString();
+//        m_moviesTitles.push_back(new QListWidgetItem(l_title));
+//        m_leftPannel->insertItem(i, m_moviesTitles[i]);
+//        i++;
+//    }
+//}
 
 /**
  * @brief Reads the database and fills the main pannel of the window.
@@ -129,6 +169,27 @@ void MainWindow::fillMoviesList()
     m_moviesList->setModel(l_modelMoviesList);
     connect(m_moviesList,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(startMovie(QModelIndex)));
 }
+
+void MainWindow::fillTagsList()
+{
+
+}
+
+void MainWindow::fillDirectorList()
+{
+
+}
+
+void MainWindow::fillToWatchList()
+{
+
+}
+
+void MainWindow::fillPlaylist()
+{
+
+}
+
 
 void MainWindow::startMovie(QModelIndex index)
 {

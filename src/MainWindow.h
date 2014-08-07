@@ -45,16 +45,29 @@ class MainWindow : public QWidget
         void startMovie(QModelIndex);
 
     private:
-        void fillLeftPannel();
-        void fillMoviesList();
-        QPushButton *m_settingsButton;
-        QHBoxLayout *m_hLayout;
-        QVBoxLayout *m_mainLayout;
-        QTextEdit *m_searchEdit;
-        QListWidget *m_leftPannel;
-        QTableView *m_moviesList;
-        QVector<QListWidgetItem*> m_moviesTitles;
-        Application * m_app;
+private:
+//        void fillLeftPannel();
+    void fillMoviesList();
+    void fillTagsList();
+    void fillDirectorList();
+    void fillToWatchList();
+    void fillPlaylist();
+    void ButtonPushed(QString ButtonName);
+
+    QPushButton *m_settingsButton;
+    QHBoxLayout *m_hLayout;
+    QVBoxLayout *m_button_layout;
+    QVBoxLayout *m_mainLayout;
+    QHBoxLayout *m_SecondaryLayout;
+    QTextEdit *m_searchEdit;
+    QPushButton *m_leftPannel1;
+    QPushButton *m_leftPannel2;
+    QPushButton *m_leftPannel3;
+    QPushButton *m_leftPannel4;
+    QPushButton *m_leftPannel5;
+    QTableView *m_moviesList;
+    QVector<QListWidgetItem*> m_moviesTitles;
+    Application * m_app;
 };
 
 #endif // MAINWINDOW_H
