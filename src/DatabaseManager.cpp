@@ -29,12 +29,11 @@
 DatabaseManager::DatabaseManager()
 {
     openDB();
-    if (m_db.tables().isEmpty())
-    {
-        createTables();
-    }
+
+    createTables();
 
     m_moviesPathModel = new QStringListModel();
+
 }
 
 /**
@@ -55,16 +54,17 @@ bool DatabaseManager::openDB()
         m_db = QSqlDatabase::addDatabase("QSQLITE", "Movies-database");
     }
 
-  #ifdef Q_OS_LINUX
+#ifdef Q_OS_LINUX
     // NOTE: We have to store database file into user home folder in Linux
     QString path(QDir::home().path());
     path.append(QDir::separator()).append("movie-project.sqlite");
     path = QDir::toNativeSeparators(path);
+
     m_db.setDatabaseName(path);
-  #else
+#else
     // NOTE: File exists in the application private folder, in Symbian Qt implementation
     m_db.setDatabaseName("movie-project.sqlite");
-  #endif
+#endif
 
     // Open databasee
     return m_db.open();
@@ -289,8 +289,6 @@ QStringList DatabaseManager::getMoviesPath()
         qDebug()<<query.value(0).toString();
         result.append(query.value(0).toString());
     }
-
-    qDebug()<<result;
 
     m_moviesPathModel->setStringList(result);
 
