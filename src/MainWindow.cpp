@@ -26,7 +26,7 @@
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
     m_app = qobject_cast<Application *>(qApp);
-    setWindowTitle(m_app->getFilesPath());
+    setWindowTitle(m_app->getAppName());
     setFixedSize(800,600);
     m_mainLayout = new QVBoxLayout(this);
     m_hLayout = new QHBoxLayout;

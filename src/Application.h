@@ -34,12 +34,14 @@ class Application : public QApplication
         void showMainWindow();
         bool addFilesPath(QString path);
         QString getFilesPath();
+        QString getAppName() {return this->m_AppName;}
         DatabaseManager * getDatabaseManager() {return this->m_dbManager;}
 
     private:
     //    MainWindow mainWindow;
         QString m_filesPath;
         DatabaseManager * m_dbManager;
+        QString m_AppName;
 };
 
 #endif // APPLICATION_H

@@ -25,6 +25,8 @@
  */
 Application::Application(int argc, char **argv) : QApplication(argc, argv)
 {
+    m_AppName = "Movie-Project";
+
     m_dbManager = new DatabaseManager();
     if (!m_dbManager->getMoviesPath().isEmpty())
     {

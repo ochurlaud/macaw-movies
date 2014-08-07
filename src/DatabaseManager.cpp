@@ -279,7 +279,6 @@ QStringList DatabaseManager::getMoviesPath()
 
     while(l_query.next())
     {
-        qDebug()<<l_query.value(0).toString();
         l_result.append(l_query.value(0).toString());
     }
 

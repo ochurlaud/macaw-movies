@@ -28,6 +28,7 @@
 int main(int argc, char *argv[])
 {
     Application l_app(argc, argv);
+
     MainWindow l_mainWindow;
 
     l_mainWindow.show();
