@@ -83,14 +83,16 @@ void MainWindow::updateApp()
     while (l_path.hasNext()) {
         l_path.next();
 
-        QSqlQuery l_knownMovieQuery = m_app->getDatabaseManager()->getMovies("file_path",l_path.fileInfo().absoluteFilePath());
-        if (!l_knownMovieQuery.next())
+        QString l_filePath = l_path.fileInfo().absoluteFilePath();
+        QString l_fileSuffix = l_path.fileInfo().suffix();
+        // First we check whether the file is already saved or not
+        QSqlQuery l_knownMovieQuery = m_app->getDatabaseManager()->getMovies("file_path",l_filePath);
+        if (!l_knownMovieQuery.next() && (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4") )
         {
-            // Could be cheacked before whether a row with same *path* exists
             QStringList l_value;
             l_value << "title" << l_path.fileInfo().baseName()
                     << "file_path" << l_path.fileInfo().absoluteFilePath()
-                    << "format" << l_path.fileInfo().suffix();
+                    << "format" << l_fileSuffix;
             m_app->getDatabaseManager()->insertNewTitle(l_value);
         }
 
@@ -125,4 +127,16 @@ void MainWindow::fillMoviesList()
     l_modelMoviesList = m_app->getDatabaseManager()->createModel();
     l_modelMoviesList->setQuery(m_app->getDatabaseManager()->getAllMovies());
     m_moviesList->setModel(l_modelMoviesList);
+    connect(m_moviesList,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(startMovie(QModelIndex)));
+}
+
+void MainWindow::startMovie(QModelIndex index)
+{
+    int l_pathColumn = 4;
+    index = m_moviesList->model()->index(index.row(),l_pathColumn);
+    QString l_fileToOpen = m_moviesList->model()->data(index,Qt::DisplayRole).toString();
+
+    qDebug()<<l_fileToOpen;
+    QDesktopServices::openUrl(QUrl("file:///" + l_fileToOpen, QUrl::TolerantMode));
+
 }

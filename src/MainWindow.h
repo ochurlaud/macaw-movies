@@ -42,6 +42,7 @@ class MainWindow : public QWidget
     public slots:
         void updateApp();
         void showSettingsWindow();
+        void startMovie(QModelIndex);
 
     private:
         void fillLeftPannel();

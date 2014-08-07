@@ -67,4 +67,3 @@ QString Application::getFilesPath()
 {
     return m_filesPath;
 }
-
