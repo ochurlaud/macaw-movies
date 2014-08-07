@@ -34,7 +34,7 @@ class Application : public QApplication
         void showMainWindow();
         bool addFilesPath(QString path);
         QString getFilesPath();
-        DatabaseManager * getDataBaseManager() {return this->m_dbManager;}
+        DatabaseManager * getDatabaseManager() {return this->m_dbManager;}
 
     private:
     //    MainWindow mainWindow;

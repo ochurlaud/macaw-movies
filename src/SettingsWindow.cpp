@@ -38,7 +38,7 @@ SettingsWindow::SettingsWindow(QDialog *parent) : QDialog(parent)
     QObject::connect(m_filesPathSearchButton, SIGNAL(clicked()), this, SLOT(browseFilesPathDialog()));
 
     m_knownPathList = new QListView;
-    m_knownPathList->setModel(m_app->getDataBaseManager()->getMoviesPathModel());
+    m_knownPathList->setModel(m_app->getDatabaseManager()->getMoviesPathModel());
 
     m_submitButton = new QPushButton("Submit");
     QObject::connect(m_submitButton, SIGNAL(clicked()), this, SLOT(applySetting()));

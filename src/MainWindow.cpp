@@ -88,7 +88,7 @@ void MainWindow::updateApp()
         l_value << "title" << l_path.fileInfo().baseName()
                 << "file_path" << l_path.fileInfo().absoluteFilePath()
                 << "format" << l_path.fileInfo().suffix();
-        m_app->getDataBaseManager()->insertNewTitle(l_value);
+        m_app->getDatabaseManager()->insertNewTitle(l_value);
 
     }
     fillLeftPannel();
@@ -101,7 +101,7 @@ void MainWindow::updateApp()
 void MainWindow::fillLeftPannel()
 {
 
-    QSqlQuery l_titlesRequest = m_app->getDataBaseManager()->getAllTitles();
+    QSqlQuery l_titlesRequest = m_app->getDatabaseManager()->getAllTitles();
     int i(0);
     while(l_titlesRequest.next())
     {
@@ -118,7 +118,7 @@ void MainWindow::fillLeftPannel()
 void MainWindow::fillMoviesList()
 {
     QSqlQueryModel * l_modelMoviesList = new QSqlQueryModel;
-    l_modelMoviesList = m_app->getDataBaseManager()->createModel();
-    l_modelMoviesList->setQuery(m_app->getDataBaseManager()->getAllMovies());
+    l_modelMoviesList = m_app->getDatabaseManager()->createModel();
+    l_modelMoviesList->setQuery(m_app->getDatabaseManager()->getAllMovies());
     m_moviesList->setModel(l_modelMoviesList);
 }

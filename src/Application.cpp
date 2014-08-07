@@ -32,7 +32,7 @@ Application::Application(int argc, char **argv) : QApplication(argc, argv)
     }
     else
     {
-        m_filesPath = "";
+        m_filesPath = "./";
     }
  //   mainWindow.setFixedSize(800,600);
 }
