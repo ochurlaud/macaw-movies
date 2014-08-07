@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     fillLeftPannel();
     m_leftPannel->setMaximumWidth(this->width()*.3);
 
-    // m_movieList : central list. Would be great to be able to how it looks like
+    // m_movieList : central list. Would be great to be able to choose how it looks like
     m_moviesList = new QTableView;
     fillMoviesList();
     m_moviesList->setShowGrid(false);
@@ -83,12 +83,16 @@ void MainWindow::updateApp()
     while (l_path.hasNext()) {
         l_path.next();
 
-        // Could be cheacked before whether a row with same *path* exists
-        QStringList l_value;
-        l_value << "title" << l_path.fileInfo().baseName()
-                << "file_path" << l_path.fileInfo().absoluteFilePath()
-                << "format" << l_path.fileInfo().suffix();
-        m_app->getDatabaseManager()->insertNewTitle(l_value);
+        QSqlQuery l_knownMovieQuery = m_app->getDatabaseManager()->getMovies("file_path",l_path.fileInfo().absoluteFilePath());
+        if (!l_knownMovieQuery.next())
+        {
+            // Could be cheacked before whether a row with same *path* exists
+            QStringList l_value;
+            l_value << "title" << l_path.fileInfo().baseName()
+                    << "file_path" << l_path.fileInfo().absoluteFilePath()
+                    << "format" << l_path.fileInfo().suffix();
+            m_app->getDatabaseManager()->insertNewTitle(l_value);
+        }
 
     }
     fillLeftPannel();

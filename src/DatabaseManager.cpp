@@ -201,37 +201,37 @@ bool DatabaseManager::insertNewTitle(QStringList value)
         return false;
     }
 
-    QString request = "INSERT into movies (";
+    QString l_request = "INSERT into movies (";
 
     // Even elements are names of fields
     for (int i = 0 ; i < value.size()-1 ; i=i+2)
     {
-        request += value.at(i);
+        l_request += value.at(i);
         if (i != value.size()-2)
         {
-            request += ", ";
+            l_request += ", ";
         }
     }
 
-    request += ") VALUES (";
+    l_request += ") VALUES (";
 
     // Odd elements are values of fields
     for (int i = 1 ; i < value.size() ; i=i+2)
     {
-        request += "'" + value.at(i) + "'";
+        l_request += "'" + value.at(i) + "'";
         if (i != value.size()-1)
         {
-            request += ", ";
+            l_request += ", ";
         }
     }
-    request += ")";
+    l_request += ")";
 
 
     QSqlQuery l_query(m_db);
-    l_query.prepare(request);
+    l_query.prepare(l_request);
     l_query.exec();
 
-    qDebug()<< "******\n" + request;
+    qDebug()<< "******\n" + l_request;
 
     return true;
 }
@@ -261,7 +261,6 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
     l_query.bindValue(":path", moviePath);
 
     return l_query.exec();
-
 }
 
 /**
