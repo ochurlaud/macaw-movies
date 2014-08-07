@@ -22,8 +22,7 @@
 #include <QtDebug>
 
 /**
- * @brief DatabaseManager::DatabaseManager
- * Constructor.
+ * @brief Constructor.
  * Opens the Database. If empty, create the schema.
  */
 DatabaseManager::DatabaseManager()
@@ -37,8 +36,7 @@ DatabaseManager::DatabaseManager()
 }
 
 /**
- * @brief DatabaseManager::openDB
- * Opens the database
+ * @brief Opens the database
  *
  * @return bool db.open()
  */
@@ -70,16 +68,8 @@ bool DatabaseManager::openDB()
     return m_db.open();
 }
 
-QSqlError DatabaseManager::lastError()
-{
-    // If opening database has failed user can ask
-    // error description by QSqlError::text()
-    return m_db.lastError();
-}
-
 /**
- * @brief DatabaseManager::closeDB
- * Closes the database.
+ * @brief Closes the database.
  *
  * @return bool
  */
@@ -92,8 +82,7 @@ bool DatabaseManager::closeDB()
 }
 
 /**
- * @brief DatabaseManager::deleteDB
- * Deletes the database.
+ * @brief Deletes the database.
  *
  * @return bool
  */
@@ -115,8 +104,7 @@ bool DatabaseManager::deleteDB()
 }
 
 /**
- * @brief DatabaseManager::createTables
- * Creates all the tables
+ * @brief Creates all the tables
  *
  * @return bool
  */
@@ -154,12 +142,11 @@ bool DatabaseManager::createTables()
 }
 
 /**
- * @brief DatabaseManager::getMovies
- * Gets the movies with a defined parameter.
+ * @brief Gets the movies with a defined parameter.
  *
- * @param parameter_name
- * @param parameter_value
- * @return QSqlQuery query
+ * @param QString parameter_name
+ * @param QVariant parameter_value
+ * @return QSqlQuery
  */
 QSqlQuery DatabaseManager::getMovies(QString parameter_name, QVariant parameter_value)
 {
@@ -172,10 +159,9 @@ QSqlQuery DatabaseManager::getMovies(QString parameter_name, QVariant parameter_
 }
 
 /**
- * @brief DatabaseManager::getAllMovies
- * Gets all the movies
+ * @brief Gets all the movies
  *
- * @return QSqlQuery query
+ * @return QSqlQuery
  */
 QSqlQuery DatabaseManager::getAllMovies()
 {
@@ -186,6 +172,11 @@ QSqlQuery DatabaseManager::getAllMovies()
     return l_query;
 }
 
+/**
+ * @brief Opens the database
+ *
+ * @return QSqlQueryModel
+ */
 QSqlQueryModel *DatabaseManager::createModel()
 {
    QSqlQueryModel *l_model = new QSqlQueryModel;
@@ -246,13 +237,11 @@ bool DatabaseManager::insertNewTitle(QStringList value)
 }
 
 /**
+ * @brief Saves the movies directory
  *
- * @brief save the movies' directory
- *
- * @param moviePath a QString containing the path to the movies directory
+ * @param QString moviePath: containing the path to the movies directory
  *
  * @return true if the config hav been updated correctly
- *
  */
 bool DatabaseManager::saveMoviesPath(QString moviePath)
 {
@@ -267,30 +256,35 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
     }
 
 
-    QSqlQuery query(m_db);
-    query.prepare("INSERT INTO config (movies_path) VALUES (:path)");
-    query.bindValue(":path", moviePath);
+    QSqlQuery l_query(m_db);
+    l_query.prepare("INSERT INTO config (movies_path) VALUES (:path)");
+    l_query.bindValue(":path", moviePath);
 
-    return query.exec();
+    return l_query.exec();
 
 }
 
+/**
+ * @brief Get the movies directory
+ *
+ * @return QStringList containing the paths of these directories
+ */
 QStringList DatabaseManager::getMoviesPath()
 {
-    QSqlQuery query(m_db);
-    query.prepare("SELECT movies_path FROM config");
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT movies_path FROM config");
 
-    query.exec();
+    l_query.exec();
 
-    QStringList result;
+    QStringList l_result;
 
-    while(query.next())
+    while(l_query.next())
     {
-        qDebug()<<query.value(0).toString();
-        result.append(query.value(0).toString());
+        qDebug()<<l_query.value(0).toString();
+        l_result.append(l_query.value(0).toString());
     }
 
-    m_moviesPathModel->setStringList(result);
+    m_moviesPathModel->setStringList(l_result);
 
-    return result;
+    return l_result;
 }

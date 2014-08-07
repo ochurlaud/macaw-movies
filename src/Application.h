@@ -32,7 +32,7 @@ class Application : public QApplication
         Application(int, char**);
         ~Application();
         void showMainWindow();
-        bool setFilesPath(QString path);
+        bool addFilesPath(QString path);
         QString getFilesPath();
         DatabaseManager * getDataBaseManager() {return this->m_dbManager;}
 

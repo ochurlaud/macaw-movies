@@ -40,7 +40,7 @@ class MainWindow : public QWidget
         ~MainWindow();
 
     public slots:
-        void setDodo();
+        void updateApp();
         void showSettingsWindow();
 
     private:

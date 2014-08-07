@@ -19,6 +19,10 @@
 
 #include "MainWindow.h"
 
+/**
+ * @brief Cosntructor.
+ * Creates the design of the window.
+ */
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
     m_app = qobject_cast<Application *>(qApp);
@@ -48,19 +52,30 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_hLayout->addWidget(m_moviesList);
 }
 
+
+/**
+ * @brief Destructor
+ */
 MainWindow::~MainWindow()
 {
 }
 
+/**
+ * @brief Call and shows the settings window.
+ * Calls the SettingsWindow class and waits until it closes to handle the results
+ */
 void MainWindow::showSettingsWindow()
 {
     SettingsWindow *l_settingsWindow = new SettingsWindow;
     l_settingsWindow->setModal(true);
     l_settingsWindow->show();
-    QObject::connect(l_settingsWindow,SIGNAL(closed()), this, SLOT(setDodo()));
+    QObject::connect(l_settingsWindow,SIGNAL(closed()), this, SLOT(updateApp()));
 }
 
-void MainWindow::setDodo()
+/**
+ * @brief Add movies to the database and updates the application.
+ */
+void MainWindow::updateApp()
 {
     QString l_directoryName = m_app->getFilesPath();
     QDirIterator l_path(l_directoryName, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
@@ -80,6 +95,9 @@ void MainWindow::setDodo()
     fillMoviesList();
 }
 
+/**
+ * @brief Reads the database and fills the left pannel of the window.
+ */
 void MainWindow::fillLeftPannel()
 {
 
@@ -94,6 +112,9 @@ void MainWindow::fillLeftPannel()
     }
 }
 
+/**
+ * @brief Reads the database and fills the main pannel of the window.
+ */
 void MainWindow::fillMoviesList()
 {
     QSqlQueryModel * l_modelMoviesList = new QSqlQueryModel;

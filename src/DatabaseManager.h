@@ -41,11 +41,11 @@ class DatabaseManager : public QObject
         QSqlQueryModel *createTitleModel();
         bool saveMoviesPath(QString moviePath);
         QStringList getMoviesPath();
-        QStringListModel* getMoviesPathModel() {return this->m_moviesPathModel;}
+        QStringListModel *getMoviesPathModel() {return this->m_moviesPathModel;}
 
     private:
         QSqlDatabase m_db;
-        QStringListModel * m_moviesPathModel;
+        QStringListModel *m_moviesPathModel;
 
 };
 

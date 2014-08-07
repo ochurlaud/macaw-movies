@@ -19,6 +19,9 @@
 
 #include "SettingsWindow.h"
 
+/**
+ * @brief Constructor.
+ */
 SettingsWindow::SettingsWindow(QDialog *parent) : QDialog(parent)
 {
     m_app = qobject_cast<Application *>(qApp);
@@ -49,16 +52,22 @@ SettingsWindow::SettingsWindow(QDialog *parent) : QDialog(parent)
     m_filesPathLayout->addWidget(m_filesPathSearchButton);
 }
 
+/**
+ * @brief Destructor.
+ */
 SettingsWindow::~SettingsWindow()
 {
 }
 
+/**
+ * @brief Save the settings.
+ */
 void SettingsWindow::applySetting()
 {
     if(QDir(m_filesPathEdit->text()).exists())
     {
         Application *l_app = qobject_cast<Application *>(qApp);
-        l_app->setFilesPath(m_filesPathEdit->text());
+        l_app->addFilesPath(m_filesPathEdit->text());
         close();
     }
     else
@@ -68,11 +77,18 @@ void SettingsWindow::applySetting()
     }
 }
 
+/**
+ * @brief Opens a QFileDialog to choose a path.
+ */
 void SettingsWindow::browseFilesPathDialog()
 {
     QString l_folder = QFileDialog::getExistingDirectory();
     m_filesPathEdit->setText(l_folder);
 }
+
+/**
+ * @brief Close the window and emit a "Closed" signal.
+ */
 void SettingsWindow::closeEvent(QCloseEvent *event)
 {
   emit closed();

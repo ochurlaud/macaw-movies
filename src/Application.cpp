@@ -19,10 +19,13 @@
 
 #include "Application.h"
 
+/**
+ * @brief Constructor
+ *
+ */
 Application::Application(int argc, char **argv) : QApplication(argc, argv)
 {
     m_dbManager = new DatabaseManager();
-qDebug() << "1";
     if (!m_dbManager->getMoviesPath().isEmpty())
     {
         m_filesPath = m_dbManager->getMoviesPath().at(0);
@@ -31,25 +34,33 @@ qDebug() << "1";
     {
         m_filesPath = "";
     }
-qDebug() << "2";
  //   mainWindow.setFixedSize(800,600);
 }
 
+/**
+ * @brief Destructor
+ */
 Application::~Application()
 {
 }
 
-/*void Application::showMainWindow()
-{
-    mainWindow.show();
-}*/
-
-bool Application::setFilesPath(QString path)
+/**
+ * @brief Add a path.
+ *
+ * @param QString path to add
+ * @return bool
+ */
+bool Application::addFilesPath(QString path)
 {
     m_filesPath = path;
     m_dbManager->saveMoviesPath(this->m_filesPath);
     return true;
 }
+
+/**
+ * @brief Gets the the files_Path (TO BE REMOVED)
+ *
+ */
 QString Application::getFilesPath()
 {
     return m_filesPath;
