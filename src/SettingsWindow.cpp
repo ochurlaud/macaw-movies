@@ -40,13 +40,19 @@ SettingsWindow::SettingsWindow(QDialog *parent) : QDialog(parent)
     m_knownPathList = new QListView;
     m_knownPathList->setModel(m_app->getDatabaseManager()->getMoviesPathModel());
 
+    m_cancelButton = new QPushButton("Cancel");
+    QObject::connect(m_cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+
     m_submitButton = new QPushButton("Submit");
     QObject::connect(m_submitButton, SIGNAL(clicked()), this, SLOT(applySetting()));
 
+    m_closeLayout = new QHBoxLayout;
     m_mainLayout->addLayout(m_filesPathLayout);
     m_mainLayout->addWidget(m_filesPathMessage);
     m_mainLayout->addWidget(m_knownPathList);
-    m_mainLayout->addWidget(m_submitButton);
+    m_mainLayout->addLayout(m_closeLayout);
+    m_closeLayout->addWidget(m_cancelButton);
+    m_closeLayout->addWidget(m_submitButton);
     m_filesPathLayout->addWidget(m_filesPathLabel);
     m_filesPathLayout->addWidget(m_filesPathEdit);
     m_filesPathLayout->addWidget(m_filesPathSearchButton);
@@ -68,6 +74,7 @@ void SettingsWindow::applySetting()
     {
         Application *l_app = qobject_cast<Application *>(qApp);
         l_app->addFilesPath(m_filesPathEdit->text());
+        emit closed();
         close();
     }
     else
@@ -89,8 +96,8 @@ void SettingsWindow::browseFilesPathDialog()
 /**
  * @brief Close the window and emit a "Closed" signal.
  */
-void SettingsWindow::closeEvent(QCloseEvent *event)
+/*void SettingsWindow::closeEvent(QCloseEvent *event)
 {
   emit closed();
   event->accept();
-}
+}*/
