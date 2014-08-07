@@ -22,9 +22,16 @@
 Application::Application(int argc, char **argv) : QApplication(argc, argv)
 {
     m_dbManager = new DatabaseManager();
-
-    m_filesPath = m_dbManager->getMoviesPath().at(0);
-
+qDebug() << "1";
+    if (!m_dbManager->getMoviesPath().isEmpty())
+    {
+        m_filesPath = m_dbManager->getMoviesPath().at(0);
+    }
+    else
+    {
+        m_filesPath = "";
+    }
+qDebug() << "2";
  //   mainWindow.setFixedSize(800,600);
 }
 
