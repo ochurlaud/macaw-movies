@@ -111,7 +111,7 @@ void MainWindow::updateApp()
         }
 
     }
-    fillLeftPannel();
+    //fillLeftPannel();
     fillMoviesList();
 }
 

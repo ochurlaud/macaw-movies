@@ -93,11 +93,3 @@ void SettingsWindow::browseFilesPathDialog()
     m_filesPathEdit->setText(l_folder);
 }
 
-/**
- * @brief Close the window and emit a "Closed" signal.
- */
-/*void SettingsWindow::closeEvent(QCloseEvent *event)
-{
-  emit closed();
-  event->accept();
-}*/
