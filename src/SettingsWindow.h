@@ -1,5 +1,5 @@
 /* Copyright (C) 2014 Movie-Project
- * (Olivier CHURLAUD)
+ * (Olivier CHURLAUD, Sébastien TOUZÉ)
  *
  * This file is part of Movie-Project.
  *

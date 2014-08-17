@@ -1,5 +1,5 @@
 /* Copyright (C) 2014 Movie-Project
- * (Olivier CHURLAUD)
+ * (Olivier CHURLAUD, Sébastien TOUZÉ)
  *
  * This file is part of Movie-Project.
  *
@@ -30,11 +30,15 @@ Application::Application(int argc, char **argv) : QApplication(argc, argv)
     m_dbManager = new DatabaseManager();
     if (!m_dbManager->getMoviesPath().isEmpty())
     {
+        qDebug()<<"plop";    //Do not work without those qDebug statement, don't know why...
         m_filesPath = m_dbManager->getMoviesPath().at(0);
+        qDebug()<<"plip";
     }
     else
     {
+        qDebug()<<"coucou";
         m_filesPath = "./";
+        qDebug()<<"coco";
     }
  //   mainWindow.setFixedSize(800,600);
 }
