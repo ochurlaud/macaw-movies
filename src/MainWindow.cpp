@@ -104,7 +104,7 @@ void MainWindow::updateApp()
         if (!l_knownMovieQuery.next() && (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4") )
         {
             QStringList l_value;
-            l_value << "title" << l_path.fileInfo().baseName()
+            l_value << "title" << l_path.fileInfo().completeBaseName()
                     << "file_path" << l_path.fileInfo().absoluteFilePath()
                     << "format" << l_fileSuffix;
             m_app->getDatabaseManager()->insertNewTitle(l_value);
