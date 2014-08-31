@@ -19,6 +19,8 @@
 
 #include "DatabaseManager.h"
 
+#include "main.cpp" //needed for the DB_VERSION
+
 #include <QtDebug>
 
 /**
@@ -116,25 +118,54 @@ bool DatabaseManager::createTables()
     if (m_db.isOpen())
     {
         QSqlQuery l_query(m_db);
-        l_ret = l_query.exec("CREATE TABLE IF NOT EXISTS movies("
-                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                  "title VARCHAR(50), "
-                  "original_title VARCHAR(50), "
-                  "director VARCHAR(30), "
-                  "producer VARCHAR(30), "
-                  "year INTEGER, "
-                  "country VARCHAR(30), "
-                  "duration INTEGER, "
-                  "synopsis TEXT, "
-                  "file_path VARCHAR(255), "
-                  "colored BOOLEAN, "
-                  "format VARCHAR(10) "
-                  ")");
-        l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS config("
-                                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                                      "movies_path VARCHAR(255) )");
 
-        //l_ret = l_ret && l_query.exec("INSERT INTO config (movies_path) VALUES ('path')");
+        if(m_db.tables().contains("config"))
+        {
+            qDebug()<<"config";
+            l_query.exec("SELECT db_version FROM config");
+            l_query.next();
+            if(l_query.value(0) != DB_VERSION) //TODO : make en intelligent upgrade of the database
+            {
+                QMessageBox msgBox;
+                msgBox.setText("Error your database version is "+ l_query.value(0).toString() +" which is too old.\n"+
+                               "This program is not currently able to update the database and will close.\n"+
+                               "Please delete your old database. ");
+                msgBox.setIcon(QMessageBox::Critical);
+                msgBox.exec();
+                exit(1);
+            }
+        }
+        else    //if config table do not exists then the db is empty...
+        {
+
+            l_ret = l_query.exec("CREATE TABLE IF NOT EXISTS movies("
+                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                      "title VARCHAR(50), "
+                      "original_title VARCHAR(50), "
+                      "director VARCHAR(30), "
+                      "producer VARCHAR(30), "
+                      "year INTEGER, "
+                      "country VARCHAR(30), "
+                      "duration INTEGER, "
+                      "synopsis TEXT, "
+                      "file_path VARCHAR(255), "
+                      "colored BOOLEAN, "
+                      "format VARCHAR(10) "
+                      ")");
+
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS paths_list("
+                                          "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                                          "movies_path VARCHAR(255))");
+
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS config("
+                                          "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                                          "db_version INTERGER )");
+
+
+            l_ret = l_ret && l_query.exec("INSERT INTO config (`db_version`) VALUES ('" + QString::number(DB_VERSION) + "')");
+
+            //l_ret = l_ret && l_query.exec("INSERT INTO paths_list (movies_path) VALUES ('path')");
+        }
 
     }
 
@@ -241,7 +272,7 @@ bool DatabaseManager::insertNewTitle(QStringList value)
  *
  * @param QString moviePath: containing the path to the movies directory
  *
- * @return true if the config hav been updated correctly
+ * @return true if the paths list have been updated correctly
  */
 bool DatabaseManager::saveMoviesPath(QString moviePath)
 {
@@ -257,7 +288,7 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
 
 
     QSqlQuery l_query(m_db);
-    l_query.prepare("INSERT INTO config (movies_path) VALUES (:path)");
+    l_query.prepare("INSERT INTO paths_list (movies_path) VALUES (:path)");
     l_query.bindValue(":path", moviePath);
 
     return l_query.exec();
@@ -271,7 +302,7 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
 QStringList DatabaseManager::getMoviesPath()
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT movies_path FROM config");
+    l_query.prepare("SELECT movies_path FROM paths_list");
 
     l_query.exec();
 

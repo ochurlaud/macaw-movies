@@ -17,6 +17,12 @@
  * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef MAIN
+#define MAIN
+
+#define SOFT_VERSION 1  // software version
+#define DB_VERSION 1    //database version, must be updated if the database model have changed
+
 #include <QApplication>
 #include <QDir>
 #include "MainWindow.h"
@@ -33,3 +39,5 @@ int main(int argc, char *argv[])
 
     return l_app.exec();
 }
+
+#endif
