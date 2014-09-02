@@ -15,18 +15,12 @@ Movies organizer. Qt/C++/Sqlite
  - members start with `m_`
  - local variables start with `l_`
  - function parameter names do not have a specific prefix
- - global variables are prohibited
+ - global variables are prohibited, the few accepted are capitalized
  - function names do not have a prefix, start with a lowercase character and use upper case characters for each new word (no underscore)
  - curly brackets always stand alone on new lines
  - if / else blocks always have curly brackets, even if only one call is to be done
  - blank line before calling return
  - blank line before two logical blocs
-
-I've seen people who additionally do this (INRIA), is it relevant ? To be discussed
- - Class names start with `C`
- - template names start with `T`
- - interface names start with `I` (as with pure abstract classes of an API)
- - variable names are prefixed with their type : `b` for boolean, `s` for string, `r` for references, `o` for objects, `i16` for signed 16 bits integers, `uint64` for unsigned 64 bits integers or `float80` for 80 bits floats…
 
 ## 2. Presentation of the project
 
