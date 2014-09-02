@@ -51,4 +51,5 @@ FORMS    += \
 OTHER_FILES += \
     ../.gitignore \
     ../COPYING \
-    ../README.md
+    ../README.md \
+    ../DDB_SCHEMA.md
