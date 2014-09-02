@@ -24,6 +24,7 @@
 #include <QtCore>
 #include <QtSql>
 
+
 class DatabaseManager : public QObject
 {
     public:

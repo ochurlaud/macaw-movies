@@ -66,6 +66,7 @@ SettingsWindow::SettingsWindow(QDialog *parent) : QDialog(parent)
  */
 SettingsWindow::~SettingsWindow()
 {
+    m_app->debug("[SettingsWindow] Destructed");
 }
 
 /**

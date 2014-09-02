@@ -52,6 +52,7 @@ Application::Application(int argc, char **argv) : QApplication(argc, argv)
  */
 Application::~Application()
 {
+    debug("[Application] Destructed");
 }
 
 /**
