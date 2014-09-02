@@ -27,8 +27,6 @@
 #include <QtGui>
 #include <QtWidgets>
 
-#include <QtDebug>
-
 class Application;
 
 class MainWindow : public QWidget

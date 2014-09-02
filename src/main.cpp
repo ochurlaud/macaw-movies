@@ -29,8 +29,6 @@
 #include "DatabaseManager.h"
 #include "Application.h"
 
-#include <QtDebug>
-
 int main(int argc, char *argv[])
 {
     Application l_app(argc, argv);

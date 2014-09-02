@@ -28,18 +28,21 @@ Application::Application(int argc, char **argv) : QApplication(argc, argv)
     m_appName = "Movie-Project";
     m_debug.setDebug(true);
 
+    debug("[Application] started");
+
     m_dbManager = new DatabaseManager();
+    debug("[Application] Database initialized");
+
     if (!m_dbManager->getMoviesPath().isEmpty())
     {
-        debug("plop");    //Do not work without those qDebug statement, don't know why...
+        debug("[Application] MoviesPaths founded");
         m_filesPath = m_dbManager->getMoviesPath().at(0);
-        debug("plip");
+        debug("plip"); // This cannot be removed. Why ??????
     }
     else
     {
-        debug("coucou");
+        debug("[Application] No MoviesPaths founded");
         m_filesPath = "./";
-        debug("coco");
     }
  //   mainWindow.setFixedSize(800,600);
 }
@@ -59,8 +62,10 @@ Application::~Application()
  */
 bool Application::addFilesPath(QString path)
 {
+    debug("[Application] Enters addFilesPath()");
     m_filesPath = path;
     m_dbManager->saveMoviesPath(this->m_filesPath);
+    debug("[Application] Exits addFilesPath()");
     return true;
 }
 
@@ -70,5 +75,7 @@ bool Application::addFilesPath(QString path)
  */
 QString Application::getFilesPath()
 {
+    debug("[Application] Enters getFilesPath()");
+    debug("[Application] Exits getFilesPath()");
     return m_filesPath;
 }

@@ -8,7 +8,7 @@ void MoviesDebug::print(QString text)
 {
     if (isDebug())
     {
-        qDebug() << text;
+        qDebug() << qPrintable(text);
     }
     // else do nothing
 }

@@ -230,7 +230,7 @@ QSqlQuery DatabaseManager::getMovies(QString parameter_name, QVariant parameter_
 QSqlQuery DatabaseManager::getAllMovies()
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT title, director, year, format, file_path FROM movies");
+    l_query.prepare("SELECT title, year, format, file_path FROM movies");
     l_query.exec();
 
     return l_query;

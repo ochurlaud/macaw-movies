@@ -25,6 +25,8 @@
 SettingsWindow::SettingsWindow(QDialog *parent) : QDialog(parent)
 {
     m_app = qobject_cast<Application *>(qApp);
+    m_app->debug("[SettingsWindow] Constructor called");
+
     resize(400,300);
     setWindowTitle("Settings");
     m_mainLayout = new QVBoxLayout(this);
@@ -44,7 +46,7 @@ SettingsWindow::SettingsWindow(QDialog *parent) : QDialog(parent)
     QObject::connect(m_cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
     m_submitButton = new QPushButton("Submit");
-    QObject::connect(m_submitButton, SIGNAL(clicked()), this, SLOT(applySetting()));
+    QObject::connect(m_submitButton, SIGNAL(clicked()), this, SLOT(applySettings()));
 
     m_closeLayout = new QHBoxLayout;
     m_mainLayout->addLayout(m_filesPathLayout);
@@ -56,6 +58,7 @@ SettingsWindow::SettingsWindow(QDialog *parent) : QDialog(parent)
     m_filesPathLayout->addWidget(m_filesPathLabel);
     m_filesPathLayout->addWidget(m_filesPathEdit);
     m_filesPathLayout->addWidget(m_filesPathSearchButton);
+    m_app->debug("[SettingsWindow] Construction done");
 }
 
 /**
@@ -68,12 +71,12 @@ SettingsWindow::~SettingsWindow()
 /**
  * @brief Save the settings.
  */
-void SettingsWindow::applySetting()
+void SettingsWindow::applySettings()
 {
+    m_app->debug("[SettingsWindow] Enters applySettings()");
     if(QDir(m_filesPathEdit->text()).exists())
     {
-        Application *l_app = qobject_cast<Application *>(qApp);
-        l_app->addFilesPath(m_filesPathEdit->text());
+        m_app->addFilesPath(m_filesPathEdit->text());
         emit closed();
         close();
     }
@@ -82,6 +85,8 @@ void SettingsWindow::applySetting()
         m_filesPathEdit->setText("");
         m_filesPathMessage->setText("Choose an existant path");
     }
+    m_app->debug("[SettingsWindow] Exits applySettings()");
+
 }
 
 /**
@@ -89,7 +94,11 @@ void SettingsWindow::applySetting()
  */
 void SettingsWindow::browseFilesPathDialog()
 {
+    m_app->debug("[SettingsWindow] Enters browseFilesPathDialog()");
+
     QString l_folder = QFileDialog::getExistingDirectory();
     m_filesPathEdit->setText(l_folder);
+    m_app->debug("[SettingsWindow] Exits browseFilesPathDialog()");
+
 }
 

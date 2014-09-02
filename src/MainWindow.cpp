@@ -26,6 +26,8 @@
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
     m_app = qobject_cast<Application *>(qApp);
+    m_app->debug("[MainWindow] Constructor called");
+
     setWindowTitle(m_app->getAppName());
     setFixedSize(800,600);
     m_mainLayout = new QVBoxLayout(this);
@@ -63,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_button_layout->addWidget(m_leftPannel4);
     m_button_layout->addWidget(m_leftPannel5);
     m_hLayout->addWidget(m_moviesList);
+    m_app->debug("[MainWindow] Construction done");
 }
 
 
@@ -79,10 +82,12 @@ MainWindow::~MainWindow()
  */
 void MainWindow::showSettingsWindow()
 {
+    m_app->debug("[MainWindow] Enters showSettingsWindow()");
     SettingsWindow *l_settingsWindow = new SettingsWindow;
     l_settingsWindow->setModal(true);
     l_settingsWindow->show();
     QObject::connect(l_settingsWindow,SIGNAL(closed()), this, SLOT(updateApp()));
+    m_app->debug("[MainWindow] Exits showSettingsWindow()");
 }
 
 /**
@@ -90,6 +95,7 @@ void MainWindow::showSettingsWindow()
  */
 void MainWindow::updateApp()
 {
+    m_app->debug("[MainWindow] Enters updateApp()");
     QString l_directoryName = m_app->getFilesPath();
     QDirIterator l_path(l_directoryName, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
 
@@ -112,6 +118,7 @@ void MainWindow::updateApp()
     }
     //fillLeftPannel();
     fillMoviesList();
+    m_app->debug("[MainWindow] Exits updateApp()");
 }
 
 void MainWindow::ButtonPushed(QString ButtonName)
