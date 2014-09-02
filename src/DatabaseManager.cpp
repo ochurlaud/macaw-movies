@@ -140,12 +140,10 @@ bool DatabaseManager::createTables()
             // Movies
             l_ret = l_query.exec("CREATE TABLE IF NOT EXISTS movies("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "title VARCHAR(50), "
-                      "original_title VARCHAR(50), "
-                      "director INTEGER, "
-                      "producer VARCHAR(30), "
+                      "title VARCHAR(255), "
+                      "original_title VARCHAR(255), "
                       "year INTEGER, "
-                      "country VARCHAR(30), "
+                      "country VARCHAR(50), "
                       "duration INTEGER, "
                       "synopsis TEXT, "
                       "file_path VARCHAR(255), "
@@ -157,15 +155,15 @@ bool DatabaseManager::createTables()
             // Peoples (directors, actor, music...)
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS people("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "name VARCHAR(50), "
-                      "first_name VARCHAR(50), "
-                      "real_name VARCHAR(50), "
+                      "name VARCHAR(100), "
+                      "first_name VARCHAR(100), "
+                      "real_name VARCHAR(255), "
                       "birthday INTEGER, "
                       "biography TEXT"
                       ")");
 
             // Links between people and movies (a type of person is given here)
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS people_movie("
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS people_movies("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                       "id_people INTEGER, "
                       "id_movie INTEGER, "
@@ -175,7 +173,7 @@ bool DatabaseManager::createTables()
             // Tags that can be attributed to the movies
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS tags("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "tag_name INTEGER"
+                      "tag_name VARCHAR(255)"
                       ")");
 
             // Links between tags and movies
@@ -191,7 +189,6 @@ bool DatabaseManager::createTables()
 
             // Config table (for update purposes)
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS config("
-                                          "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                                           "db_version INTERGER )");
 
             // Set the database version
