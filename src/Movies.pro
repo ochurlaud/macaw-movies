@@ -37,14 +37,20 @@ SOURCES += main.cpp \
     MainWindow.cpp \
     Application.cpp \
     SettingsWindow.cpp \
-    MoviesDebug.cpp
+    MoviesDebug.cpp \
+    Entities/Movie.cpp \
+    Entities/People.cpp \
+    Entities/Tag.cpp
 
 HEADERS  += \
     DatabaseManager.h \
     MainWindow.h \
     Application.h \
     SettingsWindow.h \
-    MoviesDebug.h
+    MoviesDebug.h \
+    Entities/Movie.h \
+    Entities/People.h \
+    Entities/Tag.h
 
 FORMS    += \
 
