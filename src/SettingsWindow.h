@@ -57,7 +57,7 @@ class SettingsWindow : public QDialog
         QHBoxLayout *m_filesPathLayout;
         QHBoxLayout *m_closeLayout;
         QListView *m_knownPathList;
-        Application * m_app;
+        Application *m_app;
 };
 
 #endif // SETTINGWINDOW_H

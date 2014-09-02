@@ -36,13 +36,15 @@ SOURCES += main.cpp \
     DatabaseManager.cpp \
     MainWindow.cpp \
     Application.cpp \
-    SettingsWindow.cpp
+    SettingsWindow.cpp \
+    MoviesDebug.cpp
 
 HEADERS  += \
     DatabaseManager.h \
     MainWindow.h \
     Application.h \
-    SettingsWindow.h
+    SettingsWindow.h \
+    MoviesDebug.h
 
 FORMS    += \
 

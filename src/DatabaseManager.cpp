@@ -121,7 +121,7 @@ bool DatabaseManager::createTables()
 
         if(m_db.tables().contains("config"))
         {
-            qDebug()<<"config";
+            qDebug() << "config";
             l_query.exec("SELECT db_version FROM config");
             l_query.next();
             if(l_query.value(0) != DB_VERSION) //TODO : make en intelligent upgrade of the database

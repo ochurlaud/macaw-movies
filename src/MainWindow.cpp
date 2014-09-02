@@ -63,7 +63,6 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_button_layout->addWidget(m_leftPannel4);
     m_button_layout->addWidget(m_leftPannel5);
     m_hLayout->addWidget(m_moviesList);
-
 }
 
 
@@ -197,7 +196,7 @@ void MainWindow::startMovie(QModelIndex index)
     index = m_moviesList->model()->index(index.row(),l_pathColumn);
     QString l_fileToOpen = m_moviesList->model()->data(index,Qt::DisplayRole).toString();
 
-    qDebug()<<l_fileToOpen;
+    m_app->debug(l_fileToOpen);
     QDesktopServices::openUrl(QUrl("file:///" + l_fileToOpen, QUrl::TolerantMode));
 
 }

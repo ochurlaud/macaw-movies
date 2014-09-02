@@ -25,20 +25,21 @@
  */
 Application::Application(int argc, char **argv) : QApplication(argc, argv)
 {
-    m_AppName = "Movie-Project";
+    m_appName = "Movie-Project";
+    m_debug.setDebug(true);
 
     m_dbManager = new DatabaseManager();
     if (!m_dbManager->getMoviesPath().isEmpty())
     {
-        qDebug()<<"plop";    //Do not work without those qDebug statement, don't know why...
+        debug("plop");    //Do not work without those qDebug statement, don't know why...
         m_filesPath = m_dbManager->getMoviesPath().at(0);
-        qDebug()<<"plip";
+        debug("plip");
     }
     else
     {
-        qDebug()<<"coucou";
+        debug("coucou");
         m_filesPath = "./";
-        qDebug()<<"coco";
+        debug("coco");
     }
  //   mainWindow.setFixedSize(800,600);
 }
