@@ -137,12 +137,12 @@ bool DatabaseManager::createTables()
         }
         else    //if config table do not exists then the db is empty...
         {
-
+            // Movies
             l_ret = l_query.exec("CREATE TABLE IF NOT EXISTS movies("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                       "title VARCHAR(50), "
                       "original_title VARCHAR(50), "
-                      "director VARCHAR(30), "
+                      "director INTEGER, "
                       "producer VARCHAR(30), "
                       "year INTEGER, "
                       "country VARCHAR(30), "
@@ -150,18 +150,51 @@ bool DatabaseManager::createTables()
                       "synopsis TEXT, "
                       "file_path VARCHAR(255), "
                       "colored BOOLEAN, "
-                      "format VARCHAR(10) "
+                      "format VARCHAR(10), "
+                      "rank INTEGER"
                       ")");
 
+            // Peoples (directors, actor, music...)
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS people("
+                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                      "name VARCHAR(50), "
+                      "first_name VARCHAR(50), "
+                      "real_name VARCHAR(50), "
+                      "birthday INTEGER, "
+                      "biography TEXT"
+                      ")");
+
+            // Links between people and movies (a type of person is given here)
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS people_movie("
+                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                      "id_people INTEGER, "
+                      "id_movie INTEGER, "
+                      "type INTEGER"
+                      ")");
+
+            // Tags that can be attributed to the movies
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS tags("
+                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                      "tag_name INTEGER"
+                      ")");
+
+            // Links between tags and movies
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS tags_movies("
+                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                      "id_tag INTEGER, "
+                      "id_movie INTEGER"
+                      ")");
+            // List of paths where the movies are stored
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS paths_list("
                                           "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                                           "movies_path VARCHAR(255))");
 
+            // Config table (for update purposes)
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS config("
                                           "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                                           "db_version INTERGER )");
 
-
+            // Set the database version
             l_ret = l_ret && l_query.exec("INSERT INTO config (`db_version`) VALUES ('" + QString::number(DB_VERSION) + "')");
 
             //l_ret = l_ret && l_query.exec("INSERT INTO paths_list (movies_path) VALUES ('path')");
