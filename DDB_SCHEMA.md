@@ -3,7 +3,7 @@
 ## movies
 | Column Name   | Type | Link |
 | ------------- | ---- | ---- |
-| id | INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE | |
+| id | INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE | **1**|
 | title | VARCHAR(255) | |
 | original_title | VARCHAR(255) | |
 | year | INTEGER | |
