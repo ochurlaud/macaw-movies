@@ -87,7 +87,7 @@ void MainWindow::showSettingsWindow()
     SettingsWindow *l_settingsWindow = new SettingsWindow;
     l_settingsWindow->setModal(true);
     l_settingsWindow->show();
-    QObject::connect(l_settingsWindow,SIGNAL(closed()), this, SLOT(updateApp()));
+    QObject::connect(l_settingsWindow,SIGNAL(closeAndSave()), this, SLOT(updateApp()));
     m_app->debug("[MainWindow] Exits showSettingsWindow()");
 }
 
@@ -109,11 +109,11 @@ void MainWindow::updateApp()
         QSqlQuery l_knownMovieQuery = m_app->getDatabaseManager()->getMovies("file_path",l_filePath);
         if (!l_knownMovieQuery.next() && (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4") )
         {
-            QStringList l_value;
-            l_value << "title" << l_path.fileInfo().completeBaseName()
-                    << "file_path" << l_path.fileInfo().absoluteFilePath()
-                    << "format" << l_fileSuffix;
-            m_app->getDatabaseManager()->insertNewTitle(l_value);
+            Movie l_movie;
+            l_movie.setTitle(l_path.fileInfo().completeBaseName());
+            l_movie.setFilePath(l_path.fileInfo().absoluteFilePath());
+            l_movie.setSuffix(l_fileSuffix);
+            m_app->getDatabaseManager()->insertNewMovie(l_movie);
         }
 
     }

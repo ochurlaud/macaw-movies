@@ -149,14 +149,15 @@ bool DatabaseManager::createTables()
                       "file_path VARCHAR(255), "
                       "colored BOOLEAN, "
                       "format VARCHAR(10), "
+                      "suffix VARCHAR(10), "
                       "rank INTEGER"
                       ")");
 
             // Peoples (directors, actor, music...)
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS people("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "name VARCHAR(100), "
-                      "first_name VARCHAR(100), "
+                      "lastname VARCHAR(100), "
+                      "firstname VARCHAR(100), "
                       "real_name VARCHAR(255), "
                       "birthday INTEGER, "
                       "biography TEXT"
@@ -255,6 +256,95 @@ QSqlQuery DatabaseManager::getAllTitles()
     return l_query;
 }
 
+/**
+ * @brief Opens the database
+ *
+ * @return QSqlQueryModel
+ */
+bool DatabaseManager::insertNewMovie(Movie movie)
+{
+    bool l_ret = false;
+    QSqlQuery l_query;
+    l_query.prepare("INSERT INTO movies (title, original_title, year, country, duration, synopsys, file_path, colored, format, suffix, rank) "
+                    "VALUES (:title, :original_title, :year, country, :duration, :synopsys, :file_path, :colored, :format, :suffix, :rank) ");
+    l_query.bindValue(":title", movie.getTitle());
+    l_query.bindValue(":original_title", movie.getOriginalTitle());
+    l_query.bindValue(":year", movie.getYear());
+    l_query.bindValue(":country", movie.getCountry());
+    l_query.bindValue(":duration", movie.getDuration());
+    l_query.bindValue(":synopsys", movie.getSynopsys());
+    l_query.bindValue(":file_path", movie.getFilePath());
+    l_query.bindValue(":colored", movie.isColored());
+    l_query.bindValue(":format", movie.getFormat());
+    l_query.bindValue(":suffix", movie.getSuffix());
+    l_query.bindValue(":rank", movie.getRank());
+    l_ret = l_query.exec();
+
+    int id_movie = l_query.lastInsertId().toInt();
+    for(int i = 0 ; i < movie.getDirectors().size() ; i++)
+    {
+        People l_director = movie.getDirectors().at(i);
+        l_query.prepare("INSERT INTO people (lastname, firstname, real_name, birthday, biography) "
+                        "VALUES (:lastname, :firstname, :real_name, :birthday, :biography)");
+        l_query.bindValue(":lastname", l_director.getLastname());
+        l_query.bindValue(":firstname", l_director.getFirstname());
+        l_query.bindValue(":real_name", l_director.getRealname());
+        l_query.bindValue(":birthday", l_director.getBirthday());
+        l_query.bindValue(":biography", l_director.getBiography());
+        l_ret = l_ret && l_query.exec();
+
+        int id_director = l_query.lastInsertId().toInt();
+        l_query.prepare("INSERT INTO people_movies (id_people, id_movie, type) "
+                        "VALUES (:people, :id_movie, 1)");
+        l_query.bindValue(":id_people", id_director);
+        l_query.bindValue(":id_movie", id_movie);
+        l_ret = l_ret && l_query.exec();
+    }
+
+    for(int i = 0 ; i < movie.getProducers().size() ; i++)
+    {
+        People l_producer = movie.getProducers().at(i);
+        l_query.prepare("INSERT INTO people (lastname, firstname, real_name, birthday, biography) "
+                        "VALUES (:lastname, :firstname, :real_name, :birthday, :biography)");
+        l_query.bindValue(":lastname", l_producer.getLastname());
+        l_query.bindValue(":firstname", l_producer.getFirstname());
+        l_query.bindValue(":real_name", l_producer.getRealname());
+        l_query.bindValue(":birthday", l_producer.getBirthday());
+        l_query.bindValue(":biography", l_producer.getBiography());
+        l_ret = l_ret && l_query.exec();
+
+        int id_producer = l_query.lastInsertId().toInt();
+        l_query.prepare("INSERT INTO people_movies (id_people, id_movie, type) "
+                        "VALUES (:people, :id_movie, 2)");
+        l_query.bindValue(":id_people", id_producer);
+        l_query.bindValue(":id_movie", id_movie);
+        l_ret = l_ret && l_query.exec();
+    }
+
+    for(int i = 0 ; i < movie.getActors().size() ; i++)
+    {
+        People l_actor = movie.getActors().at(i);
+        l_query.prepare("INSERT INTO people (lastname, firstname, real_name, birthday, biography) "
+                        "VALUES (:lastname, :firstname, :real_name, :birthday, :biography)");
+        l_query.bindValue(":lastname", l_actor.getLastname());
+        l_query.bindValue(":firstname", l_actor.getFirstname());
+        l_query.bindValue(":real_name", l_actor.getRealname());
+        l_query.bindValue(":birthday", l_actor.getBirthday());
+        l_query.bindValue(":biography", l_actor.getBiography());
+        l_ret = l_ret && l_query.exec();
+
+        int id_actor = l_query.lastInsertId().toInt();
+        l_query.prepare("INSERT INTO people_movies (id_people, id_movie, type) "
+                        "VALUES (:people, :id_movie, 3)");
+        l_query.bindValue(":id_people", id_actor);
+        l_query.bindValue(":id_movie", id_movie);
+        l_ret = l_ret && l_query.exec();
+    }
+
+    return l_ret;
+}
+
+/*
 bool DatabaseManager::insertNewTitle(QStringList value)
 {
     if (value.size() % 2 == 1)
@@ -296,6 +386,7 @@ bool DatabaseManager::insertNewTitle(QStringList value)
 
     return true;
 }
+*/
 
 /**
  * @brief Saves the movies directory

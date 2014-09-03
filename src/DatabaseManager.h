@@ -24,6 +24,8 @@
 #include <QtCore>
 #include <QtSql>
 
+#include "Entities/Movie.h"
+
 
 class DatabaseManager : public QObject
 {
@@ -36,7 +38,8 @@ class DatabaseManager : public QObject
         QSqlQuery getMovies(QString, QVariant);
         QSqlQuery getAllMovies();
         QSqlQuery getAllTitles();
-        bool insertNewTitle(QStringList);
+        bool insertNewMovie(Movie);
+        //bool insertNewTitle(QStringList);
         QSqlError lastError();
         QSqlQueryModel *createModel();
         QSqlQueryModel *createTitleModel();
