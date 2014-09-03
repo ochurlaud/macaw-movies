@@ -29,9 +29,42 @@ class Movie
 {
 public:
     Movie();
-    QVector<People> getDirectors() { return m_directors; }
-    QVector<People> getProducers() { return m_producers; }
-    QVector<People> getActors() { return m_actors; }
+    int getId() const;
+    void setId(int id);
+    QString getTitle() const;
+    void setTitle(QString title);
+    QString getOriginalTitle() const;
+    void setOriginalTitle(QString originalTitle);
+    QVector<People> getDirectors() const;
+    void addDirector(People director);
+    void removeDirector(People director);
+    QVector<People> getProducers() const;
+    void addProducer(People producer);
+    void removeProducer(People producer);
+    QVector<People> getActors() const;
+    void addActor(People actor);
+    void removeActor(People actor);
+    int getYear() const;
+    void setYear(int year);
+    QString getCountry() const;
+    void setCountry(QString country);
+    int getDuration() const;
+    void setDuration(int duration);
+    QString getSynopsys() const;
+    void setSynopsys(QString synopsys);
+    QString getFilePath() const;
+    void setFilePath(QString filePath);
+    bool isColored() const;
+    void setColored(bool colored);
+    QString getFormat() const;
+    void setFormat(QString format);
+    QString getSuffix() const;
+    void setSuffix(QString suffix);
+    int getRank() const;
+    void setRank(int rank);
+    QVector<Tag> getTags() const;
+    void addTag(Tag tag);
+    void removeTag(Tag tag);
 
 private:
     int m_id;
@@ -45,8 +78,9 @@ private:
     int m_duration;
     QString m_synopsys;
     QString m_filePath;
-    bool colored;
+    bool m_colored;
     QString m_format;
+    QString m_suffix;
     int m_rank;
     QVector<Tag> m_tags;
 };

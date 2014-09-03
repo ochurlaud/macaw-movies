@@ -22,3 +22,34 @@
 Tag::Tag()
 {
 }
+
+int Tag::getId() const
+{
+    return m_id;
+}
+
+void Tag::setId(int id)
+{
+    m_id = id;
+}
+
+QString Tag::getName() const
+{
+    return m_name;
+}
+
+void Tag::setName(QString name)
+{
+    m_name = name;
+}
+
+bool Tag::operator== (const Tag& other)
+{
+    if ( this->getId() == other.getId() &&
+         this->getName() == other.getName() )
+    {
+        return true;
+    }
+
+    return false;
+}

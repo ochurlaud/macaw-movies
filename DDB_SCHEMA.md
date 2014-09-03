@@ -13,6 +13,7 @@
 | file_path | VARCHAR(255) | |
 | colored | BOOLEAN  | |
 | format | VARCHAR(10) | |
+| suffix | VARCHAR(10) | |
 | rank | INTEGER | |
 
 _Note: The longest movie title is 196 char:_ Night of the Day of the Dawn of the Son of the Bride of the Return of the Revenge of the Terror of the Attack of the Evil, Mutant, Hellbound, Flesh-Eating Subhumanoid Zombified Living Dead, Part 3

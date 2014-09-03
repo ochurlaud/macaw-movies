@@ -26,10 +26,11 @@ class Tag
 {
 public:
     Tag();
-    int getId() { return m_id; }
-    void setId(int id) { m_id = id; }
-    QString getName() { return m_name; }
-    void setName(QString name) { m_name = name; }
+    int getId() const;
+    void setId(int id);
+    QString getName() const;
+    void setName(QString name);
+    bool operator== (const Tag& other);
 
 private:
     int m_id;

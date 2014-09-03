@@ -22,3 +22,19 @@
 People::People()
 {
 }
+
+
+bool People::operator== (const People& other)
+{
+    if ( this->getId() == other.getId() &&
+         this->getFirstname() == other.getFirstname() &&
+         this->getLastname() == other.getLastname() &&
+         this->getRealname() == other.getRealname() &&
+         this->getBirthday() == other.getBirthday() &&
+         this->getBiography() == other.getBiography() )
+    {
+        return true;
+    }
+
+    return false;
+}

@@ -26,18 +26,19 @@ class People
 {
 public:
     People();
-    int getId() { return m_id; }
+    int getId() const { return m_id; }
     void setId(int id) { m_id = id; }
-    QString getLastname() { return m_lastname; }
+    QString getLastname() const { return m_lastname; }
     void setLastname(QString lastname) { m_lastname = lastname; }
-    QString getFirstname() { return m_firstname; }
+    QString getFirstname() const { return m_firstname; }
     void setFirstname(QString firstname) { m_firstname = firstname; }
-    QString getRealname() { return m_realname; }
+    QString getRealname() const { return m_realname; }
     void setRealname(QString realname) { m_realname = realname; }
-    int getBirthday() { return m_birthday; }
+    int getBirthday() const { return m_birthday; }
     void setBirthday(int birthday) { m_birthday = birthday; }
-    QString getBiography() { return m_biography; }
+    QString getBiography() const { return m_biography; }
     void setBiography(QString biography) { m_biography = biography; }
+    bool operator== (const People& other);
 
 private:
     int m_id;
