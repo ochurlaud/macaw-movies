@@ -30,7 +30,7 @@ class Application : public QApplication
     Q_OBJECT
 
     public:
-        Application(int, char**);
+        Application(int&, char**);
         ~Application();
         void showMainWindow();
         bool addFilesPath(QString path);

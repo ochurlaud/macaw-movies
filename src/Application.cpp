@@ -23,7 +23,7 @@
  * @brief Constructor
  *
  */
-Application::Application(int argc, char **argv) : QApplication(argc, argv)
+Application::Application(int &argc, char **argv) : QApplication(argc, argv)
 {
     m_appName = "Movie-Project";
     m_debug.setDebug(true);
