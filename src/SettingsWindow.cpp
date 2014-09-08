@@ -78,7 +78,7 @@ void SettingsWindow::applySettings()
     if(QDir(m_filesPathEdit->text()).exists())
     {
         m_app->addFilesPath(m_filesPathEdit->text());
-        emit closed();
+        emit closeAndSave();
         close();
     }
     else
@@ -96,10 +96,10 @@ void SettingsWindow::applySettings()
 void SettingsWindow::browseFilesPathDialog()
 {
     m_app->debug("[SettingsWindow] Enters browseFilesPathDialog()");
-
-    QString l_folder = QFileDialog::getExistingDirectory();
+    QString l_folder = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                          "/home/olivier/",
+                                                          QFileDialog::ShowDirsOnly);
     m_filesPathEdit->setText(l_folder);
     m_app->debug("[SettingsWindow] Exits browseFilesPathDialog()");
-
 }
 

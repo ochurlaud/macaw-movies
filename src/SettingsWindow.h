@@ -34,7 +34,6 @@ class SettingsWindow : public QDialog
     public:
         explicit SettingsWindow(QDialog *parent = 0);
         ~SettingsWindow();
-     //   void closeEvent(QCloseEvent *event);
 
 
     public slots:
@@ -42,7 +41,7 @@ class SettingsWindow : public QDialog
         void browseFilesPathDialog();
 
     signals:
-        void closed();
+        void closeAndSave();
 
     private:
         QLabel *m_filesPathLabel;

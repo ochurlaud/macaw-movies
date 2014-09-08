@@ -50,8 +50,8 @@ public:
     void setCountry(QString country);
     int getDuration() const;
     void setDuration(int duration);
-    QString getSynopsys() const;
-    void setSynopsys(QString synopsys);
+    QString getSynopsis() const;
+    void setSynopsis(QString synopsis);
     QString getFilePath() const;
     void setFilePath(QString filePath);
     bool isColored() const;
@@ -76,7 +76,7 @@ private:
     int m_year;
     QString m_country;
     int m_duration;
-    QString m_synopsys;
+    QString m_synopsis;
     QString m_filePath;
     bool m_colored;
     QString m_format;
