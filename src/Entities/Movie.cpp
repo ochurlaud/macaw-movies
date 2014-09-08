@@ -21,6 +21,17 @@
 
 Movie::Movie()
 {
+    m_title = "";
+    m_originalTitle = "";
+    m_year = 0;
+    m_country =  "";
+    m_duration = 0;
+    m_synopsis = "";
+    m_filePath = "";
+    m_colored = true;
+    m_format = "";
+    m_suffix = "";
+    m_rank = 0;
 }
 
 int Movie::getId() const
@@ -140,14 +151,14 @@ void Movie::setDuration(int duration)
     m_duration = duration;
 }
 
-QString Movie::getSynopsys() const
+QString Movie::getSynopsis() const
 {
-    return m_synopsys;
+    return m_synopsis;
 }
 
-void Movie::setSynopsys(QString synopsys)
+void Movie::setSynopsis(QString synopsis)
 {
-    m_synopsys = synopsys;
+    m_synopsis = synopsis;
 }
 
 QString Movie::getFilePath() const

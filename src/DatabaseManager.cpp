@@ -47,7 +47,7 @@ bool DatabaseManager::openDB()
 
     if (QSqlDatabase::contains("Movies-database"))
     {
-        m_db = QSqlDatabase::database("Movies-database");
+        m_db = QSqlDatabase::database("Movies-database");        
     }
     else
     {
@@ -91,7 +91,7 @@ bool DatabaseManager::closeDB()
 bool DatabaseManager::deleteDB()
 {
     // Close database
-    m_db.close();
+    closeDB();
 
     #ifdef Q_OS_LINUX
     // NOTE: We have to store database file into user home folder in Linux
@@ -142,7 +142,7 @@ bool DatabaseManager::createTables()
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                       "title VARCHAR(255), "
                       "original_title VARCHAR(255), "
-                      "year INTEGER, "
+                      "year INTEGER(4), "
                       "country VARCHAR(50), "
                       "duration INTEGER, "
                       "synopsis TEXT, "
@@ -264,21 +264,29 @@ QSqlQuery DatabaseManager::getAllTitles()
 bool DatabaseManager::insertNewMovie(Movie movie)
 {
     bool l_ret = false;
-    QSqlQuery l_query;
-    l_query.prepare("INSERT INTO movies (title, original_title, year, country, duration, synopsys, file_path, colored, format, suffix, rank) "
-                    "VALUES (:title, :original_title, :year, country, :duration, :synopsys, :file_path, :colored, :format, :suffix, :rank) ");
+    QSqlQuery l_query(m_db);
+    l_query.prepare("INSERT INTO movies(title, original_title, year, country, duration, synopsis, file_path, colored, format, suffix, rank) "
+                    "VALUES (:title, :original_title, :year, :country, :duration, :synopsis, :file_path, :colored, :format, :suffix, :rank)");
     l_query.bindValue(":title", movie.getTitle());
-    l_query.bindValue(":original_title", movie.getOriginalTitle());
+    l_query.bindValue(":original_title", movie.getOriginalTitle()   );
     l_query.bindValue(":year", movie.getYear());
     l_query.bindValue(":country", movie.getCountry());
     l_query.bindValue(":duration", movie.getDuration());
-    l_query.bindValue(":synopsys", movie.getSynopsys());
+    l_query.bindValue(":synopsis", movie.getSynopsis());
     l_query.bindValue(":file_path", movie.getFilePath());
     l_query.bindValue(":colored", movie.isColored());
     l_query.bindValue(":format", movie.getFormat());
     l_query.bindValue(":suffix", movie.getSuffix());
     l_query.bindValue(":rank", movie.getRank());
+
     l_ret = l_query.exec();
+    if (!l_ret)
+    {
+        qDebug() << m_db.lastError().text();
+        return false;
+    }
+
+    qDebug() << "[DatabaseManager] Movie added";
 
     int id_movie = l_query.lastInsertId().toInt();
     for(int i = 0 ; i < movie.getDirectors().size() ; i++)
@@ -291,14 +299,29 @@ bool DatabaseManager::insertNewMovie(Movie movie)
         l_query.bindValue(":real_name", l_director.getRealname());
         l_query.bindValue(":birthday", l_director.getBirthday());
         l_query.bindValue(":biography", l_director.getBiography());
+
         l_ret = l_ret && l_query.exec();
+        if (!l_ret)
+        {
+            qDebug() << m_db.lastError().text();
+            return false;
+        }
 
         int id_director = l_query.lastInsertId().toInt();
         l_query.prepare("INSERT INTO people_movies (id_people, id_movie, type) "
                         "VALUES (:people, :id_movie, 1)");
         l_query.bindValue(":id_people", id_director);
         l_query.bindValue(":id_movie", id_movie);
+
         l_ret = l_ret && l_query.exec();
+        if (!l_ret)
+        {
+            qDebug() << m_db.lastError().text();
+            return false;
+        }
+
+        qDebug() << "[DatabaseManager] One director added";
+
     }
 
     for(int i = 0 ; i < movie.getProducers().size() ; i++)
@@ -311,14 +334,29 @@ bool DatabaseManager::insertNewMovie(Movie movie)
         l_query.bindValue(":real_name", l_producer.getRealname());
         l_query.bindValue(":birthday", l_producer.getBirthday());
         l_query.bindValue(":biography", l_producer.getBiography());
+
         l_ret = l_ret && l_query.exec();
+        if (!l_ret)
+        {
+            qDebug() << m_db.lastError().text();
+            return false;
+        }
 
         int id_producer = l_query.lastInsertId().toInt();
         l_query.prepare("INSERT INTO people_movies (id_people, id_movie, type) "
                         "VALUES (:people, :id_movie, 2)");
         l_query.bindValue(":id_people", id_producer);
         l_query.bindValue(":id_movie", id_movie);
+
         l_ret = l_ret && l_query.exec();
+        if (!l_ret)
+        {
+            qDebug() << m_db.lastError().text();
+            return false;
+        }
+
+        qDebug() << "[DatabaseManager] One producer added";
+
     }
 
     for(int i = 0 ; i < movie.getActors().size() ; i++)
@@ -331,16 +369,35 @@ bool DatabaseManager::insertNewMovie(Movie movie)
         l_query.bindValue(":real_name", l_actor.getRealname());
         l_query.bindValue(":birthday", l_actor.getBirthday());
         l_query.bindValue(":biography", l_actor.getBiography());
+
         l_ret = l_ret && l_query.exec();
+        if (!l_ret)
+        {
+            qDebug() << m_db.lastError().text();
+            return false;
+        }
 
         int id_actor = l_query.lastInsertId().toInt();
         l_query.prepare("INSERT INTO people_movies (id_people, id_movie, type) "
                         "VALUES (:people, :id_movie, 3)");
         l_query.bindValue(":id_people", id_actor);
         l_query.bindValue(":id_movie", id_movie);
+
         l_ret = l_ret && l_query.exec();
+        if (!l_ret)
+        {
+            qDebug() << m_db.lastError().text();
+            return false;
+        }
+
+        qDebug() << "[DatabaseManager] One actor added";
+
     }
 
+    if (!l_ret)
+    {
+        qDebug() << m_db.lastError().text();
+    }
     return l_ret;
 }
 

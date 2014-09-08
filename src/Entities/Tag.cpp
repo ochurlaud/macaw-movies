@@ -21,6 +21,7 @@
 
 Tag::Tag()
 {
+    m_name = "";
 }
 
 int Tag::getId() const

@@ -33,10 +33,7 @@ int main(int argv, char **args)
 {
     Application l_app(argv, args);
     MainWindow l_mainWindow;
-    l_app.debug("dddd");
-
     l_mainWindow.show();
-    l_app.debug("dddd");
 
     return l_app.exec();
 }
