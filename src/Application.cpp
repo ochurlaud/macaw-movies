@@ -37,7 +37,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
     {
         debug("[Application] MoviesPaths founded");
         m_filesPath = m_dbManager->getMoviesPath().at(0);
-        debug("plip"); // This cannot be removed. Why ??????
+       // debug("plip"); // This cannot be removed. Why ??????
     }
     else
     {

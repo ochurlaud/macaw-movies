@@ -121,7 +121,6 @@ bool DatabaseManager::createTables()
 
         if(m_db.tables().contains("config"))
         {
-            qDebug() << "config";
             l_query.exec("SELECT db_version FROM config");
             l_query.next();
             if(l_query.value(0) != DB_VERSION) //TODO : make en intelligent upgrade of the database
@@ -234,6 +233,29 @@ QSqlQuery DatabaseManager::getAllMovies()
     return l_query;
 }
 
+QVector<People> DatabaseManager::getAllDirectors()
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT * FROM people where type = " + TYPE_DIRECTOR);
+    l_query.exec();
+
+    QVector<People> directors;
+    while (l_query.next())
+    {
+        People director;
+        director.setId(l_query.value("id").toInt());
+        director.setLastname(l_query.value("lastname").toString());
+        director.setFirstname(l_query.value("firstname").toString());
+        director.setRealname(l_query.value("realname").toString());
+        director.setBirthday(l_query.value("birthday").toInt());
+        director.setBiography(l_query.value("biography").toString());
+
+        directors.push_back(director);
+    }
+
+    return directors;
+}
+
 /**
  * @brief Opens the database
  *
@@ -242,7 +264,6 @@ QSqlQuery DatabaseManager::getAllMovies()
 QSqlQueryModel *DatabaseManager::createModel()
 {
    QSqlQueryModel *l_model = new QSqlQueryModel;
-
 
    return l_model;
 }

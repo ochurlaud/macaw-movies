@@ -20,6 +20,10 @@
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 
+#define TYPE_DIRECTOR 1
+#define TYPE_PRODUCER 2
+#define TYPE_ACTOR 3
+
 #include <QObject>
 #include <QtCore>
 #include <QtSql>
@@ -37,15 +41,15 @@ class DatabaseManager : public QObject
         bool deleteDB();
         QSqlQuery getMovies(QString, QVariant);
         QSqlQuery getAllMovies();
+        QVector<People> getAllDirectors();
         QSqlQuery getAllTitles();
         bool insertNewMovie(Movie);
-        //bool insertNewTitle(QStringList);
         QSqlError lastError();
         QSqlQueryModel *createModel();
-        QSqlQueryModel *createTitleModel();
         bool saveMoviesPath(QString moviePath);
         QStringList getMoviesPath();
         QStringListModel *getMoviesPathModel() {return this->m_moviesPathModel;}
+
 
     private:
         QSqlDatabase m_db;

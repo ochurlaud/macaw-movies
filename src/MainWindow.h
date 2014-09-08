@@ -41,31 +41,33 @@ class MainWindow : public QWidget
         void updateApp();
         void showSettingsWindow();
         void startMovie(QModelIndex);
+        void showDirectorsMovies(QListWidgetItem*);
 
     private:
-private:
+        QPushButton *m_settingsButton;
+        QHBoxLayout *m_hLayout;
+        QVBoxLayout *m_button_layout;
+        QVBoxLayout *m_mainLayout;
+        QVBoxLayout *m_centralLayout;
+        QHBoxLayout *m_SecondaryLayout;
+        QTextEdit *m_searchEdit;
+        QPushButton *m_allMoviesButton;
+        QPushButton *m_tagsButton;
+        QPushButton *m_directorsButton;
+        QPushButton *m_toWatchButton;
+        QPushButton *m_playlistButton;
+        QTableView *m_moviesList;
+        QListWidget *m_directorList;
+        QVector<QListWidgetItem*> m_moviesTitles;
+        Application * m_app;
+
+private slots:
 //        void fillLeftPannel();
     void fillMoviesList();
     void fillTagsList();
     void fillDirectorList();
     void fillToWatchList();
     void fillPlaylist();
-    void ButtonPushed(QString ButtonName);
-
-    QPushButton *m_settingsButton;
-    QHBoxLayout *m_hLayout;
-    QVBoxLayout *m_button_layout;
-    QVBoxLayout *m_mainLayout;
-    QHBoxLayout *m_SecondaryLayout;
-    QTextEdit *m_searchEdit;
-    QPushButton *m_leftPannel1;
-    QPushButton *m_leftPannel2;
-    QPushButton *m_leftPannel3;
-    QPushButton *m_leftPannel4;
-    QPushButton *m_leftPannel5;
-    QTableView *m_moviesList;
-    QVector<QListWidgetItem*> m_moviesTitles;
-    Application * m_app;
 };
 
 #endif // MAINWINDOW_H

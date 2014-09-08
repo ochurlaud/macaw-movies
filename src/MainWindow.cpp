@@ -20,7 +20,7 @@
 #include "MainWindow.h"
 
 /**
- * @brief Cosntructor.
+ * @brief Constructor.
  * Creates the design of the window.
  */
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
@@ -37,20 +37,21 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 
 
     // m_leftPannel : list of movies or realisators or ...
-    m_leftPannel1 = new QPushButton("Films");
-    m_leftPannel2 = new QPushButton("Tags");
-    m_leftPannel3 = new QPushButton("Director");
-    m_leftPannel4 = new QPushButton("To Watch");
-    m_leftPannel5 = new QPushButton("Playlist");
-    //fillLeftPannel();
-    //m_leftPannel->setMaximumWidth(this->width()*.3);
+    m_allMoviesButton = new QPushButton("Films");
+    m_tagsButton = new QPushButton("Tags");
+    m_directorsButton = new QPushButton("Director");
+    m_toWatchButton = new QPushButton("To Watch");
+    m_playlistButton = new QPushButton("Playlist");
+    QObject::connect(m_allMoviesButton, SIGNAL(clicked()), this, SLOT(fillMoviesList()));
+    QObject::connect(m_tagsButton, SIGNAL(clicked()), this, SLOT(fillTagsList()));
+    QObject::connect(m_directorsButton, SIGNAL(clicked()), this, SLOT(fillDirectorList()));
+    QObject::connect(m_toWatchButton, SIGNAL(clicked()), this, SLOT(fillToWatchList()));
+    QObject::connect(m_playlistButton, SIGNAL(clicked()), this, SLOT(fillPlaylist()));
 
     // m_movieList : central list. Would be great to be able to choose how it looks like
-    m_moviesList = new QTableView;
+    m_centralLayout = new QVBoxLayout;
+
     fillMoviesList();
-    m_moviesList->setShowGrid(false);
-    m_moviesList->verticalHeader()->hide();
-    m_moviesList->setAlternatingRowColors(true);
 
     m_settingsButton = new QPushButton("Settings");
     QObject::connect(m_settingsButton, SIGNAL(clicked()), this, SLOT(showSettingsWindow()));
@@ -59,12 +60,12 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_mainLayout->addLayout(m_SecondaryLayout);
     m_SecondaryLayout->addLayout(m_button_layout);
     m_SecondaryLayout->addLayout(m_hLayout);
-    m_button_layout->addWidget(m_leftPannel1);
-    m_button_layout->addWidget(m_leftPannel2);
-    m_button_layout->addWidget(m_leftPannel3);
-    m_button_layout->addWidget(m_leftPannel4);
-    m_button_layout->addWidget(m_leftPannel5);
-    m_hLayout->addWidget(m_moviesList);
+    m_button_layout->addWidget(m_allMoviesButton);
+    m_button_layout->addWidget(m_tagsButton);
+    m_button_layout->addWidget(m_directorsButton);
+    m_button_layout->addWidget(m_toWatchButton);
+    m_button_layout->addWidget(m_playlistButton);
+    m_hLayout->addLayout(m_centralLayout);
     m_app->debug("[MainWindow] Construction done");
 }
 
@@ -122,32 +123,6 @@ void MainWindow::updateApp()
     m_app->debug("[MainWindow] Exits updateApp()");
 }
 
-void MainWindow::ButtonPushed(QString ButtonName)
-{
-    // Should change the central panel according to the button pressed
-    if (ButtonName=="Films")
-    {
-        fillMoviesList();
-    }
-    if (ButtonName=="Tags")
-    {
-        fillTagsList();
-    }
-    if (ButtonName=="Director")
-    {
-        fillDirectorList();
-    }
-    if (ButtonName=="To Watch")
-    {
-        fillToWatchList();
-    }
-    if (ButtonName=="Playlist")
-    {
-        fillPlaylist();
-    }
-}
-
-
 /**
  * @brief Reads the database and fills the left pannel of the window.
  */
@@ -170,11 +145,21 @@ void MainWindow::ButtonPushed(QString ButtonName)
  */
 void MainWindow::fillMoviesList()
 {
+    m_moviesList = new QTableView;
+
     QSqlQueryModel * l_modelMoviesList = new QSqlQueryModel;
     l_modelMoviesList = m_app->getDatabaseManager()->createModel();
     l_modelMoviesList->setQuery(m_app->getDatabaseManager()->getAllMovies());
     m_moviesList->setModel(l_modelMoviesList);
+    m_moviesList->setShowGrid(false);
+    m_moviesList->verticalHeader()->hide();
+    m_moviesList->setAlternatingRowColors(true);
     connect(m_moviesList,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(startMovie(QModelIndex)));
+    while(!m_centralLayout->isEmpty())
+    {
+        delete m_centralLayout->takeAt(0);
+    }
+    m_centralLayout->addWidget(m_moviesList);
 }
 
 void MainWindow::fillTagsList()
@@ -184,7 +169,31 @@ void MainWindow::fillTagsList()
 
 void MainWindow::fillDirectorList()
 {
+    m_app->debug("[MainWindow] Enters fillDirectorList");
+    m_directorList = new QListWidget(this);
+    QListWidgetItem *l_tempItem = new QListWidgetItem;
+    l_tempItem->setText("All");
+    m_directorList->insertItem(0, l_tempItem);
+    QVector<People> l_directors = m_app->getDatabaseManager()->getAllDirectors();
 
+    for (int i = 0 ; i < l_directors.size() ; i++)
+    {
+        People director = l_directors.at(i);
+        QListWidgetItem *l_tempItem = new QListWidgetItem;
+        l_tempItem->setText(director.getFirstname() + " " + director.getLastname() );
+        l_tempItem->setData(Qt::UserRole, director.getId());
+        m_directorList->insertItem(i+1, l_tempItem);
+    }
+
+    QObject::connect(m_directorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(showDirectorsMovies(QListWidgetItem*)));
+    m_directorList->setViewMode(QListView::IconMode);
+    while(!m_centralLayout->isEmpty())
+    {
+        delete m_centralLayout->takeAt(0);
+    }
+    m_centralLayout->addWidget(m_directorList);
+
+    m_app->debug("[MainWindow] Exits fillDirectorList");
 }
 
 void MainWindow::fillToWatchList()
@@ -200,11 +209,35 @@ void MainWindow::fillPlaylist()
 
 void MainWindow::startMovie(QModelIndex index)
 {
+    m_app->debug("[MainWindow] Enters startMovie");
+
     int l_pathColumn = 4;
+
     index = m_moviesList->model()->index(index.row(),l_pathColumn);
     QString l_fileToOpen = m_moviesList->model()->data(index,Qt::DisplayRole).toString();
 
-    m_app->debug(l_fileToOpen);
+    m_app->debug("[MainWindow] Opened movie: " + l_fileToOpen);
+
     QDesktopServices::openUrl(QUrl("file:///" + l_fileToOpen, QUrl::TolerantMode));
 
+    m_app->debug("[MainWindow] Exits startMovie");
+}
+
+void MainWindow::showDirectorsMovies(QListWidgetItem* item)
+{
+    m_app->debug("[MainWindow] Enters showDirectorMovies");
+
+    if (item->data(Qt::UserRole).isNull())
+    {
+        fillMoviesList();
+    }
+    else
+    {
+        QSqlQueryModel * l_modelMoviesList = new QSqlQueryModel;
+        l_modelMoviesList = m_app->getDatabaseManager()->createModel();
+        l_modelMoviesList->setQuery(m_app->getDatabaseManager()->getAllMovies());
+        m_moviesList->setModel(l_modelMoviesList);
+        connect(m_moviesList,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(startMovie(QModelIndex)));
+    }
+    m_app->debug("[MainWindow] Exits showDirectorMovies");
 }
