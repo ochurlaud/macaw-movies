@@ -41,12 +41,17 @@ class DatabaseManager : public QObject
         bool deleteDB();
         QSqlQuery getMovies(QString, QVariant);
         QSqlQuery getAllMovies();
+        QVector<Movie> getMoviesByDirector(People const&);
+        QVector<Movie> getMoviesByTag(Tag const&);
+        QVector<Movie> getMoviesByAny(QVariant);
+        QVector<Tag> getAllTags();
         QVector<People> getAllDirectors();
-        QSqlQuery getAllTitles();
+        People getDirectorById(int);
+        QVector<People> getAllActors();
         bool insertNewMovie(Movie);
         QSqlError lastError();
         QSqlQueryModel *createModel();
-        bool saveMoviesPath(QString moviePath);
+        bool saveMoviesPath(QString);
         QStringList getMoviesPath();
         QStringListModel *getMoviesPathModel() {return this->m_moviesPathModel;}
 
