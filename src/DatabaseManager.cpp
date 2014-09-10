@@ -558,7 +558,7 @@ Tag DatabaseManager::getOneTagById(int id)
  * @param Movie
  * @return bool
  */
-bool DatabaseManager::insertNewMovie(Movie movie)
+bool DatabaseManager::insertNewMovie(Movie &movie)
 {
     QSqlQuery l_query(m_db);
     l_query.prepare("INSERT INTO movies(title, original_title, year, country, duration, synopsis, file_path, colored, format, suffix, rank) "
@@ -702,6 +702,49 @@ bool DatabaseManager::addActorToMovie(People &people, Movie &movie)
     qDebug() << "[DatabaseManager] One actor added";
 
     return l_ret;
+}
+
+
+/**
+ * @brief Updates a movie from database
+ *
+ * @param Movie
+ * @return bool
+ */
+bool DatabaseManager::updateMovie(Movie &movie)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("UPDATE movies "
+                    "SET title = :title, "
+                        "original_title = :original_title, "
+                        "year = :year, "
+                        "country = :country, "
+                        "synopsis = :synopsis, "
+                        "colored = :colored, "
+                        "format = :format, "
+                        "rank = :rank "
+                    "WHERE id = :id");
+    l_query.bindValue(":title", movie.getTitle());
+    l_query.bindValue(":original_title", movie.getOriginalTitle());
+    l_query.bindValue(":year", movie.getYear());
+    l_query.bindValue(":country", movie.getCountry());
+    l_query.bindValue(":synopsis", movie.getSynopsis());
+    l_query.bindValue(":colored", movie.isColored());
+    l_query.bindValue(":format", movie.getFormat());
+    l_query.bindValue(":rank", movie.getRank());
+    l_query.bindValue(":id", movie.getId());
+
+
+    if (!l_query.exec())
+    {
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+
+    qDebug() << "[DatabaseManager] Movie updated";
+
+    return true;
 }
 
 /*

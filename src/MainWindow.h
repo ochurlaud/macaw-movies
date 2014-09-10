@@ -23,6 +23,7 @@
 #include "SettingsWindow.h"
 #include "Application.h"
 #include "Entities/Movie.h"
+#include "MetadataWindow.h"
 
 #include <QtSql>
 #include <QtGui>
@@ -43,9 +44,11 @@ class MainWindow : public QWidget
     public slots:
         void updateApp();
         void showSettingsWindow();
+        void showMetadataWindow();
         void startMovie(QTableWidgetItem*);
         void showDirectorsMovies(QListWidgetItem*);
         void showTagsMovies(QListWidgetItem*);
+        void customMenuRequested(QPoint);
 
     private:
         QPushButton *m_settingsButton;

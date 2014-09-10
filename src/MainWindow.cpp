@@ -137,6 +137,9 @@ void MainWindow::fillMoviesList(QVector<Movie> moviesList)
     QStringList l_headers;
     l_headers << "Title" << "Original Title" << "Year" << "Path of the file";
     m_moviesTable->setHorizontalHeaderLabels(l_headers);
+    m_moviesTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_moviesTable, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
+
     for (int i = 0 ; i < moviesList.size() ; i++)
     {
         QTableWidgetItem *l_title = new QTableWidgetItem(moviesList.at(i).getTitle());
@@ -286,3 +289,20 @@ void MainWindow::fillMoviesListAll()
  {
      fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
  }
+
+void MainWindow::customMenuRequested(QPoint pos)
+{
+    QMenu *l_menu=new QMenu(this);
+    QAction *l_setMetadataAction = new QAction("Set Metada", this);
+    QObject::connect(l_setMetadataAction, SIGNAL(triggered()), this, SLOT(showMetadataWindow()));
+    l_menu->addAction(new QAction("Nothing to do there", this));
+    l_menu->addAction(l_setMetadataAction);
+    l_menu->popup(m_moviesTable->viewport()->mapToGlobal(pos));
+}
+
+void MainWindow::showMetadataWindow()
+{
+    int l_movieId = m_moviesTable->selectedItems().at(0)->data(Qt::UserRole).toInt();
+    MetadataWindow *l_metadataWindow = new MetadataWindow(l_movieId);
+    l_metadataWindow->show();
+}

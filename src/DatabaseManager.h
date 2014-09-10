@@ -52,11 +52,13 @@ class DatabaseManager : public QObject
         People getOneDirectorById(int);
         QVector<People> getAllActors();
 
-        bool insertNewMovie(Movie);
+        bool insertNewMovie(Movie&);
         bool addPeopleToMovie(People&, Movie&, int);
         bool addDirectorToMovie(People&, Movie&);
         bool addProducerToMovie(People&, Movie&);
         bool addActorToMovie(People&, Movie&);
+
+        bool updateMovie(Movie&);
 
         QSqlError lastError();
         QSqlQueryModel *createModel();

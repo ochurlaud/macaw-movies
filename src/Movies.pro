@@ -40,7 +40,8 @@ SOURCES += main.cpp \
     MoviesDebug.cpp \
     Entities/Movie.cpp \
     Entities/People.cpp \
-    Entities/Tag.cpp
+    Entities/Tag.cpp \
+    MetadataWindow.cpp
 
 HEADERS  += \
     DatabaseManager.h \
@@ -50,9 +51,11 @@ HEADERS  += \
     MoviesDebug.h \
     Entities/Movie.h \
     Entities/People.h \
-    Entities/Tag.h
+    Entities/Tag.h \
+    MetadataWindow.h
 
 FORMS    += \
+    MetadataWindow.ui
 
 OTHER_FILES += \
     ../.gitignore \
