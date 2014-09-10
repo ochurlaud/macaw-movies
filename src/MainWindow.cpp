@@ -87,6 +87,7 @@ void MainWindow::showSettingsWindow()
     m_app->debug("[MainWindow] Enters showSettingsWindow()");
     SettingsWindow *l_settingsWindow = new SettingsWindow;
     l_settingsWindow->setModal(true);
+    l_settingsWindow->setAttribute(Qt::WA_DeleteOnClose);
     l_settingsWindow->show();
     QObject::connect(l_settingsWindow,SIGNAL(closeAndSave()), this, SLOT(updateApp()));
     m_app->debug("[MainWindow] Exits showSettingsWindow()");
@@ -107,38 +108,21 @@ void MainWindow::updateApp()
         QString l_filePath = l_path.fileInfo().absoluteFilePath();
         QString l_fileSuffix = l_path.fileInfo().suffix();
         // First we check whether the file is already saved or not
-    //    QSqlQuery l_knownMovieQuery = m_app->getDatabaseManager()->getMovies("file_path",l_filePath);
-    //    if (!l_knownMovieQuery.next() && (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4") )
-    //    {
+        bool l_movieExists = m_app->getDatabaseManager()->existMovie(l_filePath);
+        qDebug() << l_fileSuffix;
+        qDebug() << (!l_movieExists && (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4") );
+        if (!l_movieExists && (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4") )
+        {
             Movie l_movie;
             l_movie.setTitle(l_path.fileInfo().completeBaseName());
             l_movie.setFilePath(l_path.fileInfo().absoluteFilePath());
             l_movie.setSuffix(l_fileSuffix);
             m_app->getDatabaseManager()->insertNewMovie(l_movie);
-    //    }
-
+        }
     }
-    //fillLeftPannel();
     fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
     m_app->debug("[MainWindow] Exits updateApp()");
 }
-
-/**
- * @brief Reads the database and fills the left pannel of the window.
- */
-//void MainWindow::fillLeftPannel()
-//{
-
-//    QSqlQuery l_titlesRequest = m_app->getDatabaseManager()->getAllTitles();
-//    int i(0);
-//    while(l_titlesRequest.next())
-//    {
-//        QString l_title = l_titlesRequest.value(0).toString();
-//        m_moviesTitles.push_back(new QListWidgetItem(l_title));
-//        m_leftPannel->insertItem(i, m_moviesTitles[i]);
-//        i++;
-//    }
-//}
 
 /**
  * @brief Reads the database and fills the main pannel of the window.
@@ -185,16 +169,40 @@ void MainWindow::fillMoviesList(QVector<Movie> moviesList)
 
 void MainWindow::fillTagsList()
 {
+    m_app->debug("[MainWindow] Enters fillTagsList");
+    m_centralList = new QListWidget(this);
+    QListWidgetItem *l_tempItem = new QListWidgetItem;
+    l_tempItem->setText("All");
+    m_centralList->insertItem(0, l_tempItem);
+    QVector<Tag> l_tagsVector = m_app->getDatabaseManager()->getAllTags();
 
+    for (int i = 0 ; i < l_tagsVector.size() ; i++)
+    {
+        Tag l_tag = l_tagsVector.at(i);
+        QListWidgetItem *l_tempItem = new QListWidgetItem;
+        l_tempItem->setText(l_tag.getName());
+        l_tempItem->setData(Qt::UserRole, l_tag.getId());
+        m_centralList->insertItem(i+1, l_tempItem);
+    }
+
+    QObject::connect(m_centralList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(showTagsMovies(QListWidgetItem*)));
+    m_centralList->setViewMode(QListView::IconMode);
+    while(!m_centralLayout->isEmpty())
+    {
+        delete m_centralLayout->takeAt(0);
+    }
+    m_centralLayout->addWidget(m_centralList);
+
+    m_app->debug("[MainWindow] Exits fillTagsList");
 }
 
 void MainWindow::fillDirectorList()
 {
     m_app->debug("[MainWindow] Enters fillDirectorList");
-    m_directorList = new QListWidget(this);
+    m_centralList = new QListWidget(this);
     QListWidgetItem *l_tempItem = new QListWidgetItem;
     l_tempItem->setText("All");
-    m_directorList->insertItem(0, l_tempItem);
+    m_centralList->insertItem(0, l_tempItem);
     QVector<People> l_directors = m_app->getDatabaseManager()->getAllDirectors();
 
     for (int i = 0 ; i < l_directors.size() ; i++)
@@ -203,17 +211,16 @@ void MainWindow::fillDirectorList()
         QListWidgetItem *l_tempItem = new QListWidgetItem;
         l_tempItem->setText(director.getFirstname() + " " + director.getLastname() );
         l_tempItem->setData(Qt::UserRole, director.getId());
-        m_directorList->insertItem(i+1, l_tempItem);
-        qDebug()<<"director.getFirstname()";
+        m_centralList->insertItem(i+1, l_tempItem);
     }
 
-    QObject::connect(m_directorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(showDirectorsMovies(QListWidgetItem*)));
-    m_directorList->setViewMode(QListView::IconMode);
+    QObject::connect(m_centralList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(showDirectorsMovies(QListWidgetItem*)));
+    m_centralList->setViewMode(QListView::IconMode);
     while(!m_centralLayout->isEmpty())
     {
         delete m_centralLayout->takeAt(0);
     }
-    m_centralLayout->addWidget(m_directorList);
+    m_centralLayout->addWidget(m_centralList);
 
     m_app->debug("[MainWindow] Exits fillDirectorList");
 }
@@ -259,7 +266,23 @@ void MainWindow::showDirectorsMovies(QListWidgetItem* item)
     m_app->debug("[MainWindow] Exits showDirectorMovies");
 }
 
- void MainWindow::fillMoviesListAll()
+void MainWindow::showTagsMovies(QListWidgetItem* item)
+{
+    m_app->debug("[MainWindow] Enters showTagsMovies");
+
+    if (item->data(Qt::UserRole).isNull())
+    {
+        fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
+    }
+    else
+    {
+        Tag l_tag = m_app->getDatabaseManager()->getOneTagById(item->data(Qt::UserRole).toInt());
+        fillMoviesList(m_app->getDatabaseManager()->getMoviesByTag(l_tag));
+    }
+    m_app->debug("[MainWindow] Exits showTagsMovies");
+}
+
+void MainWindow::fillMoviesListAll()
  {
      fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
  }

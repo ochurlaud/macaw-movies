@@ -45,6 +45,7 @@ class MainWindow : public QWidget
         void showSettingsWindow();
         void startMovie(QTableWidgetItem*);
         void showDirectorsMovies(QListWidgetItem*);
+        void showTagsMovies(QListWidgetItem*);
 
     private:
         QPushButton *m_settingsButton;
@@ -60,7 +61,7 @@ class MainWindow : public QWidget
         QPushButton *m_toWatchButton;
         QPushButton *m_playlistButton;
         QTableWidget *m_moviesTable;
-        QListWidget *m_directorList;
+        QListWidget *m_centralList;
         QVector<QListWidgetItem*> m_moviesTitles;
         Application * m_app;
 

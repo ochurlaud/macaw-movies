@@ -224,7 +224,6 @@ Movie DatabaseManager::getOneMovieById(int id)
 
     if(l_query.next())
     {
-        Movie l_movie;
         l_movie.setId(l_query.value(0).toInt());
         l_movie.setTitle(l_query.value(1).toString());
         l_movie.setOriginalTitle(l_query.value(2).toString());
@@ -372,9 +371,19 @@ QVector<Movie> DatabaseManager::getMoviesByTag(Tag const &tag)
 
 QVector<Movie> getMoviesByAny(QVariant value)
 {
-    QVector<Movie> l_movies;
+    QVector<Movie> l_moviesVector;
 
-    return l_movies;
+    return l_moviesVector;
+}
+
+bool DatabaseManager::existMovie(QString filePath)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT id FROM movies WHERE file_path = :file_path ");
+    l_query.bindValue(":file_path", filePath);
+    l_query.exec();
+
+    return l_query.next();
 }
 
 /**
@@ -487,20 +496,66 @@ QVector<People> DatabaseManager::getAllActors()
 }
 
 /**
- * @brief Adds a movie to the database
+ * @brief Gets all the tags
  *
- * @return bool
+ * @return QVector<Tag>
  */
-QVector<Tag> DatabaseManagergetAllTags()
+QVector<Tag> DatabaseManager::getAllTags()
 {
-    QVector<Tag> l_tags;
+    QVector<Tag> l_tagsVector;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT id, name "
+                    "FROM tags");
 
-    return l_tags;
+    if (!l_query.exec())
+    {
+        qDebug() << l_query.lastError().text();
+    }
+
+    while(l_query.next())
+    {
+        Tag l_tag;
+        l_tag.setId(l_query.value(0).toInt());
+        l_tag.setName(l_query.value(1).toString());
+        l_tagsVector.push_back(l_tag);
+    }
+
+    return l_tagsVector;
+}
+
+/**
+ * @brief Gets the tag which id is `id`
+ *
+ * @param int id
+ * @return Tag
+ */
+Tag DatabaseManager::getOneTagById(int id)
+{
+    Tag l_tag;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT id, name "
+                    "FROM tags "
+                    "WHERE id = :id");
+    l_query.bindValue(":id", id);
+
+    if (!l_query.exec())
+    {
+        qDebug() << l_query.lastError().text();
+    }
+
+    if(l_query.next())
+    {
+        l_tag.setId(l_query.value(0).toInt());
+        l_tag.setName(l_query.value(1).toString());
+    }
+
+    return l_tag;
 }
 
 /**
  * @brief Adds a movie to the database
  *
+ * @param Movie
  * @return bool
  */
 bool DatabaseManager::insertNewMovie(Movie movie)

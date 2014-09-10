@@ -45,7 +45,9 @@ class DatabaseManager : public QObject
         QVector<Movie> getMoviesByDirector(People const&);
         QVector<Movie> getMoviesByTag(Tag const&);
         QVector<Movie> getMoviesByAny(QVariant);
+        bool existMovie(QString);
         QVector<Tag> getAllTags();
+        Tag getOneTagById(int);
         QVector<People> getAllDirectors();
         People getOneDirectorById(int);
         QVector<People> getAllActors();
