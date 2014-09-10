@@ -218,42 +218,77 @@ QSqlQuery DatabaseManager::getMovies(QString parameter_name, QVariant parameter_
 
     return l_query;
 }
+Movie DatabaseManager::getMoviesById(int id)
+{
+    Movie l_movie;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT id, title, original_title, year, country, duration, synopsis, file_path, colored, format, suffix, rank "
+                    "FROM movies "
+                    "WHERE id = :id");
+    l_query.bindValue(":id", id);
+
+    if (!l_query.exec())
+    {
+        qDebug() << l_query.lastError().text();
+    }
+
+    if(l_query.next())
+    {
+        Movie l_movie;
+        l_movie.setId(l_query.value(0).toInt());
+        l_movie.setTitle(l_query.value(1).toString());
+        l_movie.setOriginalTitle(l_query.value(2).toString());
+        l_movie.setYear(l_query.value(3).toInt());
+        l_movie.setCountry(l_query.value(4).toString());
+        l_movie.setDuration(l_query.value(5).toInt());
+        l_movie.setSynopsis(l_query.value(6).toString());
+        l_movie.setFilePath(l_query.value(7).toString());
+        l_movie.setColored(l_query.value(8).toBool());
+        l_movie.setFormat(l_query.value(9).toString());
+        l_movie.setSuffix(l_query.value(10).toString());
+        l_movie.setRank(l_query.value(11).toInt());
+    }
+
+    return l_movie;
+}
 
 /**
  * @brief Gets all the movies
  *
  * @return QSqlQuery
  */
-QSqlQuery DatabaseManager::getAllMovies()
+QVector<Movie> DatabaseManager::getAllMovies()
 {
+    QVector<Movie> l_moviesVector;
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT title, year, format, file_path FROM movies");
-    l_query.exec();
+    l_query.prepare("SELECT id, title, original_title, year, country, duration, synopsis, file_path, colored, format, suffix, rank "
+                    "FROM movies ");
 
-    return l_query;
-}
-
-QVector<People> DatabaseManager::getAllDirectors()
-{
-    QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT * FROM people where type = " + TYPE_DIRECTOR);
-    l_query.exec();
-
-    QVector<People> directors;
-    while (l_query.next())
+    if (!l_query.exec())
     {
-        People director;
-        director.setId(l_query.value("id").toInt());
-        director.setLastname(l_query.value("lastname").toString());
-        director.setFirstname(l_query.value("firstname").toString());
-        director.setRealname(l_query.value("realname").toString());
-        director.setBirthday(l_query.value("birthday").toInt());
-        director.setBiography(l_query.value("biography").toString());
-
-        directors.push_back(director);
+        qDebug() << l_query.lastError().text();
     }
 
-    return directors;
+    while(l_query.next())
+    {
+        Movie l_movie;
+        l_movie.setId(l_query.value(0).toInt());
+        l_movie.setTitle(l_query.value(1).toString());
+        l_movie.setOriginalTitle(l_query.value(2).toString());
+        l_movie.setYear(l_query.value(3).toInt());
+        l_movie.setCountry(l_query.value(4).toString());
+        l_movie.setDuration(l_query.value(5).toInt());
+        l_movie.setSynopsis(l_query.value(6).toString());
+        l_movie.setFilePath(l_query.value(7).toString());
+        l_movie.setColored(l_query.value(8).toBool());
+        l_movie.setFormat(l_query.value(9).toString());
+        l_movie.setSuffix(l_query.value(10).toString());
+        l_movie.setRank(l_query.value(11).toInt());
+
+        l_moviesVector.push_back(l_movie);
+    }
+
+    return l_moviesVector;
 }
 
 /**
@@ -415,7 +450,7 @@ bool DatabaseManager::insertNewMovie(Movie movie)
 
 People DatabaseManager::getDirectorById(int id)
 {
-    People director;
+    People l_director;
     QSqlQuery l_query(m_db);
 
     l_query.prepare("SELECT id, firstname, lastname, real_name, birthday, biography "
@@ -432,16 +467,15 @@ People DatabaseManager::getDirectorById(int id)
 
     if(l_query.next())
     {
-        qDebug() << l_query.value(2).toString();
-        director.setId(l_query.value(0).toInt());
-        director.setFirstname(l_query.value(1).toString());
-        director.setLastname(l_query.value(2).toString());
-        director.setRealname(l_query.value(3).toString());
-        director.setBirthday(l_query.value(4).toInt());
-        director.setBiography(l_query.value(5).toString());
+        l_director.setId(l_query.value(0).toInt());
+        l_director.setFirstname(l_query.value(1).toString());
+        l_director.setLastname(l_query.value(2).toString());
+        l_director.setRealname(l_query.value(3).toString());
+        l_director.setBirthday(l_query.value(4).toInt());
+        l_director.setBiography(l_query.value(5).toString());
     }
 
-    return director;
+    return l_director;
 }
 
 QVector<Movie> DatabaseManager::getMoviesByDirector(People const &director)
@@ -503,11 +537,36 @@ QVector<Tag> getAllTags()
     return l_tags;
 }
 
-QVector<People> getAllDirectors()
+QVector<People> DatabaseManager::getAllDirectors()
 {
-    QVector<People> l_directors;
+    QVector<People> l_directorsVector;
+    QSqlQuery l_query(m_db);
 
-    return l_directors;
+    l_query.prepare("SELECT id, firstname, lastname, real_name, birthday, biography "
+                    "FROM people "
+                    "WHERE id = (SELECT id_people FROM people_movies WHERE type = :type) ");
+    l_query.bindValue(":type", TYPE_DIRECTOR);
+
+    if (!l_query.exec())
+    {
+        qDebug() << l_query.lastError().text();
+    }
+
+    if(l_query.next())
+    {
+        People l_director;
+        l_director.setId(l_query.value(0).toInt());
+        l_director.setFirstname(l_query.value(1).toString());
+        l_director.setLastname(l_query.value(2).toString());
+        l_director.setRealname(l_query.value(3).toString());
+        l_director.setBirthday(l_query.value(4).toInt());
+        l_director.setBiography(l_query.value(5).toString());
+
+        l_directorsVector.push_back(l_director);
+
+    }
+
+    return l_directorsVector;
 }
 
 QVector<People> getAllActors()

@@ -22,6 +22,7 @@
 
 #include "SettingsWindow.h"
 #include "Application.h"
+#include "Entities/Movie.h"
 
 #include <QtSql>
 #include <QtGui>
@@ -36,11 +37,13 @@ class MainWindow : public QWidget
     public:
         explicit MainWindow(QWidget *parent = 0);
         ~MainWindow();
+        void fillMoviesList(QVector<Movie>);
+
 
     public slots:
         void updateApp();
         void showSettingsWindow();
-        void startMovie(QModelIndex);
+        void startMovie(QTableWidgetItem*);
         void showDirectorsMovies(QListWidgetItem*);
 
     private:
@@ -56,14 +59,14 @@ class MainWindow : public QWidget
         QPushButton *m_directorsButton;
         QPushButton *m_toWatchButton;
         QPushButton *m_playlistButton;
-        QTableView *m_moviesList;
+        QTableWidget *m_moviesTable;
         QListWidget *m_directorList;
         QVector<QListWidgetItem*> m_moviesTitles;
         Application * m_app;
 
 private slots:
 //        void fillLeftPannel();
-    void fillMoviesList();
+    void fillMoviesListAll();
     void fillTagsList();
     void fillDirectorList();
     void fillToWatchList();

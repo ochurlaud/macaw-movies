@@ -24,6 +24,7 @@
 #include "MainWindow.h"
 #include "DatabaseManager.h"
 #include "MoviesDebug.h"
+#include "Entities/Movie.h"
 
 class Application : public QApplication
 {

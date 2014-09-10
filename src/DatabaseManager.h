@@ -40,7 +40,8 @@ class DatabaseManager : public QObject
         bool closeDB();
         bool deleteDB();
         QSqlQuery getMovies(QString, QVariant);
-        QSqlQuery getAllMovies();
+        QVector<Movie> getAllMovies();
+        Movie getMoviesById(int);
         QVector<Movie> getMoviesByDirector(People const&);
         QVector<Movie> getMoviesByTag(Tag const&);
         QVector<Movie> getMoviesByAny(QVariant);

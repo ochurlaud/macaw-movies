@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     m_directorsButton = new QPushButton("Director");
     m_toWatchButton = new QPushButton("To Watch");
     m_playlistButton = new QPushButton("Playlist");
-    QObject::connect(m_allMoviesButton, SIGNAL(clicked()), this, SLOT(fillMoviesList()));
+    QObject::connect(m_allMoviesButton, SIGNAL(clicked()), this, SLOT(fillMoviesListAll()));
     QObject::connect(m_tagsButton, SIGNAL(clicked()), this, SLOT(fillTagsList()));
     QObject::connect(m_directorsButton, SIGNAL(clicked()), this, SLOT(fillDirectorList()));
     QObject::connect(m_toWatchButton, SIGNAL(clicked()), this, SLOT(fillToWatchList()));
@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     // m_movieList : central list. Would be great to be able to choose how it looks like
     m_centralLayout = new QVBoxLayout;
 
-    fillMoviesList();
+    fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
 
     m_settingsButton = new QPushButton("Settings");
     QObject::connect(m_settingsButton, SIGNAL(clicked()), this, SLOT(showSettingsWindow()));
@@ -119,7 +119,7 @@ void MainWindow::updateApp()
 
     }
     //fillLeftPannel();
-    fillMoviesList();
+    fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
     m_app->debug("[MainWindow] Exits updateApp()");
 }
 
@@ -143,23 +143,44 @@ void MainWindow::updateApp()
 /**
  * @brief Reads the database and fills the main pannel of the window.
  */
-void MainWindow::fillMoviesList()
+void MainWindow::fillMoviesList(QVector<Movie> moviesList)
 {
-    m_moviesList = new QTableView;
+    m_app->debug("[MainWindow] Enters fillMoviesList()");
+    m_moviesTable = new QTableWidget;
 
-    QSqlQueryModel * l_modelMoviesList = new QSqlQueryModel;
-    l_modelMoviesList = m_app->getDatabaseManager()->createModel();
-    l_modelMoviesList->setQuery(m_app->getDatabaseManager()->getAllMovies());
-    m_moviesList->setModel(l_modelMoviesList);
-    m_moviesList->setShowGrid(false);
-    m_moviesList->verticalHeader()->hide();
-    m_moviesList->setAlternatingRowColors(true);
-    connect(m_moviesList,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(startMovie(QModelIndex)));
+    m_moviesTable->setRowCount(moviesList.size());
+    m_moviesTable->setColumnCount(4);
+    QStringList l_headers;
+    l_headers << "Title" << "Original Title" << "Year" << "Path of the file";
+    m_moviesTable->setHorizontalHeaderLabels(l_headers);
+    for (int i = 0 ; i < moviesList.size() ; i++)
+    {
+        QTableWidgetItem *l_title = new QTableWidgetItem(moviesList.at(i).getTitle());
+        l_title->setData(Qt::UserRole, moviesList.at(i).getId());
+        QTableWidgetItem *l_originalTitle = new QTableWidgetItem(moviesList.at(i).getOriginalTitle());
+        l_originalTitle->setData(Qt::UserRole, moviesList.at(i).getId());
+        QTableWidgetItem *l_year = new QTableWidgetItem(moviesList.at(i).getYear());
+        l_year->setData(Qt::UserRole, moviesList.at(i).getId());
+        QTableWidgetItem *l_filePath = new QTableWidgetItem(moviesList.at(i).getFilePath());
+        l_filePath->setData(Qt::UserRole, moviesList.at(i).getId());
+
+        m_moviesTable->setItem(i, 0, l_title);
+        m_moviesTable->setItem(i, 1, l_originalTitle);
+        m_moviesTable->setItem(i, 2, l_year);
+        m_moviesTable->setItem(i, 3, l_filePath);
+    }
+    m_moviesTable->setShowGrid(false);
+    m_moviesTable->verticalHeader()->hide();
+    m_moviesTable->setAlternatingRowColors(true);
+
+    connect(m_moviesTable,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this,SLOT(startMovie(QTableWidgetItem*)));
+
     while(!m_centralLayout->isEmpty())
     {
         delete m_centralLayout->takeAt(0);
     }
-    m_centralLayout->addWidget(m_moviesList);
+    m_centralLayout->addWidget(m_moviesTable);
+    m_app->debug("[MainWindow] Exits fillMoviesList()");
 }
 
 void MainWindow::fillTagsList()
@@ -183,6 +204,7 @@ void MainWindow::fillDirectorList()
         l_tempItem->setText(director.getFirstname() + " " + director.getLastname() );
         l_tempItem->setData(Qt::UserRole, director.getId());
         m_directorList->insertItem(i+1, l_tempItem);
+        qDebug()<<"director.getFirstname()";
     }
 
     QObject::connect(m_directorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(showDirectorsMovies(QListWidgetItem*)));
@@ -207,18 +229,16 @@ void MainWindow::fillPlaylist()
 }
 
 
-void MainWindow::startMovie(QModelIndex index)
+void MainWindow::startMovie(QTableWidgetItem *item)
 {
     m_app->debug("[MainWindow] Enters startMovie");
 
-    int l_pathColumn = 4;
+    int l_movieId = item->data(Qt::UserRole).toInt();
+    Movie l_movie = m_app->getDatabaseManager()->getMoviesById(l_movieId);
 
-    index = m_moviesList->model()->index(index.row(),l_pathColumn);
-    QString l_fileToOpen = m_moviesList->model()->data(index,Qt::DisplayRole).toString();
+    m_app->debug("[MainWindow] Opened movie: " + l_movie.getFilePath());
 
-    m_app->debug("[MainWindow] Opened movie: " + l_fileToOpen);
-
-    QDesktopServices::openUrl(QUrl("file:///" + l_fileToOpen, QUrl::TolerantMode));
+    QDesktopServices::openUrl(QUrl("file:///" + l_movie.getFilePath(), QUrl::TolerantMode));
 
     m_app->debug("[MainWindow] Exits startMovie");
 }
@@ -229,15 +249,17 @@ void MainWindow::showDirectorsMovies(QListWidgetItem* item)
 
     if (item->data(Qt::UserRole).isNull())
     {
-        fillMoviesList();
+        fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
     }
     else
     {
-        QSqlQueryModel * l_modelMoviesList = new QSqlQueryModel;
-        l_modelMoviesList = m_app->getDatabaseManager()->createModel();
-        l_modelMoviesList->setQuery(m_app->getDatabaseManager()->getAllMovies());
-        m_moviesList->setModel(l_modelMoviesList);
-        connect(m_moviesList,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(startMovie(QModelIndex)));
+        People l_director = m_app->getDatabaseManager()->getDirectorById(item->data(Qt::UserRole).toInt());
+        fillMoviesList(m_app->getDatabaseManager()->getMoviesByDirector(l_director));
     }
     m_app->debug("[MainWindow] Exits showDirectorMovies");
 }
+
+ void MainWindow::fillMoviesListAll()
+ {
+     fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
+ }
