@@ -613,8 +613,10 @@ bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
  */
 bool DatabaseManager::addDirectorToMovie(People &people, Movie &movie)
 {
-    addPeopleToMovie(people, movie, TYPE_DIRECTOR);
+    bool l_ret = addPeopleToMovie(people, movie, TYPE_DIRECTOR);
     qDebug() << "[DatabaseManager] One director added";
+
+    return l_ret;
 }
 
 /**
@@ -626,8 +628,10 @@ bool DatabaseManager::addDirectorToMovie(People &people, Movie &movie)
  */
 bool DatabaseManager::addProducerToMovie(People &people, Movie &movie)
 {
-    addPeopleToMovie(people, movie, TYPE_PRODUCER);
+    bool l_ret = addPeopleToMovie(people, movie, TYPE_PRODUCER);
     qDebug() << "[DatabaseManager] One producer added";
+
+    return l_ret;
 }
 
 /**
@@ -639,8 +643,10 @@ bool DatabaseManager::addProducerToMovie(People &people, Movie &movie)
  */
 bool DatabaseManager::addActorToMovie(People &people, Movie &movie)
 {
-    addPeopleToMovie(people, movie, TYPE_ACTOR);
+    bool l_ret = addPeopleToMovie(people, movie, TYPE_ACTOR);
     qDebug() << "[DatabaseManager] One actor added";
+
+    return l_ret;
 }
 
 /*
