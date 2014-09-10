@@ -107,15 +107,15 @@ void MainWindow::updateApp()
         QString l_filePath = l_path.fileInfo().absoluteFilePath();
         QString l_fileSuffix = l_path.fileInfo().suffix();
         // First we check whether the file is already saved or not
-        QSqlQuery l_knownMovieQuery = m_app->getDatabaseManager()->getMovies("file_path",l_filePath);
-        if (!l_knownMovieQuery.next() && (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4") )
-        {
+    //    QSqlQuery l_knownMovieQuery = m_app->getDatabaseManager()->getMovies("file_path",l_filePath);
+    //    if (!l_knownMovieQuery.next() && (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4") )
+    //    {
             Movie l_movie;
             l_movie.setTitle(l_path.fileInfo().completeBaseName());
             l_movie.setFilePath(l_path.fileInfo().absoluteFilePath());
             l_movie.setSuffix(l_fileSuffix);
             m_app->getDatabaseManager()->insertNewMovie(l_movie);
-        }
+    //    }
 
     }
     //fillLeftPannel();
@@ -234,7 +234,7 @@ void MainWindow::startMovie(QTableWidgetItem *item)
     m_app->debug("[MainWindow] Enters startMovie");
 
     int l_movieId = item->data(Qt::UserRole).toInt();
-    Movie l_movie = m_app->getDatabaseManager()->getMoviesById(l_movieId);
+    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
 
     m_app->debug("[MainWindow] Opened movie: " + l_movie.getFilePath());
 
@@ -253,7 +253,7 @@ void MainWindow::showDirectorsMovies(QListWidgetItem* item)
     }
     else
     {
-        People l_director = m_app->getDatabaseManager()->getDirectorById(item->data(Qt::UserRole).toInt());
+        People l_director = m_app->getDatabaseManager()->getOneDirectorById(item->data(Qt::UserRole).toInt());
         fillMoviesList(m_app->getDatabaseManager()->getMoviesByDirector(l_director));
     }
     m_app->debug("[MainWindow] Exits showDirectorMovies");
