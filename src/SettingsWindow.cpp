@@ -97,7 +97,7 @@ void SettingsWindow::browseFilesPathDialog()
 {
     m_app->debug("[SettingsWindow] Enters browseFilesPathDialog()");
     QString l_folder = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                          "/home/olivier/",
+                                                          "/home/",
                                                           QFileDialog::ShowDirsOnly);
     m_filesPathEdit->setText(l_folder);
     m_app->debug("[SettingsWindow] Exits browseFilesPathDialog()");

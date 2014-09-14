@@ -811,9 +811,14 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
     }
 
 
+    //Updates the dataBase
     QSqlQuery l_query(m_db);
     l_query.prepare("INSERT INTO paths_list (movies_path) VALUES (:path)");
     l_query.bindValue(":path", moviePath);
+
+    //updates the movies path list in the settings window
+    m_moviesPathModel->insertRow(m_moviesPathModel->rowCount());
+    m_moviesPathModel->setData(m_moviesPathModel->index(m_moviesPathModel->rowCount()-1), moviePath);
 
     return l_query.exec();
 }
