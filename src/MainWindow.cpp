@@ -108,16 +108,20 @@ void MainWindow::updateApp()
         QString l_filePath = l_path.fileInfo().absoluteFilePath();
         QString l_fileSuffix = l_path.fileInfo().suffix();
         // First we check whether the file is already saved or not
-        bool l_movieExists = m_app->getDatabaseManager()->existMovie(l_filePath);
         qDebug() << l_fileSuffix;
-        qDebug() << (!l_movieExists && (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4") );
-        if (!l_movieExists && (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4") )
+        qDebug() << (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4" || l_fileSuffix == "mpg" || l_fileSuffix == "flv" || l_fileSuffix == "mov");
+        if (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4" || l_fileSuffix == "mpg" || l_fileSuffix == "flv" || l_fileSuffix == "mov")
         {
-            Movie l_movie;
-            l_movie.setTitle(l_path.fileInfo().completeBaseName());
-            l_movie.setFilePath(l_path.fileInfo().absoluteFilePath());
-            l_movie.setSuffix(l_fileSuffix);
-            m_app->getDatabaseManager()->insertNewMovie(l_movie);
+            bool l_movieExists = m_app->getDatabaseManager()->existMovie(l_filePath);
+            qDebug() << !l_movieExists;
+            if(!l_movieExists)
+            {
+                Movie l_movie;
+                l_movie.setTitle(l_path.fileInfo().completeBaseName());
+                l_movie.setFilePath(l_path.fileInfo().absoluteFilePath());
+                l_movie.setSuffix(l_fileSuffix);
+                m_app->getDatabaseManager()->insertNewMovie(l_movie);
+            }
         }
     }
     fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
@@ -248,7 +252,7 @@ void MainWindow::startMovie(QTableWidgetItem *item)
 
     m_app->debug("[MainWindow] Opened movie: " + l_movie.getFilePath());
 
-    QDesktopServices::openUrl(QUrl("file:///" + l_movie.getFilePath(), QUrl::TolerantMode));
+    QDesktopServices::openUrl(QUrl("file://" + l_movie.getFilePath(), QUrl::TolerantMode));
 
     m_app->debug("[MainWindow] Exits startMovie");
 }
