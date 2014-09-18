@@ -75,6 +75,7 @@ QString MetadataWindow::getSynopsis()
 
 void MetadataWindow::updateMovie()
 {
+    m_app->debug("[MetadataWindow] Enters updateMovie()");
     m_movie.setTitle(getTitle());
     m_movie.setOriginalTitle(getOriginalTitle());
     m_movie.setYear(getYear());
@@ -82,4 +83,5 @@ void MetadataWindow::updateMovie()
     m_movie.setSynopsis(getSynopsis());
 
     m_app->getDatabaseManager()->updateMovie(m_movie);
+    m_app->debug("[MetadataWindow] Exits updateMovie()");
 }

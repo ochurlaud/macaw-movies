@@ -94,7 +94,7 @@ void MainWindow::showSettingsWindow()
 }
 
 /**
- * @brief Add movies to the database and updates the application.
+ * @brief Add movies of the paths to the database and updates the application.
  */
 void MainWindow::updateApp()
 {
@@ -107,20 +107,24 @@ void MainWindow::updateApp()
 
         QString l_filePath = l_path.fileInfo().absoluteFilePath();
         QString l_fileSuffix = l_path.fileInfo().suffix();
-        // First we check whether the file is already saved or not
-        qDebug() << l_fileSuffix;
-        qDebug() << (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4" || l_fileSuffix == "mpg" || l_fileSuffix == "flv" || l_fileSuffix == "mov");
+
         if (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4" || l_fileSuffix == "mpg" || l_fileSuffix == "flv" || l_fileSuffix == "mov")
         {
+            m_app->debug("[MainWindow.updateApp()] Suffix accepted");
             bool l_movieExists = m_app->getDatabaseManager()->existMovie(l_filePath);
-            qDebug() << !l_movieExists;
+
             if(!l_movieExists)
             {
+                m_app->debug("[MainWindow.updateApp()] Movie not already known");
                 Movie l_movie;
                 l_movie.setTitle(l_path.fileInfo().completeBaseName());
                 l_movie.setFilePath(l_path.fileInfo().absoluteFilePath());
                 l_movie.setSuffix(l_fileSuffix);
                 m_app->getDatabaseManager()->insertNewMovie(l_movie);
+            }
+            else
+            {
+                m_app->debug("[MainWindow.updateApp()] Movie already known. Skipped");
             }
         }
     }
@@ -129,7 +133,7 @@ void MainWindow::updateApp()
 }
 
 /**
- * @brief Reads the database and fills the main pannel of the window.
+ * @brief Fills the main pannel of the window.
  */
 void MainWindow::fillMoviesList(QVector<Movie> moviesList)
 {
@@ -174,9 +178,12 @@ void MainWindow::fillMoviesList(QVector<Movie> moviesList)
     m_app->debug("[MainWindow] Exits fillMoviesList()");
 }
 
+/**
+ * @brief Fills the main pannel of the window with tags.
+ */
 void MainWindow::fillTagsList()
 {
-    m_app->debug("[MainWindow] Enters fillTagsList");
+    m_app->debug("[MainWindow] Enters fillTagsList()");
     m_centralList = new QListWidget(this);
     QListWidgetItem *l_tempItem = new QListWidgetItem;
     l_tempItem->setText("All");
@@ -200,12 +207,15 @@ void MainWindow::fillTagsList()
     }
     m_centralLayout->addWidget(m_centralList);
 
-    m_app->debug("[MainWindow] Exits fillTagsList");
+    m_app->debug("[MainWindow] Exits fillTagsList()");
 }
 
+/**
+ * @brief Fills the main pannel of the window with directors.
+ */
 void MainWindow::fillDirectorList()
 {
-    m_app->debug("[MainWindow] Enters fillDirectorList");
+    m_app->debug("[MainWindow] Enters fillDirectorList()");
     m_centralList = new QListWidget(this);
     QListWidgetItem *l_tempItem = new QListWidgetItem;
     l_tempItem->setText("All");
@@ -229,37 +239,52 @@ void MainWindow::fillDirectorList()
     }
     m_centralLayout->addWidget(m_centralList);
 
-    m_app->debug("[MainWindow] Exits fillDirectorList");
+    m_app->debug("[MainWindow] Exits fillDirectorList()");
 }
 
+/**
+ * @brief Fills the main pannel of the movies labeled "To Watch".
+ */
 void MainWindow::fillToWatchList()
 {
 
 }
 
+/**
+ * @brief Fills the main pannel of the movies of the playlist
+ */
 void MainWindow::fillPlaylist()
 {
 
 }
 
-
+/**
+ * @brief Launch a movie with the user favorite program.
+ *
+ * @param QTableWidgetItem* item doubleclicked by the user
+ */
 void MainWindow::startMovie(QTableWidgetItem *item)
 {
-    m_app->debug("[MainWindow] Enters startMovie");
+    m_app->debug("[MainWindow] Enters startMovie()");
 
     int l_movieId = item->data(Qt::UserRole).toInt();
     Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
 
-    m_app->debug("[MainWindow] Opened movie: " + l_movie.getFilePath());
+    m_app->debug("[MainWindow.startMovie()] Opened movie: " + l_movie.getFilePath());
 
     QDesktopServices::openUrl(QUrl("file://" + l_movie.getFilePath(), QUrl::TolerantMode));
 
-    m_app->debug("[MainWindow] Exits startMovie");
+    m_app->debug("[MainWindow] Exits startMovie()");
 }
 
+/**
+ * @brief Fills the main pannel with the movies of the selected director
+ *
+ * @param QListWidgetItem* director selected by the user
+ */
 void MainWindow::showDirectorsMovies(QListWidgetItem* item)
 {
-    m_app->debug("[MainWindow] Enters showDirectorMovies");
+    m_app->debug("[MainWindow] Enters showDirectorMovies()");
 
     if (item->data(Qt::UserRole).isNull())
     {
@@ -270,12 +295,18 @@ void MainWindow::showDirectorsMovies(QListWidgetItem* item)
         People l_director = m_app->getDatabaseManager()->getOneDirectorById(item->data(Qt::UserRole).toInt());
         fillMoviesList(m_app->getDatabaseManager()->getMoviesByDirector(l_director));
     }
-    m_app->debug("[MainWindow] Exits showDirectorMovies");
+    m_app->debug("[MainWindow] Exits showDirectorMovies()");
 }
 
+
+/**
+ * @brief Fills the main pannel with the movies with selected tag
+ *
+ * @param QListWidgetItem* tag selected by the user
+ */
 void MainWindow::showTagsMovies(QListWidgetItem* item)
 {
-    m_app->debug("[MainWindow] Enters showTagsMovies");
+    m_app->debug("[MainWindow] Enters showTagsMovies()");
 
     if (item->data(Qt::UserRole).isNull())
     {
@@ -286,7 +317,7 @@ void MainWindow::showTagsMovies(QListWidgetItem* item)
         Tag l_tag = m_app->getDatabaseManager()->getOneTagById(item->data(Qt::UserRole).toInt());
         fillMoviesList(m_app->getDatabaseManager()->getMoviesByTag(l_tag));
     }
-    m_app->debug("[MainWindow] Exits showTagsMovies");
+    m_app->debug("[MainWindow] Exits showTagsMovies()");
 }
 
 void MainWindow::fillMoviesListAll()
@@ -294,19 +325,32 @@ void MainWindow::fillMoviesListAll()
      fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
  }
 
+/**
+ * @brief Shows the context-menu where the user rightclicks
+ *
+ * @param QPoint position of the cursor
+ */
 void MainWindow::customMenuRequested(QPoint pos)
 {
+    m_app->debug("[MainWindow] Enters customMenuRequested()");
     QMenu *l_menu=new QMenu(this);
     QAction *l_setMetadataAction = new QAction("Set Metada", this);
     QObject::connect(l_setMetadataAction, SIGNAL(triggered()), this, SLOT(showMetadataWindow()));
     l_menu->addAction(new QAction("Nothing to do there", this));
     l_menu->addAction(l_setMetadataAction);
     l_menu->popup(m_moviesTable->viewport()->mapToGlobal(pos));
+    m_app->debug("[MainWindow] Exits customMenuRequested()");
 }
 
+
+/**
+ * @brief Shows the window to view/edit the metadata of a movie
+ */
 void MainWindow::showMetadataWindow()
 {
+    m_app->debug("[MainWindow] Enters showMetadataWindow()");
     int l_movieId = m_moviesTable->selectedItems().at(0)->data(Qt::UserRole).toInt();
     MetadataWindow *l_metadataWindow = new MetadataWindow(l_movieId);
     l_metadataWindow->show();
+    m_app->debug("[MainWindow] Exits showMetadataWindow()");
 }

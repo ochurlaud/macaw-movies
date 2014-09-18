@@ -35,11 +35,21 @@ class DatabaseManager : public QObject
 {
     public:
         DatabaseManager();
+        // Database management
         bool openDB();
         bool createTables();
         bool closeDB();
         bool deleteDB();
+        QSqlError lastError();
+
+        // Getters for paths, config
+        QStringList getMoviesPath();
         QSqlQuery getMovies(QString, QVariant);
+
+        // Insertions for paths, config
+        bool saveMoviesPath(QString);
+
+        // Getters
         QVector<Movie> getAllMovies();
         Movie getOneMovieById(int);
         QVector<Movie> getMoviesByDirector(People const&);
@@ -52,18 +62,18 @@ class DatabaseManager : public QObject
         People getOneDirectorById(int);
         QVector<People> getAllActors();
 
+        // Insertion
         bool insertNewMovie(Movie&);
         bool addPeopleToMovie(People&, Movie&, int);
         bool addDirectorToMovie(People&, Movie&);
         bool addProducerToMovie(People&, Movie&);
         bool addActorToMovie(People&, Movie&);
 
+
+        // Update
         bool updateMovie(Movie&);
 
-        QSqlError lastError();
-        QSqlQueryModel *createModel();
-        bool saveMoviesPath(QString);
-        QStringList getMoviesPath();
+        // Models
         QStringListModel *getMoviesPathModel() {return this->m_moviesPathModel;}
 
 
