@@ -88,6 +88,19 @@ void MetadataWindow::setDirectors(QVector<People> directorsVector)
     }
 }
 
+QVector<People> MetadataWindow::getDirectors()
+{
+    QVector<People> l_directorsVector;
+    for (int i = 0 ; i < m_ui->directorsWidget->count() ; i++)
+    {
+        int l_id = m_ui->directorsWidget->item(i)->data(Qt::UserRole).toInt();
+        People l_director = m_app->getDatabaseManager()->getOneDirectorById(l_id);
+        l_directorsVector.push_back(l_director);
+    }
+
+    return l_directorsVector;
+}
+
 void MetadataWindow::setProducers(QVector<People> producersVector)
 {
     for (int i = 0 ; i < producersVector.size() ; i++)
@@ -97,6 +110,20 @@ void MetadataWindow::setProducers(QVector<People> producersVector)
         l_item->setData(Qt::UserRole, l_producer.getId());
         m_ui->producersWidget->insertItem(i, l_item);
     }
+}
+
+
+QVector<People> MetadataWindow::getProducers()
+{
+    QVector<People> l_producersVector;
+    for (int i = 0 ; i < m_ui->producersWidget->count() ; i++)
+    {
+        int l_id = m_ui->producersWidget->item(i)->data(Qt::UserRole).toInt();
+        People l_producer = m_app->getDatabaseManager()->getOneProducerById(l_id);
+        l_producersVector.push_back(l_producer);
+    }
+
+    return l_producersVector;
 }
 
 void MetadataWindow::setActors(QVector<People> actorsVector)
@@ -110,6 +137,20 @@ void MetadataWindow::setActors(QVector<People> actorsVector)
     }
 }
 
+
+QVector<People> MetadataWindow::getActors()
+{
+    QVector<People> l_actorsVector;
+    for (int i = 0 ; i < m_ui->actorsWidget->count() ; i++)
+    {
+        int l_id = m_ui->actorsWidget->item(i)->data(Qt::UserRole).toInt();
+        People l_actor = m_app->getDatabaseManager()->getOneActorById(l_id);
+        l_actorsVector.push_back(l_actor);
+    }
+
+    return l_actorsVector;
+}
+
 void MetadataWindow::updateMovie()
 {
     m_app->debug("[MetadataWindow] Enters updateMovie()");
@@ -118,6 +159,9 @@ void MetadataWindow::updateMovie()
     m_movie.setYear(getYear());
     m_movie.setCountry(getCountry());
     m_movie.setSynopsis(getSynopsis());
+    m_movie.setDirectors(getDirectors());
+    m_movie.setProducers(getProducers());
+    m_movie.setActors(getActors());
 
     m_app->getDatabaseManager()->updateMovie(m_movie);
     m_app->debug("[MetadataWindow] Exits updateMovie()");

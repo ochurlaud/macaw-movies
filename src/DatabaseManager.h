@@ -58,9 +58,12 @@ class DatabaseManager : public QObject
         bool existMovie(QString);
         QVector<Tag> getAllTags();
         Tag getOneTagById(int);
+        People getOnePeopleById(int, int);
         QVector<People> getAllDirectors();
         People getOneDirectorById(int);
         QVector<People> getAllActors();
+        People getOneActorById(int);
+        People getOneProducerById(int);
         void setTagsToMovie(Movie&);
         void setPeopleToMovie(Movie&);
 

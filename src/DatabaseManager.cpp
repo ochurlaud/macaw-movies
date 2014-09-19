@@ -510,40 +510,52 @@ QVector<People> DatabaseManager::getAllDirectors()
 }
 
 /**
- * @brief Gets the one director that has the id `id`
+ * @brief Gets the one person that has the id `id`
  *
- * @param int id of the director
+ * @param int id of the person
+ * @param int type of the person
  * @return People
  */
-People DatabaseManager::getOneDirectorById(int id)
+People DatabaseManager::getOnePeopleById(int id, int type)
 {
-    People l_director;
+    People l_people;
     QSqlQuery l_query(m_db);
 
-    l_query.prepare("SELECT id, firstname, lastname, realname, birthday, biography "
-                    "FROM people "
-                    "WHERE id = :id AND EXISTS (SELECT type FROM people_movies WHERE id_people = :id2 AND type = :type) ");
+    l_query.prepare("SELECT p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography "
+                    "FROM people AS p, people_movies AS pm "
+                    "WHERE p.id = :id AND pm.id_people = p.id AND pm.type = :type) ");
     l_query.bindValue(":id", id);
-    l_query.bindValue(":id2", id);
-    l_query.bindValue(":type", TYPE_DIRECTOR);
+    l_query.bindValue(":type", type);
 
     if (!l_query.exec())
     {
-        qDebug() << "In getOneDirectorBy(int):";
+        qDebug() << "In getOnePeopleBy(int, type):";
         qDebug() << l_query.lastError().text();
     }
 
     if(l_query.next())
     {
-        l_director.setId(l_query.value(0).toInt());
-        l_director.setFirstname(l_query.value(1).toString());
-        l_director.setLastname(l_query.value(2).toString());
-        l_director.setRealname(l_query.value(3).toString());
-        l_director.setBirthday(l_query.value(4).toInt());
-        l_director.setBiography(l_query.value(5).toString());
+        l_people.setId(l_query.value(0).toInt());
+        l_people.setFirstname(l_query.value(1).toString());
+        l_people.setLastname(l_query.value(2).toString());
+        l_people.setRealname(l_query.value(3).toString());
+        l_people.setBirthday(l_query.value(4).toInt());
+        l_people.setBiography(l_query.value(5).toString());
     }
 
-    return l_director;
+    return l_people;
+}
+
+/**
+* @brief Gets the one director that has the id `id`
+*
+* @param int id of the director
+* @param int type of the director
+* @return People
+*/
+People DatabaseManager::getOneDirectorById(int id)
+{
+   return getOnePeopleById(id, TYPE_DIRECTOR);
 }
 
 /**
@@ -583,6 +595,33 @@ QVector<People> DatabaseManager::getAllActors()
 
     return l_actorsVector;
 }
+
+
+/**
+* @brief Gets the one director that has the id `id`
+*
+* @param int id of the producer
+* @param int type of the producer
+* @return People
+*/
+People DatabaseManager::getOneProducerById(int id)
+{
+   return getOnePeopleById(id, TYPE_PRODUCER);
+}
+
+
+/**
+* @brief Gets the one director that has the id `id`
+*
+* @param int id of the actor
+* @param int type of the actor
+* @return People
+*/
+People DatabaseManager::getOneActorById(int id)
+{
+   return getOnePeopleById(id, TYPE_ACTOR);
+}
+
 
 /**
  * @brief Gets all the tags

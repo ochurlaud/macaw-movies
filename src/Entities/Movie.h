@@ -36,12 +36,15 @@ public:
     QString getOriginalTitle() const;
     void setOriginalTitle(QString originalTitle);
     QVector<People> getDirectors() const;
+    void setDirectors(QVector<People>);
     void addDirector(People director);
     void removeDirector(People director);
     QVector<People> getProducers() const;
+    void setProducers(QVector<People>);
     void addProducer(People producer);
     void removeProducer(People producer);
     QVector<People> getActors() const;
+    void setActors(QVector<People>);
     void addActor(People actor);
     void removeActor(People actor);
     int getYear() const;
@@ -63,6 +66,7 @@ public:
     int getRank() const;
     void setRank(int rank);
     QVector<Tag> getTags() const;
+    void setTags(QVector<Tag>);
     void addTag(Tag tag);
     void removeTag(Tag tag);
 

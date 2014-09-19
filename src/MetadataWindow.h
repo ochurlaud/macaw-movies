@@ -28,8 +28,11 @@ class MetadataWindow : public QDialog
         void setSynopsis(QString);
         QString getSynopsis();
         void setDirectors(QVector<People>);
+        QVector<People> getDirectors();
         void setActors(QVector<People>);
+        QVector<People> getActors();
         void setProducers(QVector<People>);
+        QVector<People> getProducers();
 
     private slots:
         void updateMovie();

@@ -69,6 +69,11 @@ QVector<People> Movie::getDirectors() const
     return m_directors;
 }
 
+void Movie::setDirectors(QVector<People> directors)
+{
+    m_directors = directors;
+}
+
 void Movie::addDirector(People director)
 {
     m_directors.push_back(director);
@@ -88,6 +93,11 @@ QVector<People> Movie::getProducers() const
     return m_producers;
 }
 
+void Movie::setProducers(QVector<People> producers)
+{
+    m_producers = producers;
+}
+
 void Movie::addProducer(People producer)
 {
     m_producers.push_back(producer);
@@ -105,6 +115,11 @@ void Movie::removeProducer(People producer)
 QVector<People> Movie::getActors() const
 {
     return m_actors;
+}
+
+void Movie::setActors(QVector<People> actors)
+{
+    m_actors = actors;
 }
 
 void Movie::addActor(People actor)
