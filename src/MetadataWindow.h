@@ -27,6 +27,9 @@ class MetadataWindow : public QDialog
         QString getCountry();
         void setSynopsis(QString);
         QString getSynopsis();
+        void setDirectors(QVector<People>);
+        void setActors(QVector<People>);
+        void setProducers(QVector<People>);
 
     private slots:
         void updateMovie();

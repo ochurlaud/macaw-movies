@@ -325,6 +325,7 @@ void MainWindow::fillMoviesListAll()
      fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
  }
 
+
 /**
  * @brief Shows the context-menu where the user rightclicks
  *
@@ -333,7 +334,7 @@ void MainWindow::fillMoviesListAll()
 void MainWindow::customMenuRequested(QPoint pos)
 {
     m_app->debug("[MainWindow] Enters customMenuRequested()");
-    QMenu *l_menu=new QMenu(this);
+    QMenu *l_menu = new QMenu(this);
     QAction *l_setMetadataAction = new QAction("Set Metada", this);
     QObject::connect(l_setMetadataAction, SIGNAL(triggered()), this, SLOT(showMetadataWindow()));
     l_menu->addAction(new QAction("Nothing to do there", this));

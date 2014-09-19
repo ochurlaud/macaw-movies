@@ -14,6 +14,10 @@ MetadataWindow::MetadataWindow(int id, QWidget *parent) :
     setYear(m_movie.getYear());
     setCountry(m_movie.getCountry());
     setSynopsis(m_movie.getSynopsis());
+    setDirectors(m_movie.getDirectors());
+    setActors(m_movie.getActors());
+    setProducers(m_movie.getProducers());
+
     QObject::connect(this, SIGNAL(accepted()), this, SLOT(updateMovie()));
     m_app->debug("[MetadataWindow] Construction done");
 }
@@ -71,6 +75,39 @@ void MetadataWindow::setSynopsis(QString synopsis)
 QString MetadataWindow::getSynopsis()
 {
     return m_ui->synopsisEdit->toPlainText();
+}
+
+void MetadataWindow::setDirectors(QVector<People> directorsVector)
+{
+    for (int i = 0 ; i < directorsVector.size() ; i++)
+    {
+        People l_director = directorsVector.at(i);
+        QListWidgetItem *l_item = new QListWidgetItem(l_director.getFirstname() + " " + l_director.getLastname());
+        l_item->setData(Qt::UserRole, l_director.getId());
+        m_ui->directorsWidget->insertItem(i, l_item);
+    }
+}
+
+void MetadataWindow::setProducers(QVector<People> producersVector)
+{
+    for (int i = 0 ; i < producersVector.size() ; i++)
+    {
+        People l_producer = producersVector.at(i);
+        QListWidgetItem *l_item = new QListWidgetItem(l_producer.getFirstname() + " " + l_producer.getLastname());
+        l_item->setData(Qt::UserRole, l_producer.getId());
+        m_ui->producersWidget->insertItem(i, l_item);
+    }
+}
+
+void MetadataWindow::setActors(QVector<People> actorsVector)
+{
+    for (int i = 0 ; i < actorsVector.size() ; i++)
+    {
+        People l_actor = actorsVector.at(i);
+        QListWidgetItem *l_item = new QListWidgetItem(l_actor.getFirstname() + " " + l_actor.getLastname());
+        l_item->setData(Qt::UserRole, l_actor.getId());
+        m_ui->actorsWidget->insertItem(i, l_item);
+    }
 }
 
 void MetadataWindow::updateMovie()
