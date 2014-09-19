@@ -157,7 +157,7 @@ bool DatabaseManager::createTables()
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                       "lastname VARCHAR(100), "
                       "firstname VARCHAR(100), "
-                      "real_name VARCHAR(255), "
+                      "realname VARCHAR(255), "
                       "birthday INTEGER, "
                       "biography TEXT"
                       ")");
@@ -173,7 +173,7 @@ bool DatabaseManager::createTables()
             // Tags that can be attributed to the movies
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS tags("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "tag_name VARCHAR(255)"
+                      "name VARCHAR(255)"
                       ")");
 
             // Links between tags and movies
@@ -219,6 +219,7 @@ Movie DatabaseManager::getOneMovieById(int id)
 
     if (!l_query.exec())
     {
+        qDebug() << "In getOneMovieById(int):";
         qDebug() << l_query.lastError().text();
     }
 
@@ -236,10 +237,83 @@ Movie DatabaseManager::getOneMovieById(int id)
         l_movie.setFormat(l_query.value(9).toString());
         l_movie.setSuffix(l_query.value(10).toString());
         l_movie.setRank(l_query.value(11).toInt());
+
+        setTagsToMovie(l_movie);
+        setPeopleToMovie(l_movie);
     }
 
     return l_movie;
 }
+
+/**
+ * @brief Gets the tags of a movie and adds it to the object
+ * @param Movie
+ */
+void DatabaseManager::setTagsToMovie(Movie &movie)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT tag.id, tag.name "
+                    "FROM tags AS tag, tags_movies AS tm "
+                    "WHERE tm.id_movie = :id_movie AND tm.id_tag = tag.id");
+    l_query.bindValue(":id_movie", movie.getId());
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In setTagToMovie(Movie):";
+        qDebug() << l_query.lastError().text();
+    }
+    while (l_query.next())
+    {
+        Tag l_tag;
+        l_tag.setId(l_query.value(0).toInt());
+        l_tag.setName(l_query.value(1).toString());
+        movie.addTag(l_tag);
+    }
+}
+
+/**
+ * @brief Gets the people of a movie and adds it to the object
+ * @param Movie
+ */
+void DatabaseManager::setPeopleToMovie(Movie &movie)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT p.id, p.lastname, p.firstname, p.realname, p.birthday, p.biography, pm.type "
+                    "FROM people AS p, people_movies AS pm "
+                    "WHERE pm.id_movie = :id_movie AND pm.id_people = p.id");
+    l_query.bindValue(":id_movie", movie.getId());
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In setPeopleToMovie(Movie):";
+        qDebug() << l_query.lastError().text();
+    }
+    while (l_query.next())
+    {
+        People l_people;
+        l_people.setId(l_query.value(0).toInt());
+        l_people.setFirstname(l_query.value(1).toString());
+        l_people.setLastname(l_query.value(2).toString());
+        l_people.setRealname(l_query.value(3).toString());
+        l_people.setBirthday(l_query.value(4).toInt());
+        l_people.setBiography(l_query.value(5).toString());
+        int l_type = l_query.value(6).toInt();
+
+        switch (l_type)
+        {
+            case TYPE_DIRECTOR:
+                movie.addDirector(l_people);
+                break;
+            case TYPE_PRODUCER:
+                movie.addProducer(l_people);
+                break;
+            case TYPE_ACTOR:
+                movie.addActor(l_people);
+                break;
+        }
+    }
+}
+
 
 /**
  * @brief Gets all the movies
@@ -255,6 +329,7 @@ QVector<Movie> DatabaseManager::getAllMovies()
 
     if (!l_query.exec())
     {
+        qDebug() << "In getAllMovies():";
         qDebug() << l_query.lastError().text();
     }
 
@@ -273,6 +348,9 @@ QVector<Movie> DatabaseManager::getAllMovies()
         l_movie.setFormat(l_query.value(9).toString());
         l_movie.setSuffix(l_query.value(10).toString());
         l_movie.setRank(l_query.value(11).toInt());
+
+        setTagsToMovie(l_movie);
+        setPeopleToMovie(l_movie);
 
         l_moviesVector.push_back(l_movie);
     }
@@ -300,6 +378,7 @@ QVector<Movie> DatabaseManager::getMoviesByDirector(People const &director)
 
     if (!l_query.exec())
     {
+        qDebug() << "In getMoviesByDirector(People):";
         qDebug() << l_query.lastError().text();
     }
 
@@ -318,6 +397,9 @@ QVector<Movie> DatabaseManager::getMoviesByDirector(People const &director)
         l_movie.setFormat(l_query.value(9).toString());
         l_movie.setSuffix(l_query.value(10).toString());
         l_movie.setRank(l_query.value(11).toInt());
+
+        setTagsToMovie(l_movie);
+        setPeopleToMovie(l_movie);
 
         l_moviesVector.push_back(l_movie);
     }
@@ -344,6 +426,7 @@ QVector<Movie> DatabaseManager::getMoviesByTag(Tag const &tag)
 
     if (!l_query.exec())
     {
+        qDebug() << "In getMoviesByTag(Tag):";
         qDebug() << l_query.lastError().text();
     }
 
@@ -362,6 +445,9 @@ QVector<Movie> DatabaseManager::getMoviesByTag(Tag const &tag)
         l_movie.setFormat(l_query.value(9).toString());
         l_movie.setSuffix(l_query.value(10).toString());
         l_movie.setRank(l_query.value(11).toInt());
+
+        setTagsToMovie(l_movie);
+        setPeopleToMovie(l_movie);
 
         l_moviesVector.push_back(l_movie);
     }
@@ -396,13 +482,14 @@ QVector<People> DatabaseManager::getAllDirectors()
     QVector<People> l_directorsVector;
     QSqlQuery l_query(m_db);
 
-    l_query.prepare("SELECT id, firstname, lastname, real_name, birthday, biography "
+    l_query.prepare("SELECT id, firstname, lastname, realname, birthday, biography "
                     "FROM people "
                     "WHERE id = (SELECT id_people FROM people_movies WHERE type = :type) ");
     l_query.bindValue(":type", TYPE_DIRECTOR);
 
     if (!l_query.exec())
     {
+        qDebug() << "In getAllDirectors():";
         qDebug() << l_query.lastError().text();
     }
 
@@ -433,7 +520,7 @@ People DatabaseManager::getOneDirectorById(int id)
     People l_director;
     QSqlQuery l_query(m_db);
 
-    l_query.prepare("SELECT id, firstname, lastname, real_name, birthday, biography "
+    l_query.prepare("SELECT id, firstname, lastname, realname, birthday, biography "
                     "FROM people "
                     "WHERE id = :id AND EXISTS (SELECT type FROM people_movies WHERE id_people = :id2 AND type = :type) ");
     l_query.bindValue(":id", id);
@@ -442,6 +529,7 @@ People DatabaseManager::getOneDirectorById(int id)
 
     if (!l_query.exec())
     {
+        qDebug() << "In getOneDirectorBy(int):";
         qDebug() << l_query.lastError().text();
     }
 
@@ -468,13 +556,14 @@ QVector<People> DatabaseManager::getAllActors()
     QVector<People> l_actorsVector;
     QSqlQuery l_query(m_db);
 
-    l_query.prepare("SELECT id, firstname, lastname, real_name, birthday, biography "
+    l_query.prepare("SELECT id, firstname, lastname, realname, birthday, biography "
                     "FROM people "
                     "WHERE id = (SELECT id_people FROM people_movies WHERE type = :type) ");
     l_query.bindValue(":type", TYPE_ACTOR);
 
     if (!l_query.exec())
     {
+        qDebug() << "In getAllActors():";
         qDebug() << l_query.lastError().text();
     }
 
@@ -540,6 +629,7 @@ Tag DatabaseManager::getOneTagById(int id)
 
     if (!l_query.exec())
     {
+        qDebug() << "In getOneTagBy(int):";
         qDebug() << l_query.lastError().text();
     }
 
@@ -577,7 +667,8 @@ bool DatabaseManager::insertNewMovie(Movie &movie)
 
     if (!l_query.exec())
     {
-        qDebug() << m_db.lastError().text();
+        qDebug() << "In insertNewMovie():";
+        qDebug() << l_query.lastError().text();
 
         return false;
     }
@@ -627,17 +718,18 @@ bool DatabaseManager::insertNewMovie(Movie &movie)
 bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("INSERT INTO people (lastname, firstname, real_name, birthday, biography) "
-                    "VALUES (:lastname, :firstname, :real_name, :birthday, :biography)");
+    l_query.prepare("INSERT INTO people (lastname, firstname, realname, birthday, biography) "
+                    "VALUES (:lastname, :firstname, :realname, :birthday, :biography)");
     l_query.bindValue(":lastname", people.getLastname());
     l_query.bindValue(":firstname", people.getFirstname());
-    l_query.bindValue(":real_name", people.getRealname());
+    l_query.bindValue(":realname", people.getRealname());
     l_query.bindValue(":birthday", people.getBirthday());
     l_query.bindValue(":biography", people.getBiography());
 
     if (!l_query.exec())
     {
-        qDebug() << m_db.lastError().text();
+        qDebug() << "In addPeopleToMovie():";
+        qDebug() << l_query.lastError().text();
 
         return false;
     }
@@ -651,7 +743,8 @@ bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
 
     if (!l_query.exec())
     {
-        qDebug() << m_db.lastError().text();
+        qDebug() << "In addPeopleToMovie():";
+        qDebug() << l_query.lastError().text();
 
         return false;
     }
@@ -737,6 +830,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
 
     if (!l_query.exec())
     {
+        qDebug() << "In updateMovie():";
         qDebug() << l_query.lastError().text();
 
         return false;
@@ -746,50 +840,6 @@ bool DatabaseManager::updateMovie(Movie &movie)
 
     return true;
 }
-
-/*
-bool DatabaseManager::insertNewTitle(QStringList value)
-{
-    if (value.size() % 2 == 1)
-    {
-        return false;
-    }
-
-    QString l_request = "INSERT into movies (";
-
-    // Even elements are names of fields
-    for (int i = 0 ; i < value.size()-1 ; i=i+2)
-    {
-        l_request += value.at(i);
-        if (i != value.size()-2)
-        {
-            l_request += ", ";
-        }
-    }
-
-    l_request += ") VALUES (";
-
-    // Odd elements are values of fields
-    for (int i = 1 ; i < value.size() ; i=i+2)
-    {
-        l_request += "'" + value.at(i) + "'";
-        if (i != value.size()-1)
-        {
-            l_request += ", ";
-        }
-    }
-    l_request += ")";
-
-
-    QSqlQuery l_query(m_db);
-    l_query.prepare(l_request);
-    l_query.exec();
-
-    qDebug()<< "******\n" + l_request;
-
-    return true;
-}
-*/
 
 /**
  * @brief Saves the movies directory
@@ -820,7 +870,15 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
     m_moviesPathModel->insertRow(m_moviesPathModel->rowCount());
     m_moviesPathModel->setData(m_moviesPathModel->index(m_moviesPathModel->rowCount()-1), moviePath);
 
-    return l_query.exec();
+    if(!l_query.exec())
+    {
+        qDebug() << "In saveMoviesPath():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -833,7 +891,11 @@ QStringList DatabaseManager::getMoviesPath()
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT movies_path FROM paths_list");
 
-    l_query.exec();
+    if(!l_query.exec())
+    {
+        qDebug() << "In getMoviesPath():";
+        qDebug() << l_query.lastError().text();
+    }
 
     QStringList l_result;
 

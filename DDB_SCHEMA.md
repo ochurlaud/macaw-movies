@@ -24,7 +24,7 @@ _Note: The longest movie title is 196 char:_ Night of the Day of the Dawn of the
 | id | INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE | **2** |
 | name | VARCHAR(100) | |
 | first_name | VARCHAR(100) | |
-| real_name | VARCHAR(255) | |
+| realname | VARCHAR(255) | |
 | birthday | INTEGER | |
 | biography | TEXT | |
 

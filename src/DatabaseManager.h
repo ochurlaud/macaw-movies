@@ -61,6 +61,8 @@ class DatabaseManager : public QObject
         QVector<People> getAllDirectors();
         People getOneDirectorById(int);
         QVector<People> getAllActors();
+        void setTagsToMovie(Movie&);
+        void setPeopleToMovie(Movie&);
 
         // Insertion
         bool insertNewMovie(Movie&);
