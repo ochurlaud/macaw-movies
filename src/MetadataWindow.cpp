@@ -25,8 +25,6 @@ MetadataWindow::MetadataWindow(int id, QWidget *parent) :
     setDirectors(m_movie.getDirectors());
     setActors(m_movie.getActors());
     setProducers(m_movie.getProducers());
-
-    QObject::connect(this, SIGNAL(accepted()), this, SLOT(updateMovie()));
     m_app->debug("[MetadataWindow] Construction done");
 }
 
@@ -160,9 +158,9 @@ QVector<People> MetadataWindow::getActors()
 }
 
 
-void MetadataWindow::updateMovie()
+void MetadataWindow::on_validationButtons_accepted()
 {
-    m_app->debug("[MetadataWindow] Enters updateMovie()");
+    m_app->debug("[MetadataWindow] validationButtons accepted");
     m_movie.setTitle(getTitle());
     m_movie.setOriginalTitle(getOriginalTitle());
     m_movie.setYear(getYear());
@@ -173,5 +171,50 @@ void MetadataWindow::updateMovie()
     m_movie.setActors(getActors());
 
     m_app->getDatabaseManager()->updateMovie(m_movie);
-    m_app->debug("[MetadataWindow] Exits updateMovie()");
+    m_app->debug("[MetadataWindow] validationButtons method done");
+}
+
+void MetadataWindow::on_addDirectorButton_clicked()
+{
+    m_app->debug("[MetadataWindow] addDirectorButton clicked()");
+}
+
+void MetadataWindow::on_addProducerButton_clicked()
+{
+    m_app->debug("[MetadataWindow] addProducerButton clicked()");
+}
+
+void MetadataWindow::on_addActorButton_clicked()
+{
+    m_app->debug("[MetadataWindow] addActorButton clicked()");
+}
+
+void MetadataWindow::on_delDirectorButton_clicked()
+{
+    m_app->debug("[MetadataWindow] delDirectorButton clicked()");
+}
+
+void MetadataWindow::on_delProducerButton_clicked()
+{
+    m_app->debug("[MetadataWindow] delProducerButton clicked()");
+}
+
+void MetadataWindow::on_delActorButton_clicked()
+{
+    m_app->debug("[MetadataWindow] delActorButton clicked()");
+}
+
+void MetadataWindow::on_directorEdit_textEdited()
+{
+    m_app->debug("[MetadataWindow] directorEdit textEdited()");
+}
+
+void MetadataWindow::on_producerEdit_textEdited()
+{
+    m_app->debug("[MetadataWindow] producerEdit textEdited()");
+}
+
+void MetadataWindow::on_actorEdit_textEdited()
+{
+    m_app->debug("[MetadataWindow] actorEdit textEdited()");
 }

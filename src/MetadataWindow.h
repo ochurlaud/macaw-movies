@@ -35,7 +35,16 @@ class MetadataWindow : public QDialog
         QVector<People> getProducers();
 
     private slots:
-        void updateMovie();
+        void on_validationButtons_accepted();
+        void on_addDirectorButton_clicked();
+        void on_addProducerButton_clicked();
+        void on_addActorButton_clicked();
+        void on_delDirectorButton_clicked();
+        void on_delProducerButton_clicked();
+        void on_delActorButton_clicked();
+        void on_directorEdit_textEdited();
+        void on_producerEdit_textEdited();
+        void on_actorEdit_textEdited();
 
     private:
         Ui::MetadataWindow *m_ui;
