@@ -1,6 +1,14 @@
 #include "MetadataWindow.h"
 #include "ui_MetadataWindow.h"
 
+/* @TODO:
+ *   - While typing in a peopleEdit, propose existing names. If none: pop-up "Do you want to create ?"
+ *   - Add actions to + and - buttons
+ *   - Fill the ListWidget with the people added
+ *   - Right-click on a ListWidgetItem allow to edit it the people
+ *   - Handle tags
+ */
+
 MetadataWindow::MetadataWindow(int id, QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::MetadataWindow)
@@ -150,6 +158,7 @@ QVector<People> MetadataWindow::getActors()
 
     return l_actorsVector;
 }
+
 
 void MetadataWindow::updateMovie()
 {
