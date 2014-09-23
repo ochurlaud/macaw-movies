@@ -29,6 +29,8 @@ class MetadataWindow : public QDialog
         QString getSynopsis();
         void setDirectors(QVector<People>);
         QVector<People> getDirectors();
+        void addDirector(People);
+        void delDirector(int);
         void setActors(QVector<People>);
         QVector<People> getActors();
         void setProducers(QVector<People>);

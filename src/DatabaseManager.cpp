@@ -523,7 +523,7 @@ People DatabaseManager::getOnePeopleById(int id, int type)
 
     l_query.prepare("SELECT p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography "
                     "FROM people AS p, people_movies AS pm "
-                    "WHERE p.id = :id AND pm.id_people = p.id AND pm.type = :type) ");
+                    "WHERE p.id = :id AND pm.id_people = p.id AND pm.type = :type ");
     l_query.bindValue(":id", id);
     l_query.bindValue(":type", type);
 
@@ -546,6 +546,41 @@ People DatabaseManager::getOnePeopleById(int id, int type)
     return l_people;
 }
 
+QVector<People> DatabaseManager::getPeopleByFullname(QString fullname, int type)
+{
+    QVector<People> l_peopleVector;
+    QSqlQuery l_query(m_db);
+
+    l_query.prepare("SELECT p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography "
+                    "FROM people AS p, people_movies AS pm "
+                    "WHERE (p.lastname || ' ' || p.firstname LIKE '%'||:fullname||'%' "
+                        "OR p.firstname || ' ' ||  p.lastname LIKE '%'||:fullname||'%' "
+                        "OR p.realname LIKE '%'||:fullname||'%') "
+                        "AND pm.id_people = p.id AND pm.type = :type");
+    l_query.bindValue(":fullname", fullname);
+    l_query.bindValue(":type", type);
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In getPeopleByFullname(int, type):";
+        qDebug() << l_query.lastError().text();
+    }
+
+    while(l_query.next())
+    {
+        People l_people;
+        l_people.setId(l_query.value(0).toInt());
+        l_people.setFirstname(l_query.value(1).toString());
+        l_people.setLastname(l_query.value(2).toString());
+        l_people.setRealname(l_query.value(3).toString());
+        l_people.setBirthday(l_query.value(4).toInt());
+        l_people.setBiography(l_query.value(5).toString());
+        l_peopleVector.push_back(l_people);
+    }
+
+    return l_peopleVector;
+}
+
 /**
 * @brief Gets the one director that has the id `id`
 *
@@ -555,6 +590,7 @@ People DatabaseManager::getOnePeopleById(int id, int type)
 */
 People DatabaseManager::getOneDirectorById(int id)
 {
+    qDebug() << "getOneDirectorById()";
    return getOnePeopleById(id, TYPE_DIRECTOR);
 }
 

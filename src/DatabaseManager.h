@@ -59,6 +59,7 @@ class DatabaseManager : public QObject
         QVector<Tag> getAllTags();
         Tag getOneTagById(int);
         People getOnePeopleById(int, int);
+        QVector<People> getPeopleByFullname(QString, int);
         QVector<People> getAllDirectors();
         People getOneDirectorById(int);
         QVector<People> getAllActors();

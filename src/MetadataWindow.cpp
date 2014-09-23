@@ -85,12 +85,12 @@ QString MetadataWindow::getSynopsis()
 
 void MetadataWindow::setDirectors(QVector<People> directorsVector)
 {
-    for (int i = 0 ; i < directorsVector.size() ; i++)
+    People l_director;
+    foreach(l_director, directorsVector)
     {
-        People l_director = directorsVector.at(i);
         QListWidgetItem *l_item = new QListWidgetItem(l_director.getFirstname() + " " + l_director.getLastname());
         l_item->setData(Qt::UserRole, l_director.getId());
-        m_ui->directorsWidget->insertItem(i, l_item);
+        m_ui->directorsWidget->addItem(l_item);
     }
 }
 
@@ -105,6 +105,18 @@ QVector<People> MetadataWindow::getDirectors()
     }
 
     return l_directorsVector;
+}
+
+void MetadataWindow::addDirector(People director)
+{
+    QListWidgetItem *l_item = new QListWidgetItem(director.getFirstname() + " " + director.getLastname());
+    l_item->setData(Qt::UserRole, director.getId());
+    m_ui->directorsWidget->addItem(l_item);
+}
+
+void MetadataWindow::delDirector(int directorId)
+{
+
 }
 
 void MetadataWindow::setProducers(QVector<People> producersVector)
@@ -177,6 +189,17 @@ void MetadataWindow::on_validationButtons_accepted()
 void MetadataWindow::on_addDirectorButton_clicked()
 {
     m_app->debug("[MetadataWindow] addDirectorButton clicked()");
+    QString l_text = m_ui->directorEdit->text();
+    QVector<People> l_directorsVector = m_app->getDatabaseManager()->getPeopleByFullname(l_text, 1);
+    if (l_directorsVector.size() == 1)
+    {
+        People l_director = l_directorsVector.at(0);
+        addDirector(l_director);
+    }
+    else
+    {
+        // Open a window with new director, firstname/lastname already filled
+    }
 }
 
 void MetadataWindow::on_addProducerButton_clicked()
@@ -192,6 +215,12 @@ void MetadataWindow::on_addActorButton_clicked()
 void MetadataWindow::on_delDirectorButton_clicked()
 {
     m_app->debug("[MetadataWindow] delDirectorButton clicked()");
+    QList<QListWidgetItem*> l_itemsListToDelete = m_ui->directorsWidget->selectedItems();
+    QListWidgetItem *l_itemToDelete = new QListWidgetItem;
+    foreach (l_itemToDelete,l_itemsListToDelete)
+    {
+        m_ui->directorsWidget->removeItemWidget(l_itemToDelete);
+    }
 }
 
 void MetadataWindow::on_delProducerButton_clicked()
@@ -207,6 +236,24 @@ void MetadataWindow::on_delActorButton_clicked()
 void MetadataWindow::on_directorEdit_textEdited()
 {
     m_app->debug("[MetadataWindow] directorEdit textEdited()");
+    QString l_text =  m_ui->directorEdit->text();
+    if (l_text.size() > 3)
+    {
+        QVector<People> l_directorsVector = m_app->getDatabaseManager()->getPeopleByFullname(l_text, 1);
+        if(l_directorsVector.size() > 0)
+        {
+            People l_director;
+            QStringList l_propositions;
+            foreach (l_director, l_directorsVector)
+            {
+                l_propositions << l_director.getFirstname() + " " + l_director.getLastname();
+            }
+            QCompleter *l_completer = new QCompleter(l_propositions);
+            l_completer->setCaseSensitivity(Qt::CaseInsensitive);
+            l_completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+            m_ui->directorEdit->setCompleter(l_completer);
+         }
+    }
 }
 
 void MetadataWindow::on_producerEdit_textEdited()
