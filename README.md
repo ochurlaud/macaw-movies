@@ -24,47 +24,41 @@ Movies organizer. Qt/C++/Sqlite
 
 ## 2. Presentation of the project
 
-[TO BE TRANSLATED:]
+This application is a movie organizer. It only let the user order and find the movies he has; the movie is opened with the user's favorite tool.
 
-Mail de mon pere selon ce qu'il faudrait (synthétise bien le CDC)
+We should be able do add several metadata to each movie. To make it easily, the application will get and fill theses data thanks to an Internet movie database (like gracenote for the music).
 
-L’idéal serait d’être en capacité de récupérer les infos directement dans un truc genre IMDB et l’injecter dans ton outil (comme c’est fait avec gracenote pour Itunes).
-
-http://fr.wikipedia.org/wiki/Liste_de_bases_de_données_cinématographiques_de_l'Internet (plein de choix….)
-
-—> voir ici pour une base gratuite avec des apis http://www.bdfci.info/apis/
-
-### Ainsi, on aurait tout plein d’infos super intéressante :
-* Titre original (I)
-* Titre Francais (I)
-* Date de sortie (I)
-* Typr fr film (Drame, Romance, Science Fiction, etc (choix multiples) (I)
+### Metadata to add 
+* Title (I)
+* Original title (I)
+* Release date (I)
+* Type of movie (Drama, documentary, romance, ... - multiple choice (I)
 * Director (I)
-* Pays
-* Description, résumé
-* Chemin vers les fichers film et sous titre (plusieurs fichiers dans le cas d’un truc avec partie 1 et partie 2)
-* Durée (a récupérer sur le fichier)
-* Langues disponibles sur le fichier
-* Couleur/NB
-* Format (16/9, 4/3, etc) (a récupérer sur le fichier)
-* Taille de l’image (620x420, 1920x1080 ou autre) (a récupérer sur le fichier)
-* Affiche du film.
+* Country
+* Synopsis
+* Path to movie, subtitle (sometimes several movie for part 1, 2)
+* Duration (read on file)
+* Language available so on the file
+* Color/B&W
+* Format (16/9, 4/3, etc) (read on the file)
+* Image size (620x420, 1920x1080, etc (read on the file)
+* Cover
 * Writer
 * Star 1, star 2, star 3 , star 4, etc (I)
-* Producteur (I)
-* Musique par
-* Site officiel
+* Producer (I)
+* Music by
+* official website
 * Box office
 * budget
-* Gains lors de la sortie
-* Nb de spectateurs lors de la mise ne exploitation
-* Prix : Oscar, lion, etc (plusieurs possibilités) et pour qui (acteur, actrice, producteur, réalisateur, writer, etc) (I)
-* lieux de tournage : Paris, New york, plusieurs saisies possibles.
+* Profit when released
+* Nb of spectators when released
+* Prizes: Oscar, lion, etc (several possibilities) And for whom  (actor, actress, producer, director, writer, etc) (I)
+* Shooting places (several possibilities: Lyon, Paris, London....)
 
-### Complément pour les videos TV
-* Saison,
-* Episode,
-* Identifiant d’épisode
+### Complement for series
+* Season
+* Name of the episode
+* Number of the episode
 
 
-La où j’ai mis (I) c’est que ce la doit être un index de tri ou de recherche."
+**All the (I) are indexes for ordering or research.**
