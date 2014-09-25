@@ -24,7 +24,6 @@ Movie::Movie()
     m_id = 0;
     m_title = "";
     m_originalTitle = "";
-    m_year = 0;
     m_country =  "";
     m_duration = 0;
     m_synopsis = "";
@@ -137,14 +136,14 @@ void Movie::removeActor(People actor)
     }
 }
 
-int Movie::getYear() const
+QDate Movie::getReleaseDate() const
 {
-    return m_year;
+    return m_releaseDate;
 }
 
-void Movie::setYear(int year)
+void Movie::setReleaseDate(QDate releaseDate)
 {
-    m_year = year;
+    m_releaseDate = releaseDate;
 }
 
 QString Movie::getCountry() const

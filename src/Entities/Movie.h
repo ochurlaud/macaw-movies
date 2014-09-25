@@ -47,8 +47,8 @@ public:
     void setActors(QVector<People>);
     void addActor(People actor);
     void removeActor(People actor);
-    int getYear() const;
-    void setYear(int year);
+    QDate getReleaseDate() const;
+    void setReleaseDate(QDate);
     QString getCountry() const;
     void setCountry(QString country);
     int getDuration() const;
@@ -77,7 +77,7 @@ private:
     QVector<People> m_directors;
     QVector<People> m_producers;
     QVector<People> m_actors;
-    int m_year;
+    QDate m_releaseDate;
     QString m_country;
     int m_duration;
     QString m_synopsis;

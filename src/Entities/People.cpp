@@ -25,7 +25,6 @@ People::People()
     m_lastname = "";
     m_firstname = "";
     m_realname ="";
-    m_birthday = 0;
     m_biography = "";
 }
 

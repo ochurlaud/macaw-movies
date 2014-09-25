@@ -19,7 +19,7 @@ MetadataWindow::MetadataWindow(int id, QWidget *parent) :
     m_ui->setupUi(this);
     setTitle(m_movie.getTitle());
     setOriginalTitle(m_movie.getOriginalTitle());
-    setYear(m_movie.getYear());
+    setReleaseDate(m_movie.getReleaseDate());
     setCountry(m_movie.getCountry());
     setSynopsis(m_movie.getSynopsis());
     setDirectors(m_movie.getDirectors());
@@ -53,14 +53,14 @@ QString MetadataWindow::getOriginalTitle()
     return m_ui->originalTitleEdit->text();
 }
 
-void MetadataWindow::setYear(int year)
+void MetadataWindow::setReleaseDate(QDate releaseDate)
 {
-    m_ui->yearEdit->setValue(year);
+    m_ui->releaseDateEdit->setDate(releaseDate);
 }
 
-int MetadataWindow::getYear()
+QDate MetadataWindow::getReleaseDate()
 {
-    return m_ui->yearEdit->value();
+    return m_ui->releaseDateEdit->date();
 }
 
 void MetadataWindow::setCountry(QString country)
@@ -175,7 +175,7 @@ void MetadataWindow::on_validationButtons_accepted()
     m_app->debug("[MetadataWindow] validationButtons accepted");
     m_movie.setTitle(getTitle());
     m_movie.setOriginalTitle(getOriginalTitle());
-    m_movie.setYear(getYear());
+    m_movie.setReleaseDate(getReleaseDate());
     m_movie.setCountry(getCountry());
     m_movie.setSynopsis(getSynopsis());
     m_movie.setDirectors(getDirectors());

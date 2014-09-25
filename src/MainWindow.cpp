@@ -143,7 +143,7 @@ void MainWindow::fillMoviesList(QVector<Movie> moviesList)
     m_moviesTable->setRowCount(moviesList.size());
     m_moviesTable->setColumnCount(4);
     QStringList l_headers;
-    l_headers << "Title" << "Original Title" << "Year" << "Path of the file";
+    l_headers << "Title" << "Original Title" << "Release Date" << "Path of the file";
     m_moviesTable->setHorizontalHeaderLabels(l_headers);
     m_moviesTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(m_moviesTable, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
@@ -154,14 +154,14 @@ void MainWindow::fillMoviesList(QVector<Movie> moviesList)
         l_title->setData(Qt::UserRole, moviesList.at(i).getId());
         QTableWidgetItem *l_originalTitle = new QTableWidgetItem(moviesList.at(i).getOriginalTitle());
         l_originalTitle->setData(Qt::UserRole, moviesList.at(i).getId());
-        QTableWidgetItem *l_year = new QTableWidgetItem(moviesList.at(i).getYear());
-        l_year->setData(Qt::UserRole, moviesList.at(i).getId());
+        QTableWidgetItem *l_releaseDate = new QTableWidgetItem(moviesList.at(i).getReleaseDate().toString("dd MMM yyyy"));
+        l_releaseDate->setData(Qt::UserRole, moviesList.at(i).getId());
         QTableWidgetItem *l_filePath = new QTableWidgetItem(moviesList.at(i).getFilePath());
         l_filePath->setData(Qt::UserRole, moviesList.at(i).getId());
 
         m_moviesTable->setItem(i, 0, l_title);
         m_moviesTable->setItem(i, 1, l_originalTitle);
-        m_moviesTable->setItem(i, 2, l_year);
+        m_moviesTable->setItem(i, 2, l_releaseDate);
         m_moviesTable->setItem(i, 3, l_filePath);
     }
     m_moviesTable->setShowGrid(false);

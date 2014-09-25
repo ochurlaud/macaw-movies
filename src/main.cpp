@@ -22,6 +22,7 @@
 
 #define SOFT_VERSION 1  // software version
 #define DB_VERSION 1    //database version, must be updated if the database model have changed
+#define DATE_FORMAT "yyyy.mm.dd"
 
 #include <QApplication>
 #include <QDir>

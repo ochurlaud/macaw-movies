@@ -21,8 +21,8 @@ class MetadataWindow : public QDialog
         QString getTitle();
         void setOriginalTitle(QString);
         QString getOriginalTitle();
-        void setYear(int);
-        int getYear();
+        void setReleaseDate(QDate);
+        QDate getReleaseDate();
         void setCountry(QString);
         QString getCountry();
         void setSynopsis(QString);

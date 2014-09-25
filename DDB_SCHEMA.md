@@ -6,7 +6,7 @@
 | id | INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE | **1**|
 | title | VARCHAR(255) | |
 | original_title | VARCHAR(255) | |
-| year | INTEGER | |
+| release_date | VARCHAR(10) | |
 | country | VARCHAR(50) | |
 | duration | INTEGER | |
 | synopsys | TEXT | |
@@ -25,7 +25,7 @@ _Note: The longest movie title is 196 char:_ Night of the Day of the Dawn of the
 | name | VARCHAR(100) | |
 | firstname | VARCHAR(100) | |
 | realname | VARCHAR(255) | |
-| birthday | INTEGER | |
+| birthday |  VARCHAR(10) | |
 | biography | TEXT | |
 
 ## movies_people

@@ -34,8 +34,8 @@ public:
     void setFirstname(QString firstname) { m_firstname = firstname; }
     QString getRealname() const { return m_realname; }
     void setRealname(QString realname) { m_realname = realname; }
-    int getBirthday() const { return m_birthday; }
-    void setBirthday(int birthday) { m_birthday = birthday; }
+    QDate getBirthday() const { return m_birthday; }
+    void setBirthday(QDate birthday) { m_birthday = birthday; }
     QString getBiography() const { return m_biography; }
     void setBiography(QString biography) { m_biography = biography; }
     bool operator== (const People& other);
@@ -45,7 +45,7 @@ private:
     QString m_lastname;
     QString m_firstname;
     QString m_realname;
-    int m_birthday;
+    QDate m_birthday;
     QString m_biography;
 };
 

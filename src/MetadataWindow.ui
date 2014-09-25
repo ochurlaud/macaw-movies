@@ -63,16 +63,9 @@
      <widget class="QLineEdit" name="originalTitleEdit"/>
     </item>
     <item row="3" column="0">
-     <widget class="QLabel" name="yearLabel">
+     <widget class="QLabel" name="releaseDateLabel">
       <property name="text">
-       <string>Year</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QSpinBox" name="yearEdit">
-      <property name="maximum">
-       <number>3000</number>
+       <string>Release Date</string>
       </property>
      </widget>
     </item>
@@ -95,6 +88,9 @@
     </item>
     <item row="5" column="1">
      <widget class="QPlainTextEdit" name="synopsisEdit"/>
+    </item>
+    <item row="3" column="1">
+     <widget class="QDateEdit" name="releaseDateEdit"/>
     </item>
    </layout>
   </widget>
