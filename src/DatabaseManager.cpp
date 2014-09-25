@@ -163,11 +163,12 @@ bool DatabaseManager::createTables()
                       ")");
 
             // Links between people and movies (a type of person is given here)
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS people_movies("
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies_people("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                       "id_people INTEGER, "
                       "id_movie INTEGER, "
-                      "type INTEGER"
+                      "type INTEGER, "
+                      "UNIQUE (id_people, id_movie, type) ON CONFLICT IGNORE "
                       ")");
 
             // Tags that can be attributed to the movies
@@ -177,10 +178,11 @@ bool DatabaseManager::createTables()
                       ")");
 
             // Links between tags and movies
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS tags_movies("
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies_tags("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                       "id_tag INTEGER, "
-                      "id_movie INTEGER"
+                      "id_movie INTEGER, "
+                      "UNIQUE (id_tag, id_movie) ON CONFLICT IGNORE "
                       ")");
             // List of paths where the movies are stored
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS paths_list("
@@ -253,7 +255,7 @@ void DatabaseManager::setTagsToMovie(Movie &movie)
 {
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT tag.id, tag.name "
-                    "FROM tags AS tag, tags_movies AS tm "
+                    "FROM tags AS tag, movies_tags AS tm "
                     "WHERE tm.id_movie = :id_movie AND tm.id_tag = tag.id");
     l_query.bindValue(":id_movie", movie.getId());
 
@@ -279,7 +281,7 @@ void DatabaseManager::setPeopleToMovie(Movie &movie)
 {
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT p.id, p.lastname, p.firstname, p.realname, p.birthday, p.biography, pm.type "
-                    "FROM people AS p, people_movies AS pm "
+                    "FROM people AS p, movies_people AS pm "
                     "WHERE pm.id_movie = :id_movie AND pm.id_people = p.id");
     l_query.bindValue(":id_movie", movie.getId());
 
@@ -371,7 +373,7 @@ QVector<Movie> DatabaseManager::getMoviesByDirector(People const &director)
     l_query.prepare("SELECT id, title, original_title, year, country, duration, synopsis, file_path, colored, format, suffix, rank "
                     "FROM movies "
                     "WHERE id = (SELECT id_movie "
-                                "FROM people_movies "
+                                "FROM movies_people "
                                 "WHERE id_people = :id AND type = :type) ");
     l_query.bindValue(":id", director.getId());
     l_query.bindValue(":type", TYPE_DIRECTOR);
@@ -420,7 +422,7 @@ QVector<Movie> DatabaseManager::getMoviesByTag(Tag const &tag)
     l_query.prepare("SELECT id, title, original_title, year, country, duration, synopsis, file_path, colored, format, suffix, rank "
                     "FROM movies "
                     "WHERE id = (SELECT id_movie "
-                                "FROM tags_movies "
+                                "FROM movies_tags "
                                 "WHERE id_tag = :id) ");
     l_query.bindValue(":id", tag.getId());
 
@@ -484,7 +486,7 @@ QVector<People> DatabaseManager::getAllDirectors()
 
     l_query.prepare("SELECT id, firstname, lastname, realname, birthday, biography "
                     "FROM people "
-                    "WHERE id = (SELECT id_people FROM people_movies WHERE type = :type) ");
+                    "WHERE id = (SELECT id_people FROM movies_people WHERE type = :type) ");
     l_query.bindValue(":type", TYPE_DIRECTOR);
 
     if (!l_query.exec())
@@ -522,7 +524,7 @@ People DatabaseManager::getOnePeopleById(int id, int type)
     QSqlQuery l_query(m_db);
 
     l_query.prepare("SELECT p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography "
-                    "FROM people AS p, people_movies AS pm "
+                    "FROM people AS p, movies_people AS pm "
                     "WHERE p.id = :id AND pm.id_people = p.id AND pm.type = :type ");
     l_query.bindValue(":id", id);
     l_query.bindValue(":type", type);
@@ -564,7 +566,7 @@ QVector<People> DatabaseManager::getPeopleByFullname(QString fullname, int type)
                         "OR p.firstname || ' ' ||  p.lastname LIKE '%'||:fullname||'%' "
                         "OR p.realname LIKE '%'||:fullname||'%') "
                         "AND (SELECT COUNT(*) "
-                             "FROM people_movies AS pm "
+                             "FROM movies_people AS pm "
                              "WHERE pm.id_people = p.id AND type = :type) > 0");
     l_query.bindValue(":fullname", fullname);
     l_query.bindValue(":type", type);
@@ -614,7 +616,7 @@ QVector<People> DatabaseManager::getAllActors()
 
     l_query.prepare("SELECT id, firstname, lastname, realname, birthday, biography "
                     "FROM people "
-                    "WHERE id = (SELECT id_people FROM people_movies WHERE type = :type) ");
+                    "WHERE id = (SELECT id_people FROM movies_people WHERE type = :type) ");
     l_query.bindValue(":type", TYPE_ACTOR);
 
     if (!l_query.exec())
@@ -818,7 +820,7 @@ bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
     }
 
     people.setId(l_query.lastInsertId().toInt());
-    l_query.prepare("INSERT INTO people_movies (id_people, id_movie, type) "
+    l_query.prepare("INSERT INTO movies_people (id_people, id_movie, type) "
                     "VALUES (:id_people, :id_movie, :type)");
     l_query.bindValue(":id_people", people.getId());
     l_query.bindValue(":id_movie", movie.getId());
@@ -903,7 +905,7 @@ bool DatabaseManager::addTagToMovie(Tag &tag, Movie &movie)
     }
 
     tag.setId(l_query.lastInsertId().toInt());
-    l_query.prepare("INSERT INTO tags_movies (id_tag, id_movie) "
+    l_query.prepare("INSERT INTO movies_tags (id_tag, id_movie) "
                     "VALUES (:id_tag, :id_movie)");
     l_query.bindValue(":id_tag", tag.getId());
     l_query.bindValue(":id_movie", movie.getId());
@@ -978,7 +980,7 @@ bool DatabaseManager::updatePeopleInMovie(People &people, Movie &movie, int type
         // Checks if the people and the movie are connected, if not connects them
         QSqlQuery l_query(m_db);
         l_query.prepare("SELECT id "
-                        "FROM people_movies "
+                        "FROM movies_people "
                         "WHERE id_movie = :id_movie AND id_people = :id_people");
         l_query.bindValue(":id_movie", movie.getId());
         l_query.bindValue(":id_people", people.getId());
@@ -993,7 +995,7 @@ bool DatabaseManager::updatePeopleInMovie(People &people, Movie &movie, int type
         if (!l_query.next())
         {
             qDebug() << "People not connected to the movie";
-            l_query.prepare("INSERT INTO people_movies(id_movie, id_people, type) "
+            l_query.prepare("INSERT INTO movies_people(id_movie, id_people, type) "
                             "VALUES(:id_movie, :id_people, :type)");
             l_query.bindValue(":id_movie", movie.getId());
             l_query.bindValue(":id_people", people.getId());
@@ -1061,7 +1063,7 @@ bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
         // Checks if the people and the movie are connected, if not connects them
         QSqlQuery l_query(m_db);
         l_query.prepare("SELECT id "
-                        "FROM tags_movies "
+                        "FROM movies_tags "
                         "WHERE id_movie = :id_movie AND id_tag = :id_tag");
         l_query.bindValue(":id_movie", movie.getId());
         l_query.bindValue(":id_tag", tag.getId());
@@ -1076,7 +1078,7 @@ bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
         if (!l_query.next())
         {
             qDebug() << "Tag not connected to the movie";
-            l_query.prepare("INSERT INTO tags_movies(id_movie, id_tag) "
+            l_query.prepare("INSERT INTO movies_tags(id_movie, id_tag) "
                             "VALUES(:id_movie, :id_tag)");
             l_query.bindValue(":id_movie", movie.getId());
             l_query.bindValue(":id_tag", tag.getId());
