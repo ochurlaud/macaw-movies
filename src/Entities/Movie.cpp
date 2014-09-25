@@ -21,6 +21,7 @@
 
 Movie::Movie()
 {
+    m_id = 0;
     m_title = "";
     m_originalTitle = "";
     m_year = 0;

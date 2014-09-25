@@ -74,10 +74,15 @@ class DatabaseManager : public QObject
         bool addDirectorToMovie(People&, Movie&);
         bool addProducerToMovie(People&, Movie&);
         bool addActorToMovie(People&, Movie&);
+        bool addTagToMovie(Tag&, Movie&);
 
 
         // Update
         bool updateMovie(Movie&);
+        bool updatePeople(People&);
+        bool updatePeopleInMovie(People&, Movie&, int);
+        bool updateTag(Tag&);
+        bool updateTagInMovie(Tag&, Movie&);
 
         // Models
         QStringListModel *getMoviesPathModel() {return this->m_moviesPathModel;}

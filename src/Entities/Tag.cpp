@@ -21,6 +21,7 @@
 
 Tag::Tag()
 {
+    m_id = 0;
     m_name = "";
 }
 

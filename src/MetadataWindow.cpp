@@ -195,6 +195,7 @@ void MetadataWindow::on_addDirectorButton_clicked()
     {
         People l_director = l_directorsVector.at(0);
         addDirector(l_director);
+        m_app->debug(l_text + " added");
     }
     else
     {

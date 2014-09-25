@@ -33,7 +33,7 @@ int main(int argv, char **args)
 {
     Application l_app(argv, args);
     MainWindow l_mainWindow;
-    l_mainWindow.show();
+    l_mainWindow.show();;
 
     return l_app.exec();
 }

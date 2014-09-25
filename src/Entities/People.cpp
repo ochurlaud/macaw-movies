@@ -21,6 +21,7 @@
 
 People::People()
 {
+    m_id = 0;
     m_lastname = "";
     m_firstname = "";
     m_realname ="";

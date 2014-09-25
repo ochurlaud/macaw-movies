@@ -546,17 +546,26 @@ People DatabaseManager::getOnePeopleById(int id, int type)
     return l_people;
 }
 
+/**
+ * @brief Gets the people whose 'lastname firstname' or 'firstname lastname' is `fullname`
+ *
+ * @param QString fullname, the string searched
+ * @param int type of the person
+ * @return QVector<People>
+ */
 QVector<People> DatabaseManager::getPeopleByFullname(QString fullname, int type)
 {
     QVector<People> l_peopleVector;
     QSqlQuery l_query(m_db);
 
     l_query.prepare("SELECT p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography "
-                    "FROM people AS p, people_movies AS pm "
+                    "FROM people AS p "
                     "WHERE (p.lastname || ' ' || p.firstname LIKE '%'||:fullname||'%' "
                         "OR p.firstname || ' ' ||  p.lastname LIKE '%'||:fullname||'%' "
                         "OR p.realname LIKE '%'||:fullname||'%') "
-                        "AND pm.id_people = p.id AND pm.type = :type");
+                        "AND (SELECT COUNT(*) "
+                             "FROM people_movies AS pm "
+                             "WHERE pm.id_people = p.id AND type = :type) > 0");
     l_query.bindValue(":fullname", fullname);
     l_query.bindValue(":type", type);
 
@@ -590,7 +599,6 @@ QVector<People> DatabaseManager::getPeopleByFullname(QString fullname, int type)
 */
 People DatabaseManager::getOneDirectorById(int id)
 {
-    qDebug() << "getOneDirectorById()";
    return getOnePeopleById(id, TYPE_DIRECTOR);
 }
 
@@ -811,10 +819,10 @@ bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
 
     people.setId(l_query.lastInsertId().toInt());
     l_query.prepare("INSERT INTO people_movies (id_people, id_movie, type) "
-                    "VALUES (:people, :id_movie, :type)");
+                    "VALUES (:id_people, :id_movie, :type)");
     l_query.bindValue(":id_people", people.getId());
     l_query.bindValue(":id_movie", movie.getId());
-    l_query.bindValue(":id_movie", type);
+    l_query.bindValue(":type", type);
 
     if (!l_query.exec())
     {
@@ -872,6 +880,191 @@ bool DatabaseManager::addActorToMovie(People &people, Movie &movie)
     return l_ret;
 }
 
+/**
+ * @brief Adds a tag to the database and links it to a movie
+ *
+ * @param Tag
+ * @param Movie
+ * @return bool
+ */
+bool DatabaseManager::addTagToMovie(Tag &tag, Movie &movie)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("INSERT INTO tag (name) "
+                    "VALUES (:name)");
+    l_query.bindValue(":name", tag.getName());
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In addTagToMovie():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+
+    tag.setId(l_query.lastInsertId().toInt());
+    l_query.prepare("INSERT INTO tags_movies (id_tag, id_movie) "
+                    "VALUES (:id_tag, :id_movie)");
+    l_query.bindValue(":id_tag", tag.getId());
+    l_query.bindValue(":id_movie", movie.getId());
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In addTagToMovie():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+
+    return true;
+}
+
+bool DatabaseManager::updatePeople(People &people)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("UPDATE people "
+                    "SET firstname = :firstname, "
+                        "lastname = :lastname, "
+                        "realname = :realname, "
+                        "birthday = :birthday, "
+                        "biography = :biography "
+                    "WHERE id = :id");
+    l_query.bindValue(":firstname", people.getFirstname());
+    l_query.bindValue(":lastname", people.getLastname());
+    l_query.bindValue(":realname",  people.getRealname());
+    l_query.bindValue(":birthday",  people.getBirthday());
+    l_query.bindValue(":biography", people.getBiography());
+    l_query.bindValue(":id", people.getId());
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In updateMovie():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+
+    return true;
+}
+
+bool DatabaseManager::updatePeopleInMovie(People &people, Movie &movie, int type)
+{
+    // If the id is 0, then the director doesn't exist
+    if (people.getId() == 0)
+    {
+        qDebug() << "People not known";
+        addPeopleToMovie(people, movie, type);
+    }
+    // This means that the director exists, so we upgrade
+    else
+    {
+        qDebug() << "People known";
+        updatePeople(people);
+
+        // Checks if the people and the movie are connected, if not connects them
+        QSqlQuery l_query(m_db);
+        l_query.prepare("SELECT id "
+                        "FROM people_movies "
+                        "WHERE id_movie = :id_movie AND id_people = :id_people");
+        l_query.bindValue(":id_movie", movie.getId());
+        l_query.bindValue(":id_people", people.getId());
+        if (!l_query.exec())
+        {
+            qDebug() << "In updatePeopleInMovie():";
+            qDebug() << l_query.lastError().text();
+
+            return false;
+        }
+
+        if (!l_query.next())
+        {
+            qDebug() << "People not connected to the movie";
+            l_query.prepare("INSERT INTO people_movies(id_movie, id_people, type) "
+                            "VALUES(:id_movie, :id_people, :type)");
+            l_query.bindValue(":id_movie", movie.getId());
+            l_query.bindValue(":id_people", people.getId());
+            l_query.bindValue(":type", type);
+            if (!l_query.exec())
+            {
+                qDebug() << "In updatePeopleInMovie():";
+                qDebug() << l_query.lastError().text();
+
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool DatabaseManager::updateTag(Tag &tag)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("UPDATE tags "
+                    "SET name = :name "
+                    "WHERE id = :id");
+    l_query.bindValue(":name", tag.getName());
+    l_query.bindValue(":id", tag.getId());
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In updateTag():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+
+    return true;
+}
+
+bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
+{
+    // If the id is 0, then the tag doesn't exist
+    if (tag.getId() == 0)
+    {
+        qDebug() << "Tag not known";
+        addTagToMovie(tag, movie);
+    }
+    // This means that the tag exists, so we upgrade
+    else
+    {
+        qDebug() << "Tag known";
+        updateTag(tag);
+
+        // Checks if the people and the movie are connected, if not connects them
+        QSqlQuery l_query(m_db);
+        l_query.prepare("SELECT id "
+                        "FROM tags_movies "
+                        "WHERE id_movie = :id_movie AND id_tag = :id_tag");
+        l_query.bindValue(":id_movie", movie.getId());
+        l_query.bindValue(":id_tag", tag.getId());
+        if (!l_query.exec())
+        {
+            qDebug() << "In updateTagInMovie():";
+            qDebug() << l_query.lastError().text();
+
+            return false;
+        }
+
+        if (!l_query.next())
+        {
+            qDebug() << "Tag not connected to the movie";
+            l_query.prepare("INSERT INTO tags_movies(id_movie, id_tag) "
+                            "VALUES(:id_movie, :id_tag)");
+            l_query.bindValue(":id_movie", movie.getId());
+            l_query.bindValue(":id_tag", tag.getId());
+            if (!l_query.exec())
+            {
+                qDebug() << "In updateTagInMovie():";
+                qDebug() << l_query.lastError().text();
+
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
 
 /**
  * @brief Updates a movie from database
@@ -911,6 +1104,26 @@ bool DatabaseManager::updateMovie(Movie &movie)
         return false;
     }
 
+    People l_director;
+    foreach (l_director, movie.getDirectors())
+    {
+        updatePeopleInMovie(l_director, movie, TYPE_DIRECTOR);
+    }
+    People l_producer;
+    foreach (l_producer, movie.getProducers())
+    {
+        updatePeopleInMovie(l_director, movie, TYPE_PRODUCER);
+    }
+    People l_actor;
+    foreach (l_actor, movie.getActors())
+    {
+        updatePeopleInMovie(l_director, movie, TYPE_ACTOR);
+    }
+    Tag l_tag;
+    foreach (l_tag, movie.getTags())
+    {
+        updateTagInMovie(l_tag, movie);
+    }
     qDebug() << "[DatabaseManager] Movie updated";
 
     return true;
@@ -934,7 +1147,6 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
     {
         return false;
     }
-
 
     //Updates the dataBase
     QSqlQuery l_query(m_db);
