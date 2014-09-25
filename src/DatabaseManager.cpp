@@ -919,6 +919,12 @@ bool DatabaseManager::addTagToMovie(Tag &tag, Movie &movie)
     return true;
 }
 
+/**
+ * @brief Updates a people in database
+ *
+ * @param People people to update
+ * @return bool
+ */
 bool DatabaseManager::updatePeople(People &people)
 {
     QSqlQuery l_query(m_db);
@@ -947,6 +953,14 @@ bool DatabaseManager::updatePeople(People &people)
     return true;
 }
 
+/**
+ * @brief Updates a people linked to a movie
+ *
+ * @param People people
+ * @param Movie movie
+ * @param int type
+ * @return bool
+ */
 bool DatabaseManager::updatePeopleInMovie(People &people, Movie &movie, int type)
 {
     // If the id is 0, then the director doesn't exist
@@ -997,6 +1011,12 @@ bool DatabaseManager::updatePeopleInMovie(People &people, Movie &movie, int type
     return true;
 }
 
+/**
+ * @brief Updates a tag in database
+ *
+ * @param Tag to update
+ * @return bool
+ */
 bool DatabaseManager::updateTag(Tag &tag)
 {
     QSqlQuery l_query(m_db);
@@ -1017,6 +1037,13 @@ bool DatabaseManager::updateTag(Tag &tag)
     return true;
 }
 
+/**
+ * @brief Updates a tag linked to a movie
+ *
+ * @param Tag tag
+ * @param Movie movie
+ * @return bool
+ */
 bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
 {
     // If the id is 0, then the tag doesn't exist
