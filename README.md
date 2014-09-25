@@ -2,9 +2,9 @@
 
 Movies organizer. Qt/C++/Sqlite
 
-*This application is a movie organizer. It helps anyone to order, choose and find back a movie in his collection.
+*This application is a movie organizer. It helps anyone to order, choose and find back a movie in his collection.*
 
-The program is written in C++, with the Qt framework. It will be released for Linux, Windows and Mac OS X*
+*The program is written in C++, with the Qt framework. It will be released for Linux, Windows and Mac OS X*
 
 1. Rules for coding
 2. Presentation of the project
