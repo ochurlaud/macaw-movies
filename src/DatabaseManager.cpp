@@ -303,13 +303,13 @@ void DatabaseManager::setPeopleToMovie(Movie &movie)
 
         switch (l_type)
         {
-            case TYPE_DIRECTOR:
+            case Director:
                 movie.addDirector(l_people);
                 break;
-            case TYPE_PRODUCER:
+            case Producer:
                 movie.addProducer(l_people);
                 break;
-            case TYPE_ACTOR:
+            case Actor:
                 movie.addActor(l_people);
                 break;
         }
@@ -376,7 +376,7 @@ QVector<Movie> DatabaseManager::getMoviesByDirector(People const &director)
                                 "FROM movies_people "
                                 "WHERE id_people = :id AND type = :type) ");
     l_query.bindValue(":id", director.getId());
-    l_query.bindValue(":type", TYPE_DIRECTOR);
+    l_query.bindValue(":type", Director);
 
     if (!l_query.exec())
     {
@@ -487,7 +487,7 @@ QVector<People> DatabaseManager::getAllDirectors()
     l_query.prepare("SELECT id, firstname, lastname, realname, birthday, biography "
                     "FROM people "
                     "WHERE id = (SELECT id_people FROM movies_people WHERE type = :type) ");
-    l_query.bindValue(":type", TYPE_DIRECTOR);
+    l_query.bindValue(":type", Director);
 
     if (!l_query.exec())
     {
@@ -601,7 +601,7 @@ QVector<People> DatabaseManager::getPeopleByFullname(QString fullname, int type)
 */
 People DatabaseManager::getOneDirectorById(int id)
 {
-   return getOnePeopleById(id, TYPE_DIRECTOR);
+   return getOnePeopleById(id, Director);
 }
 
 /**
@@ -617,7 +617,7 @@ QVector<People> DatabaseManager::getAllActors()
     l_query.prepare("SELECT id, firstname, lastname, realname, birthday, biography "
                     "FROM people "
                     "WHERE id = (SELECT id_people FROM movies_people WHERE type = :type) ");
-    l_query.bindValue(":type", TYPE_ACTOR);
+    l_query.bindValue(":type", Actor);
 
     if (!l_query.exec())
     {
@@ -651,7 +651,7 @@ QVector<People> DatabaseManager::getAllActors()
 */
 People DatabaseManager::getOneProducerById(int id)
 {
-   return getOnePeopleById(id, TYPE_PRODUCER);
+   return getOnePeopleById(id, Producer);
 }
 
 
@@ -664,7 +664,7 @@ People DatabaseManager::getOneProducerById(int id)
 */
 People DatabaseManager::getOneActorById(int id)
 {
-   return getOnePeopleById(id, TYPE_ACTOR);
+   return getOnePeopleById(id, Actor);
 }
 
 
@@ -845,7 +845,7 @@ bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
  */
 bool DatabaseManager::addDirectorToMovie(People &people, Movie &movie)
 {
-    bool l_ret = addPeopleToMovie(people, movie, TYPE_DIRECTOR);
+    bool l_ret = addPeopleToMovie(people, movie, Director);
     qDebug() << "[DatabaseManager] One director added";
 
     return l_ret;
@@ -860,7 +860,7 @@ bool DatabaseManager::addDirectorToMovie(People &people, Movie &movie)
  */
 bool DatabaseManager::addProducerToMovie(People &people, Movie &movie)
 {
-    bool l_ret = addPeopleToMovie(people, movie, TYPE_PRODUCER);
+    bool l_ret = addPeopleToMovie(people, movie, Producer);
     qDebug() << "[DatabaseManager] One producer added";
 
     return l_ret;
@@ -875,7 +875,7 @@ bool DatabaseManager::addProducerToMovie(People &people, Movie &movie)
  */
 bool DatabaseManager::addActorToMovie(People &people, Movie &movie)
 {
-    bool l_ret = addPeopleToMovie(people, movie, TYPE_ACTOR);
+    bool l_ret = addPeopleToMovie(people, movie, Actor);
     qDebug() << "[DatabaseManager] One actor added";
 
     return l_ret;
@@ -1135,17 +1135,17 @@ bool DatabaseManager::updateMovie(Movie &movie)
     People l_director;
     foreach (l_director, movie.getDirectors())
     {
-        updatePeopleInMovie(l_director, movie, TYPE_DIRECTOR);
+        updatePeopleInMovie(l_director, movie, Director);
     }
     People l_producer;
     foreach (l_producer, movie.getProducers())
     {
-        updatePeopleInMovie(l_director, movie, TYPE_PRODUCER);
+        updatePeopleInMovie(l_director, movie, Producer);
     }
     People l_actor;
     foreach (l_actor, movie.getActors())
     {
-        updatePeopleInMovie(l_director, movie, TYPE_ACTOR);
+        updatePeopleInMovie(l_director, movie, Actor);
     }
     Tag l_tag;
     foreach (l_tag, movie.getTags())

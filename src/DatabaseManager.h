@@ -20,9 +20,7 @@
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 
-#define TYPE_DIRECTOR 1
-#define TYPE_PRODUCER 2
-#define TYPE_ACTOR 3
+enum typePeople {Director, Producer, Actor};
 
 #include <QObject>
 #include <QtCore>
