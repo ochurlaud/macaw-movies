@@ -56,6 +56,7 @@ class DatabaseManager : public QObject
         bool existMovie(QString);
         QVector<Tag> getAllTags();
         Tag getOneTagById(int);
+        People getOnePeopleById(int);
         People getOnePeopleById(int, int);
         QVector<People> getPeopleByFullname(QString, int);
         QVector<People> getAllDirectors();
@@ -68,6 +69,7 @@ class DatabaseManager : public QObject
 
         // Insertion
         bool insertNewMovie(Movie&);
+        bool addPeople(People&);
         bool addPeopleToMovie(People&, Movie&, int);
         bool addDirectorToMovie(People&, Movie&);
         bool addProducerToMovie(People&, Movie&);

@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
+  <widget class="QDialogButtonBox" name="validationButtons">
    <property name="geometry">
     <rect>
      <x>90</x>
@@ -73,7 +73,18 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QDateEdit" name="birthdayEdit"/>
+       <widget class="QDateEdit" name="birthdayEdit">
+        <property name="dateTime">
+         <datetime>
+          <hour>0</hour>
+          <minute>0</minute>
+          <second>0</second>
+          <year>1900</year>
+          <month>1</month>
+          <day>1</day>
+         </datetime>
+        </property>
+       </widget>
       </item>
       <item row="0" column="1">
        <widget class="QLineEdit" name="realnameEdit"/>
@@ -116,7 +127,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>validationButtons</sender>
    <signal>accepted()</signal>
    <receiver>PeopleWindow</receiver>
    <slot>accept()</slot>
@@ -132,7 +143,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>validationButtons</sender>
    <signal>rejected()</signal>
    <receiver>PeopleWindow</receiver>
    <slot>reject()</slot>

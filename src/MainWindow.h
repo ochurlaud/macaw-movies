@@ -68,13 +68,13 @@ class MainWindow : public QWidget
         QVector<QListWidgetItem*> m_moviesTitles;
         Application * m_app;
 
-private slots:
-//        void fillLeftPannel();
-    void fillMoviesListAll();
-    void fillTagsList();
-    void fillDirectorList();
-    void fillToWatchList();
-    void fillPlaylist();
+    private slots:
+    //        void fillLeftPannel();
+        void fillMoviesListAll();
+        void fillTagsList();
+        void fillDirectorList();
+        void fillToWatchList();
+        void fillPlaylist();
 };
 
 #endif // MAINWINDOW_H

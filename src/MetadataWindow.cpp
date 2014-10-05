@@ -35,6 +35,7 @@ MetadataWindow::~MetadataWindow()
 void MetadataWindow::setTitle(QString title)
 {
     m_ui->titleEdit->setText(title);
+    m_movie.setTitle(title);
 }
 
 QString MetadataWindow::getTitle()
@@ -45,6 +46,7 @@ QString MetadataWindow::getTitle()
 void MetadataWindow::setOriginalTitle(QString originalTitle)
 {
     m_ui->originalTitleEdit->setText(originalTitle);
+    m_movie.setOriginalTitle(originalTitle);
 }
 
 QString MetadataWindow::getOriginalTitle()
@@ -55,6 +57,7 @@ QString MetadataWindow::getOriginalTitle()
 void MetadataWindow::setReleaseDate(QDate releaseDate)
 {
     m_ui->releaseDateEdit->setDate(releaseDate);
+    m_movie.setReleaseDate(releaseDate);
 }
 
 QDate MetadataWindow::getReleaseDate()
@@ -65,6 +68,7 @@ QDate MetadataWindow::getReleaseDate()
 void MetadataWindow::setCountry(QString country)
 {
     m_ui->countryEdit->setText(country);
+    m_movie.setCountry(country);
 }
 
 QString MetadataWindow::getCountry()
@@ -75,6 +79,7 @@ QString MetadataWindow::getCountry()
 void MetadataWindow::setSynopsis(QString synopsis)
 {
     m_ui->synopsisEdit->setPlainText(synopsis);
+    m_movie.setSynopsis(synopsis);
 }
 
 QString MetadataWindow::getSynopsis()
@@ -111,6 +116,7 @@ void MetadataWindow::addDirector(People director)
     QListWidgetItem *l_item = new QListWidgetItem(director.getFirstname() + " " + director.getLastname());
     l_item->setData(Qt::UserRole, director.getId());
     m_ui->directorsWidget->addItem(l_item);
+    m_movie.addDirector(director);
 }
 
 void MetadataWindow::delDirector(int directorId)
@@ -172,14 +178,6 @@ QVector<People> MetadataWindow::getActors()
 void MetadataWindow::on_validationButtons_accepted()
 {
     m_app->debug("[MetadataWindow] validationButtons accepted");
-    m_movie.setTitle(getTitle());
-    m_movie.setOriginalTitle(getOriginalTitle());
-    m_movie.setReleaseDate(getReleaseDate());
-    m_movie.setCountry(getCountry());
-    m_movie.setSynopsis(getSynopsis());
-    m_movie.setDirectors(getDirectors());
-    m_movie.setProducers(getProducers());
-    m_movie.setActors(getActors());
 
     m_app->getDatabaseManager()->updateMovie(m_movie);
     m_app->debug("[MetadataWindow] validationButtons method done");
@@ -198,7 +196,17 @@ void MetadataWindow::on_addDirectorButton_clicked()
     }
     else
     {
-        // Open a window with new director, firstname/lastname already filled
+        PeopleWindow *l_peopleWindow = new PeopleWindow;
+        // We suppose here that a name is composed by N firstnames
+        // and 1 lastname, separated by spaces
+        QStringList l_textExplosed = l_text.split(" ");
+        QString l_lastname = l_textExplosed.last();
+        l_textExplosed.removeLast();
+        QString l_firstname = l_textExplosed.join(" ");
+        l_peopleWindow->setFirstname(l_firstname);
+        l_peopleWindow->setLastname(l_lastname);
+        l_peopleWindow->show();
+        QObject::connect(l_peopleWindow, SIGNAL(peopleCreated(People)), this, SLOT(peopleWindow_peopleCreated(People)));
     }
 }
 
@@ -239,9 +247,10 @@ void MetadataWindow::on_directorEdit_textEdited()
     QString l_text =  m_ui->directorEdit->text();
     if (l_text.size() > 3)
     {
-        QVector<People> l_directorsVector = m_app->getDatabaseManager()->getPeopleByFullname(l_text, 1);
+        QVector<People> l_directorsVector = m_app->getDatabaseManager()->getPeopleByFullname(l_text, Director);
         if(l_directorsVector.size() > 0)
         {
+            m_app->debug("dfdfds");
             People l_director;
             QStringList l_propositions;
             foreach (l_director, l_directorsVector)
@@ -264,4 +273,9 @@ void MetadataWindow::on_producerEdit_textEdited()
 void MetadataWindow::on_actorEdit_textEdited()
 {
     m_app->debug("[MetadataWindow] actorEdit textEdited()");
+}
+
+void MetadataWindow::peopleWindow_peopleCreated(People people)
+{
+    addDirector(people);
 }

@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "Application.h"
+#include "PeopleWindow.h"
 
 class Application;
 
@@ -47,6 +48,8 @@ class MetadataWindow : public QDialog
         void on_directorEdit_textEdited();
         void on_producerEdit_textEdited();
         void on_actorEdit_textEdited();
+        void peopleWindow_peopleCreated(People);
+
 
     private:
         Ui::MetadataWindow *m_ui;

@@ -34,7 +34,6 @@ DatabaseManager::DatabaseManager()
     createTables();
 
     m_moviesPathModel = new QStringListModel();
-
 }
 
 /**
@@ -515,6 +514,41 @@ QVector<People> DatabaseManager::getAllDirectors()
  * @brief Gets the one person that has the id `id`
  *
  * @param int id of the person
+ * @return People
+ */
+People DatabaseManager::getOnePeopleById(int id)
+{
+    People l_people;
+    QSqlQuery l_query(m_db);
+
+    l_query.prepare("SELECT p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography "
+                    "FROM people AS p "
+                    "WHERE p.id = :id ");
+    l_query.bindValue(":id", id);
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In getOnePeopleBy(int, type):";
+        qDebug() << l_query.lastError().text();
+    }
+
+    if(l_query.next())
+    {
+        l_people.setId(l_query.value(0).toInt());
+        l_people.setFirstname(l_query.value(1).toString());
+        l_people.setLastname(l_query.value(2).toString());
+        l_people.setRealname(l_query.value(3).toString());
+        l_people.setBirthday(QDate::fromString(l_query.value(4).toString(), DATE_FORMAT));
+        l_people.setBiography(l_query.value(5).toString());
+    }
+
+    return l_people;
+}
+
+/**
+ * @brief Gets the one person that has the id `id`
+ *
+ * @param int id of the person
  * @param int type of the person
  * @return People
  */
@@ -792,14 +826,12 @@ bool DatabaseManager::insertNewMovie(Movie &movie)
 }
 
 /**
- * @brief Adds a person to the database and links it to a movie
+ * @brief Adds a person to the database
  *
  * @param People
- * @param Movie
- * @param int type: the type of People
  * @return bool
  */
-bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
+bool DatabaseManager::addPeople(People &people)
 {
     QSqlQuery l_query(m_db);
     l_query.prepare("INSERT INTO people (lastname, firstname, realname, birthday, biography) "
@@ -817,8 +849,30 @@ bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
 
         return false;
     }
-
     people.setId(l_query.lastInsertId().toInt());
+
+    return true;
+}
+
+/**
+ * @brief Adds a person to the database and links it to a movie
+ *
+ * @param People
+ * @param Movie
+ * @param int type: the type of People
+ * @return bool
+ */
+bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
+{
+    qDebug()<< people.getFirstname();
+
+    if (!addPeople(people))
+    {
+
+        return false;
+    }
+
+    QSqlQuery l_query(m_db);
     l_query.prepare("INSERT INTO movies_people (id_people, id_movie, type) "
                     "VALUES (:id_people, :id_movie, :type)");
     l_query.bindValue(":id_people", people.getId());
@@ -967,6 +1021,8 @@ bool DatabaseManager::updatePeopleInMovie(People &people, Movie &movie, int type
     // If the id is 0, then the director doesn't exist
     if (people.getId() == 0)
     {
+        qDebug()<< people.getFirstname();
+
         qDebug() << "People not known";
         addPeopleToMovie(people, movie, type);
     }
@@ -1132,23 +1188,26 @@ bool DatabaseManager::updateMovie(Movie &movie)
         return false;
     }
 
-    People l_director;
-    foreach (l_director, movie.getDirectors())
+    qDebug()<< movie.getDirectors().size();
+
+    foreach (People l_director, movie.getDirectors())
     {
+        qDebug()<< l_director.getFirstname();
+
         updatePeopleInMovie(l_director, movie, Director);
     }
-    People l_producer;
-    foreach (l_producer, movie.getProducers())
+
+    foreach (People l_producer, movie.getProducers())
     {
-        updatePeopleInMovie(l_director, movie, Producer);
+        updatePeopleInMovie(l_producer, movie, Producer);
     }
-    People l_actor;
-    foreach (l_actor, movie.getActors())
+
+    foreach (People l_actor, movie.getActors())
     {
-        updatePeopleInMovie(l_director, movie, Actor);
+        updatePeopleInMovie(l_actor, movie, Actor);
     }
-    Tag l_tag;
-    foreach (l_tag, movie.getTags())
+
+    foreach (Tag l_tag, movie.getTags())
     {
         updateTagInMovie(l_tag, movie);
     }
