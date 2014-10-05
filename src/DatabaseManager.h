@@ -84,6 +84,11 @@ class DatabaseManager : public QObject
         bool updateTag(Tag&);
         bool updateTagInMovie(Tag&, Movie&);
 
+        // Delete
+        bool deleteMovie(Movie&);
+        bool removePeopleFromMovie(People&, Movie&, int);
+        bool removeTagFromMovie(Tag&, Movie&);
+
         // Models
         QStringListModel *getMoviesPathModel() {return this->m_moviesPathModel;}
 
@@ -91,6 +96,8 @@ class DatabaseManager : public QObject
     private:
         QSqlDatabase m_db;
         QStringListModel *m_moviesPathModel;
+        bool deletePeople(People&);
+        bool deleteTag(Tag&);
 
 };
 

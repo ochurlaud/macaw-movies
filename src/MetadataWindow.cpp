@@ -135,7 +135,6 @@ void MetadataWindow::setProducers(QVector<People> producersVector)
     }
 }
 
-
 QVector<People> MetadataWindow::getProducers()
 {
     QVector<People> l_producersVector;
@@ -250,7 +249,6 @@ void MetadataWindow::on_directorEdit_textEdited()
         QVector<People> l_directorsVector = m_app->getDatabaseManager()->getPeopleByFullname(l_text, Director);
         if(l_directorsVector.size() > 0)
         {
-            m_app->debug("dfdfds");
             People l_director;
             QStringList l_propositions;
             foreach (l_director, l_directorsVector)
