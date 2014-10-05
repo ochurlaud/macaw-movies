@@ -138,13 +138,13 @@ bool DatabaseManager::createTables()
             // Movies
             l_ret = l_query.exec("CREATE TABLE IF NOT EXISTS movies("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "title VARCHAR(255), "
+                      "title VARCHAR(255) NOT NULL, "
                       "original_title VARCHAR(255), "
                       "release_date VARCHAR(10), "
                       "country VARCHAR(50), "
                       "duration INTEGER, "
                       "synopsis TEXT, "
-                      "file_path VARCHAR(255), "
+                      "file_path VARCHAR(255) UNIQUE NOT NULL, "
                       "colored BOOLEAN, "
                       "format VARCHAR(10), "
                       "suffix VARCHAR(10), "
@@ -154,7 +154,7 @@ bool DatabaseManager::createTables()
             // Peoples (directors, actor, music...)
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS people("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "lastname VARCHAR(100), "
+                      "lastname VARCHAR(100) NOT NULL, "
                       "firstname VARCHAR(100), "
                       "realname VARCHAR(255), "
                       "birthday VARCHAR(10), "
@@ -164,29 +164,31 @@ bool DatabaseManager::createTables()
             // Links between people and movies (a type of person is given here)
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies_people("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "id_people INTEGER, "
-                      "id_movie INTEGER, "
-                      "type INTEGER, "
+                      "id_people INTEGER NOT NULL, "
+                      "id_movie INTEGER NOT NULL, "
+                      "type INTEGER NOT NULL, "
                       "UNIQUE (id_people, id_movie, type) ON CONFLICT IGNORE "
                       ")");
 
             // Tags that can be attributed to the movies
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS tags("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "name VARCHAR(255)"
+                      "name VARCHAR(255) UNIQUE NOT NULL"
                       ")");
 
             // Links between tags and movies
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies_tags("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "id_tag INTEGER, "
-                      "id_movie INTEGER, "
+                      "id_tag INTEGER NOT NULL, "
+                      "id_movie INTEGER NOT NULL, "
                       "UNIQUE (id_tag, id_movie) ON CONFLICT IGNORE "
                       ")");
+
             // List of paths where the movies are stored
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS paths_list("
                                           "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                                          "movies_path VARCHAR(255))");
+                                          "movies_path VARCHAR(255) UNIQUE"
+                                          ")");
 
             // Config table (for update purposes)
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS config("
@@ -864,8 +866,6 @@ bool DatabaseManager::addPeople(People &people)
  */
 bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
 {
-    qDebug()<< people.getFirstname();
-
     if (!addPeople(people))
     {
 

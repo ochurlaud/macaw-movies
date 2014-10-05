@@ -92,7 +92,6 @@ class DatabaseManager : public QObject
         // Models
         QStringListModel *getMoviesPathModel() {return this->m_moviesPathModel;}
 
-
     private:
         QSqlDatabase m_db;
         QStringListModel *m_moviesPathModel;
