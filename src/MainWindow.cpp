@@ -325,7 +325,6 @@ void MainWindow::fillMoviesListAll()
      fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
  }
 
-
 /**
  * @brief Shows the context-menu where the user rightclicks
  *
@@ -342,7 +341,6 @@ void MainWindow::customMenuRequested(QPoint pos)
     l_menu->popup(m_moviesTable->viewport()->mapToGlobal(pos));
     m_app->debug("[MainWindow] Exits customMenuRequested()");
 }
-
 
 /**
  * @brief Shows the window to view/edit the metadata of a movie
