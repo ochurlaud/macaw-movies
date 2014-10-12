@@ -152,12 +152,16 @@ void MainWindow::fillMoviesList(QVector<Movie> moviesList)
     {
         QTableWidgetItem *l_title = new QTableWidgetItem(moviesList.at(i).getTitle());
         l_title->setData(Qt::UserRole, moviesList.at(i).getId());
+        l_title->setFlags(Qt::NoItemFlags|Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         QTableWidgetItem *l_originalTitle = new QTableWidgetItem(moviesList.at(i).getOriginalTitle());
         l_originalTitle->setData(Qt::UserRole, moviesList.at(i).getId());
+        l_originalTitle->setFlags(Qt::NoItemFlags|Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         QTableWidgetItem *l_releaseDate = new QTableWidgetItem(moviesList.at(i).getReleaseDate().toString("dd MMM yyyy"));
         l_releaseDate->setData(Qt::UserRole, moviesList.at(i).getId());
+        l_releaseDate->setFlags(Qt::NoItemFlags|Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         QTableWidgetItem *l_filePath = new QTableWidgetItem(moviesList.at(i).getFilePath());
         l_filePath->setData(Qt::UserRole, moviesList.at(i).getId());
+        l_filePath->setFlags(Qt::NoItemFlags|Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
         m_moviesTable->setItem(i, 0, l_title);
         m_moviesTable->setItem(i, 1, l_originalTitle);
@@ -184,28 +188,56 @@ void MainWindow::fillMoviesList(QVector<Movie> moviesList)
 void MainWindow::fillTagsList()
 {
     m_app->debug("[MainWindow] Enters fillTagsList()");
-    m_centralList = new QListWidget(this);
-    QListWidgetItem *l_tempItem = new QListWidgetItem;
-    l_tempItem->setText("All");
-    m_centralList->insertItem(0, l_tempItem);
-    QVector<Tag> l_tagsVector = m_app->getDatabaseManager()->getAllTags();
 
-    for (int i = 0 ; i < l_tagsVector.size() ; i++)
+    m_centralTreeWidget = new QTreeWidget();
+    m_centralTreeWidget->setColumnCount(3);
+    QList<QTreeWidgetItem *> l_tagsList;
+
+    QTreeWidgetItem *l_tagItem = new QTreeWidgetItem((QTreeWidget*)0, QStringList("Without Tag"));
+    QVector<Movie> l_moviesVector = m_app->getDatabaseManager()->getMoviesWithoutTag();
+
+    l_tagItem->setData(0, Qt::UserRole, 0);
+    foreach (Movie l_movie, l_moviesVector)
     {
-        Tag l_tag = l_tagsVector.at(i);
-        QListWidgetItem *l_tempItem = new QListWidgetItem;
-        l_tempItem->setText(l_tag.getName());
-        l_tempItem->setData(Qt::UserRole, l_tag.getId());
-        m_centralList->insertItem(i+1, l_tempItem);
+        QTreeWidgetItem *l_movieItem = new QTreeWidgetItem();
+        l_movieItem->setData(0, Qt::UserRole, l_movie.getId());
+        l_movieItem->setData(1, Qt::UserRole, l_movie.getId());
+        l_movieItem->setData(2, Qt::UserRole, l_movie.getId());
+        l_movieItem->setData(0, Qt::DisplayRole, l_movie.getTitle());
+        l_movieItem->setData(1, Qt::DisplayRole, l_movie.getReleaseDate());
+        l_movieItem->setData(2, Qt::DisplayRole, l_movie.getFilePath());
+        l_tagItem->addChild(l_movieItem);
     }
+    l_tagsList.append(l_tagItem);
 
-    QObject::connect(m_centralList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(showTagsMovies(QListWidgetItem*)));
-    m_centralList->setViewMode(QListView::IconMode);
+    QVector<Tag> l_tagsVector = m_app->getDatabaseManager()->getAllTags();
+    foreach (Tag l_tag, l_tagsVector)
+    {
+        QTreeWidgetItem *l_tagItem = new QTreeWidgetItem((QTreeWidget*)0, QStringList(l_tag.getName()));
+        l_tagItem->setData(0, Qt::UserRole, l_tag.getId());
+
+        QVector<Movie> l_moviesVector = m_app->getDatabaseManager()->getMoviesByTag(l_tag);
+        foreach (Movie l_movie, l_moviesVector)
+        {
+            QTreeWidgetItem *l_movieItem = new QTreeWidgetItem();
+            l_movieItem->setData(0, Qt::UserRole, l_movie.getId());
+            l_movieItem->setData(1, Qt::UserRole, l_movie.getId());
+            l_movieItem->setData(2, Qt::UserRole, l_movie.getId());
+            l_movieItem->setData(0, Qt::DisplayRole, l_movie.getTitle());
+            l_movieItem->setData(1, Qt::DisplayRole, l_movie.getReleaseDate());
+            l_movieItem->setData(2, Qt::DisplayRole, l_movie.getFilePath());
+            l_tagItem->addChild(l_movieItem);
+        }
+
+        l_tagsList.append(l_tagItem);
+    }
+    m_centralTreeWidget->insertTopLevelItems(0, l_tagsList);
+
     while(!m_centralLayout->isEmpty())
     {
         delete m_centralLayout->takeAt(0);
     }
-    m_centralLayout->addWidget(m_centralList);
+    m_centralLayout->addWidget(m_centralTreeWidget);
 
     m_app->debug("[MainWindow] Exits fillTagsList()");
 }
@@ -216,28 +248,62 @@ void MainWindow::fillTagsList()
 void MainWindow::fillDirectorList()
 {
     m_app->debug("[MainWindow] Enters fillDirectorList()");
-    m_centralList = new QListWidget(this);
-    QListWidgetItem *l_tempItem = new QListWidgetItem;
-    l_tempItem->setText("All");
-    m_centralList->insertItem(0, l_tempItem);
-    QVector<People> l_directors = m_app->getDatabaseManager()->getAllDirectors();
 
-    for (int i = 0 ; i < l_directors.size() ; i++)
+    m_centralTreeWidget = new QTreeWidget();
+    m_centralTreeWidget->setColumnCount(3);
+    QList<QTreeWidgetItem *> l_directorsList;
+
+    QTreeWidgetItem *l_directorItem = new QTreeWidgetItem((QTreeWidget*)0, QStringList("Without Director"));
+    QVector<Movie> l_moviesVector = m_app->getDatabaseManager()->getMoviesWithoutDirector();
+
+    l_directorItem->setData(0, Qt::UserRole, 0);
+    foreach (Movie l_movie, l_moviesVector)
     {
-        People director = l_directors.at(i);
-        QListWidgetItem *l_tempItem = new QListWidgetItem;
-        l_tempItem->setText(director.getFirstname() + " " + director.getLastname() );
-        l_tempItem->setData(Qt::UserRole, director.getId());
-        m_centralList->insertItem(i+1, l_tempItem);
+        QTreeWidgetItem *l_movieItem = new QTreeWidgetItem();
+        l_movieItem->setData(0, Qt::UserRole, l_movie.getId());
+        l_movieItem->setData(1, Qt::UserRole, l_movie.getId());
+        l_movieItem->setData(2, Qt::UserRole, l_movie.getId());
+        l_movieItem->setData(0, Qt::DisplayRole, l_movie.getTitle());
+        l_movieItem->setData(1, Qt::DisplayRole, l_movie.getReleaseDate());
+        l_movieItem->setData(2, Qt::DisplayRole, l_movie.getFilePath());
+        l_directorItem->addChild(l_movieItem);
     }
+    l_directorsList.append(l_directorItem);
 
-    QObject::connect(m_centralList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(showDirectorsMovies(QListWidgetItem*)));
-    m_centralList->setViewMode(QListView::IconMode);
+    QVector<People> l_directorsVector = m_app->getDatabaseManager()->getAllDirectors();
+    foreach (People l_director, l_directorsVector)
+    {
+        QString l_directorFullname;
+        if(l_director.getFirstname() != "")
+        {
+            l_directorFullname = l_director.getFirstname() + " ";
+        }
+        l_directorFullname = l_directorFullname + l_director.getLastname();
+        QTreeWidgetItem *l_directorItem = new QTreeWidgetItem((QTreeWidget*)0, QStringList(l_directorFullname));
+        l_directorItem->setData(0, Qt::UserRole, l_director.getId());
+
+        QVector<Movie> l_moviesVector = m_app->getDatabaseManager()->getMoviesByDirector(l_director);
+        foreach (Movie l_movie, l_moviesVector)
+        {
+            QTreeWidgetItem *l_movieItem = new QTreeWidgetItem();
+            l_movieItem->setData(0, Qt::UserRole, l_movie.getId());
+            l_movieItem->setData(1, Qt::UserRole, l_movie.getId());
+            l_movieItem->setData(2, Qt::UserRole, l_movie.getId());
+            l_movieItem->setData(0, Qt::DisplayRole, l_movie.getTitle());
+            l_movieItem->setData(1, Qt::DisplayRole, l_movie.getReleaseDate());
+            l_movieItem->setData(2, Qt::DisplayRole, l_movie.getFilePath());
+            l_directorItem->addChild(l_movieItem);
+        }
+
+        l_directorsList.append(l_directorItem);
+    }
+    m_centralTreeWidget->insertTopLevelItems(0, l_directorsList);
+
     while(!m_centralLayout->isEmpty())
     {
         delete m_centralLayout->takeAt(0);
     }
-    m_centralLayout->addWidget(m_centralList);
+    m_centralLayout->addWidget(m_centralTreeWidget);
 
     m_app->debug("[MainWindow] Exits fillDirectorList()");
 }

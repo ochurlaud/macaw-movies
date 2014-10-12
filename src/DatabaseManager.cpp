@@ -458,9 +458,85 @@ QVector<Movie> DatabaseManager::getMoviesByTag(Tag const &tag)
     return l_moviesVector;
 }
 
-QVector<Movie> getMoviesByAny(QVariant value)
+QVector<Movie> DatabaseManager::getMoviesWithoutTag()
 {
     QVector<Movie> l_moviesVector;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT m.id, m.title, m.original_title, m.release_date, m.country, m.duration, m.synopsis, m.file_path, m.colored, m.format, m.suffix, m.rank "
+                    "FROM movies AS m "
+                    "WHERE (SELECT COUNT(*) "
+                                "FROM movies_tags AS mt "
+                                "WHERE mt.id_movie = m.id) = 0 ");
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In getMoviesWithoutTag():";
+        qDebug() << l_query.lastError().text();
+    }
+
+    while(l_query.next())
+    {
+        Movie l_movie;
+        l_movie.setId(l_query.value(0).toInt());
+        l_movie.setTitle(l_query.value(1).toString());
+        l_movie.setOriginalTitle(l_query.value(2).toString());
+        l_movie.setReleaseDate(QDate::fromString(l_query.value(3).toString(), DATE_FORMAT));
+        l_movie.setCountry(l_query.value(4).toString());
+        l_movie.setDuration(l_query.value(5).toInt());
+        l_movie.setSynopsis(l_query.value(6).toString());
+        l_movie.setFilePath(l_query.value(7).toString());
+        l_movie.setColored(l_query.value(8).toBool());
+        l_movie.setFormat(l_query.value(9).toString());
+        l_movie.setSuffix(l_query.value(10).toString());
+        l_movie.setRank(l_query.value(11).toInt());
+
+        setTagsToMovie(l_movie);
+        setPeopleToMovie(l_movie);
+
+        l_moviesVector.push_back(l_movie);
+    }
+
+    return l_moviesVector;
+}
+
+QVector<Movie> DatabaseManager::getMoviesWithoutDirector()
+{
+    QVector<Movie> l_moviesVector;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT m.id, m.title, m.original_title, m.release_date, m.country, m.duration, m.synopsis, m.file_path, m.colored, m.format, m.suffix, m.rank "
+                    "FROM movies AS m "
+                    "WHERE (SELECT COUNT(*) "
+                                "FROM movies_people AS mp "
+                                "WHERE mp.id_movie = m.id AND mp.type = :type) = 0" );
+    l_query.bindValue(":type", Director);
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In getMoviesWithoutDirector():";
+        qDebug() << l_query.lastError().text();
+    }
+
+    while(l_query.next())
+    {
+        Movie l_movie;
+        l_movie.setId(l_query.value(0).toInt());
+        l_movie.setTitle(l_query.value(1).toString());
+        l_movie.setOriginalTitle(l_query.value(2).toString());
+        l_movie.setReleaseDate(QDate::fromString(l_query.value(3).toString(), DATE_FORMAT));
+        l_movie.setCountry(l_query.value(4).toString());
+        l_movie.setDuration(l_query.value(5).toInt());
+        l_movie.setSynopsis(l_query.value(6).toString());
+        l_movie.setFilePath(l_query.value(7).toString());
+        l_movie.setColored(l_query.value(8).toBool());
+        l_movie.setFormat(l_query.value(9).toString());
+        l_movie.setSuffix(l_query.value(10).toString());
+        l_movie.setRank(l_query.value(11).toInt());
+
+        setTagsToMovie(l_movie);
+        setPeopleToMovie(l_movie);
+
+        l_moviesVector.push_back(l_movie);
+    }
 
     return l_moviesVector;
 }

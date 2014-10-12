@@ -64,7 +64,7 @@ class MainWindow : public QWidget
         QPushButton *m_toWatchButton;
         QPushButton *m_playlistButton;
         QTableWidget *m_moviesTable;
-        QListWidget *m_centralList;
+        QTreeWidget *m_centralTreeWidget;
         QVector<QListWidgetItem*> m_moviesTitles;
         Application * m_app;
 
