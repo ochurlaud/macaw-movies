@@ -20,7 +20,7 @@
 #include "PeopleWindow.h"
 #include "ui_PeopleWindow.h"
 
-PeopleWindow::PeopleWindow(int type, int id, QWidget *parent) :
+PeopleWindow::PeopleWindow(int id, int type, QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::PeopleWindow),
     m_type(type)

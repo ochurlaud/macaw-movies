@@ -45,9 +45,7 @@ class MainWindow : public QWidget
         void updateApp();
         void showSettingsWindow();
         void showMetadataWindow();
-        void startMovie(QTableWidgetItem*);
-        void showDirectorsMovies(QListWidgetItem*);
-        void showTagsMovies(QListWidgetItem*);
+        void startMovie(QTreeWidgetItem*, int);
         void customMenuRequested(QPoint);
 
     private:
@@ -69,7 +67,6 @@ class MainWindow : public QWidget
         Application * m_app;
 
     private slots:
-    //        void fillLeftPannel();
         void fillMoviesListAll();
         void fillTagsList();
         void fillDirectorList();

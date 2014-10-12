@@ -138,47 +138,47 @@ void MainWindow::updateApp()
 void MainWindow::fillMoviesList(QVector<Movie> moviesList)
 {
     m_app->debug("[MainWindow] Enters fillMoviesList()");
-    m_moviesTable = new QTableWidget;
 
-    m_moviesTable->setRowCount(moviesList.size());
-    m_moviesTable->setColumnCount(4);
+    m_centralTreeWidget = new QTreeWidget();
+    m_centralTreeWidget->setColumnCount(4);
+    m_centralTreeWidget->setAlternatingRowColors(true);
+    m_centralTreeWidget->setWordWrap(true);
+
     QStringList l_headers;
     l_headers << "Title" << "Original Title" << "Release Date" << "Path of the file";
-    m_moviesTable->setHorizontalHeaderLabels(l_headers);
-    m_moviesTable->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(m_moviesTable, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
+    m_centralTreeWidget->setHeaderLabels(l_headers);
+    m_centralTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(m_centralTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
 
-    for (int i = 0 ; i < moviesList.size() ; i++)
+    foreach (Movie l_movie, moviesList)
     {
-        QTableWidgetItem *l_title = new QTableWidgetItem(moviesList.at(i).getTitle());
-        l_title->setData(Qt::UserRole, moviesList.at(i).getId());
-        l_title->setFlags(Qt::NoItemFlags|Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        QTableWidgetItem *l_originalTitle = new QTableWidgetItem(moviesList.at(i).getOriginalTitle());
-        l_originalTitle->setData(Qt::UserRole, moviesList.at(i).getId());
-        l_originalTitle->setFlags(Qt::NoItemFlags|Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        QTableWidgetItem *l_releaseDate = new QTableWidgetItem(moviesList.at(i).getReleaseDate().toString("dd MMM yyyy"));
-        l_releaseDate->setData(Qt::UserRole, moviesList.at(i).getId());
-        l_releaseDate->setFlags(Qt::NoItemFlags|Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        QTableWidgetItem *l_filePath = new QTableWidgetItem(moviesList.at(i).getFilePath());
-        l_filePath->setData(Qt::UserRole, moviesList.at(i).getId());
-        l_filePath->setFlags(Qt::NoItemFlags|Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        QTreeWidgetItem *l_movieItem = new QTreeWidgetItem();
+        l_movieItem->setData(0, Qt::UserRole, l_movie.getId());
+        l_movieItem->setData(0, Qt::UserRole+1, 1);
 
-        m_moviesTable->setItem(i, 0, l_title);
-        m_moviesTable->setItem(i, 1, l_originalTitle);
-        m_moviesTable->setItem(i, 2, l_releaseDate);
-        m_moviesTable->setItem(i, 3, l_filePath);
+        QLabel *l_movieTitle = new QLabel(l_movie.getTitle());
+        l_movieTitle->setWordWrap(true);
+        QLabel *l_movieOriginalTitle = new QLabel(l_movie.getOriginalTitle());
+        l_movieOriginalTitle->setWordWrap(true);
+        QLabel *l_movieReleaseDate = new QLabel(l_movie.getReleaseDate().toString("dd MMM yyyy"));
+        l_movieReleaseDate->setWordWrap(true);
+        QLabel *l_movieFilePath = new QLabel(l_movie.getFilePath());
+        l_movieFilePath->setWordWrap(false);
+
+        m_centralTreeWidget->insertTopLevelItem(m_centralTreeWidget->topLevelItemCount(), l_movieItem);
+        m_centralTreeWidget->setItemWidget(l_movieItem, 0, l_movieTitle);
+        m_centralTreeWidget->setItemWidget(l_movieItem, 1, l_movieOriginalTitle);
+        m_centralTreeWidget->setItemWidget(l_movieItem, 2, l_movieReleaseDate);
+        m_centralTreeWidget->setItemWidget(l_movieItem, 3, l_movieFilePath);
     }
-    m_moviesTable->setShowGrid(false);
-    m_moviesTable->verticalHeader()->hide();
-    m_moviesTable->setAlternatingRowColors(true);
 
-    connect(m_moviesTable,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this,SLOT(startMovie(QTableWidgetItem*)));
+    QObject::connect(m_centralTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),this,SLOT(startMovie(QTreeWidgetItem*, int)));
 
     while(!m_centralLayout->isEmpty())
     {
         delete m_centralLayout->takeAt(0);
     }
-    m_centralLayout->addWidget(m_moviesTable);
+    m_centralLayout->addWidget(m_centralTreeWidget);
     m_app->debug("[MainWindow] Exits fillMoviesList()");
 }
 
@@ -201,8 +201,7 @@ void MainWindow::fillTagsList()
     {
         QTreeWidgetItem *l_movieItem = new QTreeWidgetItem();
         l_movieItem->setData(0, Qt::UserRole, l_movie.getId());
-        l_movieItem->setData(1, Qt::UserRole, l_movie.getId());
-        l_movieItem->setData(2, Qt::UserRole, l_movie.getId());
+        l_movieItem->setData(0, Qt::UserRole+1, 1);
         l_movieItem->setData(0, Qt::DisplayRole, l_movie.getTitle());
         l_movieItem->setData(1, Qt::DisplayRole, l_movie.getReleaseDate());
         l_movieItem->setData(2, Qt::DisplayRole, l_movie.getFilePath());
@@ -221,8 +220,7 @@ void MainWindow::fillTagsList()
         {
             QTreeWidgetItem *l_movieItem = new QTreeWidgetItem();
             l_movieItem->setData(0, Qt::UserRole, l_movie.getId());
-            l_movieItem->setData(1, Qt::UserRole, l_movie.getId());
-            l_movieItem->setData(2, Qt::UserRole, l_movie.getId());
+            l_movieItem->setData(0, Qt::UserRole+1, 1);
             l_movieItem->setData(0, Qt::DisplayRole, l_movie.getTitle());
             l_movieItem->setData(1, Qt::DisplayRole, l_movie.getReleaseDate());
             l_movieItem->setData(2, Qt::DisplayRole, l_movie.getFilePath());
@@ -232,6 +230,7 @@ void MainWindow::fillTagsList()
         l_tagsList.append(l_tagItem);
     }
     m_centralTreeWidget->insertTopLevelItems(0, l_tagsList);
+    QObject::connect(m_centralTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),this,SLOT(startMovie(QTreeWidgetItem*, int)));
 
     while(!m_centralLayout->isEmpty())
     {
@@ -251,7 +250,15 @@ void MainWindow::fillDirectorList()
 
     m_centralTreeWidget = new QTreeWidget();
     m_centralTreeWidget->setColumnCount(3);
+    m_centralTreeWidget->setAlternatingRowColors(true);
+    m_centralTreeWidget->setWordWrap(true);
     QList<QTreeWidgetItem *> l_directorsList;
+
+    QStringList l_headers;
+    l_headers << "Title" << "Release Date" << "Path of the file";
+    m_centralTreeWidget->setHeaderLabels(l_headers);
+    m_centralTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(m_centralTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
 
     QTreeWidgetItem *l_directorItem = new QTreeWidgetItem((QTreeWidget*)0, QStringList("Without Director"));
     QVector<Movie> l_moviesVector = m_app->getDatabaseManager()->getMoviesWithoutDirector();
@@ -261,12 +268,19 @@ void MainWindow::fillDirectorList()
     {
         QTreeWidgetItem *l_movieItem = new QTreeWidgetItem();
         l_movieItem->setData(0, Qt::UserRole, l_movie.getId());
-        l_movieItem->setData(1, Qt::UserRole, l_movie.getId());
-        l_movieItem->setData(2, Qt::UserRole, l_movie.getId());
-        l_movieItem->setData(0, Qt::DisplayRole, l_movie.getTitle());
-        l_movieItem->setData(1, Qt::DisplayRole, l_movie.getReleaseDate());
-        l_movieItem->setData(2, Qt::DisplayRole, l_movie.getFilePath());
+        l_movieItem->setData(0, Qt::UserRole+1, 1);
         l_directorItem->addChild(l_movieItem);
+
+        QLabel *l_movieTitle = new QLabel(l_movie.getTitle());
+        l_movieTitle->setWordWrap(true);
+        QLabel *l_movieReleaseDate = new QLabel(l_movie.getReleaseDate().toString("dd MMM yyyy"));
+        l_movieReleaseDate->setWordWrap(true);
+        QLabel *l_movieFilePath = new QLabel(l_movie.getFilePath());
+        l_movieFilePath->setWordWrap(false);
+
+        m_centralTreeWidget->setItemWidget(l_movieItem, 0, l_movieTitle);
+        m_centralTreeWidget->setItemWidget(l_movieItem, 1, l_movieReleaseDate);
+        m_centralTreeWidget->setItemWidget(l_movieItem, 2, l_movieFilePath);
     }
     l_directorsList.append(l_directorItem);
 
@@ -287,17 +301,26 @@ void MainWindow::fillDirectorList()
         {
             QTreeWidgetItem *l_movieItem = new QTreeWidgetItem();
             l_movieItem->setData(0, Qt::UserRole, l_movie.getId());
-            l_movieItem->setData(1, Qt::UserRole, l_movie.getId());
-            l_movieItem->setData(2, Qt::UserRole, l_movie.getId());
-            l_movieItem->setData(0, Qt::DisplayRole, l_movie.getTitle());
-            l_movieItem->setData(1, Qt::DisplayRole, l_movie.getReleaseDate());
-            l_movieItem->setData(2, Qt::DisplayRole, l_movie.getFilePath());
+            l_movieItem->setData(0, Qt::UserRole+1, 1);
             l_directorItem->addChild(l_movieItem);
+
+            QLabel *l_movieTitle = new QLabel(l_movie.getTitle());
+            l_movieTitle->setWordWrap(true);
+            QLabel *l_movieReleaseDate = new QLabel(l_movie.getReleaseDate().toString("dd MMM yyyy"));
+            l_movieReleaseDate->setWordWrap(true);
+            QLabel *l_movieFilePath = new QLabel(l_movie.getFilePath());
+            l_movieFilePath->setWordWrap(false);
+
+            m_centralTreeWidget->setItemWidget(l_movieItem, 0, l_movieTitle);
+            m_centralTreeWidget->setItemWidget(l_movieItem, 1, l_movieReleaseDate);
+            m_centralTreeWidget->setItemWidget(l_movieItem, 2, l_movieFilePath);
         }
 
         l_directorsList.append(l_directorItem);
     }
     m_centralTreeWidget->insertTopLevelItems(0, l_directorsList);
+
+    QObject::connect(m_centralTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),this,SLOT(startMovie(QTreeWidgetItem*, int)));
 
     while(!m_centralLayout->isEmpty())
     {
@@ -329,61 +352,21 @@ void MainWindow::fillPlaylist()
  *
  * @param QTableWidgetItem* item doubleclicked by the user
  */
-void MainWindow::startMovie(QTableWidgetItem *item)
+void MainWindow::startMovie(QTreeWidgetItem *item, int column)
 {
     m_app->debug("[MainWindow] Enters startMovie()");
 
-    int l_movieId = item->data(Qt::UserRole).toInt();
-    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
+    // We do something only if it's a movie
+    if (item->data(0, Qt::UserRole+1).toInt() == 1)
+    {
+        int l_movieId = item->data(0, Qt::UserRole).toInt();
+        Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
 
-    m_app->debug("[MainWindow.startMovie()] Opened movie: " + l_movie.getFilePath());
+        m_app->debug("[MainWindow.startMovie()] Opened movie: " + l_movie.getFilePath());
 
-    QDesktopServices::openUrl(QUrl("file://" + l_movie.getFilePath(), QUrl::TolerantMode));
-
+        QDesktopServices::openUrl(QUrl("file://" + l_movie.getFilePath(), QUrl::TolerantMode));
+    }
     m_app->debug("[MainWindow] Exits startMovie()");
-}
-
-/**
- * @brief Fills the main pannel with the movies of the selected director
- *
- * @param QListWidgetItem* director selected by the user
- */
-void MainWindow::showDirectorsMovies(QListWidgetItem* item)
-{
-    m_app->debug("[MainWindow] Enters showDirectorMovies()");
-
-    if (item->data(Qt::UserRole).isNull())
-    {
-        fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
-    }
-    else
-    {
-        People l_director = m_app->getDatabaseManager()->getOneDirectorById(item->data(Qt::UserRole).toInt());
-        fillMoviesList(m_app->getDatabaseManager()->getMoviesByDirector(l_director));
-    }
-    m_app->debug("[MainWindow] Exits showDirectorMovies()");
-}
-
-
-/**
- * @brief Fills the main pannel with the movies with selected tag
- *
- * @param QListWidgetItem* tag selected by the user
- */
-void MainWindow::showTagsMovies(QListWidgetItem* item)
-{
-    m_app->debug("[MainWindow] Enters showTagsMovies()");
-
-    if (item->data(Qt::UserRole).isNull())
-    {
-        fillMoviesList(m_app->getDatabaseManager()->getAllMovies());
-    }
-    else
-    {
-        Tag l_tag = m_app->getDatabaseManager()->getOneTagById(item->data(Qt::UserRole).toInt());
-        fillMoviesList(m_app->getDatabaseManager()->getMoviesByTag(l_tag));
-    }
-    m_app->debug("[MainWindow] Exits showTagsMovies()");
 }
 
 void MainWindow::fillMoviesListAll()
