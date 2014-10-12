@@ -28,7 +28,6 @@ enum typePeople {Director, Producer, Actor};
 
 #include "Entities/Movie.h"
 
-
 class DatabaseManager : public QObject
 {
     public:
@@ -97,9 +96,12 @@ class DatabaseManager : public QObject
     private:
         QSqlDatabase m_db;
         QStringListModel *m_moviesPathModel;
+        QString m_movieFields;
+        QString m_peopleFields;
         bool deletePeople(People&);
         bool deleteTag(Tag&);
-
+        Movie hydrateMovie(QSqlQuery&);
+        People hydratePeople(QSqlQuery&);
 };
 
 #endif // DATABASEMANAGER_H
