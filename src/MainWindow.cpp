@@ -387,7 +387,7 @@ void MainWindow::customMenuRequested(QPoint pos)
     QObject::connect(l_setMetadataAction, SIGNAL(triggered()), this, SLOT(showMetadataWindow()));
     l_menu->addAction(new QAction("Nothing to do there", this));
     l_menu->addAction(l_setMetadataAction);
-    l_menu->popup(m_moviesTable->viewport()->mapToGlobal(pos));
+    l_menu->popup(m_centralTreeWidget->viewport()->mapToGlobal(pos));
     m_app->debug("[MainWindow] Exits customMenuRequested()");
 }
 
@@ -397,8 +397,22 @@ void MainWindow::customMenuRequested(QPoint pos)
 void MainWindow::showMetadataWindow()
 {
     m_app->debug("[MainWindow] Enters showMetadataWindow()");
-    int l_movieId = m_moviesTable->selectedItems().at(0)->data(Qt::UserRole).toInt();
-    MetadataWindow *l_metadataWindow = new MetadataWindow(l_movieId);
-    l_metadataWindow->show();
+    int l_id = m_centralTreeWidget->selectedItems().at(0)->data(0, Qt::UserRole).toInt();
+
+    // Editable only if id != 0
+    if (m_centralTreeWidget->selectedItems().at(0)->data(0,Qt::UserRole).toInt() != 0)
+    {
+        // Modification of a movie (1) or person (0)
+        if (m_centralTreeWidget->selectedItems().at(0)->data(0,Qt::UserRole+1).toInt() == 1)
+        {
+            MetadataWindow *l_metadataWindow = new MetadataWindow(l_id);
+            l_metadataWindow->show();
+        }
+        else if (m_centralTreeWidget->selectedItems().at(0)->data(0,Qt::UserRole+1).toInt() == 0)
+        {
+            PeopleWindow *l_metadataWindow = new PeopleWindow(l_id);
+            l_metadataWindow->show();
+        }
+    }
     m_app->debug("[MainWindow] Exits showMetadataWindow()");
 }
