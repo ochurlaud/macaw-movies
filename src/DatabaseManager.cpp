@@ -281,7 +281,7 @@ void DatabaseManager::setTagsToMovie(Movie &movie)
 void DatabaseManager::setPeopleToMovie(Movie &movie)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT p.id, p.lastname, p.firstname, p.realname, p.birthday, p.biography, pm.type "
+    l_query.prepare("SELECT p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography, pm.type "
                     "FROM people AS p, movies_people AS pm "
                     "WHERE pm.id_movie = :id_movie AND pm.id_people = p.id");
     l_query.bindValue(":id_movie", movie.getId());
@@ -846,7 +846,7 @@ bool DatabaseManager::addPeople(People &people)
 
     if (!l_query.exec())
     {
-        qDebug() << "In addPeopleToMovie():";
+        qDebug() << "In addPeople():";
         qDebug() << l_query.lastError().text();
 
         return false;
@@ -868,10 +868,8 @@ bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
 {
     if (!addPeople(people))
     {
-
         return false;
     }
-
     QSqlQuery l_query(m_db);
     l_query.prepare("INSERT INTO movies_people (id_people, id_movie, type) "
                     "VALUES (:id_people, :id_movie, :type)");
@@ -887,6 +885,7 @@ bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
         return false;
     }
 
+    movie = getOneMovieById(movie.getId());
     return true;
 }
 
@@ -970,6 +969,7 @@ bool DatabaseManager::addTagToMovie(Tag &tag, Movie &movie)
 
         return false;
     }
+    movie = getOneMovieById(movie.getId());
 
     return true;
 }
@@ -999,7 +999,7 @@ bool DatabaseManager::updatePeople(People &people)
 
     if (!l_query.exec())
     {
-        qDebug() << "In updateMovie():";
+        qDebug() << "In updatePeople():";
         qDebug() << l_query.lastError().text();
 
         return false;
@@ -1186,6 +1186,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
         return false;
     }
 
+    // Insertions/Updates of the linked elements
     foreach (People l_director, movie.getDirectors())
     {
         updatePeopleInMovie(l_director, movie, Director);
@@ -1205,6 +1206,81 @@ bool DatabaseManager::updateMovie(Movie &movie)
     {
         updateTagInMovie(l_tag, movie);
     }
+
+    // Deletion of the old linked elements
+    l_query.prepare("SELECT t.id, t.name "
+                    "FROM tags AS t, movies_tags AS mt "
+                    "WHERE mt.id_movie = :id_movie AND mt.id_tag = t.id");
+    l_query.bindValue(":id_movie", movie.getId());
+    if (!l_query.exec())
+    {
+        qDebug() << "In updateMovie():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+    while(l_query.next())
+    {
+        Tag l_tag;
+        l_tag.setId(l_query.value(0).toInt());
+        l_tag.setName(l_query.value(1).toString());
+        if(movie.getTags().indexOf(l_tag) < 0)
+        {
+            removeTagFromMovie(l_tag, movie);
+        }
+    }
+
+    QVector<int> types;
+    types << Director << Producer << Actor;
+    foreach (int type, types)
+    {
+        l_query.prepare("SELECT p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography "
+                        "FROM people AS p, movies_people AS mp "
+                        "WHERE mp.id_movie = :id_movie "
+                          "AND mp.type = :type "
+                          "AND mp.id_people = p.id");
+        l_query.bindValue(":id_movie", movie.getId());
+        l_query.bindValue(":type", type);
+        if (!l_query.exec())
+        {
+            qDebug() << "In updateMovie():";
+            qDebug() << l_query.lastError().text();
+
+            return false;
+        }
+        while(l_query.next())
+        {
+            People l_people;
+            l_people.setId(l_query.value(0).toInt());
+            l_people.setFirstname(l_query.value(1).toString());
+            l_people.setLastname(l_query.value(2).toString());
+            l_people.setRealname(l_query.value(3).toString());
+            l_people.setBirthday(QDate::fromString(l_query.value(4).toString(),DATE_FORMAT));
+            l_people.setBiography(l_query.value(5).toString());
+            switch (type)
+            {
+                case Director:
+                    if(movie.getDirectors().indexOf(l_people) < 0)
+                    {
+                        removePeopleFromMovie(l_people, movie, type);
+                    }
+                break;
+                case Producer:
+                    if(movie.getProducers().indexOf(l_people) < 0)
+                    {
+                        removePeopleFromMovie(l_people, movie, type);
+                    }
+                break;
+                case Actor:
+                    if(movie.getActors().indexOf(l_people) < 0)
+                    {
+                        removePeopleFromMovie(l_people, movie, type);
+                    }
+                break;
+            }
+        }
+    }
+
     qDebug() << "[DatabaseManager] Movie updated";
 
     return true;

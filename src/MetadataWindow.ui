@@ -101,6 +101,30 @@
         <day>1</day>
        </datetime>
       </property>
+      <property name="minimumDateTime">
+       <datetime>
+        <hour>0</hour>
+        <minute>0</minute>
+        <second>0</second>
+        <year>1752</year>
+        <month>10</month>
+        <day>1</day>
+       </datetime>
+      </property>
+      <property name="minimumDate">
+       <date>
+        <year>1752</year>
+        <month>10</month>
+        <day>1</day>
+       </date>
+      </property>
+      <property name="date">
+       <date>
+        <year>1900</year>
+        <month>1</month>
+        <day>1</day>
+       </date>
+      </property>
      </widget>
     </item>
    </layout>

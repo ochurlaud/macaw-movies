@@ -31,7 +31,7 @@ class MetadataWindow : public QDialog
         void setDirectors(QVector<People>);
         QVector<People> getDirectors();
         void addDirector(People);
-        void delDirector(int);
+        void delDirector(People);
         void setActors(QVector<People>);
         QVector<People> getActors();
         void setProducers(QVector<People>);
@@ -49,7 +49,8 @@ class MetadataWindow : public QDialog
         void on_producerEdit_textEdited();
         void on_actorEdit_textEdited();
         void peopleWindow_peopleCreated(People);
-
+        void customMenuRequested(QPoint);
+        void showPeopleWindow();
 
     private:
         Ui::MetadataWindow *m_ui;

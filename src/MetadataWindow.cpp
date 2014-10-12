@@ -24,6 +24,9 @@ MetadataWindow::MetadataWindow(int id, QWidget *parent) :
     setDirectors(m_movie.getDirectors());
     setActors(m_movie.getActors());
     setProducers(m_movie.getProducers());
+
+    m_ui->directorsWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_ui->directorsWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
     m_app->debug("[MetadataWindow] Construction done");
 }
 
@@ -119,9 +122,9 @@ void MetadataWindow::addDirector(People director)
     m_movie.addDirector(director);
 }
 
-void MetadataWindow::delDirector(int directorId)
+void MetadataWindow::delDirector(People director)
 {
-
+    m_movie.removeDirector(director);
 }
 
 void MetadataWindow::setProducers(QVector<People> producersVector)
@@ -196,7 +199,7 @@ void MetadataWindow::on_addDirectorButton_clicked()
     else
     {
         PeopleWindow *l_peopleWindow = new PeopleWindow;
-        // We suppose here that a name is composed by N firstnames
+        // We suppose here that a name is composed by N >= 0 firstnames
         // and 1 lastname, separated by spaces
         QStringList l_textExplosed = l_text.split(" ");
         QString l_lastname = l_textExplosed.last();
@@ -223,10 +226,12 @@ void MetadataWindow::on_delDirectorButton_clicked()
 {
     m_app->debug("[MetadataWindow] delDirectorButton clicked()");
     QList<QListWidgetItem*> l_itemsListToDelete = m_ui->directorsWidget->selectedItems();
-    QListWidgetItem *l_itemToDelete = new QListWidgetItem;
-    foreach (l_itemToDelete,l_itemsListToDelete)
+    foreach (QListWidgetItem *l_itemToDelete, l_itemsListToDelete)
     {
-        m_ui->directorsWidget->removeItemWidget(l_itemToDelete);
+        int l_directorId = l_itemToDelete->data(Qt::UserRole).toInt();
+        People l_director = m_app->getDatabaseManager()->getOneDirectorById(l_directorId);
+        delDirector(l_director);
+        delete(l_itemToDelete);
     }
 }
 
@@ -276,4 +281,32 @@ void MetadataWindow::on_actorEdit_textEdited()
 void MetadataWindow::peopleWindow_peopleCreated(People people)
 {
     addDirector(people);
+}
+
+/**
+ * @brief Shows the context-menu where the user rightclicks
+ *
+ * @param QPoint position of the cursor
+ */
+void MetadataWindow::customMenuRequested(QPoint pos)
+{
+    m_app->debug("[MetadataWindow] Enters customMenuRequested()");
+    QMenu *l_menu = new QMenu(this);
+    QAction *l_setMetadataAction = new QAction("Update person", this);
+    QObject::connect(l_setMetadataAction, SIGNAL(triggered()), this, SLOT(showPeopleWindow()));
+    l_menu->addAction(l_setMetadataAction);
+    l_menu->popup(m_ui->directorsWidget->viewport()->mapToGlobal(pos));
+    m_app->debug("[MetadataWindow] Exits customMenuRequested()");
+}
+
+/**
+ * @brief Shows the window to view/edit the metadata of a people
+ */
+void MetadataWindow::showPeopleWindow()
+{
+    m_app->debug("[MetadataWindow] Enters showPeopleWindow()");
+    int l_peopleId = m_ui->directorsWidget->selectedItems().at(0)->data(Qt::UserRole).toInt();
+    PeopleWindow *l_peopleWindow = new PeopleWindow(l_peopleId);
+    l_peopleWindow->show();
+    m_app->debug("[MetadataWindow] Exits showPeopleWindow()");
 }
