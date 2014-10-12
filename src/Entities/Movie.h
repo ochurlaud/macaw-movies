@@ -36,15 +36,15 @@ public:
     QString getOriginalTitle() const;
     void setOriginalTitle(QString originalTitle);
     QVector<People> getDirectors() const;
-    void setDirectors(QVector<People>);
+    void setDirectors(QVector<People> directorsVector);
     void addDirector(People director);
     void removeDirector(People director);
     QVector<People> getProducers() const;
-    void setProducers(QVector<People>);
+    void setProducers(QVector<People> producersVector);
     void addProducer(People producer);
     void removeProducer(People producer);
     QVector<People> getActors() const;
-    void setActors(QVector<People>);
+    void setActors(QVector<People> actorsVector);
     void addActor(People actor);
     void removeActor(People actor);
     QDate getReleaseDate() const;

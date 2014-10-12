@@ -45,7 +45,7 @@ MetadataWindow::MetadataWindow(int id, QWidget *parent) :
     setProducers(m_movie.getProducers());
 
     m_ui->directorsWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(m_ui->directorsWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
+    QObject::connect(m_ui->directorsWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
     m_app->debug("[MetadataWindow] Construction done");
 }
 
@@ -109,92 +109,164 @@ QString MetadataWindow::getSynopsis()
     return m_ui->synopsisEdit->toPlainText();
 }
 
+void MetadataWindow::setPeople(QVector<People> peopleVector, int type)
+{
+    QListWidget *l_peopleWidget;
+    switch (type)
+    {
+    case Director:
+        l_peopleWidget = m_ui->directorsWidget;
+        break;
+    case Producer:
+        l_peopleWidget = m_ui->producersWidget;
+        break;
+    case Actor:
+        l_peopleWidget = m_ui->actorsWidget;
+        break;
+    }
+    foreach(People l_people, peopleVector)
+    {
+        QListWidgetItem *l_item = new QListWidgetItem(l_people.getFirstname() + " " + l_people.getLastname());
+        l_item->setData(Qt::UserRole, l_people.getId());
+        l_peopleWidget->addItem(l_item);
+    }
+}
+
+QVector<People> MetadataWindow::getPeople(int type)
+{
+    QListWidget *l_peopleWidget;
+    switch (type)
+    {
+    case Director:
+        l_peopleWidget = m_ui->directorsWidget;
+        break;
+    case Producer:
+        l_peopleWidget = m_ui->producersWidget;
+        break;
+    case Actor:
+        l_peopleWidget = m_ui->actorsWidget;
+        break;
+    }
+    QVector<People> l_peopleVector;
+    for (int i = 0 ; i < l_peopleWidget->count() ; i++)
+    {
+        int l_id = l_peopleWidget->item(i)->data(Qt::UserRole).toInt();
+        People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_id, type);
+        l_peopleVector.push_back(l_people);
+    }
+
+    return l_peopleVector;
+}
+
+void MetadataWindow::addPeople(People &people, int type)
+{
+    QListWidget *l_peopleWidget;
+    switch (type)
+    {
+    case Director:
+        l_peopleWidget = m_ui->directorsWidget;
+        break;
+    case Producer:
+        l_peopleWidget = m_ui->producersWidget;
+        break;
+    case Actor:
+        l_peopleWidget = m_ui->actorsWidget;
+        break;
+    }
+    QListWidgetItem *l_item = new QListWidgetItem(people.getFirstname() + " " + people.getLastname());
+    l_item->setData(Qt::UserRole, people.getId());
+    l_peopleWidget->addItem(l_item);
+
+    // If we could do an alias of the function above, it would be prettier I think
+    switch (type)
+    {
+    case Director:
+        m_movie.addDirector(people);
+        break;
+    case Producer:
+        m_movie.addProducer(people);
+        break;
+    case Actor:
+        m_movie.addActor(people);
+        break;
+    }
+}
+
+void MetadataWindow::delPeople(People &people, int type)
+{
+    switch (type)
+    {
+    case Director:
+        m_movie.removeDirector(people);
+        break;
+    case Producer:
+        m_movie.removeProducer(people);
+        break;
+    case Actor:
+        m_movie.removeActor(people);
+        break;
+    }
+}
+
 void MetadataWindow::setDirectors(QVector<People> directorsVector)
 {
-    People l_director;
-    foreach(l_director, directorsVector)
-    {
-        QListWidgetItem *l_item = new QListWidgetItem(l_director.getFirstname() + " " + l_director.getLastname());
-        l_item->setData(Qt::UserRole, l_director.getId());
-        m_ui->directorsWidget->addItem(l_item);
-    }
+    setPeople(directorsVector, Director);
 }
 
 QVector<People> MetadataWindow::getDirectors()
 {
-    QVector<People> l_directorsVector;
-    for (int i = 0 ; i < m_ui->directorsWidget->count() ; i++)
-    {
-        int l_id = m_ui->directorsWidget->item(i)->data(Qt::UserRole).toInt();
-        People l_director = m_app->getDatabaseManager()->getOneDirectorById(l_id);
-        l_directorsVector.push_back(l_director);
-    }
-
-    return l_directorsVector;
+    return getPeople(Director);
 }
 
-void MetadataWindow::addDirector(People director)
+void MetadataWindow::addDirector(People &director)
 {
-    QListWidgetItem *l_item = new QListWidgetItem(director.getFirstname() + " " + director.getLastname());
-    l_item->setData(Qt::UserRole, director.getId());
-    m_ui->directorsWidget->addItem(l_item);
-    m_movie.addDirector(director);
+    addPeople(director, Director);
 }
 
-void MetadataWindow::delDirector(People director)
+void MetadataWindow::delDirector(People &director)
 {
-    m_movie.removeDirector(director);
+    delPeople(director, Director);
 }
 
 void MetadataWindow::setProducers(QVector<People> producersVector)
 {
-    for (int i = 0 ; i < producersVector.size() ; i++)
-    {
-        People l_producer = producersVector.at(i);
-        QListWidgetItem *l_item = new QListWidgetItem(l_producer.getFirstname() + " " + l_producer.getLastname());
-        l_item->setData(Qt::UserRole, l_producer.getId());
-        m_ui->producersWidget->insertItem(i, l_item);
-    }
+    setPeople(producersVector, Producer);
 }
 
 QVector<People> MetadataWindow::getProducers()
 {
-    QVector<People> l_producersVector;
-    for (int i = 0 ; i < m_ui->producersWidget->count() ; i++)
-    {
-        int l_id = m_ui->producersWidget->item(i)->data(Qt::UserRole).toInt();
-        People l_producer = m_app->getDatabaseManager()->getOneProducerById(l_id);
-        l_producersVector.push_back(l_producer);
-    }
+    return getPeople(Producer);
+}
 
-    return l_producersVector;
+void MetadataWindow::addProducer(People &producer)
+{
+    addPeople(producer, Producer);
+}
+
+void MetadataWindow::delProducer(People &producer)
+{
+    delPeople(producer, Producer);
 }
 
 void MetadataWindow::setActors(QVector<People> actorsVector)
 {
-    for (int i = 0 ; i < actorsVector.size() ; i++)
-    {
-        People l_actor = actorsVector.at(i);
-        QListWidgetItem *l_item = new QListWidgetItem(l_actor.getFirstname() + " " + l_actor.getLastname());
-        l_item->setData(Qt::UserRole, l_actor.getId());
-        m_ui->actorsWidget->insertItem(i, l_item);
-    }
+    setPeople(actorsVector, Actor);
 }
-
 
 QVector<People> MetadataWindow::getActors()
 {
-    QVector<People> l_actorsVector;
-    for (int i = 0 ; i < m_ui->actorsWidget->count() ; i++)
-    {
-        int l_id = m_ui->actorsWidget->item(i)->data(Qt::UserRole).toInt();
-        People l_actor = m_app->getDatabaseManager()->getOneActorById(l_id);
-        l_actorsVector.push_back(l_actor);
-    }
-
-    return l_actorsVector;
+    return getPeople(Actor);
 }
 
+void MetadataWindow::addActor(People &actor)
+{
+    addPeople(actor, Actor);
+}
+
+void MetadataWindow::delActor(People &actor)
+{
+    delPeople(actor, Actor);
+}
 
 void MetadataWindow::on_validationButtons_accepted()
 {
@@ -207,17 +279,63 @@ void MetadataWindow::on_validationButtons_accepted()
 void MetadataWindow::on_addDirectorButton_clicked()
 {
     m_app->debug("[MetadataWindow] addDirectorButton clicked()");
-    QString l_text = m_ui->directorEdit->text();
-    QVector<People> l_directorsVector = m_app->getDatabaseManager()->getPeopleByFullname(l_text, 1);
-    if (l_directorsVector.size() == 1)
+    addPeopleButton_clicked(Director);
+}
+
+void MetadataWindow::on_addProducerButton_clicked()
+{
+    m_app->debug("[MetadataWindow] addProducerButton clicked()");
+    addPeopleButton_clicked(Producer);
+}
+
+void MetadataWindow::on_addActorButton_clicked()
+{
+    m_app->debug("[MetadataWindow] addActorButton clicked()");
+    addPeopleButton_clicked(Actor);
+}
+
+void MetadataWindow::addPeopleButton_clicked(int type)
+{
+    m_app->debug("[MetadataWindow] Enters addPeopleButton_clicked()");
+
+    QLineEdit *l_peopleEdit;
+    QListWidget *l_peopleWidget;
+    switch (type)
     {
-        People l_director = l_directorsVector.at(0);
-        addDirector(l_director);
-        m_app->debug(l_text + " added");
+    case Director:
+        l_peopleEdit = m_ui->directorEdit;
+        l_peopleWidget = m_ui->directorsWidget;
+        break;
+    case Producer:
+        l_peopleEdit = m_ui->producerEdit;
+        l_peopleWidget = m_ui->producersWidget;
+        break;
+    case Actor:
+        l_peopleEdit = m_ui->actorEdit;
+        l_peopleWidget = m_ui->actorsWidget;
+        break;
+    }
+
+    QString l_text = l_peopleEdit->text();
+
+    // To be simply added, the person must exist and not be already in the list
+    if (m_app->getDatabaseManager()->existPeople(l_text))
+    {
+        if(l_peopleWidget->findItems(l_text, Qt::MatchExactly).size() == 0)
+        {
+            QVector<People> l_peopleVector = m_app->getDatabaseManager()->getPeopleByFullname(l_text);
+            People l_people = l_peopleVector.at(0);
+            addPeople(l_people, type);
+            m_app->debug("[MetadataWindow] " + l_text + " added");
+        }
+        else
+        {
+            m_app->debug("[MetadataWindow] " + l_text + " already in the list");
+        }
     }
     else
     {
-        PeopleWindow *l_peopleWindow = new PeopleWindow;
+        PeopleWindow *l_peopleWindow = new PeopleWindow(type);
         // We suppose here that a name is composed by N >= 0 firstnames
         // and 1 lastname, separated by spaces
         QStringList l_textExplosed = l_text.split(" ");
@@ -227,31 +345,14 @@ void MetadataWindow::on_addDirectorButton_clicked()
         l_peopleWindow->setFirstname(l_firstname);
         l_peopleWindow->setLastname(l_lastname);
         l_peopleWindow->show();
-        QObject::connect(l_peopleWindow, SIGNAL(peopleCreated(People)), this, SLOT(peopleWindow_peopleCreated(People)));
+        QObject::connect(l_peopleWindow, SIGNAL(peopleCreated(People, int)), this, SLOT(peopleWindow_peopleCreated(People, int)));
     }
-}
-
-void MetadataWindow::on_addProducerButton_clicked()
-{
-    m_app->debug("[MetadataWindow] addProducerButton clicked()");
-}
-
-void MetadataWindow::on_addActorButton_clicked()
-{
-    m_app->debug("[MetadataWindow] addActorButton clicked()");
 }
 
 void MetadataWindow::on_delDirectorButton_clicked()
 {
     m_app->debug("[MetadataWindow] delDirectorButton clicked()");
-    QList<QListWidgetItem*> l_itemsListToDelete = m_ui->directorsWidget->selectedItems();
-    foreach (QListWidgetItem *l_itemToDelete, l_itemsListToDelete)
-    {
-        int l_directorId = l_itemToDelete->data(Qt::UserRole).toInt();
-        People l_director = m_app->getDatabaseManager()->getOneDirectorById(l_directorId);
-        delDirector(l_director);
-        delete(l_itemToDelete);
-    }
+    delPeopleButton_clicked(Director);
 }
 
 void MetadataWindow::on_delProducerButton_clicked()
@@ -264,42 +365,95 @@ void MetadataWindow::on_delActorButton_clicked()
     m_app->debug("[MetadataWindow] delActorButton clicked()");
 }
 
+void MetadataWindow::delPeopleButton_clicked(int type)
+{
+    m_app->debug("[MetadataWindow] Enters delPeopleButton_clicked()");
+
+    QListWidget *l_peopleWidget;
+    switch (type)
+    {
+    case Director:
+        l_peopleWidget = m_ui->directorsWidget;
+        break;
+    case Producer:
+        l_peopleWidget = m_ui->producersWidget;
+        break;
+    case Actor:
+        l_peopleWidget = m_ui->actorsWidget;
+        break;
+    }
+
+    QList<QListWidgetItem*> l_itemsListToDelete = l_peopleWidget->selectedItems();
+    foreach (QListWidgetItem *l_itemToDelete, l_itemsListToDelete)
+    {
+        int l_peopleId = l_itemToDelete->data(Qt::UserRole).toInt();
+        People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_peopleId, type);
+        delPeople(l_people, type);
+        delete(l_itemToDelete);
+    }
+    m_app->debug("[MetadataWindow] Exits delPeopleButton_clicked()");
+}
+
 void MetadataWindow::on_directorEdit_textEdited()
 {
     m_app->debug("[MetadataWindow] directorEdit textEdited()");
-    QString l_text =  m_ui->directorEdit->text();
-    if (l_text.size() > 3)
-    {
-        QVector<People> l_directorsVector = m_app->getDatabaseManager()->getPeopleByFullname(l_text, Director);
-        if(l_directorsVector.size() > 0)
-        {
-            People l_director;
-            QStringList l_propositions;
-            foreach (l_director, l_directorsVector)
-            {
-                l_propositions << l_director.getFirstname() + " " + l_director.getLastname();
-            }
-            QCompleter *l_completer = new QCompleter(l_propositions);
-            l_completer->setCaseSensitivity(Qt::CaseInsensitive);
-            l_completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
-            m_ui->directorEdit->setCompleter(l_completer);
-         }
-    }
+    on_peopleEdit_textEdited(Director);
 }
 
 void MetadataWindow::on_producerEdit_textEdited()
 {
     m_app->debug("[MetadataWindow] producerEdit textEdited()");
+    on_peopleEdit_textEdited(Producer);
 }
 
 void MetadataWindow::on_actorEdit_textEdited()
 {
     m_app->debug("[MetadataWindow] actorEdit textEdited()");
+    on_peopleEdit_textEdited(Actor);
 }
 
-void MetadataWindow::peopleWindow_peopleCreated(People people)
+void MetadataWindow::on_peopleEdit_textEdited(int type)
 {
-    addDirector(people);
+    m_app->debug("[MetadataWindow] Enters on_peopleEdit_textEdited()");
+
+    QLineEdit *l_peopleEdit;
+    switch (type)
+    {
+    case Director:
+        l_peopleEdit = m_ui->directorEdit;
+        break;
+    case Producer:
+        l_peopleEdit = m_ui->producerEdit;
+        break;
+    case Actor:
+        l_peopleEdit = m_ui->actorEdit;
+        break;
+    }
+
+    QString l_text =  l_peopleEdit->text();
+    if (l_text.size() > 3)
+    {
+        QVector<People> l_peopleVector = m_app->getDatabaseManager()->getPeopleByFullname(l_text);
+        if(l_peopleVector.size() > 0)
+        {
+            People l_people;
+            QStringList l_propositions;
+            foreach (l_people, l_peopleVector)
+            {
+                l_propositions << l_people.getFirstname() + " " + l_people.getLastname();
+            }
+            QCompleter *l_completer = new QCompleter(l_propositions);
+            l_completer->setCaseSensitivity(Qt::CaseInsensitive);
+            l_completer->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
+            l_peopleEdit->setCompleter(l_completer);
+        }
+    }
+    m_app->debug("[MetadataWindow] Exits on_peopleEdit_textEdited()");
+}
+
+void MetadataWindow::peopleWindow_peopleCreated(People people, int type)
+{
+    addPeople(people, type);
 }
 
 /**

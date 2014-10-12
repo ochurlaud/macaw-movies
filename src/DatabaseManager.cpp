@@ -285,15 +285,15 @@ void DatabaseManager::setPeopleToMovie(Movie &movie)
 
         switch (l_type)
         {
-            case Director:
-                movie.addDirector(l_people);
-                break;
-            case Producer:
-                movie.addProducer(l_people);
-                break;
-            case Actor:
-                movie.addActor(l_people);
-                break;
+        case Director:
+            movie.addDirector(l_people);
+            break;
+        case Producer:
+            movie.addProducer(l_people);
+            break;
+        case Actor:
+            movie.addActor(l_people);
+            break;
         }
     }
 }
@@ -454,7 +454,44 @@ bool DatabaseManager::existMovie(QString filePath)
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT id FROM movies WHERE file_path = :file_path ");
     l_query.bindValue(":file_path", filePath);
-    l_query.exec();
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In existMovie():";
+        qDebug() << l_query.lastError().text();
+    }
+
+    return l_query.next();
+}
+
+bool DatabaseManager::existTag(QString name)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT id FROM tags WHERE name = :name ");
+    l_query.bindValue(":name", name);
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In existTag():";
+        qDebug() << l_query.lastError().text();
+    }
+
+    return l_query.next();
+}
+
+bool DatabaseManager::existPeople(QString fullname)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT id FROM people AS p "
+                    "WHERE p.lastname || ' ' || p.firstname  = :fullname "
+                    "OR p.firstname || ' ' || p.lastname = :fullname");
+    l_query.bindValue(":fullname", fullname);
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In existPeople():";
+        qDebug() << l_query.lastError().text();
+    }
 
     return l_query.next();
 }
@@ -555,28 +592,22 @@ People DatabaseManager::getOnePeopleById(int id, int type)
  * @brief Gets the people whose 'lastname firstname' or 'firstname lastname' is `fullname`
  *
  * @param QString fullname, the string searched
- * @param int type of the person
  * @return QVector<People>
  */
-QVector<People> DatabaseManager::getPeopleByFullname(QString fullname, int type)
+QVector<People> DatabaseManager::getPeopleByFullname(QString fullname)
 {
     QVector<People> l_peopleVector;
     QSqlQuery l_query(m_db);
 
     l_query.prepare("SELECT " + m_peopleFields + " "
                     "FROM people AS p "
-                    "WHERE (p.lastname || ' ' || p.firstname LIKE '%'||:fullname||'%' "
-                        "OR p.firstname || ' ' ||  p.lastname LIKE '%'||:fullname||'%' "
-                        "OR p.realname LIKE '%'||:fullname||'%') "
-                        "AND (SELECT COUNT(*) "
-                             "FROM movies_people AS pm "
-                             "WHERE pm.id_people = p.id AND type = :type) > 0");
+                    "WHERE p.lastname || ' ' || p.firstname LIKE '%'||:fullname||'%' "
+                       "OR p.firstname || ' ' || p.lastname LIKE '%'||:fullname||'%'");
     l_query.bindValue(":fullname", fullname);
-    l_query.bindValue(":type", type);
 
     if (!l_query.exec())
     {
-        qDebug() << "In getPeopleByFullname(int, type):";
+        qDebug() << "In getPeopleByFullname(QString):";
         qDebug() << l_query.lastError().text();
     }
 
@@ -975,7 +1006,7 @@ bool DatabaseManager::updatePeopleInMovie(People &people, Movie &movie, int type
     // If the id is 0, then the director doesn't exist
     if (people.getId() == 0)
     {
-       qDebug() << "People not known";
+        qDebug() << "People not known";
         addPeopleToMovie(people, movie, type);
     }
     // This means that the director exists, so we upgrade
@@ -988,9 +1019,11 @@ bool DatabaseManager::updatePeopleInMovie(People &people, Movie &movie, int type
         QSqlQuery l_query(m_db);
         l_query.prepare("SELECT id "
                         "FROM movies_people "
-                        "WHERE id_movie = :id_movie AND id_people = :id_people");
+                        "WHERE id_movie = :id_movie AND id_people = :id_people AND type = :type");
         l_query.bindValue(":id_movie", movie.getId());
         l_query.bindValue(":id_people", people.getId());
+        l_query.bindValue(":type", type);
+
         if (!l_query.exec())
         {
             qDebug() << "In updatePeopleInMovie():";
@@ -1207,24 +1240,24 @@ bool DatabaseManager::updateMovie(Movie &movie)
             People l_people = hydratePeople(l_query);
             switch (type)
             {
-                case Director:
-                    if(movie.getDirectors().indexOf(l_people) < 0)
-                    {
-                        removePeopleFromMovie(l_people, movie, type);
-                    }
-                break;
-                case Producer:
-                    if(movie.getProducers().indexOf(l_people) < 0)
-                    {
-                        removePeopleFromMovie(l_people, movie, type);
-                    }
-                break;
-                case Actor:
-                    if(movie.getActors().indexOf(l_people) < 0)
-                    {
-                        removePeopleFromMovie(l_people, movie, type);
-                    }
-                break;
+            case Director:
+                if(movie.getDirectors().indexOf(l_people) < 0)
+                {
+                    removePeopleFromMovie(l_people, movie, type);
+                }
+            break;
+            case Producer:
+                if(movie.getProducers().indexOf(l_people) < 0)
+                {
+                    removePeopleFromMovie(l_people, movie, type);
+                }
+            break;
+            case Actor:
+                if(movie.getActors().indexOf(l_people) < 0)
+                {
+                    removePeopleFromMovie(l_people, movie, type);
+                }
+            break;
             }
         }
     }

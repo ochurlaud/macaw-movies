@@ -55,11 +55,13 @@ class DatabaseManager : public QObject
         QVector<Movie> getMoviesWithoutDirector();
         QVector<Movie> getMoviesByAny(QVariant);
         bool existMovie(QString);
+        bool existTag(QString);
+        bool existPeople(QString);
         QVector<Tag> getAllTags();
         Tag getOneTagById(int);
         People getOnePeopleById(int);
         People getOnePeopleById(int, int);
-        QVector<People> getPeopleByFullname(QString, int);
+        QVector<People> getPeopleByFullname(QString);
         QVector<People> getAllDirectors();
         People getOneDirectorById(int);
         QVector<People> getAllActors();

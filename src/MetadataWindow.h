@@ -47,14 +47,26 @@ class MetadataWindow : public QDialog
         QString getCountry();
         void setSynopsis(QString);
         QString getSynopsis();
+        void setPeople(QVector<People>, int);
+        QVector<People> getPeople(int);
+        void addPeople(People&, int);
+        void delPeople(People&, int);
         void setDirectors(QVector<People>);
         QVector<People> getDirectors();
-        void addDirector(People);
-        void delDirector(People);
-        void setActors(QVector<People>);
-        QVector<People> getActors();
+        void addDirector(People&);
+        void delDirector(People&);
         void setProducers(QVector<People>);
         QVector<People> getProducers();
+        void addProducer(People&);
+        void delProducer(People&);
+        void setActors(QVector<People>);
+        QVector<People> getActors();
+        void addActor(People&);
+        void delActor(People&);
+        void on_peopleEdit_textEdited(int);
+        void addPeopleButton_clicked(int);
+        void delPeopleButton_clicked(int);
+
 
     private slots:
         void on_validationButtons_accepted();
@@ -67,7 +79,7 @@ class MetadataWindow : public QDialog
         void on_directorEdit_textEdited();
         void on_producerEdit_textEdited();
         void on_actorEdit_textEdited();
-        void peopleWindow_peopleCreated(People);
+        void peopleWindow_peopleCreated(People, int);
         void customMenuRequested(QPoint);
         void showPeopleWindow();
 

@@ -20,9 +20,10 @@
 #include "PeopleWindow.h"
 #include "ui_PeopleWindow.h"
 
-PeopleWindow::PeopleWindow(int id, QWidget *parent) :
+PeopleWindow::PeopleWindow(int type, int id, QWidget *parent) :
     QDialog(parent),
-    m_ui(new Ui::PeopleWindow)
+    m_ui(new Ui::PeopleWindow),
+    m_type(type)
 {
     m_app = qobject_cast<Application *>(qApp);
     m_app->debug("[PeopleWindow] Constructor called");
@@ -105,7 +106,7 @@ void PeopleWindow::on_validationButtons_accepted()
     m_people.setRealname(getRealname());
     m_people.setBirthday(getBirthday());
     m_people.setBiography(getBiography());
-    emit(peopleCreated(m_people));
+    emit(peopleCreated(m_people, m_type));
 
     m_app->debug("[PeopleWindow] validationButtons method done");
 }

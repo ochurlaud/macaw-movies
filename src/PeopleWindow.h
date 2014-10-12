@@ -34,7 +34,7 @@ class PeopleWindow : public QDialog
     Q_OBJECT
 
     public:
-        explicit PeopleWindow(int = 0, QWidget *parent = 0);
+        explicit PeopleWindow(int = 0, int = 0, QWidget *parent = 0);
         ~PeopleWindow();
         void setFirstname(QString);
         QString getFirstname();
@@ -51,12 +51,13 @@ class PeopleWindow : public QDialog
         void on_validationButtons_accepted();
 
     signals:
-        void peopleCreated(People);
+        void peopleCreated(People, int);
 
     private:
         Ui::PeopleWindow *m_ui;
         People m_people;
         Application *m_app;
+        int m_type;
 };
 
 #endif // PEOPLEWINDOW_H
