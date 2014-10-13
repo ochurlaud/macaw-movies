@@ -21,6 +21,20 @@ Movies organizer. Qt/C++/Sqlite
  - function names do not have a prefix, start with a lowercase character and use upper case characters for each new word (no underscore)
  - curly brackets always stand alone on new lines
  - if / else blocks always have curly brackets, even if only one call is to be done
+ - identation should follow the rules: always indent after curly bracket, except in switch/case
+
+````
+switch (var)
+{
+case 1:
+    fct();
+    break;
+case 2:
+    otherFct();
+    break;
+}
+````
+
  - blank line before calling return
  - blank line before two logical blocs
 
