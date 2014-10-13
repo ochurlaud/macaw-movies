@@ -88,6 +88,18 @@ void Movie::removeDirector(People director)
     }
 }
 
+void Movie::updateDirector(People director)
+{
+    for (int i = 0 ; i < m_directors.size() ; i++)
+    {
+        if(m_directors.at(i).getId() == director.getId())
+        {
+            m_directors.replace(i, director);
+            break;
+        }
+    }
+}
+
 QVector<People> Movie::getProducers() const
 {
     return m_producers;
@@ -112,6 +124,18 @@ void Movie::removeProducer(People producer)
     }
 }
 
+void Movie::updateProducer(People producer)
+{
+    for (int i = 0 ; i < m_producers.size() ; i++)
+    {
+        if(m_producers.at(i).getId() == producer.getId())
+        {
+            m_producers.replace(i, producer);
+            break;
+        }
+    }
+}
+
 QVector<People> Movie::getActors() const
 {
     return m_actors;
@@ -133,6 +157,18 @@ void Movie::removeActor(People actor)
     if (l_index != -1)
     {
         m_actors.removeAt(l_index);
+    }
+}
+
+void Movie::updateActor(People actor)
+{
+    for (int i = 0 ; i < m_actors.size() ; i++)
+    {
+        if(m_actors.at(i).getId() == actor.getId())
+        {
+             m_actors.replace(i, actor);
+             break;
+        }
     }
 }
 

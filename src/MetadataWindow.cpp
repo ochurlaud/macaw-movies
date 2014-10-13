@@ -46,6 +46,10 @@ MetadataWindow::MetadataWindow(int id, QWidget *parent) :
 
     m_ui->directorsWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(m_ui->directorsWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
+    m_ui->producersWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(m_ui->producersWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
+    m_ui->actorsWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(m_ui->actorsWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
     m_app->debug("[MetadataWindow] Construction done");
 }
 
@@ -124,6 +128,7 @@ void MetadataWindow::setPeople(QVector<People> peopleVector, int type)
         l_peopleWidget = m_ui->actorsWidget;
         break;
     }
+    l_peopleWidget->clear();
     foreach(People l_people, peopleVector)
     {
         QListWidgetItem *l_item = new QListWidgetItem(l_people.getFirstname() + " " + l_people.getLastname());
@@ -208,6 +213,16 @@ void MetadataWindow::delPeople(People &people, int type)
     }
 }
 
+void MetadataWindow::updatePeople(People &people)
+{
+    m_movie.updateDirector(people);
+    m_movie.updateProducer(people);
+    m_movie.updateActor(people);
+    setDirectors(m_movie.getDirectors());
+    setProducers(m_movie.getProducers());
+    setActors(m_movie.getActors());
+}
+
 void MetadataWindow::setDirectors(QVector<People> directorsVector)
 {
     setPeople(directorsVector, Director);
@@ -271,7 +286,6 @@ void MetadataWindow::delActor(People &actor)
 void MetadataWindow::on_validationButtons_accepted()
 {
     m_app->debug("[MetadataWindow] validationButtons accepted");
-
     m_app->getDatabaseManager()->updateMovie(m_movie);
     m_app->debug("[MetadataWindow] validationButtons method done");
 }
@@ -453,7 +467,14 @@ void MetadataWindow::on_peopleEdit_textEdited(int type)
 
 void MetadataWindow::peopleWindow_peopleCreated(People people, int type)
 {
-    addPeople(people, type);
+    if(people.getId() == 0)
+    {
+        addPeople(people, type);
+    }
+    else
+    {
+        updatePeople(people);
+    }
 }
 
 /**
@@ -464,11 +485,12 @@ void MetadataWindow::peopleWindow_peopleCreated(People people, int type)
 void MetadataWindow::customMenuRequested(QPoint pos)
 {
     m_app->debug("[MetadataWindow] Enters customMenuRequested()");
+    QListWidget *l_widget = getFocusedListWidget();
     QMenu *l_menu = new QMenu(this);
     QAction *l_setMetadataAction = new QAction("Update person", this);
     QObject::connect(l_setMetadataAction, SIGNAL(triggered()), this, SLOT(showPeopleWindow()));
     l_menu->addAction(l_setMetadataAction);
-    l_menu->popup(m_ui->directorsWidget->viewport()->mapToGlobal(pos));
+    l_menu->popup(l_widget->viewport()->mapToGlobal(pos));
     m_app->debug("[MetadataWindow] Exits customMenuRequested()");
 }
 
@@ -478,8 +500,34 @@ void MetadataWindow::customMenuRequested(QPoint pos)
 void MetadataWindow::showPeopleWindow()
 {
     m_app->debug("[MetadataWindow] Enters showPeopleWindow()");
-    int l_peopleId = m_ui->directorsWidget->selectedItems().at(0)->data(Qt::UserRole).toInt();
+    QListWidget *l_widget = getFocusedListWidget();
+    int l_peopleId = l_widget->selectedItems().at(0)->data(Qt::UserRole).toInt();
     PeopleWindow *l_peopleWindow = new PeopleWindow(l_peopleId);
     l_peopleWindow->show();
+    QObject::connect(l_peopleWindow, SIGNAL(peopleCreated(People, int)), this, SLOT(peopleWindow_peopleCreated(People, int)));
     m_app->debug("[MetadataWindow] Exits showPeopleWindow()");
+}
+
+/**
+ * @brief Returns the QListWidget that has focus
+ *
+ * @return QListWidget*
+ */
+QListWidget* MetadataWindow::getFocusedListWidget()
+{
+    QListWidget *l_widget;
+    if (m_ui->directorsWidget->hasFocus())
+    {
+        l_widget = m_ui->directorsWidget;
+    }
+    else if (m_ui->producersWidget->hasFocus())
+    {
+        l_widget = m_ui->producersWidget;
+    }
+    else if (m_ui->actorsWidget->hasFocus())
+    {
+        l_widget = m_ui->actorsWidget;
+    }
+
+    return l_widget;
 }

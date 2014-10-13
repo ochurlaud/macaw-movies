@@ -39,14 +39,17 @@ public:
     void setDirectors(QVector<People> directorsVector);
     void addDirector(People director);
     void removeDirector(People director);
+    void updateDirector(People director);
     QVector<People> getProducers() const;
     void setProducers(QVector<People> producersVector);
     void addProducer(People producer);
     void removeProducer(People producer);
+    void updateProducer(People producer);
     QVector<People> getActors() const;
     void setActors(QVector<People> actorsVector);
     void addActor(People actor);
     void removeActor(People actor);
+    void updateActor(People actor);
     QDate getReleaseDate() const;
     void setReleaseDate(QDate);
     QString getCountry() const;

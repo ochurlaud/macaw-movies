@@ -51,6 +51,7 @@ class MetadataWindow : public QDialog
         QVector<People> getPeople(int);
         void addPeople(People&, int);
         void delPeople(People&, int);
+        void updatePeople(People&);
         void setDirectors(QVector<People>);
         QVector<People> getDirectors();
         void addDirector(People&);
@@ -66,6 +67,7 @@ class MetadataWindow : public QDialog
         void on_peopleEdit_textEdited(int);
         void addPeopleButton_clicked(int);
         void delPeopleButton_clicked(int);
+        QListWidget* getFocusedListWidget();
 
 
     private slots:
