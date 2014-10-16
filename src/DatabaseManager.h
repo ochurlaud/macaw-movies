@@ -55,7 +55,7 @@ class DatabaseManager : public QObject
         QVector<Movie> getMoviesByTag(Tag const&, QString fieldOrder = "title");
         QVector<Movie> getMoviesWithoutTag(QString fieldOrder = "title");
         QVector<Movie> getMoviesWithoutPeople(int type, QString fieldOrder = "title");
-        QVector<Movie> getMoviesByAny(QVariant, QString fieldOrder = "title");
+        QVector<Movie> getMoviesByAny(QString, QString fieldOrder = "title");
         bool existMovie(QString);
         bool existTag(QString);
         bool existPeople(QString);

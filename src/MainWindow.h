@@ -57,6 +57,9 @@ private slots:
     void on_actionEdit_mainPannelMetadata_triggered();
     void selfUpdate();
 
+
+    void on_searchEdit_returnPressed();
+
 private:
     Ui::MainWindow *m_ui;
     Application *m_app;

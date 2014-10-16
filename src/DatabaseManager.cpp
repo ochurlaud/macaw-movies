@@ -766,6 +766,38 @@ Tag DatabaseManager::getOneTagById(int id)
     return l_tag;
 }
 
+QVector<Movie> DatabaseManager::getMoviesByAny(QString text, QString fieldOrder)
+{
+    QVector<Movie> l_moviesVector;
+    QSqlQuery l_query(m_db);
+
+    l_query.prepare("SELECT " + m_movieFields + " FROM movies AS m "
+                    "WHERE ( m.title LIKE '%'||:text||'%' OR m.original_title LIKE '%'||:text||'%' OR m.release_date LIKE '%'||:text||'%' ) "
+                         "OR ( SELECT COUNT(*) "
+                              "FROM people AS p "
+                              "WHERE ( p.firstname || ' ' || p.lastname LIKE '%'||:text||'%' "
+                                  " OR p.lastname || ' ' || p.firstname LIKE '%'||:text||'%' ) "
+                                   "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id) > 0 "
+                              ") > 0 "
+                   "ORDER BY " + fieldOrder);
+    l_query.bindValue(":text", text);
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In getMoviesByAny():";
+        qDebug() << l_query.lastError().text();
+    }
+
+    while(l_query.next())
+    {
+        qDebug() << l_query.value(0);
+        Movie l_movie = hydrateMovie(l_query);
+        l_moviesVector.push_back(l_movie);
+    }
+
+    return l_moviesVector;
+}
+
 /**
  * @brief Adds a movie to the database
  *

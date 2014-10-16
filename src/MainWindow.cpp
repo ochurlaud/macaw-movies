@@ -321,3 +321,13 @@ void MainWindow::setLeftPannelLabel()
         }
     }
 }
+
+void MainWindow::on_searchEdit_returnPressed()
+{
+    m_app->debug("[MainWindow] editing finished on searchEdit");
+
+    QString l_text = m_ui->searchEdit->text();
+    m_moviesVector = m_app->getDatabaseManager()->getMoviesByAny(l_text);
+    fillMainPannel();
+}
+
