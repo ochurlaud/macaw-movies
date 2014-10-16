@@ -32,8 +32,8 @@ _Note: The longest movie title is 196 char:_ Night of the Day of the Dawn of the
 | Column Name   | Type | Link |
 | ------------- | ---- | ---- |
 | id | INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE | |
-| id_people | INTEGER  NOT NULL | **2** |
 | id_movie | INTEGER  NOT NULL | **1** |
+| id_people | INTEGER  NOT NULL | **2** |
 | type | INTEGER  NOT NULL | |
 
 `UNIQUE (id_people, id_movie, type) ON CONFLICT IGNORE`
@@ -48,8 +48,8 @@ _Note: The longest movie title is 196 char:_ Night of the Day of the Dawn of the
 | Column Name   | Type | Link |
 | ------------- | ---- | ---- |
 | id | INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE | |
-| id_tag | INTEGER NOT NULL | **3** |
 | id_movie | INTEGER NOT NULL | **1** |
+| id_tag | INTEGER NOT NULL | **3** |
 
 `UNIQUE (id_tag, id_movie) ON CONFLICT IGNORE`
 

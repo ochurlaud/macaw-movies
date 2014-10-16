@@ -64,6 +64,7 @@ class DatabaseManager : public QObject
         People getOnePeopleById(int);
         People getOnePeopleById(int, int);
         QVector<People> getPeopleByFullname(QString fullname, QString fieldOrder = "lastname");
+        QVector<People> getPeopleByAny(QString text, int type, QString fieldOrder = "lastname");
         QVector<People> getAllPeople(int type, QString fieldOrder = "lastname");
         QVector<People> getAllDirectors(QString fieldOrder = "lastname");
         People getOneDirectorById(int);

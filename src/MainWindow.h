@@ -72,6 +72,7 @@ private:
     void fillLeftPannel(int typeElement, int typePeople);
     void setLeftPannelLabel();
     void prepareMoviesToDisplay(int id);
+    void filterPannels();
 
 };
 

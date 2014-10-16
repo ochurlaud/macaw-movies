@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(on_customContextMenuRequested(const QPoint &)));
 
     m_moviesVector = m_app->getDatabaseManager()->getAllMovies();
+    m_leftPannelSelectedId = 0;
     fillMainPannel();
     fillLeftPannel(isPeople, Director);
     m_app->debug("[MainWindow] Construction done");
@@ -68,6 +69,10 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
     QListWidgetItem *l_item = new QListWidgetItem("All");
     l_item->setData(Qt::UserRole, 0);
     m_ui->leftPannel->addItem(l_item);
+    if (m_leftPannelSelectedId == 0)
+    {
+        l_item->setSelected(true);
+    }
 
     if (typeElement == isPeople)
     {
@@ -75,6 +80,10 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
         l_item->setData(Qt::UserRole, -1);
         l_item->setData(Qt::UserRole+1, isPeople);
         m_ui->leftPannel->addItem(l_item);
+        if (m_leftPannelSelectedId == -1)
+        {
+            l_item->setSelected(true);
+        }
 
         QVector<People> l_peopleVector = m_app->getDatabaseManager()->getAllPeople(typePeople);
         foreach (People l_people, l_peopleVector)
@@ -90,6 +99,10 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             l_item->setData(Qt::UserRole, l_people.getId());
             l_item->setData(Qt::UserRole+1, isPeople);
             l_item->setData(Qt::UserRole+2, typePeople);
+            if (m_leftPannelSelectedId == l_people.getId())
+            {
+                l_item->setSelected(true);
+            }
 
             m_ui->leftPannel->addItem(l_item);
         }
@@ -100,6 +113,10 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
         l_item->setData(Qt::UserRole, -1);
         l_item->setData(Qt::UserRole+1, isTag);
         m_ui->leftPannel->addItem(l_item);
+        if (m_leftPannelSelectedId == -1)
+        {
+            l_item->setSelected(true);
+        }
 
         QVector<Tag> l_tagsVector = m_app->getDatabaseManager()->getAllTags();
         foreach (Tag l_tag, l_tagsVector)
@@ -111,6 +128,10 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             l_item->setData(Qt::UserRole+1, isTag);
 
             m_ui->leftPannel->addItem(l_item);
+            if (m_leftPannelSelectedId == l_tag.getId())
+            {
+                l_item->setSelected(true);
+            }
         }
     }
     this->setLeftPannelLabel();
@@ -157,6 +178,7 @@ void MainWindow::on_peopleBox_activated(int type)
     m_app->debug("[MainWindow] Enters on_peopleBox_activated()");
 
     fillLeftPannel(isPeople, type);
+    m_leftPannelSelectedId = 0;
 }
 
 void MainWindow::on_playlistsButton_clicked()
@@ -173,6 +195,7 @@ void MainWindow::on_tagsButton_clicked()
 {
     m_app->debug("[MainWindow] tagsButton clicked");
     fillLeftPannel(isTag);
+    m_leftPannelSelectedId = 0;
 }
 
 void MainWindow::on_customContextMenuRequested(const QPoint &point)
@@ -237,7 +260,6 @@ void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
 void MainWindow::on_leftPannel_clicked(const QModelIndex &item)
 {
     m_app->debug("[MainWindow] itemClicked on leftPannel()");
-
     m_leftPannelSelectedId = item.data(Qt::UserRole).toInt();
     this->prepareMoviesToDisplay(m_leftPannelSelectedId);
 }
@@ -249,7 +271,7 @@ void MainWindow::on_mainPannel_clicked(const QModelIndex &index)
 
 void MainWindow::prepareMoviesToDisplay(int id)
 {
-    m_app->debug("[MainWindow] itemClicked on leftPannel()");
+    m_app->debug("[MainWindow] prepareMoviesToDisplay()");
 
     m_leftPannelSelectedId = id;
     if(m_leftPannelSelectedId == 0)
@@ -278,12 +300,13 @@ void MainWindow::prepareMoviesToDisplay(int id)
             m_moviesVector = m_app->getDatabaseManager()->getMoviesByTag(m_leftPannelSelectedId);
         }
     }
-    fillMainPannel();
+    filterPannels();
 }
 
 void MainWindow::selfUpdate()
 {
     m_app->debug("[MainWindow] selfUpdate()");
+    m_moviesVector.clear();
     fillLeftPannel(m_typeElement, m_typePeople);
 
     for (int i = 0 ; i < m_ui->leftPannel->count() ; i++)
@@ -327,7 +350,91 @@ void MainWindow::on_searchEdit_returnPressed()
     m_app->debug("[MainWindow] editing finished on searchEdit");
 
     QString l_text = m_ui->searchEdit->text();
-    m_moviesVector = m_app->getDatabaseManager()->getMoviesByAny(l_text);
-    fillMainPannel();
+    filterPannels();
 }
 
+void MainWindow::filterPannels()
+{
+    m_app->debug("[MainWindow] Enters filterPeople()");
+
+    fillMainPannel();
+    fillLeftPannel(m_typeElement, m_typePeople);
+
+    QString l_text = m_ui->searchEdit->text();
+
+    if (l_text != "")
+    {
+        // mainPannel
+        QVector<Movie> l_authorizedMoviesVector = m_app->getDatabaseManager()->getMoviesByAny(l_text);
+        for (int i = 0 ; i < m_ui->mainPannel->rowCount(); i++)
+        {
+            bool l_isPresent(false);
+            QTableWidgetItem *l_item = m_ui->mainPannel->item(i, 0);
+            foreach(Movie l_movie, l_authorizedMoviesVector)
+            {
+                 if (l_movie.getId() == l_item->data(Qt::UserRole))
+                 {
+                     l_isPresent = true;
+                 }
+            }
+            if (l_isPresent == false)
+            {
+                m_ui->mainPannel->removeRow(i);
+                i--; // We remove a line, so we have to decrement i...
+            }
+        }
+
+        // leftPannel
+       /* if (m_typeElement == isTag)
+        {
+            QVector<Movie> l_authorizedMoviesVector = m_app->getDatabaseManager()->getTagsByAny(l_text);
+            for (int i = 0 ; i < m_ui->mainPannel->rowCount(); i++)
+            {
+                bool l_isPresent(false);
+                QTableWidgetItem *l_item = m_ui->mainPannel->item(i);
+                foreach(Movie l_movie, l_authorizedMoviesVector)
+                {
+                     if (l_movie.getId() == l_item->data(Qt::UserRole))
+                     {
+                         l_isPresent = true;
+                     }
+                }
+                if (l_isPresent == false)
+                {
+                    m_ui->mainPannel->removeRow(i);
+                }
+            }
+        }
+        else*/ if (m_typeElement == isPeople)
+        {
+            QVector<People> l_authorizedPeopleVector = m_app->getDatabaseManager()->getPeopleByAny(l_text, m_typePeople);
+
+            // We begin at 1 because the first item is "All"
+            for (int i = 1 ; i < m_ui->leftPannel->count() ; i++)
+            {
+                bool l_isPresent(false);
+                QListWidgetItem *l_item = m_ui->leftPannel->item(i);
+                foreach(People l_people, l_authorizedPeopleVector)
+                {
+                     if (l_people.getId() == l_item->data(Qt::UserRole))
+                     {
+                         l_isPresent = true;
+                     }
+                }
+                if (l_isPresent == false)
+                {
+                    delete l_item;
+                    i--; // We remove an item so we have to decrement i
+                }
+            }
+        }
+    }
+    for (int i = 0 ; i < m_ui->leftPannel->count() ; i ++)
+    {
+        QListWidgetItem *l_item = m_ui->leftPannel->item(i);
+        if (m_leftPannelSelectedId == l_item->data(Qt::UserRole))
+        {
+            l_item->setSelected(true);
+        }
+    }
+}

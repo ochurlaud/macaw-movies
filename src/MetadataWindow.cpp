@@ -290,6 +290,12 @@ void MetadataWindow::delActor(People &actor)
 void MetadataWindow::on_validationButtons_accepted()
 {
     m_app->debug("[MetadataWindow] validationButtons accepted");
+    m_movie.setTitle(getTitle());
+    m_movie.setOriginalTitle(getOriginalTitle());
+    m_movie.setReleaseDate(getReleaseDate());
+    m_movie.setCountry(getCountry());
+    m_movie.setSynopsis(getSynopsis());
+
     m_app->getDatabaseManager()->updateMovie(m_movie);
     m_app->debug("[MetadataWindow] validationButtons method done");
 }

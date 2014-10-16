@@ -165,8 +165,8 @@ bool DatabaseManager::createTables()
             // Links between people and movies (a type of person is given here)
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies_people("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "id_people INTEGER NOT NULL, "
                       "id_movie INTEGER NOT NULL, "
+                      "id_people INTEGER NOT NULL, "
                       "type INTEGER NOT NULL, "
                       "UNIQUE (id_people, id_movie, type) ON CONFLICT IGNORE "
                       ")");
@@ -180,8 +180,8 @@ bool DatabaseManager::createTables()
             // Links between tags and movies
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies_tags("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "id_tag INTEGER NOT NULL, "
                       "id_movie INTEGER NOT NULL, "
+                      "id_tag INTEGER NOT NULL, "
                       "UNIQUE (id_tag, id_movie) ON CONFLICT IGNORE "
                       ")");
 
@@ -340,10 +340,10 @@ QVector<Movie> DatabaseManager::getMoviesByPeople(int id, int type, QString fiel
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT " + m_movieFields + " "
                     "FROM movies AS m "
-                    "WHERE id = (SELECT id_movie "
-                                "FROM movies_people "
-                                "WHERE id_people = :id AND type = :type) "
-                                "ORDER BY " + fieldOrder);
+                    "WHERE id IN (SELECT id_movie "
+                                 "FROM movies_people "
+                                 "WHERE id_people = :id AND type = :type) "
+                                 "ORDER BY " + fieldOrder);
     l_query.bindValue(":id", id);
     l_query.bindValue(":type", type);
 
@@ -390,10 +390,10 @@ QVector<Movie> DatabaseManager::getMoviesByTag(int id, QString fieldOrder)
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT " + m_movieFields + " "
                     "FROM movies AS m"
-                    "WHERE id = (SELECT id_movie "
-                                "FROM movies_tags "
-                                "WHERE id_tag = :id) "
-                                "ORDER BY " + fieldOrder);
+                    "WHERE id IN (SELECT id_movie "
+                                 "FROM movies_tags "
+                                 "WHERE id_tag = :id) "
+                                 "ORDER BY " + fieldOrder);
     l_query.bindValue(":id", id);
 
     if (!l_query.exec())
@@ -770,17 +770,33 @@ QVector<Movie> DatabaseManager::getMoviesByAny(QString text, QString fieldOrder)
 {
     QVector<Movie> l_moviesVector;
     QSqlQuery l_query(m_db);
+    QStringList l_splittedText = text.split(" ");
 
-    l_query.prepare("SELECT " + m_movieFields + " FROM movies AS m "
-                    "WHERE ( m.title LIKE '%'||:text||'%' OR m.original_title LIKE '%'||:text||'%' OR m.release_date LIKE '%'||:text||'%' ) "
-                         "OR ( SELECT COUNT(*) "
-                              "FROM people AS p "
-                              "WHERE ( p.firstname || ' ' || p.lastname LIKE '%'||:text||'%' "
-                                  " OR p.lastname || ' ' || p.firstname LIKE '%'||:text||'%' ) "
-                                   "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id) > 0 "
-                              ") > 0 "
-                   "ORDER BY " + fieldOrder);
-    l_query.bindValue(":text", text);
+    QString l_queryText = "SELECT " + m_movieFields + " FROM movies AS m WHERE ";
+    for( int i = 0 ; i < l_splittedText.size() ; i++)
+    {
+        if (i != 0)
+        {
+            l_queryText = l_queryText+ "AND ";
+        }
+        l_queryText = l_queryText+ "( (m.title LIKE '%'||:text"+QString::number(i)+"||'%' OR m.original_title LIKE '%'||:text"+ QString::number(i) +"||'%') "
+                                     "OR ( SELECT COUNT(*) "
+                                          "FROM people AS p "
+                                          "WHERE ( p.lastname LIKE '%'||:text"+ QString::number(i) +"||'%' "
+                                               "OR p.firstname LIKE '%'||:text"+ QString::number(i) +"||'%' ) "
+                                               "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id) > 0 "
+                                        ") > 0 "
+                                     "OR ( SELECT COUNT(*) "
+                                           "FROM tags AS t "
+                                           "WHERE t.name LIKE '%'||:text"+ QString::number(i) +"||'%') > 0 "
+                                    ") ";
+    }
+    l_queryText = l_queryText+ "ORDER BY m." + fieldOrder;
+    l_query.prepare(l_queryText);
+    for( int i = 0 ; i < l_splittedText.size() ; i++)
+    {
+        l_query.bindValue(":text"+ QString::number(i), l_splittedText.at(i));
+    }
 
     if (!l_query.exec())
     {
@@ -790,13 +806,112 @@ QVector<Movie> DatabaseManager::getMoviesByAny(QString text, QString fieldOrder)
 
     while(l_query.next())
     {
-        qDebug() << l_query.value(0);
         Movie l_movie = hydrateMovie(l_query);
         l_moviesVector.push_back(l_movie);
     }
 
     return l_moviesVector;
 }
+
+QVector<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fieldOrder)
+{
+    QVector<People> l_peopleVector;
+    QSqlQuery l_query(m_db);
+    QStringList l_splittedText = text.split(" ");
+
+    QString l_queryText = "SELECT " + m_peopleFields + " FROM people AS p WHERE ";
+    for( int i = 0 ; i < l_splittedText.size() ; i++)
+    {
+        if (i != 0)
+        {
+            l_queryText += "AND ";
+        }
+    l_queryText = l_queryText + "(( p.lastname LIKE '%'||:text"+ QString::number(i) +"||'%' "
+                                "OR p.firstname LIKE '%'||:text"+ QString::number(i) +"||'%' ) "
+                                "OR ( SELECT COUNT(*) "
+                                     "FROM movies AS m "
+                                     "WHERE (m.title LIKE '%'||:text"+ QString::number(i) +"||'%' OR m.original_title LIKE '%'||:text"+ QString::number(i) +"||'%' ) "
+                                     "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id) > 0 "
+                                    ") > 0 "
+                              "OR ( SELECT COUNT(*) "
+                                    "FROM tags AS t "
+                                    "WHERE t.name LIKE '%'||:text"+ QString::number(i) +"||'%') > 0 "
+                               ") ";
+    }
+    l_queryText = l_queryText + "AND (SELECT COUNT(*) FROM movies_people AS mp WHERE mp.type = :type) > 0 "
+                                "ORDER BY p." + fieldOrder;
+    l_query.prepare(l_queryText);
+
+    for( int i = 0 ; i < l_splittedText.size() ; i++)
+    {
+        l_query.bindValue(":text"+ QString::number(i), text);
+    }
+    l_query.bindValue(":type", type);
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In getPeopleByAny():";
+        qDebug() << l_query.lastError().text();
+    }
+
+    while(l_query.next())
+    {
+        People l_people = hydratePeople(l_query);
+        l_peopleVector.push_back(l_people);
+    }
+
+    return l_peopleVector;
+}
+/*
+QVector<Tag> DatabaseManager::getTagByAny(QString text, QString fieldOrder)
+{
+    QVector<People> l_peopleVector;
+    QSqlQuery l_query(m_db);
+    QStringList l_splittedText = text.split(" ");
+
+    QString l_queryText = "SELECT " + m_tagFields + " FROM tags AS t WHERE ";
+    for( int i = 0 ; i < l_splittedText.size() ; i++)
+    {
+        if (i != 0)
+        {
+            l_queryText += "AND ";
+        }
+    lqueryText = lqueryText + "(  ( p.firstname || ' ' || p.lastname LIKE '%'||:text||'%' "
+                                "OR p.lastname || ' ' || p.firstname LIKE '%'||:text||'%' ) "
+                                "OR ( SELECT COUNT(*) "
+                                     "FROM movies AS m "
+                                     "WHERE m.title LIKE '%'||:text||'%' OR m.original_title LIKE '%'||:text||'%' OR m.release_date LIKE '%'||:text||'%' ) "
+                                     "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id) > 0 "
+                                    ") > 0 "
+                              "OR ( SELECT COUNT(*) "
+                                    "FROM tags AS t "
+                                    "WHERE t.name LIKE '%'||:text"+ QString::number(i) +"||'%') > 0 "
+                               ") ";
+    }
+    l_queryText = l_queryText + "AND mp.type = :type"
+                                "ORDER BY p." + fieldOrder;
+    l_query.prepare(l_queryText);
+
+    for( int i = 0 ; i < l_splittedText.size() ; i++)
+    {
+        l_query.bindValue(":text"+i, text);
+    }
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In getTagsByAny():";
+        qDebug() << l_query.lastError().text();
+    }
+
+    while(l_query.next())
+    {
+        Tag l_tag = hydrateTag(l_query);
+        l_tagVector.push_back(l_tag);
+    }
+
+    return l_tagVector;
+}
+*/
 
 /**
  * @brief Adds a movie to the database
@@ -1205,6 +1320,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
                         "rank = :rank "
                     "WHERE id = :id");
     l_query.bindValue(":title", movie.getTitle());
+    qDebug() << movie.getOriginalTitle();
     l_query.bindValue(":original_title", movie.getOriginalTitle());
     l_query.bindValue(":release_date", movie.getReleaseDate().toString(DATE_FORMAT));
     l_query.bindValue(":country", movie.getCountry());
