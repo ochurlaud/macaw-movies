@@ -27,6 +27,9 @@ SettingsWindow::SettingsWindow(QDialog *parent) : QDialog(parent)
     m_app = qobject_cast<Application *>(qApp);
     m_app->debug("[SettingsWindow] Constructor called");
 
+    setModal(true);
+    setAttribute(Qt::WA_DeleteOnClose);
+
     resize(400,300);
     setWindowTitle("Settings");
     m_mainLayout = new QVBoxLayout(this);

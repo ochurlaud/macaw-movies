@@ -304,12 +304,13 @@ void DatabaseManager::setPeopleToMovie(Movie &movie)
  *
  * @return QVector<Movie>
  */
-QVector<Movie> DatabaseManager::getAllMovies()
+QVector<Movie> DatabaseManager::getAllMovies(QString fieldOrder)
 {
     QVector<Movie> l_moviesVector;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT " + m_movieFields + " "
-                    "FROM movies AS m");
+                    "FROM movies AS m "
+                    "ORDER BY " + fieldOrder);
 
     if (!l_query.exec())
     {
@@ -327,12 +328,13 @@ QVector<Movie> DatabaseManager::getAllMovies()
 }
 
 /**
- * @brief Gets all the movies directed by `director`
+ * @brief Gets all the movies directed by people having the id `id` and of type `type`
  *
- * @param People director
+ * @param int id of the people
+ * @param int type of the people
  * @return QVector<Movie>
  */
-QVector<Movie> DatabaseManager::getMoviesByPeople(People const &people, int type)
+QVector<Movie> DatabaseManager::getMoviesByPeople(int id, int type, QString fieldOrder)
 {
     QVector<Movie> l_moviesVector;
     QSqlQuery l_query(m_db);
@@ -340,8 +342,9 @@ QVector<Movie> DatabaseManager::getMoviesByPeople(People const &people, int type
                     "FROM movies AS m "
                     "WHERE id = (SELECT id_movie "
                                 "FROM movies_people "
-                                "WHERE id_people = :id AND type = :type) ");
-    l_query.bindValue(":id", people.getId());
+                                "WHERE id_people = :id AND type = :type) "
+                                "ORDER BY " + fieldOrder);
+    l_query.bindValue(":id", id);
     l_query.bindValue(":type", type);
 
     if (!l_query.exec())
@@ -361,12 +364,27 @@ QVector<Movie> DatabaseManager::getMoviesByPeople(People const &people, int type
 }
 
 /**
- * @brief Gets all the movies tagged by 'tag'
+ * @brief Gets all the movies directed by people having the id `id` and of type `type`
+ *
+ * @param People director
+ * @param int type of the people
+ * @param QString upon which field we order the request
+ * @return QVector<Movie>
+ */
+QVector<Movie> DatabaseManager::getMoviesByPeople(People const &people, int type, QString fieldOrder)
+{
+    QVector<Movie> l_moviesVector = getMoviesByPeople(people.getId(), type, fieldOrder);
+
+    return l_moviesVector;
+}
+
+/**
+ * @brief Gets all the movies tagged by the tag having the id `id`
  *
  * @param Tag tag
  * @return QVector<Movie>
  */
-QVector<Movie> DatabaseManager::getMoviesByTag(Tag const &tag)
+QVector<Movie> DatabaseManager::getMoviesByTag(int id, QString fieldOrder)
 {
     QVector<Movie> l_moviesVector;
     QSqlQuery l_query(m_db);
@@ -374,8 +392,9 @@ QVector<Movie> DatabaseManager::getMoviesByTag(Tag const &tag)
                     "FROM movies AS m"
                     "WHERE id = (SELECT id_movie "
                                 "FROM movies_tags "
-                                "WHERE id_tag = :id) ");
-    l_query.bindValue(":id", tag.getId());
+                                "WHERE id_tag = :id) "
+                                "ORDER BY " + fieldOrder);
+    l_query.bindValue(":id", id);
 
     if (!l_query.exec())
     {
@@ -392,7 +411,20 @@ QVector<Movie> DatabaseManager::getMoviesByTag(Tag const &tag)
     return l_moviesVector;
 }
 
-QVector<Movie> DatabaseManager::getMoviesWithoutTag()
+/**
+ * @brief Gets all the movies tagged by 'tag'
+ *
+ * @param Tag tag
+ * @return QVector<Movie>
+ */
+QVector<Movie> DatabaseManager::getMoviesByTag(Tag const &tag, QString fieldOrder)
+{
+    QVector<Movie> l_moviesVector = getMoviesByTag(tag.getId(), fieldOrder);
+
+    return l_moviesVector;
+}
+
+QVector<Movie> DatabaseManager::getMoviesWithoutTag(QString fieldOrder)
 {
     QVector<Movie> l_moviesVector;
     QSqlQuery l_query(m_db);
@@ -400,7 +432,8 @@ QVector<Movie> DatabaseManager::getMoviesWithoutTag()
                     "FROM movies AS m "
                     "WHERE (SELECT COUNT(*) "
                                 "FROM movies_tags AS mt "
-                                "WHERE mt.id_movie = m.id) = 0 ");
+                                "WHERE mt.id_movie = m.id) = 0 "
+                    "ORDER BY " + fieldOrder);
 
     if (!l_query.exec())
     {
@@ -417,7 +450,7 @@ QVector<Movie> DatabaseManager::getMoviesWithoutTag()
     return l_moviesVector;
 }
 
-QVector<Movie> DatabaseManager::getMoviesWithoutPeople(int type)
+QVector<Movie> DatabaseManager::getMoviesWithoutPeople(int type, QString fieldOrder)
 {
     QVector<Movie> l_moviesVector;
     QSqlQuery l_query(m_db);
@@ -425,7 +458,8 @@ QVector<Movie> DatabaseManager::getMoviesWithoutPeople(int type)
                     "FROM movies AS m "
                     "WHERE (SELECT COUNT(*) "
                                 "FROM movies_people AS mp "
-                                "WHERE mp.id_movie = m.id AND mp.type = :type) = 0" );
+                                "WHERE mp.id_movie = m.id AND mp.type = :type) = 0 "
+                    "ORDER BY " + fieldOrder);
     l_query.bindValue(":type", type);
 
     if (!l_query.exec())
@@ -501,14 +535,15 @@ bool DatabaseManager::existPeople(QString fullname)
  *
  * @return QVector<People>
  */
-QVector<People> DatabaseManager::getAllPeople(int type)
+QVector<People> DatabaseManager::getAllPeople(int type, QString fieldOrder)
 {
     QVector<People> l_peopleVector;
     QSqlQuery l_query(m_db);
 
     l_query.prepare("SELECT " + m_peopleFields + " "
                     "FROM people AS p "
-                    "WHERE id IN (SELECT id_people FROM movies_people WHERE type = :type) ");
+                    "WHERE id IN (SELECT id_people FROM movies_people WHERE type = :type) "
+                    "ORDER BY " + fieldOrder);
     l_query.bindValue(":type", type);
 
     if (!l_query.exec())
@@ -594,7 +629,7 @@ People DatabaseManager::getOnePeopleById(int id, int type)
  * @param QString fullname, the string searched
  * @return QVector<People>
  */
-QVector<People> DatabaseManager::getPeopleByFullname(QString fullname)
+QVector<People> DatabaseManager::getPeopleByFullname(QString fullname, QString fieldOrder)
 {
     QVector<People> l_peopleVector;
     QSqlQuery l_query(m_db);
@@ -602,7 +637,8 @@ QVector<People> DatabaseManager::getPeopleByFullname(QString fullname)
     l_query.prepare("SELECT " + m_peopleFields + " "
                     "FROM people AS p "
                     "WHERE p.lastname || ' ' || p.firstname LIKE '%'||:fullname||'%' "
-                       "OR p.firstname || ' ' || p.lastname LIKE '%'||:fullname||'%'");
+                       "OR p.firstname || ' ' || p.lastname LIKE '%'||:fullname||'%' "
+                    "ORDER BY " + fieldOrder);
     l_query.bindValue(":fullname", fullname);
 
     if (!l_query.exec())
@@ -637,27 +673,9 @@ People DatabaseManager::getOneDirectorById(int id)
  *
  * @return QVector<People>
  */
-QVector<People> DatabaseManager::getAllActors()
+QVector<People> DatabaseManager::getAllActors(QString fieldOrder)
 {
-    QVector<People> l_actorsVector;
-    QSqlQuery l_query(m_db);
-
-    l_query.prepare("SELECT " + m_peopleFields + " "
-                    "FROM people AS p"
-                    "WHERE id = (SELECT id_people FROM movies_people WHERE type = :type) ");
-    l_query.bindValue(":type", Actor);
-
-    if (!l_query.exec())
-    {
-        qDebug() << "In getAllActors():";
-        qDebug() << l_query.lastError().text();
-    }
-
-    if(l_query.next())
-    {
-        People l_actor = hydratePeople(l_query);
-        l_actorsVector.push_back(l_actor);
-    }
+    QVector<People> l_actorsVector = getAllPeople(Actor, fieldOrder);
 
     return l_actorsVector;
 }
@@ -694,12 +712,13 @@ People DatabaseManager::getOneActorById(int id)
  *
  * @return QVector<Tag>
  */
-QVector<Tag> DatabaseManager::getAllTags()
+QVector<Tag> DatabaseManager::getAllTags(QString fieldOrder)
 {
     QVector<Tag> l_tagsVector;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT id, name "
-                    "FROM tags");
+                    "FROM tags "
+                    "ORDER BY " + fieldOrder);
 
     if (!l_query.exec())
     {
@@ -806,7 +825,6 @@ bool DatabaseManager::insertNewMovie(Movie &movie)
         {
             return false;
         }
-
     }
 
     return true;

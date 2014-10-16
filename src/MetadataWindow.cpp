@@ -34,7 +34,11 @@ MetadataWindow::MetadataWindow(int id, QWidget *parent) :
     m_app = qobject_cast<Application *>(qApp);
     m_app->debug("[MetadataWindow] Constructor called");
     m_movie = m_app->getDatabaseManager()->getOneMovieById(id);
+
     m_ui->setupUi(this);
+    this->setWindowTitle("Edit Metadata of: " + m_movie.getTitle());
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
     setTitle(m_movie.getTitle());
     setOriginalTitle(m_movie.getOriginalTitle());
     setReleaseDate(m_movie.getReleaseDate());

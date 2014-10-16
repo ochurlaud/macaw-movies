@@ -34,8 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_ui->mainPannel, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(on_customContextMenuRequested(const QPoint &)));
     connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(on_customContextMenuRequested(const QPoint &)));
 
-    QVector<Movie> l_moviesVector = m_app->getDatabaseManager()->getAllMovies();
-    fillMainPannel(l_moviesVector);
+    m_moviesVector = m_app->getDatabaseManager()->getAllMovies();
+    fillMainPannel();
     fillLeftPannel(isPeople, Director);
     m_app->debug("[MainWindow] Construction done");
 }
@@ -54,16 +54,16 @@ void MainWindow::on_actionEdit_Settings_triggered()
 {
     m_app->debug("[MainWindow] Enters showSettingsWindow()");
     SettingsWindow *l_settingsWindow = new SettingsWindow;
-    l_settingsWindow->setModal(true);
-    l_settingsWindow->setAttribute(Qt::WA_DeleteOnClose);
     l_settingsWindow->show();
-    QObject::connect(l_settingsWindow,SIGNAL(closeAndSave()), this, SLOT(updateApp()));
+    QObject::connect(l_settingsWindow,SIGNAL(destroyed()), this, SLOT(selfUpdate()));
     m_app->debug("[MainWindow] Exits showSettingsWindow()");
 }
 
 void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
 {
     m_ui->leftPannel->clear();
+    m_typeElement = typeElement;
+    m_typePeople = typePeople;
 
     QListWidgetItem *l_item = new QListWidgetItem("All");
     l_item->setData(Qt::UserRole, 0);
@@ -92,18 +92,6 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             l_item->setData(Qt::UserRole+2, typePeople);
 
             m_ui->leftPannel->addItem(l_item);
-            switch (typePeople)
-            {
-            case Director:
-                m_ui->leftPannelLabel->setText("Director");
-                break;
-            case Producer:
-                m_ui->leftPannelLabel->setText("Producer");
-                break;
-            case Actor:
-                m_ui->leftPannelLabel->setText("Actor");
-                break;
-            }
         }
     }
     else if(typeElement == isTag)
@@ -124,11 +112,11 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
 
             m_ui->leftPannel->addItem(l_item);
         }
-        m_ui->leftPannelLabel->setText("Tags");
     }
+    this->setLeftPannelLabel();
 }
 
-void MainWindow::fillMainPannel(QVector<Movie> moviesVector)
+void MainWindow::fillMainPannel()
 {
     m_app->debug("[MainWindow] Enters fillMainPannel()");
 
@@ -138,10 +126,10 @@ void MainWindow::fillMainPannel(QVector<Movie> moviesVector)
     QStringList l_headers;
     l_headers << "Title" << "Original Title" << "Release Date" << "Path of the file";
     m_ui->mainPannel->setHorizontalHeaderLabels(l_headers);
-    m_ui->mainPannel->setRowCount(moviesVector.size());
+    m_ui->mainPannel->setRowCount(m_moviesVector.size());
     int l_row = 0;
 
-    foreach (Movie l_movie, moviesVector)
+    foreach (Movie l_movie, m_moviesVector)
     {
         int l_column = 0;
         QStringList l_movieData;
@@ -203,13 +191,13 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
     }
 }
 
-
 void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
 {
     m_app->debug("[MainWindow] actionEdit_Metadata_triggered()");
     int l_id = m_ui->mainPannel->selectedItems().at(0)->data(Qt::UserRole).toInt();
 
     MetadataWindow *l_metadataWindow = new MetadataWindow(l_id);
+    connect(l_metadataWindow, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
     l_metadataWindow->show();
 }
 
@@ -224,6 +212,7 @@ void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
         if (l_typeElement == isPeople)
         {
             PeopleWindow *l_metadataWindow = new PeopleWindow(l_id);
+            connect(l_metadataWindow, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
             l_metadataWindow->show();
         }
         else if (l_typeElement == isTag)
@@ -245,46 +234,90 @@ void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
     QDesktopServices::openUrl(QUrl("file://" + l_movie.getFilePath(), QUrl::TolerantMode));
 }
 
-void MainWindow::on_leftPannel_clicked(const QModelIndex &index)
+void MainWindow::on_leftPannel_clicked(const QModelIndex &item)
 {
-    QVector<Movie> l_moviesVector;
-    int l_id = index.data(Qt::UserRole).toInt();
-    int l_typeElement = index.data(Qt::UserRole+1).toInt();
-    if(l_id == 0)
-    {
-        l_moviesVector = m_app->getDatabaseManager()->getAllMovies();
-    }
-    else if(l_typeElement == isPeople)
-    {
-        int l_typePeople = index.data(Qt::UserRole+2).toInt();
+    m_app->debug("[MainWindow] itemClicked on leftPannel()");
 
-        if (l_id == -1)
-        {
-            l_moviesVector = m_app->getDatabaseManager()->getMoviesWithoutPeople(l_typePeople);
-        }
-        else
-        {
-            People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_id, l_typePeople);
-            l_moviesVector = m_app->getDatabaseManager()->getMoviesByPeople(l_people, l_typePeople);
-        }
-    }
-    else if (l_typeElement == isTag)
-    {
-        if (l_id == -1)
-        {
-            l_moviesVector = m_app->getDatabaseManager()->getMoviesWithoutTag();
-        }
-        else
-        {
-            Tag l_tag = m_app->getDatabaseManager()->getOneTagById(l_id);
-            l_moviesVector = m_app->getDatabaseManager()->getMoviesByTag(l_tag);
-        }
-    }
-    fillMainPannel(l_moviesVector);
+    m_leftPannelSelectedId = item.data(Qt::UserRole).toInt();
+    this->prepareMoviesToDisplay(m_leftPannelSelectedId);
 }
 
 void MainWindow::on_mainPannel_clicked(const QModelIndex &index)
 {
     m_app->debug("[MainWindow] mainPannel clicked");
-    m_ui->mainPannel->selectRow(index.row());
+}
+
+void MainWindow::prepareMoviesToDisplay(int id)
+{
+    m_app->debug("[MainWindow] itemClicked on leftPannel()");
+
+    m_leftPannelSelectedId = id;
+    if(m_leftPannelSelectedId == 0)
+    {
+        m_moviesVector = m_app->getDatabaseManager()->getAllMovies();
+    }
+    else if(m_typeElement == isPeople)
+    {
+        if (m_leftPannelSelectedId == -1)
+        {
+            m_moviesVector = m_app->getDatabaseManager()->getMoviesWithoutPeople(m_typePeople);
+        }
+        else
+        {
+            m_moviesVector = m_app->getDatabaseManager()->getMoviesByPeople(m_leftPannelSelectedId, m_typePeople);
+        }
+    }
+    else if (m_typeElement == isTag)
+    {
+        if (m_leftPannelSelectedId == -1)
+        {
+            m_moviesVector = m_app->getDatabaseManager()->getMoviesWithoutTag();
+        }
+        else
+        {
+            m_moviesVector = m_app->getDatabaseManager()->getMoviesByTag(m_leftPannelSelectedId);
+        }
+    }
+    fillMainPannel();
+}
+
+void MainWindow::selfUpdate()
+{
+    m_app->debug("[MainWindow] selfUpdate()");
+    fillLeftPannel(m_typeElement, m_typePeople);
+
+    for (int i = 0 ; i < m_ui->leftPannel->count() ; i++)
+    {
+        QListWidgetItem *l_item = m_ui->leftPannel->item(i);
+        if (l_item->data(Qt::UserRole).toInt() == m_leftPannelSelectedId)
+        {
+
+            l_item->setSelected(true);
+            this->prepareMoviesToDisplay(l_item->data(Qt::UserRole).toInt());
+            break;
+        }
+    }
+}
+
+void MainWindow::setLeftPannelLabel()
+{
+    switch (m_typeElement)
+    {
+    case isTag:
+        m_ui->leftPannelLabel->setText("Tags");
+        break;
+    case isPeople:
+        switch (m_typePeople)
+        {
+        case Director:
+            m_ui->leftPannelLabel->setText("Directors");
+            break;
+        case Producer:
+            m_ui->leftPannelLabel->setText("Producers");
+            break;
+        case Actor:
+            m_ui->leftPannelLabel->setText("Actors");
+            break;
+        }
+    }
 }

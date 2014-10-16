@@ -29,6 +29,8 @@ PeopleWindow::PeopleWindow(int id, int type, QWidget *parent) :
     m_app->debug("[PeopleWindow] Constructor called");
 
     m_ui->setupUi(this);
+    this->setWindowTitle("Edit People Metadata");
+    this->setAttribute(Qt::WA_DeleteOnClose);
 
     // If id is 0 it means we create a new People
     if (id != 0)
@@ -106,7 +108,17 @@ void PeopleWindow::on_validationButtons_accepted()
     m_people.setRealname(getRealname());
     m_people.setBirthday(getBirthday());
     m_people.setBiography(getBiography());
-    emit(peopleCreated(m_people, m_type));
+
+    // If type != 0, it means we come from the metadata window
+    // If type = 0, it means we directly edit a people
+    if (m_type != 0)
+    {
+        emit(peopleCreated(m_people, m_type));
+    }
+    else
+    {
+        m_app->getDatabaseManager()->updatePeople(m_people);
+    }
 
     m_app->debug("[PeopleWindow] validationButtons method done");
 }

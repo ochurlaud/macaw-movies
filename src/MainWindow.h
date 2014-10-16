@@ -28,7 +28,6 @@
 #include "MetadataWindow.h"
 #include "PeopleWindow.h"
 
-enum typeElement {None, isMovie, isPeople, isTag};
 
 class Application;
 
@@ -42,8 +41,6 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    void fillMainPannel(QVector<Movie> moviesVector);
-    void fillLeftPannel(int typeElement, int typePeople);
     ~MainWindow();
 
 private slots:
@@ -58,10 +55,21 @@ private slots:
     void on_mainPannel_clicked(const QModelIndex &index);
     void on_actionEdit_leftPannelMetadata_triggered();
     void on_actionEdit_mainPannelMetadata_triggered();
+    void selfUpdate();
 
 private:
     Ui::MainWindow *m_ui;
     Application *m_app;
+    QVector<Movie> m_moviesVector;
+    int m_typePeople;
+    int m_typeElement;
+    int m_leftPannelSelectedId;
+    enum typeElement {None, isMovie, isPeople, isTag};
+    void fillMainPannel();
+    void fillLeftPannel(int typeElement, int typePeople);
+    void setLeftPannelLabel();
+    void prepareMoviesToDisplay(int id);
+
 };
 
 #endif // MainWindow_H

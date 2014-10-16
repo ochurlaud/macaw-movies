@@ -47,25 +47,27 @@ class DatabaseManager : public QObject
         bool saveMoviesPath(QString);
 
         // Getters
-        QVector<Movie> getAllMovies();
+        QVector<Movie> getAllMovies(QString fieldOrder = "title");
         Movie getOneMovieById(int);
-        QVector<Movie> getMoviesByPeople(People const&, int type);
-        QVector<Movie> getMoviesByTag(Tag const&);
-        QVector<Movie> getMoviesWithoutTag();
-        QVector<Movie> getMoviesWithoutPeople(int type);
-        QVector<Movie> getMoviesByAny(QVariant);
+        QVector<Movie> getMoviesByPeople(int id, int type, QString fieldOrder = "title");
+        QVector<Movie> getMoviesByPeople(People const&, int type, QString fieldOrder = "title");
+        QVector<Movie> getMoviesByTag(int id, QString fieldOrder = "title");
+        QVector<Movie> getMoviesByTag(Tag const&, QString fieldOrder = "title");
+        QVector<Movie> getMoviesWithoutTag(QString fieldOrder = "title");
+        QVector<Movie> getMoviesWithoutPeople(int type, QString fieldOrder = "title");
+        QVector<Movie> getMoviesByAny(QVariant, QString fieldOrder = "title");
         bool existMovie(QString);
         bool existTag(QString);
         bool existPeople(QString);
-        QVector<Tag> getAllTags();
+        QVector<Tag> getAllTags(QString fieldOrder = "name");
         Tag getOneTagById(int);
         People getOnePeopleById(int);
         People getOnePeopleById(int, int);
-        QVector<People> getPeopleByFullname(QString);
-        QVector<People> getAllPeople(int type);
-        QVector<People> getAllDirectors();
+        QVector<People> getPeopleByFullname(QString fullname, QString fieldOrder = "lastname");
+        QVector<People> getAllPeople(int type, QString fieldOrder = "lastname");
+        QVector<People> getAllDirectors(QString fieldOrder = "lastname");
         People getOneDirectorById(int);
-        QVector<People> getAllActors();
+        QVector<People> getAllActors(QString fieldOrder = "lastname");
         People getOneActorById(int);
         People getOneProducerById(int);
         void setTagsToMovie(Movie&);
