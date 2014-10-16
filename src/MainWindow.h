@@ -1,77 +1,48 @@
-/* Copyright (C) 2014 Movie-Project
- * (Olivier CHURLAUD, Sébastien TOUZÉ)
- *
- * This file is part of Movie-Project.
- *
- * Movie-Project is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Movie-Project is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
- */
+#ifndef MainWindow_H
+#define MainWindow_H
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
-#include "SettingsWindow.h"
-#include "Application.h"
-#include "Entities/Movie.h"
-#include "MetadataWindow.h"
-
-#include <QtSql>
 #include <QtGui>
 #include <QtWidgets>
+#include "Application.h"
+#include "Entities/Movie.h"
+#include "SettingsWindow.h"
+#include "MetadataWindow.h"
+#include "PeopleWindow.h"
+
+enum typeElement {None, isMovie, isPeople, isTag};
 
 class Application;
 
-class MainWindow : public QWidget
+namespace Ui {
+class MainWindow;
+}
+
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    public:
-        explicit MainWindow(QWidget *parent = 0);
-        ~MainWindow();
-        void fillMoviesList(QVector<Movie>);
+public:
+    explicit MainWindow(QWidget *parent = 0);
+    void fillMainPannel(QVector<Movie> moviesVector);
+    void fillLeftPannel(int typeElement, int typePeople);
+    ~MainWindow();
 
+private slots:
+    void on_actionEdit_Settings_triggered();
+    void on_peopleBox_activated(int type);
+    void on_playlistsButton_clicked();
+    void on_toWatchButton_clicked();
+    void on_tagsButton_clicked();
+    void on_customContextMenuRequested(const QPoint &);
+    void on_mainPannel_itemDoubleClicked(QTableWidgetItem *item);
+    void on_leftPannel_clicked(const QModelIndex &index);
+    void on_mainPannel_clicked(const QModelIndex &index);
+    void on_actionEdit_leftPannelMetadata_triggered();
+    void on_actionEdit_mainPannelMetadata_triggered();
 
-    public slots:
-        void updateApp();
-        void showSettingsWindow();
-        void showMetadataWindow();
-        void startMovie(QTreeWidgetItem*, int);
-        void customMenuRequested(QPoint);
-
-    private:
-        QPushButton *m_settingsButton;
-        QHBoxLayout *m_hLayout;
-        QVBoxLayout *m_button_layout;
-        QVBoxLayout *m_mainLayout;
-        QVBoxLayout *m_centralLayout;
-        QHBoxLayout *m_SecondaryLayout;
-        QTextEdit *m_searchEdit;
-        QPushButton *m_allMoviesButton;
-        QPushButton *m_tagsButton;
-        QPushButton *m_directorsButton;
-        QPushButton *m_toWatchButton;
-        QPushButton *m_playlistButton;
-        QTableWidget *m_moviesTable;
-        QTreeWidget *m_centralTreeWidget;
-        QVector<QListWidgetItem*> m_moviesTitles;
-        Application * m_app;
-
-    private slots:
-        void fillMoviesListAll();
-        void fillTagsList();
-        void fillDirectorList();
-        void fillToWatchList();
-        void fillPlaylist();
+private:
+    Ui::MainWindow *m_ui;
+    Application *m_app;
 };
 
-#endif // MAINWINDOW_H
+#endif // MainWindow_H

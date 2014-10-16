@@ -49,10 +49,10 @@ class DatabaseManager : public QObject
         // Getters
         QVector<Movie> getAllMovies();
         Movie getOneMovieById(int);
-        QVector<Movie> getMoviesByDirector(People const&);
+        QVector<Movie> getMoviesByPeople(People const&, int type);
         QVector<Movie> getMoviesByTag(Tag const&);
         QVector<Movie> getMoviesWithoutTag();
-        QVector<Movie> getMoviesWithoutDirector();
+        QVector<Movie> getMoviesWithoutPeople(int type);
         QVector<Movie> getMoviesByAny(QVariant);
         bool existMovie(QString);
         bool existTag(QString);
@@ -62,6 +62,7 @@ class DatabaseManager : public QObject
         People getOnePeopleById(int);
         People getOnePeopleById(int, int);
         QVector<People> getPeopleByFullname(QString);
+        QVector<People> getAllPeople(int type);
         QVector<People> getAllDirectors();
         People getOneDirectorById(int);
         QVector<People> getAllActors();

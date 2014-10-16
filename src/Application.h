@@ -36,8 +36,9 @@ class Application : public QApplication
         void showMainWindow();
         bool addFilesPath(QString path);
         QString getFilesPath();
-        QString getAppName() {return this->m_appName;}
-        DatabaseManager *getDatabaseManager() {return this->m_dbManager;}
+        QString getAppName() { return this->m_appName; }
+        QIcon getAppIcon() { return this->m_appIcon; }
+        DatabaseManager *getDatabaseManager() { return this->m_dbManager; }
         void debug(QString text) { m_debug.print(text); }
 
     private:
@@ -45,6 +46,7 @@ class Application : public QApplication
         QString m_filesPath;
         DatabaseManager *m_dbManager;
         QString m_appName;
+        QIcon m_appIcon;
         MoviesDebug m_debug;
 };
 

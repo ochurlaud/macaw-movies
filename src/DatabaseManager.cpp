@@ -33,7 +33,7 @@ DatabaseManager::DatabaseManager()
 
     createTables();
     m_movieFields = "m.id, m.title, m.original_title, m.release_date, m.country, m.duration, m.synopsis, m.file_path, m.colored, m.format, m.suffix, m.rank";
-    m_peopleFields = " p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography";
+    m_peopleFields = "p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography";
     m_moviesPathModel = new QStringListModel();
 }
 
@@ -332,7 +332,7 @@ QVector<Movie> DatabaseManager::getAllMovies()
  * @param People director
  * @return QVector<Movie>
  */
-QVector<Movie> DatabaseManager::getMoviesByDirector(People const &director)
+QVector<Movie> DatabaseManager::getMoviesByPeople(People const &people, int type)
 {
     QVector<Movie> l_moviesVector;
     QSqlQuery l_query(m_db);
@@ -341,12 +341,12 @@ QVector<Movie> DatabaseManager::getMoviesByDirector(People const &director)
                     "WHERE id = (SELECT id_movie "
                                 "FROM movies_people "
                                 "WHERE id_people = :id AND type = :type) ");
-    l_query.bindValue(":id", director.getId());
-    l_query.bindValue(":type", Director);
+    l_query.bindValue(":id", people.getId());
+    l_query.bindValue(":type", type);
 
     if (!l_query.exec())
     {
-        qDebug() << "In getMoviesByDirector(People):";
+        qDebug() << "In getMoviesByPeople():";
         qDebug() << l_query.lastError().text();
     }
 
@@ -417,7 +417,7 @@ QVector<Movie> DatabaseManager::getMoviesWithoutTag()
     return l_moviesVector;
 }
 
-QVector<Movie> DatabaseManager::getMoviesWithoutDirector()
+QVector<Movie> DatabaseManager::getMoviesWithoutPeople(int type)
 {
     QVector<Movie> l_moviesVector;
     QSqlQuery l_query(m_db);
@@ -426,11 +426,11 @@ QVector<Movie> DatabaseManager::getMoviesWithoutDirector()
                     "WHERE (SELECT COUNT(*) "
                                 "FROM movies_people AS mp "
                                 "WHERE mp.id_movie = m.id AND mp.type = :type) = 0" );
-    l_query.bindValue(":type", Director);
+    l_query.bindValue(":type", type);
 
     if (!l_query.exec())
     {
-        qDebug() << "In getMoviesWithoutDirector():";
+        qDebug() << "In getMoviesWithoutPeople():";
         qDebug() << l_query.lastError().text();
     }
 
@@ -501,29 +501,29 @@ bool DatabaseManager::existPeople(QString fullname)
  *
  * @return QVector<People>
  */
-QVector<People> DatabaseManager::getAllDirectors()
+QVector<People> DatabaseManager::getAllPeople(int type)
 {
-    QVector<People> l_directorsVector;
+    QVector<People> l_peopleVector;
     QSqlQuery l_query(m_db);
 
     l_query.prepare("SELECT " + m_peopleFields + " "
                     "FROM people AS p "
-                    "WHERE id = (SELECT id_people FROM movies_people WHERE type = :type) ");
-    l_query.bindValue(":type", Director);
+                    "WHERE id IN (SELECT id_people FROM movies_people WHERE type = :type) ");
+    l_query.bindValue(":type", type);
 
     if (!l_query.exec())
     {
-        qDebug() << "In getAllDirectors():";
+        qDebug() << "In getAllPeople():";
         qDebug() << l_query.lastError().text();
     }
 
     while(l_query.next())
     {
-        People l_director = hydratePeople(l_query);
-        l_directorsVector.push_back(l_director);
+        People l_people = hydratePeople(l_query);
+        l_peopleVector.push_back(l_people);
     }
 
-    return l_directorsVector;
+    return l_peopleVector;
 }
 
 /**

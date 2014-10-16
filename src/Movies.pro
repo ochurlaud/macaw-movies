@@ -34,7 +34,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     DatabaseManager.cpp \
-    MainWindow.cpp \
     Application.cpp \
     SettingsWindow.cpp \
     MoviesDebug.cpp \
@@ -42,11 +41,11 @@ SOURCES += main.cpp \
     Entities/People.cpp \
     Entities/Tag.cpp \
     MetadataWindow.cpp \
-    PeopleWindow.cpp
+    PeopleWindow.cpp \
+    MainWindow.cpp
 
 HEADERS  += \
     DatabaseManager.h \
-    MainWindow.h \
     Application.h \
     SettingsWindow.h \
     MoviesDebug.h \
@@ -54,14 +53,19 @@ HEADERS  += \
     Entities/People.h \
     Entities/Tag.h \
     MetadataWindow.h \
-    PeopleWindow.h
+    PeopleWindow.h \
+    MainWindow.h
 
 FORMS    += \
     MetadataWindow.ui \
-    PeopleWindow.ui
+    PeopleWindow.ui \
+    MainWindow.ui
 
 OTHER_FILES += \
     ../.gitignore \
     ../COPYING \
     ../README.md \
     ../DDB_SCHEMA.md
+
+RESOURCES += \
+    images.qrc
