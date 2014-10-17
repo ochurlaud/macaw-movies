@@ -219,9 +219,9 @@ void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
     m_app->debug("[MainWindow] actionEdit_Metadata_triggered()");
     int l_id = m_ui->mainPannel->selectedItems().at(0)->data(Qt::UserRole).toInt();
 
-    MetadataWindow *l_metadataWindow = new MetadataWindow(l_id);
-    connect(l_metadataWindow, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
-    l_metadataWindow->show();
+    MovieDialog *l_movieDialog = new MovieDialog(l_id);
+    connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
+    l_movieDialog->show();
 }
 
 void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
@@ -234,9 +234,9 @@ void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
         int l_typeElement = m_ui->leftPannel->selectedItems().at(0)->data(Qt::UserRole+1).toInt();
         if (l_typeElement == isPeople)
         {
-            PeopleWindow *l_metadataWindow = new PeopleWindow(l_id);
-            connect(l_metadataWindow, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
-            l_metadataWindow->show();
+            PeopleDialog *l_movieDialog = new PeopleDialog(l_id);
+            connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
+            l_movieDialog->show();
         }
         else if (l_typeElement == isTag)
         {

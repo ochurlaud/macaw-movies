@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PeopleWindow</class>
- <widget class="QDialog" name="PeopleWindow">
+ <class>PeopleDialog</class>
+ <widget class="QDialog" name="PeopleDialog">
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
@@ -132,7 +132,7 @@
   <connection>
    <sender>validationButtons</sender>
    <signal>accepted()</signal>
-   <receiver>PeopleWindow</receiver>
+   <receiver>PeopleDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -148,7 +148,7 @@
   <connection>
    <sender>validationButtons</sender>
    <signal>rejected()</signal>
-   <receiver>PeopleWindow</receiver>
+   <receiver>PeopleDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

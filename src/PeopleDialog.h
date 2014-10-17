@@ -17,8 +17,8 @@
  * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PEOPLEWINDOW_H
-#define PEOPLEWINDOW_H
+#ifndef PEOPLEDIALOG_H
+#define PEOPLEDIALOG_H
 
 #include <QDialog>
 #include "Application.h"
@@ -26,16 +26,16 @@
 class Application;
 
 namespace Ui {
-class PeopleWindow;
+class PeopleDialog;
 }
 
-class PeopleWindow : public QDialog
+class PeopleDialog : public QDialog
 {
     Q_OBJECT
 
     public:
-        explicit PeopleWindow(int = 0, int = 0, QWidget *parent = 0);
-        ~PeopleWindow();
+        explicit PeopleDialog(int = 0, int = 0, QWidget *parent = 0);
+        ~PeopleDialog();
         void setFirstname(QString);
         QString getFirstname();
         void setLastname(QString);
@@ -54,10 +54,10 @@ class PeopleWindow : public QDialog
         void peopleCreated(People, int);
 
     private:
-        Ui::PeopleWindow *m_ui;
+        Ui::PeopleDialog *m_ui;
         People m_people;
         Application *m_app;
         int m_type;
 };
 
-#endif // PEOPLEWINDOW_H
+#endif // PEOPLEDIALOG_H

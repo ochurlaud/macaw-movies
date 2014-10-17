@@ -17,16 +17,16 @@
  * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PeopleWindow.h"
-#include "ui_PeopleWindow.h"
+#include "PeopleDialog.h"
+#include "ui_PeopleDialog.h"
 
-PeopleWindow::PeopleWindow(int id, int type, QWidget *parent) :
+PeopleDialog::PeopleDialog(int id, int type, QWidget *parent) :
     QDialog(parent),
-    m_ui(new Ui::PeopleWindow),
+    m_ui(new Ui::PeopleDialog),
     m_type(type)
 {
     m_app = qobject_cast<Application *>(qApp);
-    m_app->debug("[PeopleWindow] Constructor called");
+    m_app->debug("[PeopleDialog] Constructor called");
 
     m_ui->setupUi(this);
     this->setWindowTitle("Edit People Metadata");
@@ -42,67 +42,67 @@ PeopleWindow::PeopleWindow(int id, int type, QWidget *parent) :
         setBirthday(m_people.getBirthday());
         setBiography(m_people.getBiography());
     }
-    m_app->debug("[PeopleWindow] Construction done");
+    m_app->debug("[PeopleDialog] Construction done");
 }
 
-PeopleWindow::~PeopleWindow()
+PeopleDialog::~PeopleDialog()
 {
     delete m_ui;
 }
 
-void PeopleWindow::setFirstname(QString firstname)
+void PeopleDialog::setFirstname(QString firstname)
 {
     m_ui->firstnameEdit->setText(firstname);
 }
 
-QString PeopleWindow::getFirstname()
+QString PeopleDialog::getFirstname()
 {
     return m_ui->firstnameEdit->text();
 }
 
-void PeopleWindow::setLastname(QString lastname)
+void PeopleDialog::setLastname(QString lastname)
 {
     m_ui->lastnameEdit->setText(lastname);
 }
 
-QString PeopleWindow::getLastname()
+QString PeopleDialog::getLastname()
 {
     return m_ui->lastnameEdit->text();
 }
 
-void PeopleWindow::setRealname(QString realname)
+void PeopleDialog::setRealname(QString realname)
 {
     m_ui->realnameEdit->setText(realname);
 }
 
-QString PeopleWindow::getRealname()
+QString PeopleDialog::getRealname()
 {
     return m_ui->realnameEdit->text();
 }
 
-void PeopleWindow::setBirthday(QDate birthday)
+void PeopleDialog::setBirthday(QDate birthday)
 {
     m_ui->birthdayEdit->setDate(birthday);
 }
 
-QDate PeopleWindow::getBirthday()
+QDate PeopleDialog::getBirthday()
 {
     return m_ui->birthdayEdit->date();
 }
 
-void PeopleWindow::setBiography(QString biography)
+void PeopleDialog::setBiography(QString biography)
 {
     m_ui->biographyEdit->setPlainText(biography);
 }
 
-QString PeopleWindow::getBiography()
+QString PeopleDialog::getBiography()
 {
     return m_ui->biographyEdit->toPlainText();
 }
 
-void PeopleWindow::on_validationButtons_accepted()
+void PeopleDialog::on_validationButtons_accepted()
 {
-    m_app->debug("[PeopleWindow] validationButtons accepted");
+    m_app->debug("[PeopleDialog] validationButtons accepted");
     m_people.setFirstname(getFirstname());
     m_people.setLastname(getLastname());
     m_people.setRealname(getRealname());
@@ -120,5 +120,5 @@ void PeopleWindow::on_validationButtons_accepted()
         m_app->getDatabaseManager()->updatePeople(m_people);
     }
 
-    m_app->debug("[PeopleWindow] validationButtons method done");
+    m_app->debug("[PeopleDialog] validationButtons method done");
 }

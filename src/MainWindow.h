@@ -25,8 +25,8 @@
 #include "Application.h"
 #include "Entities/Movie.h"
 #include "SettingsWindow.h"
-#include "MetadataWindow.h"
-#include "PeopleWindow.h"
+#include "MovieDialog.h"
+#include "PeopleDialog.h"
 
 
 class Application;

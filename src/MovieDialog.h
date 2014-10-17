@@ -17,26 +17,26 @@
  * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef METADATAWINDOW_H
-#define METADATAWINDOW_H
+#ifndef MOVIEDIALOG_H
+#define MOVIEDIALOG_H
 
 #include <QDialog>
 #include "Application.h"
-#include "PeopleWindow.h"
+#include "PeopleDialog.h"
 
 class Application;
 
 namespace Ui {
-class MetadataWindow;
+class MovieDialog;
 }
 
-class MetadataWindow : public QDialog
+class MovieDialog : public QDialog
 {
     Q_OBJECT
 
     public:
-        explicit MetadataWindow(int, QWidget *parent = 0);
-        ~MetadataWindow();
+        explicit MovieDialog(int, QWidget *parent = 0);
+        ~MovieDialog();
         void setTitle(QString);
         QString getTitle();
         void setOriginalTitle(QString);
@@ -81,14 +81,14 @@ class MetadataWindow : public QDialog
         void on_directorEdit_textEdited();
         void on_producerEdit_textEdited();
         void on_actorEdit_textEdited();
-        void peopleWindow_peopleCreated(People, int);
+        void peopleDialog_peopleCreated(People, int);
         void customMenuRequested(QPoint);
-        void showPeopleWindow();
+        void showPeopleDialog();
 
     private:
-        Ui::MetadataWindow *m_ui;
+        Ui::MovieDialog *m_ui;
         Movie m_movie;
         Application *m_app;
 };
 
-#endif // METADATAWINDOW_H
+#endif // MOVIEDIALOG_H

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MetadataWindow</class>
- <widget class="QDialog" name="MetadataWindow">
+ <class>MovieDialog</class>
+ <widget class="QDialog" name="MovieDialog">
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
@@ -281,7 +281,7 @@
   <connection>
    <sender>validationButtons</sender>
    <signal>accepted()</signal>
-   <receiver>MetadataWindow</receiver>
+   <receiver>MovieDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -297,7 +297,7 @@
   <connection>
    <sender>validationButtons</sender>
    <signal>rejected()</signal>
-   <receiver>MetadataWindow</receiver>
+   <receiver>MovieDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

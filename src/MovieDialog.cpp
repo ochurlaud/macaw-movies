@@ -17,8 +17,8 @@
  * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MetadataWindow.h"
-#include "ui_MetadataWindow.h"
+#include "MovieDialog.h"
+#include "ui_MovieDialog.h"
 
 /* @TODO:
  *   - While typing in a peopleEdit, propose existing names. If none: pop-up "Do you want to create ?"
@@ -27,12 +27,12 @@
  *   - Handle tags
  */
 
-MetadataWindow::MetadataWindow(int id, QWidget *parent) :
+MovieDialog::MovieDialog(int id, QWidget *parent) :
     QDialog(parent),
-    m_ui(new Ui::MetadataWindow)
+    m_ui(new Ui::MovieDialog)
 {
     m_app = qobject_cast<Application *>(qApp);
-    m_app->debug("[MetadataWindow] Constructor called");
+    m_app->debug("[MovieDialog] Constructor called");
     m_movie = m_app->getDatabaseManager()->getOneMovieById(id);
 
     m_ui->setupUi(this);
@@ -54,70 +54,70 @@ MetadataWindow::MetadataWindow(int id, QWidget *parent) :
     QObject::connect(m_ui->producersWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
     m_ui->actorsWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(m_ui->actorsWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
-    m_app->debug("[MetadataWindow] Construction done");
+    m_app->debug("[MovieDialog] Construction done");
 }
 
-MetadataWindow::~MetadataWindow()
+MovieDialog::~MovieDialog()
 {
     delete m_ui;
 }
 
-void MetadataWindow::setTitle(QString title)
+void MovieDialog::setTitle(QString title)
 {
     m_ui->titleEdit->setText(title);
     m_movie.setTitle(title);
 }
 
-QString MetadataWindow::getTitle()
+QString MovieDialog::getTitle()
 {
     return m_ui->titleEdit->text();
 }
 
-void MetadataWindow::setOriginalTitle(QString originalTitle)
+void MovieDialog::setOriginalTitle(QString originalTitle)
 {
     m_ui->originalTitleEdit->setText(originalTitle);
     m_movie.setOriginalTitle(originalTitle);
 }
 
-QString MetadataWindow::getOriginalTitle()
+QString MovieDialog::getOriginalTitle()
 {
     return m_ui->originalTitleEdit->text();
 }
 
-void MetadataWindow::setReleaseDate(QDate releaseDate)
+void MovieDialog::setReleaseDate(QDate releaseDate)
 {
     m_ui->releaseDateEdit->setDate(releaseDate);
     m_movie.setReleaseDate(releaseDate);
 }
 
-QDate MetadataWindow::getReleaseDate()
+QDate MovieDialog::getReleaseDate()
 {
     return m_ui->releaseDateEdit->date();
 }
 
-void MetadataWindow::setCountry(QString country)
+void MovieDialog::setCountry(QString country)
 {
     m_ui->countryEdit->setText(country);
     m_movie.setCountry(country);
 }
 
-QString MetadataWindow::getCountry()
+QString MovieDialog::getCountry()
 {
     return m_ui->countryEdit->text();
 }
 
-void MetadataWindow::setSynopsis(QString synopsis)
+void MovieDialog::setSynopsis(QString synopsis)
 {
     m_ui->synopsisEdit->setPlainText(synopsis);
     m_movie.setSynopsis(synopsis);
 }
 
-QString MetadataWindow::getSynopsis()
+QString MovieDialog::getSynopsis()
 {
     return m_ui->synopsisEdit->toPlainText();
 }
 
-void MetadataWindow::setPeople(QVector<People> peopleVector, int type)
+void MovieDialog::setPeople(QVector<People> peopleVector, int type)
 {
     QListWidget *l_peopleWidget;
     switch (type)
@@ -141,7 +141,7 @@ void MetadataWindow::setPeople(QVector<People> peopleVector, int type)
     }
 }
 
-QVector<People> MetadataWindow::getPeople(int type)
+QVector<People> MovieDialog::getPeople(int type)
 {
     QListWidget *l_peopleWidget;
     switch (type)
@@ -167,7 +167,7 @@ QVector<People> MetadataWindow::getPeople(int type)
     return l_peopleVector;
 }
 
-void MetadataWindow::addPeople(People &people, int type)
+void MovieDialog::addPeople(People &people, int type)
 {
     QListWidget *l_peopleWidget;
     switch (type)
@@ -201,7 +201,7 @@ void MetadataWindow::addPeople(People &people, int type)
     }
 }
 
-void MetadataWindow::delPeople(People &people, int type)
+void MovieDialog::delPeople(People &people, int type)
 {
     switch (type)
     {
@@ -217,7 +217,7 @@ void MetadataWindow::delPeople(People &people, int type)
     }
 }
 
-void MetadataWindow::updatePeople(People &people)
+void MovieDialog::updatePeople(People &people)
 {
     m_movie.updateDirector(people);
     m_movie.updateProducer(people);
@@ -227,69 +227,69 @@ void MetadataWindow::updatePeople(People &people)
     setActors(m_movie.getActors());
 }
 
-void MetadataWindow::setDirectors(QVector<People> directorsVector)
+void MovieDialog::setDirectors(QVector<People> directorsVector)
 {
     setPeople(directorsVector, Director);
 }
 
-QVector<People> MetadataWindow::getDirectors()
+QVector<People> MovieDialog::getDirectors()
 {
     return getPeople(Director);
 }
 
-void MetadataWindow::addDirector(People &director)
+void MovieDialog::addDirector(People &director)
 {
     addPeople(director, Director);
 }
 
-void MetadataWindow::delDirector(People &director)
+void MovieDialog::delDirector(People &director)
 {
     delPeople(director, Director);
 }
 
-void MetadataWindow::setProducers(QVector<People> producersVector)
+void MovieDialog::setProducers(QVector<People> producersVector)
 {
     setPeople(producersVector, Producer);
 }
 
-QVector<People> MetadataWindow::getProducers()
+QVector<People> MovieDialog::getProducers()
 {
     return getPeople(Producer);
 }
 
-void MetadataWindow::addProducer(People &producer)
+void MovieDialog::addProducer(People &producer)
 {
     addPeople(producer, Producer);
 }
 
-void MetadataWindow::delProducer(People &producer)
+void MovieDialog::delProducer(People &producer)
 {
     delPeople(producer, Producer);
 }
 
-void MetadataWindow::setActors(QVector<People> actorsVector)
+void MovieDialog::setActors(QVector<People> actorsVector)
 {
     setPeople(actorsVector, Actor);
 }
 
-QVector<People> MetadataWindow::getActors()
+QVector<People> MovieDialog::getActors()
 {
     return getPeople(Actor);
 }
 
-void MetadataWindow::addActor(People &actor)
+void MovieDialog::addActor(People &actor)
 {
     addPeople(actor, Actor);
 }
 
-void MetadataWindow::delActor(People &actor)
+void MovieDialog::delActor(People &actor)
 {
     delPeople(actor, Actor);
 }
 
-void MetadataWindow::on_validationButtons_accepted()
+void MovieDialog::on_validationButtons_accepted()
 {
-    m_app->debug("[MetadataWindow] validationButtons accepted");
+    m_app->debug("[MovieDialog] validationButtons accepted");
     m_movie.setTitle(getTitle());
     m_movie.setOriginalTitle(getOriginalTitle());
     m_movie.setReleaseDate(getReleaseDate());
@@ -297,30 +297,30 @@ void MetadataWindow::on_validationButtons_accepted()
     m_movie.setSynopsis(getSynopsis());
 
     m_app->getDatabaseManager()->updateMovie(m_movie);
-    m_app->debug("[MetadataWindow] validationButtons method done");
+    m_app->debug("[MovieDialog] validationButtons method done");
 }
 
-void MetadataWindow::on_addDirectorButton_clicked()
+void MovieDialog::on_addDirectorButton_clicked()
 {
-    m_app->debug("[MetadataWindow] addDirectorButton clicked()");
+    m_app->debug("[MovieDialog] addDirectorButton clicked()");
     addPeopleButton_clicked(Director);
 }
 
-void MetadataWindow::on_addProducerButton_clicked()
+void MovieDialog::on_addProducerButton_clicked()
 {
-    m_app->debug("[MetadataWindow] addProducerButton clicked()");
+    m_app->debug("[MovieDialog] addProducerButton clicked()");
     addPeopleButton_clicked(Producer);
 }
 
-void MetadataWindow::on_addActorButton_clicked()
+void MovieDialog::on_addActorButton_clicked()
 {
-    m_app->debug("[MetadataWindow] addActorButton clicked()");
+    m_app->debug("[MovieDialog] addActorButton clicked()");
     addPeopleButton_clicked(Actor);
 }
 
-void MetadataWindow::addPeopleButton_clicked(int type)
+void MovieDialog::addPeopleButton_clicked(int type)
 {
-    m_app->debug("[MetadataWindow] Enters addPeopleButton_clicked()");
+    m_app->debug("[MovieDialog] Enters addPeopleButton_clicked()");
 
     QLineEdit *l_peopleEdit;
     QListWidget *l_peopleWidget;
@@ -350,48 +350,48 @@ void MetadataWindow::addPeopleButton_clicked(int type)
             QVector<People> l_peopleVector = m_app->getDatabaseManager()->getPeopleByFullname(l_text);
             People l_people = l_peopleVector.at(0);
             addPeople(l_people, type);
-            m_app->debug("[MetadataWindow] " + l_text + " added");
+            m_app->debug("[MovieDialog] " + l_text + " added");
         }
         else
         {
-            m_app->debug("[MetadataWindow] " + l_text + " already in the list");
+            m_app->debug("[MovieDialog] " + l_text + " already in the list");
         }
     }
     else
     {
-        PeopleWindow *l_peopleWindow = new PeopleWindow(type);
+        PeopleDialog *l_peopleDialog = new PeopleDialog(type);
         // We suppose here that a name is composed by N >= 0 firstnames
         // and 1 lastname, separated by spaces
         QStringList l_textExplosed = l_text.split(" ");
         QString l_lastname = l_textExplosed.last();
         l_textExplosed.removeLast();
         QString l_firstname = l_textExplosed.join(" ");
-        l_peopleWindow->setFirstname(l_firstname);
-        l_peopleWindow->setLastname(l_lastname);
-        l_peopleWindow->show();
-        QObject::connect(l_peopleWindow, SIGNAL(peopleCreated(People, int)), this, SLOT(peopleWindow_peopleCreated(People, int)));
+        l_peopleDialog->setFirstname(l_firstname);
+        l_peopleDialog->setLastname(l_lastname);
+        l_peopleDialog->show();
+        QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People, int)), this, SLOT(peopleDialog_peopleCreated(People, int)));
     }
 }
 
-void MetadataWindow::on_delDirectorButton_clicked()
+void MovieDialog::on_delDirectorButton_clicked()
 {
-    m_app->debug("[MetadataWindow] delDirectorButton clicked()");
+    m_app->debug("[MovieDialog] delDirectorButton clicked()");
     delPeopleButton_clicked(Director);
 }
 
-void MetadataWindow::on_delProducerButton_clicked()
+void MovieDialog::on_delProducerButton_clicked()
 {
-    m_app->debug("[MetadataWindow] delProducerButton clicked()");
+    m_app->debug("[MovieDialog] delProducerButton clicked()");
 }
 
-void MetadataWindow::on_delActorButton_clicked()
+void MovieDialog::on_delActorButton_clicked()
 {
-    m_app->debug("[MetadataWindow] delActorButton clicked()");
+    m_app->debug("[MovieDialog] delActorButton clicked()");
 }
 
-void MetadataWindow::delPeopleButton_clicked(int type)
+void MovieDialog::delPeopleButton_clicked(int type)
 {
-    m_app->debug("[MetadataWindow] Enters delPeopleButton_clicked()");
+    m_app->debug("[MovieDialog] Enters delPeopleButton_clicked()");
 
     QListWidget *l_peopleWidget;
     switch (type)
@@ -415,30 +415,30 @@ void MetadataWindow::delPeopleButton_clicked(int type)
         delPeople(l_people, type);
         delete(l_itemToDelete);
     }
-    m_app->debug("[MetadataWindow] Exits delPeopleButton_clicked()");
+    m_app->debug("[MovieDialog] Exits delPeopleButton_clicked()");
 }
 
-void MetadataWindow::on_directorEdit_textEdited()
+void MovieDialog::on_directorEdit_textEdited()
 {
-    m_app->debug("[MetadataWindow] directorEdit textEdited()");
+    m_app->debug("[MovieDialog] directorEdit textEdited()");
     on_peopleEdit_textEdited(Director);
 }
 
-void MetadataWindow::on_producerEdit_textEdited()
+void MovieDialog::on_producerEdit_textEdited()
 {
-    m_app->debug("[MetadataWindow] producerEdit textEdited()");
+    m_app->debug("[MovieDialog] producerEdit textEdited()");
     on_peopleEdit_textEdited(Producer);
 }
 
-void MetadataWindow::on_actorEdit_textEdited()
+void MovieDialog::on_actorEdit_textEdited()
 {
-    m_app->debug("[MetadataWindow] actorEdit textEdited()");
+    m_app->debug("[MovieDialog] actorEdit textEdited()");
     on_peopleEdit_textEdited(Actor);
 }
 
-void MetadataWindow::on_peopleEdit_textEdited(int type)
+void MovieDialog::on_peopleEdit_textEdited(int type)
 {
-    m_app->debug("[MetadataWindow] Enters on_peopleEdit_textEdited()");
+    m_app->debug("[MovieDialog] Enters on_peopleEdit_textEdited()");
 
     QLineEdit *l_peopleEdit;
     switch (type)
@@ -472,10 +472,10 @@ void MetadataWindow::on_peopleEdit_textEdited(int type)
             l_peopleEdit->setCompleter(l_completer);
         }
     }
-    m_app->debug("[MetadataWindow] Exits on_peopleEdit_textEdited()");
+    m_app->debug("[MovieDialog] Exits on_peopleEdit_textEdited()");
 }
 
-void MetadataWindow::peopleWindow_peopleCreated(People people, int type)
+void MovieDialog::peopleDialog_peopleCreated(People people, int type)
 {
     if(people.getId() == 0)
     {
@@ -492,30 +492,30 @@ void MetadataWindow::peopleWindow_peopleCreated(People people, int type)
  *
  * @param QPoint position of the cursor
  */
-void MetadataWindow::customMenuRequested(QPoint pos)
+void MovieDialog::customMenuRequested(QPoint pos)
 {
-    m_app->debug("[MetadataWindow] Enters customMenuRequested()");
+    m_app->debug("[MovieDialog] Enters customMenuRequested()");
     QListWidget *l_widget = getFocusedListWidget();
     QMenu *l_menu = new QMenu(this);
     QAction *l_setMetadataAction = new QAction("Update person", this);
-    QObject::connect(l_setMetadataAction, SIGNAL(triggered()), this, SLOT(showPeopleWindow()));
+    QObject::connect(l_setMetadataAction, SIGNAL(triggered()), this, SLOT(showPeopleDialog()));
     l_menu->addAction(l_setMetadataAction);
     l_menu->popup(l_widget->viewport()->mapToGlobal(pos));
-    m_app->debug("[MetadataWindow] Exits customMenuRequested()");
+    m_app->debug("[MovieDialog] Exits customMenuRequested()");
 }
 
 /**
  * @brief Shows the window to view/edit the metadata of a people
  */
-void MetadataWindow::showPeopleWindow()
+void MovieDialog::showPeopleDialog()
 {
-    m_app->debug("[MetadataWindow] Enters showPeopleWindow()");
+    m_app->debug("[MovieDialog] Enters showPeopleDialog()");
     QListWidget *l_widget = getFocusedListWidget();
     int l_peopleId = l_widget->selectedItems().at(0)->data(Qt::UserRole).toInt();
-    PeopleWindow *l_peopleWindow = new PeopleWindow(l_peopleId);
-    l_peopleWindow->show();
-    QObject::connect(l_peopleWindow, SIGNAL(peopleCreated(People, int)), this, SLOT(peopleWindow_peopleCreated(People, int)));
-    m_app->debug("[MetadataWindow] Exits showPeopleWindow()");
+    PeopleDialog *l_peopleDialog = new PeopleDialog(l_peopleId);
+    l_peopleDialog->show();
+    QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People, int)), this, SLOT(peopleDialog_peopleCreated(People, int)));
+    m_app->debug("[MovieDialog] Exits showPeopleDialog()");
 }
 
 /**
@@ -523,7 +523,7 @@ void MetadataWindow::showPeopleWindow()
  *
  * @return QListWidget*
  */
-QListWidget* MetadataWindow::getFocusedListWidget()
+QListWidget* MovieDialog::getFocusedListWidget()
 {
     QListWidget *l_widget;
     if (m_ui->directorsWidget->hasFocus())

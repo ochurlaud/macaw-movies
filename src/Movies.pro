@@ -26,6 +26,7 @@
 QT       += core
 QT	 += gui
 QT       += sql
+QT       += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Movies
@@ -40,9 +41,9 @@ SOURCES += main.cpp \
     Entities/Movie.cpp \
     Entities/People.cpp \
     Entities/Tag.cpp \
-    MetadataWindow.cpp \
-    PeopleWindow.cpp \
-    MainWindow.cpp
+    MainWindow.cpp \
+    PeopleDialog.cpp \
+    MovieDialog.cpp
 
 HEADERS  += \
     DatabaseManager.h \
@@ -52,14 +53,14 @@ HEADERS  += \
     Entities/Movie.h \
     Entities/People.h \
     Entities/Tag.h \
-    MetadataWindow.h \
-    PeopleWindow.h \
-    MainWindow.h
+    MainWindow.h \
+    MovieDialog.h \
+    PeopleDialog.h
 
 FORMS    += \
-    MetadataWindow.ui \
-    PeopleWindow.ui \
-    MainWindow.ui
+    MainWindow.ui \
+    MovieDialog.ui \
+    PeopleDialog.ui
 
 OTHER_FILES += \
     ../.gitignore \
