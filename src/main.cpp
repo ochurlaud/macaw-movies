@@ -29,6 +29,7 @@
 #include "MainWindow.h"
 #include "DatabaseManager.h"
 #include "Application.h"
+#include "MetadataFetcher.h"
 
 int main(int argv, char **args)
 {

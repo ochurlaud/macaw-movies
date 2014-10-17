@@ -3,23 +3,31 @@
 
 #include <QObject>
 #include <QtNetwork>
+#include <QtXml>
+#include <Application.h>
 
 class MetadataFetcher : public QObject
 {
     Q_OBJECT
 
     public:
-        explicit MetadataFetcher(QObject *parent = 0);
-        void checkConnection(QString title);
+        explicit MetadataFetcher(Movie movie, QObject *parent = 0);
+        void fetchMetadata(QString title);
 
     signals:
+        void movieHydrated(Movie&);
 
     public slots:
-        void slotReadyRead();
+        void replyRelatedMovies(QNetworkReply *reply);
+        void replyHydrateMovie(QNetworkReply *reply);
+        bool updateMovieInDatabase(Movie &movie);
 
     private:
         QNetworkAccessManager *m_networkManager;
-        QNetworkReply *m_reply;
+        Application *m_app;
+        Movie m_movie;
+        void getRelatedMovies(QString title);
+        void getMetadata(QString imdbID);
 
 };
 
