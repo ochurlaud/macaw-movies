@@ -42,6 +42,7 @@ SOURCES += main.cpp \
     Entities/People.cpp \
     Entities/Tag.cpp \
     MainWindow.cpp \
+    MetadataFetcher.cpp \
     PeopleDialog.cpp \
     MovieDialog.cpp
 
@@ -54,6 +55,7 @@ HEADERS  += \
     Entities/People.h \
     Entities/Tag.h \
     MainWindow.h \
+    MetadataFetcher.h \
     MovieDialog.h \
     PeopleDialog.h
 

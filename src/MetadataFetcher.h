@@ -1,18 +1,26 @@
-#ifndef NETWORKCONNECT_H
-#define NETWORKCONNECT_H
+#ifndef METADATAFETCHER_H
+#define METADATAFETCHER_H
 
 #include <QObject>
+#include <QtNetwork>
 
-class NetworkConnect : public QObject
+class MetadataFetcher : public QObject
 {
     Q_OBJECT
-public:
-    explicit NetworkConnect(QObject *parent = 0);
 
-signals:
+    public:
+        explicit MetadataFetcher(QObject *parent = 0);
+        void checkConnection(QString title);
 
-public slots:
+    signals:
+
+    public slots:
+        void slotReadyRead();
+
+    private:
+        QNetworkAccessManager *m_networkManager;
+        QNetworkReply *m_reply;
 
 };
 
-#endif // NETWORKCONNECT_H
+#endif // METADATAFETCHER_H
