@@ -56,9 +56,11 @@ private slots:
     void on_actionEdit_leftPannelMetadata_triggered();
     void on_actionEdit_mainPannelMetadata_triggered();
     void selfUpdate();
-
-
+    void addNewMovies();
     void on_searchEdit_returnPressed();
+
+signals:
+    void toUpdate();
 
 private:
     Ui::MainWindow *m_ui;

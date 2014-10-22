@@ -31,8 +31,11 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle(m_app->getAppName());
     this->setWindowIcon(m_app->getAppIcon());
 
-    connect(m_ui->mainPannel, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(on_customContextMenuRequested(const QPoint &)));
-    connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(on_customContextMenuRequested(const QPoint &)));
+    connect(m_ui->mainPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
+            this, SLOT(on_customContextMenuRequested(const QPoint &)));
+    connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
+            this, SLOT(on_customContextMenuRequested(const QPoint &)));
+    connect(this, SIGNAL(toUpdate()), this, SLOT(selfUpdate()));
 
     m_moviesVector = m_app->getDatabaseManager()->getAllMovies();
     m_leftPannelSelectedId = 0;
@@ -56,7 +59,7 @@ void MainWindow::on_actionEdit_Settings_triggered()
     m_app->debug("[MainWindow] Enters showSettingsWindow()");
     SettingsWindow *l_settingsWindow = new SettingsWindow;
     l_settingsWindow->show();
-    QObject::connect(l_settingsWindow,SIGNAL(destroyed()), this, SLOT(selfUpdate()));
+    QObject::connect(l_settingsWindow,SIGNAL(closeAndSave()), this, SLOT(addNewMovies()));
     m_app->debug("[MainWindow] Exits showSettingsWindow()");
 }
 
@@ -437,4 +440,39 @@ void MainWindow::filterPannels()
             l_item->setSelected(true);
         }
     }
+}
+
+void MainWindow::addNewMovies()
+{
+    m_app->debug("[MainWindow] Enter addNewMovies");
+
+    QString l_directoryName = m_app->getFilesPath();
+    QDirIterator l_path(l_directoryName, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
+    while (l_path.hasNext())
+    {
+        l_path.next();
+        QString l_filePath = l_path.fileInfo().absoluteFilePath();
+        QString l_fileSuffix = l_path.fileInfo().suffix();
+        if (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4" || l_fileSuffix == "mpg" || l_fileSuffix == "flv" || l_fileSuffix == "mov")
+        {
+            m_app->debug("[MainWindow.updateApp()] Suffix accepted");
+            bool l_movieExists = m_app->getDatabaseManager()->existMovie(l_filePath);
+            if(!l_movieExists)
+            {
+                m_app->debug("[MainWindow.updateApp()] Movie not already known");
+                Movie l_movie;
+                l_movie.setTitle(l_path.fileInfo().completeBaseName());
+                l_movie.setFilePath(l_path.fileInfo().absoluteFilePath());
+                l_movie.setSuffix(l_fileSuffix);
+                m_app->getDatabaseManager()->insertNewMovie(l_movie);
+            }
+            else
+            {
+                m_app->debug("[MainWindow.updateApp()] Movie already known. Skipped");
+            }
+        }
+    }
+
+    emit(toUpdate());
+    m_app->debug("[MainWindow] Enter addNewMovies");
 }
