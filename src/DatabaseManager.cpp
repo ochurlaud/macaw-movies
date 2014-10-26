@@ -1669,8 +1669,26 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
         return false;
     }
 
-    //Updates the dataBase
+    //Gets the dataBase
     QSqlQuery l_query(m_db);
+
+    l_query.prepare("SELECT movies_path FROM paths_list");
+
+    if(!l_query.exec())
+    {
+        qDebug() << "In saveMoviesPath(), getting existing path:";
+        qDebug() << l_query.lastError().text();
+    }
+
+    while(l_query.next())
+    {
+        if(l_query.value(0).toString() == moviePath)
+        {
+            return false;
+        }
+    }
+
+
     l_query.prepare("INSERT INTO paths_list (movies_path) VALUES (:path)");
     l_query.bindValue(":path", moviePath);
 
