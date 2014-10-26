@@ -109,14 +109,16 @@ void PeopleDialog::on_validationButtons_accepted()
     m_people.setBirthday(getBirthday());
     m_people.setBiography(getBiography());
 
-    // If type != 0, it means we come from the metadata window
+    // If type != 0, it means we come from the movie dialog
     // If type = 0, it means we directly edit a people
     if (m_type != 0)
     {
+        m_app->debug("[PeopleDialog] validationButtons method: type="+QString::number(m_type));
         emit(peopleCreated(m_people, m_type));
     }
     else
     {
+        m_app->debug("[PeopleDialog] validationButtons method: type=0");
         m_app->getDatabaseManager()->updatePeople(m_people);
     }
 

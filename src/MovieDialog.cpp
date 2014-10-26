@@ -49,11 +49,14 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     setProducers(m_movie.getProducers());
 
     m_ui->directorsWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(m_ui->directorsWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
+    QObject::connect(m_ui->directorsWidget, SIGNAL(customContextMenuRequested(QPoint)),
+                     this, SLOT(customMenuRequested(QPoint)));
     m_ui->producersWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(m_ui->producersWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
+    QObject::connect(m_ui->producersWidget, SIGNAL(customContextMenuRequested(QPoint)),
+                     this, SLOT(customMenuRequested(QPoint)));
     m_ui->actorsWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(m_ui->actorsWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));
+    QObject::connect(m_ui->actorsWidget, SIGNAL(customContextMenuRequested(QPoint)),
+                     this, SLOT(customMenuRequested(QPoint)));
     m_app->debug("[MovieDialog] Construction done");
 }
 
@@ -320,7 +323,7 @@ void MovieDialog::on_addActorButton_clicked()
 
 void MovieDialog::addPeopleButton_clicked(int type)
 {
-    m_app->debug("[MovieDialog] Enters addPeopleButton_clicked()");
+    m_app->debug("[MovieDialog] Enters addPeopleButton_clicked(), type = "+QString::number(type));
 
     QLineEdit *l_peopleEdit;
     QListWidget *l_peopleWidget;
@@ -359,7 +362,8 @@ void MovieDialog::addPeopleButton_clicked(int type)
     }
     else
     {
-        PeopleDialog *l_peopleDialog = new PeopleDialog(type);
+        m_app->debug(QString::number(type));
+        PeopleDialog *l_peopleDialog = new PeopleDialog(None, type);
         // We suppose here that a name is composed by N >= 0 firstnames
         // and 1 lastname, separated by spaces
         QStringList l_textExplosed = l_text.split(" ");
@@ -369,7 +373,8 @@ void MovieDialog::addPeopleButton_clicked(int type)
         l_peopleDialog->setFirstname(l_firstname);
         l_peopleDialog->setLastname(l_lastname);
         l_peopleDialog->show();
-        QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People, int)), this, SLOT(peopleDialog_peopleCreated(People, int)));
+        QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People, int)),
+                         this, SLOT(peopleDialog_peopleCreated(People, int)));
     }
 }
 
@@ -477,6 +482,7 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
 
 void MovieDialog::peopleDialog_peopleCreated(People people, int type)
 {
+    m_app->debug("[MovieDialog] peopleDialog_peopleCreated()");
     if(people.getId() == 0)
     {
         addPeople(people, type);
@@ -514,7 +520,8 @@ void MovieDialog::showPeopleDialog()
     int l_peopleId = l_widget->selectedItems().at(0)->data(Qt::UserRole).toInt();
     PeopleDialog *l_peopleDialog = new PeopleDialog(l_peopleId);
     l_peopleDialog->show();
-    QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People, int)), this, SLOT(peopleDialog_peopleCreated(People, int)));
+    QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People, int)),
+                     this, SLOT(peopleDialog_peopleCreated(People, int)));
     m_app->debug("[MovieDialog] Exits showPeopleDialog()");
 }
 
