@@ -4,3 +4,4 @@ Movies.pro.user
 Movies.pro.user.*
 src/Movies.pro.user
 moc_*
+*.ui.autosave

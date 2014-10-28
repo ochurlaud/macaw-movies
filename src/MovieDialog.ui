@@ -36,9 +36,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>70</y>
+     <y>50</y>
      <width>371</width>
-     <height>191</height>
+     <height>195</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout">
@@ -138,7 +138,7 @@
      <x>430</x>
      <y>20</y>
      <width>371</width>
-     <height>310</height>
+     <height>313</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -272,6 +272,46 @@
        <string>-</string>
       </property>
      </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>259</y>
+     <width>371</width>
+     <height>77</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="newTagLabel">
+          <property name="text">
+           <string>New tag</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="newTagLineEdit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="addNewTagButton">
+        <property name="text">
+         <string>add tag</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QListView" name="tagListView"/>
     </item>
    </layout>
   </widget>

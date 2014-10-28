@@ -475,6 +475,14 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
     m_app->debug("[MovieDialog] Exits on_peopleEdit_textEdited()");
 }
 
+void MovieDialog::on_addNewTagButton_clicked()
+{
+    QString newTag =  m_ui->newTagLineEdit->text();
+
+    //TODO ajouter la tag à la liste des tags
+
+}
+
 void MovieDialog::peopleDialog_peopleCreated(People people, int type)
 {
     if(people.getId() == 0)

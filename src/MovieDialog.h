@@ -81,6 +81,7 @@ class MovieDialog : public QDialog
         void on_directorEdit_textEdited();
         void on_producerEdit_textEdited();
         void on_actorEdit_textEdited();
+        void on_addNewTagButton_clicked();
         void peopleDialog_peopleCreated(People, int);
         void customMenuRequested(QPoint);
         void showPeopleDialog();
