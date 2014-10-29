@@ -205,12 +205,17 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
 {
     m_app->debug("[MainWindow] customContextMenuRequested()");
     QMenu *l_menu = new QMenu(this);
-    if(m_ui->leftPannel->indexAt(point).isValid())
+
+    // The left pannel must have focus, one item selected which id is not 0
+    // (not to be "All" or "Unknown")
+    if(m_ui->leftPannel->hasFocus()
+            && m_ui->leftPannel->selectedItems().count() != 0
+            && m_ui->leftPannel->selectedItems().at(0)->data(Qt::UserRole) != 0)
     {
         l_menu->addAction(m_ui->actionEdit_leftPannelMetadata);
         l_menu->exec(m_ui->leftPannel->mapToGlobal(point));
     }
-    else if (m_ui->mainPannel->indexAt(point).isValid())
+    else if (m_ui->mainPannel->hasFocus() && m_ui->mainPannel->selectedItems().count() != 0)
     {
         l_menu->addAction(m_ui->actionEdit_mainPannelMetadata);
         l_menu->exec(m_ui->mainPannel->mapToGlobal(point));
