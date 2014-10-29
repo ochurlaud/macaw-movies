@@ -502,11 +502,16 @@ void MovieDialog::customMenuRequested(QPoint pos)
 {
     m_app->debug("[MovieDialog] Enters customMenuRequested()");
     QListWidget *l_widget = getFocusedListWidget();
-    QMenu *l_menu = new QMenu(this);
-    QAction *l_setMetadataAction = new QAction("Update person", this);
-    QObject::connect(l_setMetadataAction, SIGNAL(triggered()), this, SLOT(showPeopleDialog()));
-    l_menu->addAction(l_setMetadataAction);
-    l_menu->popup(l_widget->viewport()->mapToGlobal(pos));
+
+    // If nothing selected, don't do anything
+    if (l_widget->selectedItems().count() != 0)
+    {
+        QMenu *l_menu = new QMenu(this);
+        QAction *l_setMetadataAction = new QAction("Update person", this);
+        QObject::connect(l_setMetadataAction, SIGNAL(triggered()), this, SLOT(showPeopleDialog()));
+        l_menu->addAction(l_setMetadataAction);
+        l_menu->popup(l_widget->viewport()->mapToGlobal(pos));
+    }
     m_app->debug("[MovieDialog] Exits customMenuRequested()");
 }
 
