@@ -51,7 +51,7 @@ class MovieDialog : public QDialog
         QVector<People> getPeople(int);
         void addPeople(People&, int);
         void delPeople(People&, int);
-        void updatePeople(People&);
+        bool updatePeople(People&);
         void setDirectors(QVector<People>);
         QVector<People> getDirectors();
         void addDirector(People&);
@@ -68,6 +68,8 @@ class MovieDialog : public QDialog
         void addPeopleButton_clicked(int);
         void delPeopleButton_clicked(int);
         QListWidget* getFocusedListWidget();
+        QVector<People> getFocusedListPeople();
+
 
 
     private slots:

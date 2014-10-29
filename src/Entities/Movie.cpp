@@ -88,16 +88,19 @@ void Movie::removeDirector(People director)
     }
 }
 
-void Movie::updateDirector(People director)
+bool Movie::updateDirector(People director)
 {
     for (int i = 0 ; i < m_directors.size() ; i++)
     {
         if(m_directors.at(i).getId() == director.getId())
         {
             m_directors.replace(i, director);
-            break;
-        }
-    }
+
+            return true;
+       }
+   }
+
+   return false;
 }
 
 QVector<People> Movie::getProducers() const
@@ -124,16 +127,19 @@ void Movie::removeProducer(People producer)
     }
 }
 
-void Movie::updateProducer(People producer)
+bool Movie::updateProducer(People producer)
 {
     for (int i = 0 ; i < m_producers.size() ; i++)
     {
         if(m_producers.at(i).getId() == producer.getId())
         {
             m_producers.replace(i, producer);
-            break;
-        }
-    }
+
+            return true;
+       }
+   }
+
+   return false;
 }
 
 QVector<People> Movie::getActors() const
@@ -160,16 +166,19 @@ void Movie::removeActor(People actor)
     }
 }
 
-void Movie::updateActor(People actor)
+bool Movie::updateActor(People actor)
 {
     for (int i = 0 ; i < m_actors.size() ; i++)
     {
         if(m_actors.at(i).getId() == actor.getId())
         {
              m_actors.replace(i, actor);
-             break;
+
+             return true;
         }
     }
+
+    return false;
 }
 
 QDate Movie::getReleaseDate() const

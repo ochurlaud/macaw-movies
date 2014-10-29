@@ -123,16 +123,20 @@ QString MovieDialog::getSynopsis()
 void MovieDialog::setPeople(QVector<People> peopleVector, int type)
 {
     QListWidget *l_peopleWidget;
+    int l_type;
     switch (type)
     {
     case Director:
         l_peopleWidget = m_ui->directorsWidget;
+        l_type = Director;
         break;
     case Producer:
         l_peopleWidget = m_ui->producersWidget;
+        l_type = Producer;
         break;
     case Actor:
         l_peopleWidget = m_ui->actorsWidget;
+        l_type = Actor;
         break;
     }
     l_peopleWidget->clear();
@@ -140,6 +144,7 @@ void MovieDialog::setPeople(QVector<People> peopleVector, int type)
     {
         QListWidgetItem *l_item = new QListWidgetItem(l_people.getFirstname() + " " + l_people.getLastname());
         l_item->setData(Qt::UserRole, l_people.getId());
+        l_item->setData(Qt::UserRole+1, l_type);
         l_peopleWidget->addItem(l_item);
     }
 }
@@ -172,21 +177,27 @@ QVector<People> MovieDialog::getPeople(int type)
 
 void MovieDialog::addPeople(People &people, int type)
 {
+    m_app->debug("[MovieDialog] addPeople()");
     QListWidget *l_peopleWidget;
+    int l_type;
     switch (type)
     {
     case Director:
         l_peopleWidget = m_ui->directorsWidget;
+        l_type = Director;
         break;
     case Producer:
         l_peopleWidget = m_ui->producersWidget;
+        l_type = Producer;
         break;
     case Actor:
         l_peopleWidget = m_ui->actorsWidget;
+        l_type = Actor;
         break;
     }
     QListWidgetItem *l_item = new QListWidgetItem(people.getFirstname() + " " + people.getLastname());
     l_item->setData(Qt::UserRole, people.getId());
+    l_item->setData(Qt::UserRole+1, l_type);
     l_peopleWidget->addItem(l_item);
 
     // If we could do an alias of the function above, it would be prettier I think
@@ -220,14 +231,18 @@ void MovieDialog::delPeople(People &people, int type)
     }
 }
 
-void MovieDialog::updatePeople(People &people)
+bool MovieDialog::updatePeople(People &people)
 {
-    m_movie.updateDirector(people);
-    m_movie.updateProducer(people);
-    m_movie.updateActor(people);
+    m_app->debug("[MovieDialog] updatePeople()");
+    bool l_result;
+    l_result = m_movie.updateDirector(people);
+    l_result = l_result || m_movie.updateProducer(people);
+    l_result = l_result || m_movie.updateActor(people);
     setDirectors(m_movie.getDirectors());
     setProducers(m_movie.getProducers());
     setActors(m_movie.getActors());
+
+    return l_result;
 }
 
 void MovieDialog::setDirectors(QVector<People> directorsVector)
@@ -362,7 +377,6 @@ void MovieDialog::addPeopleButton_clicked(int type)
     }
     else
     {
-        m_app->debug(QString::number(type));
         PeopleDialog *l_peopleDialog = new PeopleDialog(None, type);
         // We suppose here that a name is composed by N >= 0 firstnames
         // and 1 lastname, separated by spaces
@@ -483,13 +497,9 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
 void MovieDialog::peopleDialog_peopleCreated(People people, int type)
 {
     m_app->debug("[MovieDialog] peopleDialog_peopleCreated()");
-    if(people.getId() == 0)
+    if(!updatePeople(people))
     {
         addPeople(people, type);
-    }
-    else
-    {
-        updatePeople(people);
     }
 }
 
@@ -522,8 +532,10 @@ void MovieDialog::showPeopleDialog()
 {
     m_app->debug("[MovieDialog] Enters showPeopleDialog()");
     QListWidget *l_widget = getFocusedListWidget();
-    int l_peopleId = l_widget->selectedItems().at(0)->data(Qt::UserRole).toInt();
-    PeopleDialog *l_peopleDialog = new PeopleDialog(l_peopleId);
+    int l_itemRow = l_widget->row(l_widget->selectedItems().at(0));
+    int l_type = l_widget->selectedItems().at(0)->data(Qt::UserRole + 1).toInt();
+    People l_selectedPeople = this->getFocusedListPeople().at(l_itemRow);
+    PeopleDialog *l_peopleDialog = new PeopleDialog(l_selectedPeople, l_type);
     l_peopleDialog->show();
     QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People, int)),
                      this, SLOT(peopleDialog_peopleCreated(People, int)));
@@ -552,4 +564,28 @@ QListWidget* MovieDialog::getFocusedListWidget()
     }
 
     return l_widget;
+}
+
+/**
+ * @brief Returns the QList<People> that has focus
+ *
+ * @return QList<People>
+ */
+QVector<People> MovieDialog::getFocusedListPeople()
+{
+    QVector<People> l_people;
+    if (m_ui->directorsWidget->hasFocus())
+    {
+        l_people = m_movie.getDirectors();
+    }
+    else if (m_ui->producersWidget->hasFocus())
+    {
+        l_people = m_movie.getProducers();
+    }
+    else if (m_ui->actorsWidget->hasFocus())
+    {
+        l_people = m_movie.getActors();
+    }
+
+    return l_people;
 }

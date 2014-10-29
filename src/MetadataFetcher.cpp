@@ -159,5 +159,5 @@ void MetadataFetcher::fetchMetadata(QString title)
 
 bool MetadataFetcher::updateMovieInDatabase(Movie &movie)
 {
-    m_app->getDatabaseManager()->updateMovie(movie);
+    return m_app->getDatabaseManager()->updateMovie(movie);
 }

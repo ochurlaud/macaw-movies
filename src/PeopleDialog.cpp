@@ -45,6 +45,28 @@ PeopleDialog::PeopleDialog(int id, int type, QWidget *parent) :
     m_app->debug("[PeopleDialog] Construction done");
 }
 
+PeopleDialog::PeopleDialog(People people, int type, QWidget *parent):
+    QDialog(parent),
+    m_ui(new Ui::PeopleDialog),
+    m_type(type)
+{
+    m_people = people;
+    m_app = qobject_cast<Application *>(qApp);
+    m_app->debug("[PeopleDialog] Constructor called (People arg)");
+
+    m_ui->setupUi(this);
+    this->setWindowTitle("Edit People Metadata");
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
+    setFirstname(m_people.getFirstname());
+    setLastname(m_people.getLastname());
+    setRealname(m_people.getRealname());
+    setBirthday(m_people.getBirthday());
+    setBiography(m_people.getBiography());
+
+    m_app->debug("[PeopleDialog] Construction done (People arg)");
+}
+
 PeopleDialog::~PeopleDialog()
 {
     delete m_ui;
