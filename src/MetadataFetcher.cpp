@@ -72,7 +72,11 @@ void MetadataFetcher::replyRelatedMovies(QNetworkReply *reply)
             QString l_imdbID = l_element.attribute("imdbID");
             this->getMetadata(l_imdbID);
         }
-        // else: error!
+        else
+        {
+            emit(noMovieFound());
+            m_app->debug("No movie found");
+        }
     }
     else
     {
@@ -93,9 +97,17 @@ void MetadataFetcher::replyRelatedMovies(QNetworkReply *reply)
             }
             l_node = l_node.nextSibling();
         }
-        QDialog *l_selectWindow;
-        QListWidget *l_listWidget;
-        l_listWidget->setParent(l_selectWindow);
+
+        // This should go in another class
+        QDialog *l_selectWindow = new QDialog;
+        QListWidget *l_listWidget = new QListWidget(l_selectWindow);
+        for (int i = 0 ; i < l_printableStrings.size() ; i++)
+        {
+            QListWidgetItem *l_item = new QListWidgetItem(l_printableStrings.at(i));
+            l_item->setData(Qt::UserRole, l_imdbIDs.at(i));
+            l_listWidget->addItem(l_item);
+        }
+        connect(l_listWidget,SIGNAL(doubleClicked(QModelIndex)), this, SLOT(on_doubleClickedMovie(QModelIndex)));
         l_selectWindow->show();
 
     }
@@ -210,6 +222,11 @@ void MetadataFetcher::fetchMetadata(QString title)
     m_app->debug("[MetadataFetcher] Enter fetchMetadata, " + title);
     this->getRelatedMovies(title);
     connect(this, SIGNAL(movieHydrated(Movie&)), this, SLOT(updateMovieInDatabase(Movie&)));
+    QEventLoop l_loop;
+    connect(this, SIGNAL(movieHydrated(Movie&)), &l_loop, SLOT(quit()));
+    connect(this, SIGNAL(noMovieFound()), &l_loop, SLOT(quit()));
+
+    l_loop.exec();
     m_app->debug("[MetadataFetcher] Exit fetchMetadata");
 }
 
@@ -217,4 +234,10 @@ bool MetadataFetcher::updateMovieInDatabase(Movie &movie)
 {
     m_app->debug("[MetadataFetcher] Enter updateMovieInDatabase");
     return m_app->getDatabaseManager()->updateMovie(movie);
+}
+
+void MetadataFetcher::on_doubleClickedMovie(QModelIndex index)
+{
+    QString l_imdbID = index.data(Qt::UserRole).toString();
+    this->getMetadata(l_imdbID);
 }

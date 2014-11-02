@@ -36,11 +36,13 @@ class MetadataFetcher : public QObject
 
     signals:
         void movieHydrated(Movie&);
+        void noMovieFound();
 
     public slots:
         void replyRelatedMovies(QNetworkReply *reply);
         void replyHydrateMovie(QNetworkReply *reply);
         bool updateMovieInDatabase(Movie &movie);
+        void on_doubleClickedMovie(QModelIndex);
 
     private:
         QNetworkAccessManager *m_networkManager;
