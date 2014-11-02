@@ -475,6 +475,17 @@ void MainWindow::addNewMovies()
                 l_movie.setFilePath(l_path.fileInfo().absoluteFilePath());
                 l_movie.setSuffix(l_fileSuffix);
                 m_app->getDatabaseManager()->insertNewMovie(l_movie);
+
+                MetadataFetcher l_metadataFetcher(l_movie);
+
+                // Needed to wait that MetadataFetcher is constructed
+                // A waiting function would be welcomed
+                qDebug() << l_movie.getTitle();
+                qDebug() << l_movie.getId();
+                l_metadataFetcher.fetchMetadata(l_movie.getTitle());
+
+                // The l_metadataFetcher object is directly destructed here...
+                // 2 options: multithread or make fetchMetadata() last longer.
             }
             else
             {

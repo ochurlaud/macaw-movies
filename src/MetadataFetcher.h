@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QtNetwork>
 #include <QtXml>
+#include <QLocale>
 #include <Application.h>
 
 class MetadataFetcher : public QObject
