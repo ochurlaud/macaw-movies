@@ -102,3 +102,8 @@ bool People::operator== (const People& other)
 
     return false;
 }
+
+bool People::operator!= (const People& other)
+{
+    return !this->operator==(other);
+}

@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->setupUi(this);
     this->setWindowTitle(m_app->getAppName());
     this->setWindowIcon(m_app->getAppIcon());
+    m_ui->metadataTop->setWordWrap(true);
 
     connect(m_ui->mainPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
@@ -275,6 +276,10 @@ void MainWindow::on_leftPannel_clicked(const QModelIndex &item)
 void MainWindow::on_mainPannel_clicked(const QModelIndex &index)
 {
     m_app->debug("[MainWindow] mainPannel clicked");
+    int l_idMovie = index.data(Qt::UserRole).toInt();
+    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_idMovie);
+    this->fillMetadataPannel(l_movie);
+
 }
 
 void MainWindow::prepareMoviesToDisplay(int id)
@@ -479,5 +484,62 @@ void MainWindow::addNewMovies()
     }
 
     emit(toUpdate());
-    m_app->debug("[MainWindow] Enter addNewMovies");
+    m_app->debug("[MainWindow] Exit addNewMovies");
+}
+
+void MainWindow::fillMetadataPannel(Movie movie)
+{
+    m_app->debug("[MainWindow] Enter fillMetadataPannel");
+
+    QString l_title = "<html>"+movie.getTitle()+"<br />";
+    QString l_originalTitle = "<i>"+movie.getOriginalTitle()+"</i></br /><br />";
+    QString l_directors = "<i>Directed by</i><br />";
+    foreach (People l_director, movie.getDirectors())
+    {
+        if(l_director.getFirstname() != "")
+        {
+            l_directors += l_director.getFirstname() + " ";
+        }
+        l_directors += l_director.getLastname();
+        if (l_director != movie.getDirectors().last())
+        {
+            l_directors += ", ";
+        }
+    }
+    l_directors += "<br /><br />";
+
+    QString l_producers = "<i>Produced by</i><br />";
+    foreach (People l_producer, movie.getProducers())
+    {
+        if (l_producer.getFirstname() != "")
+        {
+            l_producers += l_producer.getFirstname() + " ";
+        }
+        l_producers += l_producer.getLastname();
+        if (l_producer != movie.getProducers().last())
+        {
+            l_producers += ", ";
+        }
+    }
+    l_producers += "<br /><br />";
+
+
+    QString l_actors = "<i>With</i><br />";
+    foreach (People l_actor, movie.getActors())
+    {
+        if(l_actor.getFirstname() != "")
+        {
+            l_actors += l_actor.getFirstname() + " ";
+        }
+        l_actors += l_actor.getLastname();
+        if (l_actor != movie.getActors().last())
+        {
+            l_actors += ", ";
+        }
+    }
+    l_actors += "</html>";
+
+    m_ui->metadataTop->setText(l_title+l_originalTitle + l_directors +l_producers + l_actors);
+    m_ui->metadataPlot->setText(movie.getSynopsis());
+    m_app->debug("[MainWindow] Exit fillMetadataPannel");
 }

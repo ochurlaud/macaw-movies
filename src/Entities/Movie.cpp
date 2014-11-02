@@ -88,6 +88,11 @@ void Movie::removeDirector(People director)
     }
 }
 
+/**
+ * @brief Movie::updateDirector
+ * @param Director
+ * @return bool : true if something updated, else false
+ */
 bool Movie::updateDirector(People director)
 {
     for (int i = 0 ; i < m_directors.size() ; i++)
@@ -127,6 +132,11 @@ void Movie::removeProducer(People producer)
     }
 }
 
+/**
+ * @brief Movie::updateProducer
+ * @param Producer
+ * @return bool : true if something updated, else false
+ */
 bool Movie::updateProducer(People producer)
 {
     for (int i = 0 ; i < m_producers.size() ; i++)
@@ -166,6 +176,11 @@ void Movie::removeActor(People actor)
     }
 }
 
+/**
+ * @brief Movie::updateActor
+ * @param Actor
+ * @return bool : true if something updated, else false
+ */
 bool Movie::updateActor(People actor)
 {
     for (int i = 0 ; i < m_actors.size() ; i++)
