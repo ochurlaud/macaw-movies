@@ -27,6 +27,7 @@
 #include "SettingsWindow.h"
 #include "MovieDialog.h"
 #include "PeopleDialog.h"
+#include "MetadataFetcher.h"
 
 
 class Application;
@@ -59,6 +60,7 @@ private slots:
     void addNewMovies();
     void on_searchEdit_returnPressed();
 
+
 signals:
     void toUpdate();
 
@@ -75,6 +77,8 @@ private:
     void setLeftPannelLabel();
     void prepareMoviesToDisplay(int id);
     void filterPannels();
+    void fillMetadataPannel(Movie movie);
+
 
 };
 

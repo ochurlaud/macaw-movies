@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->setupUi(this);
     this->setWindowTitle(m_app->getAppName());
     this->setWindowIcon(m_app->getAppIcon());
+    m_ui->metadataTop->setWordWrap(true);
 
     connect(m_ui->mainPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
@@ -205,12 +206,17 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
 {
     m_app->debug("[MainWindow] customContextMenuRequested()");
     QMenu *l_menu = new QMenu(this);
-    if(m_ui->leftPannel->indexAt(point).isValid())
+
+    // The left pannel must have focus, one item selected which id is not 0
+    // (not to be "All" or "Unknown")
+    if(m_ui->leftPannel->hasFocus()
+            && m_ui->leftPannel->selectedItems().count() != 0
+            && m_ui->leftPannel->selectedItems().at(0)->data(Qt::UserRole) != 0)
     {
         l_menu->addAction(m_ui->actionEdit_leftPannelMetadata);
         l_menu->exec(m_ui->leftPannel->mapToGlobal(point));
     }
-    else if (m_ui->mainPannel->indexAt(point).isValid())
+    else if (m_ui->mainPannel->hasFocus() && m_ui->mainPannel->selectedItems().count() != 0)
     {
         l_menu->addAction(m_ui->actionEdit_mainPannelMetadata);
         l_menu->exec(m_ui->mainPannel->mapToGlobal(point));
@@ -270,6 +276,10 @@ void MainWindow::on_leftPannel_clicked(const QModelIndex &item)
 void MainWindow::on_mainPannel_clicked(const QModelIndex &index)
 {
     m_app->debug("[MainWindow] mainPannel clicked");
+    int l_idMovie = index.data(Qt::UserRole).toInt();
+    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_idMovie);
+    this->fillMetadataPannel(l_movie);
+
 }
 
 void MainWindow::prepareMoviesToDisplay(int id)
@@ -465,6 +475,17 @@ void MainWindow::addNewMovies()
                 l_movie.setFilePath(l_path.fileInfo().absoluteFilePath());
                 l_movie.setSuffix(l_fileSuffix);
                 m_app->getDatabaseManager()->insertNewMovie(l_movie);
+
+                MetadataFetcher l_metadataFetcher(l_movie);
+
+                // Needed to wait that MetadataFetcher is constructed
+                // A waiting function would be welcomed
+                qDebug() << l_movie.getTitle();
+                qDebug() << l_movie.getId();
+                l_metadataFetcher.fetchMetadata(l_movie.getTitle());
+
+                // The l_metadataFetcher object is directly destructed here...
+                // 2 options: multithread or make fetchMetadata() last longer.
             }
             else
             {
@@ -474,5 +495,62 @@ void MainWindow::addNewMovies()
     }
 
     emit(toUpdate());
-    m_app->debug("[MainWindow] Enter addNewMovies");
+    m_app->debug("[MainWindow] Exit addNewMovies");
+}
+
+void MainWindow::fillMetadataPannel(Movie movie)
+{
+    m_app->debug("[MainWindow] Enter fillMetadataPannel");
+
+    QString l_title = "<html>"+movie.getTitle()+"<br />";
+    QString l_originalTitle = "<i>"+movie.getOriginalTitle()+"</i></br /><br />";
+    QString l_directors = "<i>Directed by</i><br />";
+    foreach (People l_director, movie.getDirectors())
+    {
+        if(l_director.getFirstname() != "")
+        {
+            l_directors += l_director.getFirstname() + " ";
+        }
+        l_directors += l_director.getLastname();
+        if (l_director != movie.getDirectors().last())
+        {
+            l_directors += ", ";
+        }
+    }
+    l_directors += "<br /><br />";
+
+    QString l_producers = "<i>Produced by</i><br />";
+    foreach (People l_producer, movie.getProducers())
+    {
+        if (l_producer.getFirstname() != "")
+        {
+            l_producers += l_producer.getFirstname() + " ";
+        }
+        l_producers += l_producer.getLastname();
+        if (l_producer != movie.getProducers().last())
+        {
+            l_producers += ", ";
+        }
+    }
+    l_producers += "<br /><br />";
+
+
+    QString l_actors = "<i>With</i><br />";
+    foreach (People l_actor, movie.getActors())
+    {
+        if(l_actor.getFirstname() != "")
+        {
+            l_actors += l_actor.getFirstname() + " ";
+        }
+        l_actors += l_actor.getLastname();
+        if (l_actor != movie.getActors().last())
+        {
+            l_actors += ", ";
+        }
+    }
+    l_actors += "</html>";
+
+    m_ui->metadataTop->setText(l_title+l_originalTitle + l_directors +l_producers + l_actors);
+    m_ui->metadataPlot->setText(movie.getSynopsis());
+    m_app->debug("[MainWindow] Exit fillMetadataPannel");
 }

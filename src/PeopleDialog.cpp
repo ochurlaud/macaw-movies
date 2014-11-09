@@ -45,6 +45,28 @@ PeopleDialog::PeopleDialog(int id, int type, QWidget *parent) :
     m_app->debug("[PeopleDialog] Construction done");
 }
 
+PeopleDialog::PeopleDialog(People people, int type, QWidget *parent):
+    QDialog(parent),
+    m_ui(new Ui::PeopleDialog),
+    m_type(type)
+{
+    m_people = people;
+    m_app = qobject_cast<Application *>(qApp);
+    m_app->debug("[PeopleDialog] Constructor called (People arg)");
+
+    m_ui->setupUi(this);
+    this->setWindowTitle("Edit People Metadata");
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
+    setFirstname(m_people.getFirstname());
+    setLastname(m_people.getLastname());
+    setRealname(m_people.getRealname());
+    setBirthday(m_people.getBirthday());
+    setBiography(m_people.getBiography());
+
+    m_app->debug("[PeopleDialog] Construction done (People arg)");
+}
+
 PeopleDialog::~PeopleDialog()
 {
     delete m_ui;
@@ -109,14 +131,16 @@ void PeopleDialog::on_validationButtons_accepted()
     m_people.setBirthday(getBirthday());
     m_people.setBiography(getBiography());
 
-    // If type != 0, it means we come from the metadata window
+    // If type != 0, it means we come from the movie dialog
     // If type = 0, it means we directly edit a people
     if (m_type != 0)
     {
+        m_app->debug("[PeopleDialog] validationButtons method: type="+QString::number(m_type));
         emit(peopleCreated(m_people, m_type));
     }
     else
     {
+        m_app->debug("[PeopleDialog] validationButtons method: type=0");
         m_app->getDatabaseManager()->updatePeople(m_people);
     }
 

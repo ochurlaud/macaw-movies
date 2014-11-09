@@ -35,6 +35,7 @@ class PeopleDialog : public QDialog
 
     public:
         explicit PeopleDialog(int = 0, int = 0, QWidget *parent = 0);
+        explicit PeopleDialog(People people, int type = 0, QWidget *parent = 0);
         ~PeopleDialog();
         void setFirstname(QString);
         QString getFirstname();

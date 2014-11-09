@@ -39,6 +39,7 @@ public:
     QString getBiography() const;
     void setBiography(QString);
     bool operator== (const People&);
+    bool operator!= (const People&);
 
 private:
     int m_id;
