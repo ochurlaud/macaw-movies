@@ -39,6 +39,8 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     this->setWindowTitle("Edit Metadata of: " + m_movie.getTitle());
     this->setAttribute(Qt::WA_DeleteOnClose);
 
+    m_ui->tagListView->setModel(m_app->getDatabaseManager()->getTagListModel());
+
     setTitle(m_movie.getTitle());
     setOriginalTitle(m_movie.getOriginalTitle());
     setReleaseDate(m_movie.getReleaseDate());
@@ -475,11 +477,18 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
     m_app->debug("[MovieDialog] Exits on_peopleEdit_textEdited()");
 }
 
+/**
+ * @brief add the tag in newTagLineEdit field to the tag list
+ *
+ * @param QPoint position of the cursor
+ */
 void MovieDialog::on_addNewTagButton_clicked()
 {
     QString newTag =  m_ui->newTagLineEdit->text();
 
-    //TODO ajouter la tag à la liste des tags
+    m_app->getDatabaseManager()->createTag(newTag);
+
+    m_ui->newTagLineEdit->clear();
 
 }
 

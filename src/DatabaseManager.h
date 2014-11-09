@@ -42,6 +42,7 @@ class DatabaseManager : public QObject
         // Getters for paths, config
         QStringList getMoviesPath();
         QSqlQuery getMovies(QString, QVariant);
+        QStringList getTags();
 
         // Insertions for paths, config
         bool saveMoviesPath(QString);
@@ -81,6 +82,7 @@ class DatabaseManager : public QObject
         bool addDirectorToMovie(People&, Movie&);
         bool addProducerToMovie(People&, Movie&);
         bool addActorToMovie(People&, Movie&);
+        bool createTag(QString name);
         bool addTagToMovie(Tag&, Movie&);
 
 
@@ -98,10 +100,12 @@ class DatabaseManager : public QObject
 
         // Models
         QStringListModel *getMoviesPathModel() {return this->m_moviesPathModel;}
+        QStringListModel *getTagListModel() {return this->m_tagListModel;}
 
     private:
         QSqlDatabase m_db;
         QStringListModel *m_moviesPathModel;
+        QStringListModel * m_tagListModel;
         QString m_movieFields;
         QString m_peopleFields;
         bool deletePeople(People&);

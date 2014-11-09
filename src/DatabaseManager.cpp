@@ -35,6 +35,7 @@ DatabaseManager::DatabaseManager()
     m_movieFields = "m.id, m.title, m.original_title, m.release_date, m.country, m.duration, m.synopsis, m.file_path, m.colored, m.format, m.suffix, m.rank";
     m_peopleFields = "p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography";
     m_moviesPathModel = new QStringListModel();
+    m_tagListModel = new QStringListModel();
 }
 
 /**
@@ -1124,6 +1125,26 @@ bool DatabaseManager::addTagToMovie(Tag &tag, Movie &movie)
     return true;
 }
 
+bool DatabaseManager::createTag(QString name)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("INSERT INTO `tags` (name) VALUES (:name)");
+    l_query.bindValue(":name", name);
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In createTag():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+
+    m_tagListModel->insertRow(m_tagListModel->rowCount());
+    m_tagListModel->setData(m_tagListModel->index(m_tagListModel->rowCount()-1), name);
+
+    return true;
+}
+
 /**
  * @brief Updates a people in database
  *
@@ -1708,7 +1729,7 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
 }
 
 /**
- * @brief Get the movies directory
+ * @brief Get the movies directories
  *
  * @return QStringList containing the paths of these directories
  */
@@ -1731,6 +1752,34 @@ QStringList DatabaseManager::getMoviesPath()
     }
 
     m_moviesPathModel->setStringList(l_result);
+
+    return l_result;
+}
+
+/**
+ * @brief Get the tags in the database
+ *
+ * @return QStringList containing all the tags
+ */
+QStringList DatabaseManager::getTags()
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT name FROM tags");
+
+    if(!l_query.exec())
+    {
+        qDebug() << "In getTags():";
+        qDebug() << l_query.lastError().text();
+    }
+
+    QStringList l_result;
+
+    while(l_query.next())
+    {
+        l_result.append(l_query.value(0).toString());
+    }
+
+    m_tagListModel->setStringList(l_result);
 
     return l_result;
 }
