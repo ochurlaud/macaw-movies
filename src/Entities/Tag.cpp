@@ -25,6 +25,12 @@ Tag::Tag()
     m_name = "";
 }
 
+Tag::Tag(QString name) : Tag()
+{
+    m_name = name;
+}
+
+
 int Tag::getId() const
 {
     return m_id;

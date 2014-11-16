@@ -62,6 +62,7 @@ class DatabaseManager : public QObject
         bool existPeople(QString);
         QVector<Tag> getAllTags(QString fieldOrder = "name");
         Tag getOneTagById(int);
+        Tag getTagByName(QString tagName);
         People getOnePeopleById(int);
         People getOnePeopleById(int, int);
         QVector<People> getPeopleByFullname(QString fullname, QString fieldOrder = "lastname");

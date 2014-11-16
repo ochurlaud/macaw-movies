@@ -286,6 +286,11 @@ void Movie::setRank(int rank)
     m_rank = rank;
 }
 
+void Movie::setTags(QVector<Tag> tagVector)
+{
+    m_tags = tagVector;
+}
+
 QVector<Tag> Movie::getTags()  const
 {
     return m_tags;

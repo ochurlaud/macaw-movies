@@ -767,6 +767,30 @@ Tag DatabaseManager::getOneTagById(int id)
     return l_tag;
 }
 
+Tag DatabaseManager::getTagByName(QString tagName)
+{
+    Tag l_tag;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT id, name "
+                    "FROM tags "
+                    "WHERE name = :name");
+    l_query.bindValue(":name", tagName);
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In getTagByName(QString):";
+        qDebug() << l_query.lastError().text();
+    }
+
+    if(l_query.next())
+    {
+        l_tag.setId(l_query.value(0).toInt());
+        l_tag.setName(l_query.value(1).toString());
+    }
+
+    return l_tag;
+}
+
 QVector<Movie> DatabaseManager::getMoviesByAny(QString text, QString fieldOrder)
 {
     QVector<Movie> l_moviesVector;
