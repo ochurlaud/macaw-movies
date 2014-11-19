@@ -181,7 +181,8 @@ void MainWindow::on_peopleBox_activated(int type)
 {
     m_app->debug("[MainWindow] Enters on_peopleBox_activated()");
 
-    fillLeftPannel(isPeople, type);
+    int peopleType = type + 1;
+    fillLeftPannel(isPeople, peopleType);
     m_leftPannelSelectedId = 0;
 }
 
