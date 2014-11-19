@@ -63,6 +63,8 @@ public:
     void setTagList(const QList<Tag> &tagList);
     void addTag(const Tag &tag);
     void removeTag(const Tag &tag);
+    bool operator== (const Movie &other);
+    bool operator!= (const Movie &other);
 
 private:
     int m_id;

@@ -31,33 +31,33 @@ class PeopleDialog;
 
 class PeopleDialog : public QDialog
 {
-    Q_OBJECT
+Q_OBJECT
 
-    public:
-        explicit PeopleDialog(int = 0, QWidget *parent = 0);
-        explicit PeopleDialog(People people, QWidget *parent = 0);
-        ~PeopleDialog();
-        void setFirstname(QString);
-        QString getFirstname();
-        void setLastname(QString);
-        QString getLastname();
-        void setRealname(QString);
-        QString getRealname();
-        void setBirthday(QDate);
-        QDate getBirthday();
-        void setBiography(QString);
-        QString getBiography();
+public:
+    explicit PeopleDialog(int = 0, QWidget *parent = 0);
+    explicit PeopleDialog(People people, QWidget *parent = 0);
+    ~PeopleDialog();
+    void setFirstname(QString);
+    QString getFirstname();
+    void setLastname(QString);
+    QString getLastname();
+    void setRealname(QString);
+    QString getRealname();
+    void setBirthday(QDate);
+    QDate getBirthday();
+    void setBiography(QString);
+    QString getBiography();
 
-    public slots:
-        void on_validationButtons_accepted();
+public slots:
+    void on_validationButtons_accepted();
 
-    signals:
-        void peopleCreated(People);
+signals:
+    void peopleCreated(People);
 
-    private:
-        Ui::PeopleDialog *m_ui;
-        People m_people;
-        Application *m_app;
+private:
+    Ui::PeopleDialog *m_ui;
+    People m_people;
+    Application *m_app;
 };
 
 #endif // PEOPLEDIALOG_H

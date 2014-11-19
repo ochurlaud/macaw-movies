@@ -17,24 +17,37 @@
  * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MOVIESDEBUG_H
-#define MOVIESDEBUG_H
+#ifndef PLAYLIST_H
+#define PLAYLIST_H
 
-#include <QtGui>
-#include <QtWidgets>
+#include <QWidget>
 
-#include <QtDebug>
+#include "Movie.h"
 
-class MoviesDebug : public QObject
+class Playlist
 {
 public:
-    MoviesDebug();
-    void print(QString);
-    void setDebug(bool value) { m_debug = value; }
-    bool isDebug() { return m_debug; }
+    Playlist();
+    int getId() const;
+    void setId(const int id);
+    QString getName() const;
+    void setName(const QString name);
+    int getRate() const;
+    void setRate(const int rate);
+    QDateTime getCreationDate() const;
+    void setCreationDate(const QDateTime creationDate);
+    QList<Movie> getMovieList() const;
+    void setMovieList(const QList<Movie> &movieList);
+    void addMovie(const Movie &movie);
+    void removeMovie(const Movie &movie);
+    void updateMovie(const Movie &movie);
 
 private:
-    bool m_debug;
+    int m_id;
+    QString m_name;
+    int m_rate;
+    QDateTime m_creationDate;
+    QList<Movie> m_movieList;
 };
 
-#endif // MOVIESDEBUG_H
+#endif // PLAYLIST_H

@@ -29,32 +29,32 @@ class Application;
 
 class SettingsWindow : public QDialog
 {
-    Q_OBJECT
+Q_OBJECT
 
-    public:
-        explicit SettingsWindow(QDialog *parent = 0);
-        ~SettingsWindow();
+public:
+    explicit SettingsWindow(QDialog *parent = 0);
+    ~SettingsWindow();
 
 
-    public slots:
-        void applySettings();
-        void browseFilesPathDialog();
+public slots:
+    void applySettings();
+    void browseFilesPathDialog();
 
-    signals:
-        void closeAndSave();
+signals:
+    void closeAndSave();
 
-    private:
-        QLabel *m_filesPathLabel;
-        QLabel *m_filesPathMessage;
-        QLineEdit *m_filesPathEdit;
-        QPushButton *m_filesPathSearchButton;
-        QPushButton *m_submitButton;
-        QPushButton *m_cancelButton;
-        QVBoxLayout *m_mainLayout;
-        QHBoxLayout *m_filesPathLayout;
-        QHBoxLayout *m_closeLayout;
-        QListView *m_knownPathList;
-        Application *m_app;
+private:
+    QLabel *m_filesPathLabel;
+    QLabel *m_filesPathMessage;
+    QLineEdit *m_filesPathEdit;
+    QPushButton *m_filesPathSearchButton;
+    QPushButton *m_submitButton;
+    QPushButton *m_cancelButton;
+    QVBoxLayout *m_mainLayout;
+    QHBoxLayout *m_filesPathLayout;
+    QHBoxLayout *m_closeLayout;
+    QListView *m_knownPathList;
+    Application *m_app;
 };
 
 #endif // SETTINGWINDOW_H

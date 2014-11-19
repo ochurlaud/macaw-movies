@@ -30,7 +30,8 @@ public:
     void setId(int id);
     QString getName() const;
     void setName(QString name);
-    bool operator== (const Tag& other);
+    bool operator== (const Tag &other);
+    bool operator!= (const Tag &other);
 
 private:
     int m_id;

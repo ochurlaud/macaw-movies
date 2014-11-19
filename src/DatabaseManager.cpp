@@ -186,6 +186,22 @@ bool DatabaseManager::createTables()
                       "UNIQUE (id_tag, id_movie) ON CONFLICT IGNORE "
                       ")");
 
+            // Playlists
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS playlists("
+                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                      "name VARCHAR(255) UNIQUE NOT NULL, "
+                      "rate INTEGER, "
+                      "creation_date VARCHAR(255)"
+                      ")");
+
+            // Links between playlist and movies
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies_playlists("
+                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                      "id_movie INTEGER NOT NULL, "
+                      "id_playlist INTEGER NOT NULL, "
+                      "UNIQUE (id_playlist, id_movie) ON CONFLICT IGNORE "
+                      ")");
+
             // List of paths where the movies are stored
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS paths_list("
                                           "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "

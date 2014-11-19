@@ -98,7 +98,7 @@ void People::setType(const int type)
     m_type = type;
 }
 
-bool People::operator== (const People& other)
+bool People::operator== (const People &other)
 {
     if ( this->getId() == other.getId() &&
          this->getFirstname() == other.getFirstname() &&
@@ -114,7 +114,7 @@ bool People::operator== (const People& other)
     return false;
 }
 
-bool People::operator!= (const People& other)
+bool People::operator!= (const People &other)
 {
     return !this->operator==(other);
 }

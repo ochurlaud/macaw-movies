@@ -103,8 +103,7 @@ void Movie::removePeople(const People &people)
 
 /**
  * @brief Movie::updateDirector
- * @param Director
- * @return bool : true if something updated, else false
+ * @param People
  */
 void Movie::updatePeople(const People &people)
 {
@@ -232,3 +231,31 @@ void Movie::removeTag(const Tag &tag)
     }
 }
 
+
+bool Movie::operator== (const Movie &other)
+{
+    if ( this->getId() == other.getId() &&
+         this->getTitle() == other.getTitle() &&
+         this->getOriginalTitle() == other.getOriginalTitle() &&
+         this->getCountry() == other.getCountry() &&
+         this->getReleaseDate() == other.getReleaseDate() &&
+         this->getDuration() == other.getDuration() &&
+         this->getFilePath() == other.getFilePath() &&
+         this->getSynopsis() == other.getSynopsis() &&
+         this->getSuffix() == other.getSuffix() &&
+         this->getRank() == other.getRank() &&
+         this->getFormat() == other.getFormat() &&
+         this->isColored() == other.isColored() &&
+         this->getPeopleList() == other.getPeopleList() &&
+         this->getTagList() == other.getTagList() )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool Movie::operator!= (const Movie &other)
+{
+    return !this->operator==(other);
+}
