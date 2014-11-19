@@ -21,9 +21,6 @@
 #include "ui_MovieDialog.h"
 
 /* @TODO:
- *   - While typing in a peopleEdit, propose existing names. If none: pop-up "Do you want to create ?"
- *   - Add actions to + and - buttons
- *   - Right-click on a ListWidgetItem allow to edit it the people
  *   - Handle tags
  */
 
@@ -514,7 +511,11 @@ void MovieDialog::on_addNewTagButton_clicked()
 void MovieDialog::peopleDialog_peopleCreated(People people, int type)
 {
     m_app->debug("[MovieDialog] peopleDialog_peopleCreated()");
-    if(!updatePeople(people))
+    if (people.getId() != 0)
+    {
+        updatePeople(people);
+    }
+    else
     {
         addPeople(people, type);
     }
@@ -549,10 +550,18 @@ void MovieDialog::showPeopleDialog()
 {
     m_app->debug("[MovieDialog] Enters showPeopleDialog()");
     QListWidget *l_widget = getFocusedListWidget();
-    int l_itemRow = l_widget->row(l_widget->selectedItems().at(0));
+    QListWidgetItem *l_selectedItem = l_widget->selectedItems().at(0);
+    int l_itemRow = l_widget->row(l_selectedItem);
     int l_type = l_widget->selectedItems().at(0)->data(Qt::UserRole + 1).toInt();
     People l_selectedPeople = this->getFocusedListPeople().at(l_itemRow);
     PeopleDialog *l_peopleDialog = new PeopleDialog(l_selectedPeople, l_type);
+
+    // Because we cannot update a people without id, we recreate it.
+    if(l_selectedPeople.getId() == 0)
+    {
+        delPeople(l_selectedPeople, l_type);
+        delete(l_selectedItem);
+    }
     l_peopleDialog->show();
     QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People, int)),
                      this, SLOT(peopleDialog_peopleCreated(People, int)));
