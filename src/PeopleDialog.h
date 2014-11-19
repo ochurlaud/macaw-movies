@@ -34,8 +34,8 @@ class PeopleDialog : public QDialog
     Q_OBJECT
 
     public:
-        explicit PeopleDialog(int = 0, int = 0, QWidget *parent = 0);
-        explicit PeopleDialog(People people, int type = 0, QWidget *parent = 0);
+        explicit PeopleDialog(int = 0, QWidget *parent = 0);
+        explicit PeopleDialog(People people, QWidget *parent = 0);
         ~PeopleDialog();
         void setFirstname(QString);
         QString getFirstname();
@@ -52,13 +52,12 @@ class PeopleDialog : public QDialog
         void on_validationButtons_accepted();
 
     signals:
-        void peopleCreated(People, int);
+        void peopleCreated(People);
 
     private:
         Ui::PeopleDialog *m_ui;
         People m_people;
         Application *m_app;
-        int m_type;
 };
 
 #endif // PEOPLEDIALOG_H

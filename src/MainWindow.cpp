@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
     connect(this, SIGNAL(toUpdate()), this, SLOT(selfUpdate()));
 
-    m_moviesVector = m_app->getDatabaseManager()->getAllMovies();
+    m_moviesList = m_app->getDatabaseManager()->getAllMovies();
     m_leftPannelSelectedId = 0;
     fillMainPannel();
     fillLeftPannel(isPeople, Director);
@@ -89,8 +89,8 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             l_item->setSelected(true);
         }
 
-        QVector<People> l_peopleVector = m_app->getDatabaseManager()->getAllPeople(typePeople);
-        foreach (People l_people, l_peopleVector)
+        QList<People> l_peopleList = m_app->getDatabaseManager()->getAllPeople(typePeople);
+        foreach (People l_people, l_peopleList)
         {
             QString l_name(l_people.getLastname());
             if (l_people.getFirstname() != "")
@@ -122,8 +122,8 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             l_item->setSelected(true);
         }
 
-        QVector<Tag> l_tagsVector = m_app->getDatabaseManager()->getAllTags();
-        foreach (Tag l_tag, l_tagsVector)
+        QList<Tag> l_tagsList = m_app->getDatabaseManager()->getAllTags();
+        foreach (Tag l_tag, l_tagsList)
         {
             QString l_name(l_tag.getName());
 
@@ -151,10 +151,10 @@ void MainWindow::fillMainPannel()
     QStringList l_headers;
     l_headers << "Title" << "Original Title" << "Release Date" << "Path of the file";
     m_ui->mainPannel->setHorizontalHeaderLabels(l_headers);
-    m_ui->mainPannel->setRowCount(m_moviesVector.size());
+    m_ui->mainPannel->setRowCount(m_moviesList.size());
     int l_row = 0;
 
-    foreach (Movie l_movie, m_moviesVector)
+    foreach (Movie l_movie, m_moviesList)
     {
         int l_column = 0;
         QStringList l_movieData;
@@ -162,8 +162,8 @@ void MainWindow::fillMainPannel()
                     << l_movie.getOriginalTitle()
                     << l_movie.getReleaseDate().toString("dd MMM yyyy")
                     << l_movie.getFilePath();
-        QVector<QTableWidgetItem*> l_itemsVector(4);
-        foreach(QTableWidgetItem *l_item, l_itemsVector)
+        QVector<QTableWidgetItem*> l_itemList(4);
+        foreach(QTableWidgetItem *l_item, l_itemList)
         {
             l_item = new QTableWidgetItem(l_movieData.at(l_column));
             l_item->setData(Qt::UserRole, l_movie.getId());
@@ -289,28 +289,28 @@ void MainWindow::prepareMoviesToDisplay(int id)
     m_leftPannelSelectedId = id;
     if(m_leftPannelSelectedId == 0)
     {
-        m_moviesVector = m_app->getDatabaseManager()->getAllMovies();
+        m_moviesList = m_app->getDatabaseManager()->getAllMovies();
     }
     else if(m_typeElement == isPeople)
     {
         if (m_leftPannelSelectedId == -1)
         {
-            m_moviesVector = m_app->getDatabaseManager()->getMoviesWithoutPeople(m_typePeople);
+            m_moviesList = m_app->getDatabaseManager()->getMoviesWithoutPeople(m_typePeople);
         }
         else
         {
-            m_moviesVector = m_app->getDatabaseManager()->getMoviesByPeople(m_leftPannelSelectedId, m_typePeople);
+            m_moviesList = m_app->getDatabaseManager()->getMoviesByPeople(m_leftPannelSelectedId, m_typePeople);
         }
     }
     else if (m_typeElement == isTag)
     {
         if (m_leftPannelSelectedId == -1)
         {
-            m_moviesVector = m_app->getDatabaseManager()->getMoviesWithoutTag();
+            m_moviesList = m_app->getDatabaseManager()->getMoviesWithoutTag();
         }
         else
         {
-            m_moviesVector = m_app->getDatabaseManager()->getMoviesByTag(m_leftPannelSelectedId);
+            m_moviesList = m_app->getDatabaseManager()->getMoviesByTag(m_leftPannelSelectedId);
         }
     }
     filterPannels();
@@ -319,7 +319,7 @@ void MainWindow::prepareMoviesToDisplay(int id)
 void MainWindow::selfUpdate()
 {
     m_app->debug("[MainWindow] selfUpdate()");
-    m_moviesVector.clear();
+    m_moviesList.clear();
     fillLeftPannel(m_typeElement, m_typePeople);
 
     for (int i = 0 ; i < m_ui->leftPannel->count() ; i++)
@@ -378,12 +378,12 @@ void MainWindow::filterPannels()
     if (l_text != "")
     {
         // mainPannel
-        QVector<Movie> l_authorizedMoviesVector = m_app->getDatabaseManager()->getMoviesByAny(l_text);
+        QList<Movie> l_authorizedMoviesList = m_app->getDatabaseManager()->getMoviesByAny(l_text);
         for (int i = 0 ; i < m_ui->mainPannel->rowCount(); i++)
         {
             bool l_isPresent(false);
             QTableWidgetItem *l_item = m_ui->mainPannel->item(i, 0);
-            foreach(Movie l_movie, l_authorizedMoviesVector)
+            foreach(Movie l_movie, l_authorizedMoviesList)
             {
                  if (l_movie.getId() == l_item->data(Qt::UserRole))
                  {
@@ -400,12 +400,12 @@ void MainWindow::filterPannels()
         // leftPannel
        /* if (m_typeElement == isTag)
         {
-            QVector<Movie> l_authorizedMoviesVector = m_app->getDatabaseManager()->getTagsByAny(l_text);
+            QList<Movie> l_authorizedMoviesList = m_app->getDatabaseManager()->getTagsByAny(l_text);
             for (int i = 0 ; i < m_ui->mainPannel->rowCount(); i++)
             {
                 bool l_isPresent(false);
                 QTableWidgetItem *l_item = m_ui->mainPannel->item(i);
-                foreach(Movie l_movie, l_authorizedMoviesVector)
+                foreach(Movie l_movie, l_authorizedMoviesList)
                 {
                      if (l_movie.getId() == l_item->data(Qt::UserRole))
                      {
@@ -420,14 +420,14 @@ void MainWindow::filterPannels()
         }
         else*/ if (m_typeElement == isPeople)
         {
-            QVector<People> l_authorizedPeopleVector = m_app->getDatabaseManager()->getPeopleByAny(l_text, m_typePeople);
+            QList<People> l_authorizedPeopleList = m_app->getDatabaseManager()->getPeopleByAny(l_text, m_typePeople);
 
             // We begin at 1 because the first item is "All"
             for (int i = 1 ; i < m_ui->leftPannel->count() ; i++)
             {
                 bool l_isPresent(false);
                 QListWidgetItem *l_item = m_ui->leftPannel->item(i);
-                foreach(People l_people, l_authorizedPeopleVector)
+                foreach(People l_people, l_authorizedPeopleList)
                 {
                      if (l_people.getId() == l_item->data(Qt::UserRole))
                      {
@@ -505,49 +505,52 @@ void MainWindow::fillMetadataPannel(Movie movie)
     QString l_title = "<html>"+movie.getTitle()+"<br />";
     QString l_originalTitle = "<i>"+movie.getOriginalTitle()+"</i></br /><br />";
     QString l_directors = "<i>Directed by</i><br />";
-    foreach (People l_director, movie.getDirectors())
+    QString l_producers = "<i>Produced by</i><br />";
+    QString l_actors = "<i>With</i><br />";
+
+    foreach (People l_people, movie.getPeopleList())
     {
-        if(l_director.getFirstname() != "")
+        switch (l_people.getType())
         {
-            l_directors += l_director.getFirstname() + " ";
+        case Director:
+            if (l_people.getFirstname() != "")
+            {
+                l_directors += l_people.getFirstname() + " ";
+            }
+            l_directors += l_people.getLastname() + ", ";
+            break;
+        case Producer:
+            if (l_people.getFirstname() != "")
+            {
+                l_producers += l_people.getFirstname() + " ";
+            }
+            l_producers += l_people.getLastname() + ", ";
+            break;
+        case Actor:
+            if(l_people.getFirstname() != "")
+            {
+                l_actors += l_people.getFirstname() + " ";
+            }
+            l_actors += l_people.getLastname() + ", ";
+            break;
         }
-        l_directors += l_director.getLastname();
-        if (l_director != movie.getDirectors().last())
-        {
-            l_directors += ", ";
-        }
+    }
+    // Need to remove ", " = 2 chars
+    if (l_directors.right(2) == ", ")
+    {
+        l_directors = l_directors.remove(l_directors.size(),-2);
     }
     l_directors += "<br /><br />";
-
-    QString l_producers = "<i>Produced by</i><br />";
-    foreach (People l_producer, movie.getProducers())
+    if (l_producers.right(2) == ", ")
     {
-        if (l_producer.getFirstname() != "")
-        {
-            l_producers += l_producer.getFirstname() + " ";
-        }
-        l_producers += l_producer.getLastname();
-        if (l_producer != movie.getProducers().last())
-        {
-            l_producers += ", ";
-        }
+        l_producers = l_producers.remove(l_producers.size(),-2);
     }
     l_producers += "<br /><br />";
-
-
-    QString l_actors = "<i>With</i><br />";
-    foreach (People l_actor, movie.getActors())
+    if (l_actors.right(2) == ", ")
     {
-        if(l_actor.getFirstname() != "")
-        {
-            l_actors += l_actor.getFirstname() + " ";
-        }
-        l_actors += l_actor.getLastname();
-        if (l_actor != movie.getActors().last())
-        {
-            l_actors += ", ";
-        }
+        l_actors = l_actors.remove(l_actors.size(),-2);
     }
+    l_actors += "<br /><br />";
     l_actors += "</html>";
 
     m_ui->metadataTop->setText(l_title+l_originalTitle + l_directors +l_producers + l_actors);

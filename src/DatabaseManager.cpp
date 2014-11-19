@@ -282,20 +282,8 @@ void DatabaseManager::setPeopleToMovie(Movie &movie)
     while (l_query.next())
     {
         People l_people = hydratePeople(l_query);
-        int l_type = l_query.value(6).toInt();
+        movie.addPeople(l_people);
 
-        switch (l_type)
-        {
-        case Director:
-            movie.addDirector(l_people);
-            break;
-        case Producer:
-            movie.addProducer(l_people);
-            break;
-        case Actor:
-            movie.addActor(l_people);
-            break;
-        }
     }
 }
 
@@ -303,11 +291,11 @@ void DatabaseManager::setPeopleToMovie(Movie &movie)
 /**
  * @brief Gets all the movies
  *
- * @return QVector<Movie>
+ * @return QList<Movie>
  */
-QVector<Movie> DatabaseManager::getAllMovies(QString fieldOrder)
+QList<Movie> DatabaseManager::getAllMovies(QString fieldOrder)
 {
-    QVector<Movie> l_moviesVector;
+    QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT " + m_movieFields + " "
                     "FROM movies AS m "
@@ -322,10 +310,10 @@ QVector<Movie> DatabaseManager::getAllMovies(QString fieldOrder)
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_moviesVector.push_back(l_movie);
+        l_movieList.push_back(l_movie);
     }
 
-    return l_moviesVector;
+    return l_movieList;
 }
 
 /**
@@ -333,11 +321,11 @@ QVector<Movie> DatabaseManager::getAllMovies(QString fieldOrder)
  *
  * @param int id of the people
  * @param int type of the people
- * @return QVector<Movie>
+ * @return QList<Movie>
  */
-QVector<Movie> DatabaseManager::getMoviesByPeople(int id, int type, QString fieldOrder)
+QList<Movie> DatabaseManager::getMoviesByPeople(int id, int type, QString fieldOrder)
 {
-    QVector<Movie> l_moviesVector;
+    QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT " + m_movieFields + " "
                     "FROM movies AS m "
@@ -358,10 +346,10 @@ QVector<Movie> DatabaseManager::getMoviesByPeople(int id, int type, QString fiel
     {
         Movie l_movie = hydrateMovie(l_query);
 
-        l_moviesVector.push_back(l_movie);
+        l_movieList.push_back(l_movie);
     }
 
-    return l_moviesVector;
+    return l_movieList;
 }
 
 /**
@@ -370,24 +358,24 @@ QVector<Movie> DatabaseManager::getMoviesByPeople(int id, int type, QString fiel
  * @param People director
  * @param int type of the people
  * @param QString upon which field we order the request
- * @return QVector<Movie>
+ * @return QList<Movie>
  */
-QVector<Movie> DatabaseManager::getMoviesByPeople(People const &people, int type, QString fieldOrder)
+QList<Movie> DatabaseManager::getMoviesByPeople(People const &people, int type, QString fieldOrder)
 {
-    QVector<Movie> l_moviesVector = getMoviesByPeople(people.getId(), type, fieldOrder);
+    QList<Movie> l_movieList = getMoviesByPeople(people.getId(), type, fieldOrder);
 
-    return l_moviesVector;
+    return l_movieList;
 }
 
 /**
  * @brief Gets all the movies tagged by the tag having the id `id`
  *
  * @param Tag tag
- * @return QVector<Movie>
+ * @return QList<Movie>
  */
-QVector<Movie> DatabaseManager::getMoviesByTag(int id, QString fieldOrder)
+QList<Movie> DatabaseManager::getMoviesByTag(int id, QString fieldOrder)
 {
-    QVector<Movie> l_moviesVector;
+    QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT " + m_movieFields + " "
                     "FROM movies AS m"
@@ -406,28 +394,28 @@ QVector<Movie> DatabaseManager::getMoviesByTag(int id, QString fieldOrder)
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_moviesVector.push_back(l_movie);
+        l_movieList.push_back(l_movie);
     }
 
-    return l_moviesVector;
+    return l_movieList;
 }
 
 /**
  * @brief Gets all the movies tagged by 'tag'
  *
  * @param Tag tag
- * @return QVector<Movie>
+ * @return QList<Movie>
  */
-QVector<Movie> DatabaseManager::getMoviesByTag(Tag const &tag, QString fieldOrder)
+QList<Movie> DatabaseManager::getMoviesByTag(Tag const &tag, QString fieldOrder)
 {
-    QVector<Movie> l_moviesVector = getMoviesByTag(tag.getId(), fieldOrder);
+    QList<Movie> l_movieList = getMoviesByTag(tag.getId(), fieldOrder);
 
-    return l_moviesVector;
+    return l_movieList;
 }
 
-QVector<Movie> DatabaseManager::getMoviesWithoutTag(QString fieldOrder)
+QList<Movie> DatabaseManager::getMoviesWithoutTag(QString fieldOrder)
 {
-    QVector<Movie> l_moviesVector;
+    QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT " + m_movieFields + " "
                     "FROM movies AS m "
@@ -445,15 +433,15 @@ QVector<Movie> DatabaseManager::getMoviesWithoutTag(QString fieldOrder)
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_moviesVector.push_back(l_movie);
+        l_movieList.push_back(l_movie);
     }
 
-    return l_moviesVector;
+    return l_movieList;
 }
 
-QVector<Movie> DatabaseManager::getMoviesWithoutPeople(int type, QString fieldOrder)
+QList<Movie> DatabaseManager::getMoviesWithoutPeople(int type, QString fieldOrder)
 {
-    QVector<Movie> l_moviesVector;
+    QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT " + m_movieFields + " "
                     "FROM movies AS m "
@@ -472,10 +460,10 @@ QVector<Movie> DatabaseManager::getMoviesWithoutPeople(int type, QString fieldOr
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_moviesVector.push_back(l_movie);
+        l_movieList.push_back(l_movie);
     }
 
-    return l_moviesVector;
+    return l_movieList;
 }
 
 /**
@@ -534,11 +522,11 @@ bool DatabaseManager::existPeople(QString fullname)
 /**
  * @brief Gets all the directors
  *
- * @return QVector<People>
+ * @return QList<People>
  */
-QVector<People> DatabaseManager::getAllPeople(int type, QString fieldOrder)
+QList<People> DatabaseManager::getAllPeople(int type, QString fieldOrder)
 {
-    QVector<People> l_peopleVector;
+    QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
 
     l_query.prepare("SELECT " + m_peopleFields + " "
@@ -556,10 +544,10 @@ QVector<People> DatabaseManager::getAllPeople(int type, QString fieldOrder)
     while(l_query.next())
     {
         People l_people = hydratePeople(l_query);
-        l_peopleVector.push_back(l_people);
+        l_peopleList.push_back(l_people);
     }
 
-    return l_peopleVector;
+    return l_peopleList;
 }
 
 /**
@@ -628,11 +616,11 @@ People DatabaseManager::getOnePeopleById(int id, int type)
  * @brief Gets the people whose 'lastname firstname' or 'firstname lastname' is `fullname`
  *
  * @param QString fullname, the string searched
- * @return QVector<People>
+ * @return QList<People>
  */
-QVector<People> DatabaseManager::getPeopleByFullname(QString fullname, QString fieldOrder)
+QList<People> DatabaseManager::getPeopleByFullname(QString fullname, QString fieldOrder)
 {
-    QVector<People> l_peopleVector;
+    QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
 
     l_query.prepare("SELECT " + m_peopleFields + " "
@@ -651,10 +639,10 @@ QVector<People> DatabaseManager::getPeopleByFullname(QString fullname, QString f
     while(l_query.next())
     {
         People l_people = hydratePeople(l_query);
-        l_peopleVector.push_back(l_people);
+        l_peopleList.push_back(l_people);
     }
 
-    return l_peopleVector;
+    return l_peopleList;
 }
 
 /**
@@ -672,11 +660,11 @@ People DatabaseManager::getOneDirectorById(int id)
 /**
  * @brief Gets all the directors
  *
- * @return QVector<People>
+ * @return QList<People>
  */
-QVector<People> DatabaseManager::getAllActors(QString fieldOrder)
+QList<People> DatabaseManager::getAllActors(QString fieldOrder)
 {
-    QVector<People> l_actorsVector = getAllPeople(Actor, fieldOrder);
+    QList<People> l_actorsVector = getAllPeople(Actor, fieldOrder);
 
     return l_actorsVector;
 }
@@ -711,11 +699,11 @@ People DatabaseManager::getOneActorById(int id)
 /**
  * @brief Gets all the tags
  *
- * @return QVector<Tag>
+ * @return QList<Tag>
  */
-QVector<Tag> DatabaseManager::getAllTags(QString fieldOrder)
+QList<Tag> DatabaseManager::getAllTags(QString fieldOrder)
 {
-    QVector<Tag> l_tagsVector;
+    QList<Tag> l_tagList;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT id, name "
                     "FROM tags "
@@ -731,10 +719,10 @@ QVector<Tag> DatabaseManager::getAllTags(QString fieldOrder)
         Tag l_tag;
         l_tag.setId(l_query.value(0).toInt());
         l_tag.setName(l_query.value(1).toString());
-        l_tagsVector.push_back(l_tag);
+        l_tagList.push_back(l_tag);
     }
 
-    return l_tagsVector;
+    return l_tagList;
 }
 
 /**
@@ -767,9 +755,9 @@ Tag DatabaseManager::getOneTagById(int id)
     return l_tag;
 }
 
-QVector<Movie> DatabaseManager::getMoviesByAny(QString text, QString fieldOrder)
+QList<Movie> DatabaseManager::getMoviesByAny(QString text, QString fieldOrder)
 {
-    QVector<Movie> l_moviesVector;
+    QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
     QStringList l_splittedText = text.split(" ");
 
@@ -808,15 +796,15 @@ QVector<Movie> DatabaseManager::getMoviesByAny(QString text, QString fieldOrder)
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_moviesVector.push_back(l_movie);
+        l_movieList.push_back(l_movie);
     }
 
-    return l_moviesVector;
+    return l_movieList;
 }
 
-QVector<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fieldOrder)
+QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fieldOrder)
 {
-    QVector<People> l_peopleVector;
+    QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
     QStringList l_splittedText = text.split(" ");
 
@@ -858,15 +846,15 @@ QVector<People> DatabaseManager::getPeopleByAny(QString text, int type, QString 
     while(l_query.next())
     {
         People l_people = hydratePeople(l_query);
-        l_peopleVector.push_back(l_people);
+        l_peopleList.push_back(l_people);
     }
 
-    return l_peopleVector;
+    return l_peopleList;
 }
 /*
-QVector<Tag> DatabaseManager::getTagByAny(QString text, QString fieldOrder)
+QList<Tag> DatabaseManager::getTagByAny(QString text, QString fieldOrder)
 {
-    QVector<People> l_peopleVector;
+    QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
     QStringList l_splittedText = text.split(" ");
 
@@ -929,7 +917,7 @@ bool DatabaseManager::insertNewMovie(Movie &movie)
     l_query.bindValue(":original_title", movie.getOriginalTitle()   );
     l_query.bindValue(":release_date", movie.getReleaseDate().toString(DATE_FORMAT));
     l_query.bindValue(":country", movie.getCountry());
-    l_query.bindValue(":duration", movie.getDuration());
+    l_query.bindValue(":duration", movie.getDuration().msecsSinceStartOfDay());
     l_query.bindValue(":synopsis", movie.getSynopsis());
     l_query.bindValue(":file_path", movie.getFilePath());
     l_query.bindValue(":colored", movie.isColored());
@@ -949,27 +937,10 @@ bool DatabaseManager::insertNewMovie(Movie &movie)
 
     movie.setId(l_query.lastInsertId().toInt());
 
-    for(int i = 0 ; i < movie.getDirectors().size() ; i++)
+    for(int i = 0 ; i < movie.getPeopleList().size() ; i++)
     {
-        People l_director = movie.getDirectors().at(i);
-        if (!addDirectorToMovie(l_director, movie))
-        {
-            return false;
-        }
-    }
-
-    for(int i = 0 ; i < movie.getProducers().size() ; i++)
-    {
-        People l_producer = movie.getProducers().at(i);
-        if (!addProducerToMovie(l_producer, movie))
-        {
-            return false;
-        }
-    }
-    for(int i = 0 ; i < movie.getActors().size() ; i++)
-    {
-        People l_actor = movie.getActors().at(i);
-        if (!addActorToMovie(l_actor, movie))
+        People l_people = movie.getPeopleList().at(i);
+        if (!addPeopleToMovie(l_people, movie, l_people.getType()))
         {
             return false;
         }
@@ -1329,6 +1300,7 @@ bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
  */
 bool DatabaseManager::updateMovie(Movie &movie)
 {
+    qDebug() << "[DatabaseManager] Enters updateMovie()";
     QSqlQuery l_query(m_db);
     l_query.prepare("UPDATE movies "
                     "SET title = :title, "
@@ -1341,7 +1313,6 @@ bool DatabaseManager::updateMovie(Movie &movie)
                         "rank = :rank "
                     "WHERE id = :id");
     l_query.bindValue(":title", movie.getTitle());
-    qDebug() << movie.getOriginalTitle();
     l_query.bindValue(":original_title", movie.getOriginalTitle());
     l_query.bindValue(":release_date", movie.getReleaseDate().toString(DATE_FORMAT));
     l_query.bindValue(":country", movie.getCountry());
@@ -1361,22 +1332,12 @@ bool DatabaseManager::updateMovie(Movie &movie)
     }
 
     // Insertions/Updates of the linked elements
-    foreach (People l_director, movie.getDirectors())
+    foreach (People l_people, movie.getPeopleList())
     {
-        updatePeopleInMovie(l_director, movie, Director);
+        updatePeopleInMovie(l_people, movie, l_people.getType());
     }
 
-    foreach (People l_producer, movie.getProducers())
-    {
-        updatePeopleInMovie(l_producer, movie, Producer);
-    }
-
-    foreach (People l_actor, movie.getActors())
-    {
-        updatePeopleInMovie(l_actor, movie, Actor);
-    }
-
-    foreach (Tag l_tag, movie.getTags())
+    foreach (Tag l_tag, movie.getTagList())
     {
         updateTagInMovie(l_tag, movie);
     }
@@ -1398,17 +1359,17 @@ bool DatabaseManager::updateMovie(Movie &movie)
         Tag l_tag;
         l_tag.setId(l_query.value(0).toInt());
         l_tag.setName(l_query.value(1).toString());
-        if(movie.getTags().indexOf(l_tag) < 0)
+        if(movie.getTagList().indexOf(l_tag) < 0)
         {
             removeTagFromMovie(l_tag, movie);
         }
     }
 
-    QVector<int> types;
+    QList<int> types;
     types << Director << Producer << Actor;
     foreach (int type, types)
     {
-        l_query.prepare("SELECT " + m_peopleFields + " "
+        l_query.prepare("SELECT " + m_peopleFields + ", mp.type "
                         "FROM people AS p, movies_people AS mp "
                         "WHERE mp.id_movie = :id_movie "
                           "AND mp.type = :type "
@@ -1425,26 +1386,9 @@ bool DatabaseManager::updateMovie(Movie &movie)
         while(l_query.next())
         {
             People l_people = hydratePeople(l_query);
-            switch (type)
+            if(movie.getPeopleList().indexOf(l_people) < 0)
             {
-            case Director:
-                if(movie.getDirectors().indexOf(l_people) < 0)
-                {
-                    removePeopleFromMovie(l_people, movie, type);
-                }
-            break;
-            case Producer:
-                if(movie.getProducers().indexOf(l_people) < 0)
-                {
-                    removePeopleFromMovie(l_people, movie, type);
-                }
-            break;
-            case Actor:
-                if(movie.getActors().indexOf(l_people) < 0)
-                {
-                    removePeopleFromMovie(l_people, movie, type);
-                }
-            break;
+                removePeopleFromMovie(l_people, movie, l_people.getType());
             }
         }
     }
@@ -1462,28 +1406,14 @@ bool DatabaseManager::updateMovie(Movie &movie)
  */
 bool DatabaseManager::deleteMovie(Movie &movie)
 {
-    foreach(People l_director, movie.getDirectors())
+    foreach(People l_people, movie.getPeopleList())
     {
-        if (!removePeopleFromMovie(l_director, movie, Director))
+        if (!removePeopleFromMovie(l_people, movie, l_people.getType()))
         {
             return false;
         }
     }
-    foreach(People l_producer, movie.getProducers())
-    {
-        if (!removePeopleFromMovie(l_producer, movie, Producer))
-        {
-            return false;
-        }
-    }
-    foreach(People l_actor, movie.getActors())
-    {
-        if (!removePeopleFromMovie(l_actor, movie, Actor))
-        {
-            return false;
-        }
-    }
-    foreach(Tag l_tag, movie.getTags())
+    foreach(Tag l_tag, movie.getTagList())
     {
         if (!removeTagFromMovie(l_tag, movie))
         {
@@ -1798,7 +1728,7 @@ Movie DatabaseManager::hydrateMovie(QSqlQuery &query)
     l_movie.setOriginalTitle(query.value(2).toString());
     l_movie.setReleaseDate(QDate::fromString(query.value(3).toString(), DATE_FORMAT));
     l_movie.setCountry(query.value(4).toString());
-    l_movie.setDuration(query.value(5).toInt());
+    l_movie.setDuration(QTime::fromMSecsSinceStartOfDay(query.value(5).toInt()));
     l_movie.setSynopsis(query.value(6).toString());
     l_movie.setFilePath(query.value(7).toString());
     l_movie.setColored(query.value(8).toBool());
@@ -1826,6 +1756,10 @@ People DatabaseManager::hydratePeople(QSqlQuery &query)
     l_people.setRealname(query.value(3).toString());
     l_people.setBirthday(QDate::fromString(query.value(4).toString(), DATE_FORMAT));
     l_people.setBiography(query.value(5).toString());
+    if (query.value(6).isValid())
+    {
+        l_people.setType(query.value(6).toInt());
+    }
 
     return l_people;
 }

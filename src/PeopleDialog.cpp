@@ -20,10 +20,9 @@
 #include "PeopleDialog.h"
 #include "ui_PeopleDialog.h"
 
-PeopleDialog::PeopleDialog(int id, int type, QWidget *parent) :
+PeopleDialog::PeopleDialog(int id, QWidget *parent) :
     QDialog(parent),
-    m_ui(new Ui::PeopleDialog),
-    m_type(type)
+    m_ui(new Ui::PeopleDialog)
 {
     m_app = qobject_cast<Application *>(qApp);
     m_app->debug("[PeopleDialog] Constructor called");
@@ -45,10 +44,9 @@ PeopleDialog::PeopleDialog(int id, int type, QWidget *parent) :
     m_app->debug("[PeopleDialog] Construction done");
 }
 
-PeopleDialog::PeopleDialog(People people, int type, QWidget *parent):
+PeopleDialog::PeopleDialog(People people, QWidget *parent):
     QDialog(parent),
-    m_ui(new Ui::PeopleDialog),
-    m_type(type)
+    m_ui(new Ui::PeopleDialog)
 {
     m_people = people;
     m_app = qobject_cast<Application *>(qApp);
@@ -70,6 +68,7 @@ PeopleDialog::PeopleDialog(People people, int type, QWidget *parent):
 PeopleDialog::~PeopleDialog()
 {
     delete m_ui;
+    m_app->debug("[PeopleDialog] Destructed");
 }
 
 void PeopleDialog::setFirstname(QString firstname)
@@ -133,10 +132,11 @@ void PeopleDialog::on_validationButtons_accepted()
 
     // If type != 0, it means we come from the movie dialog
     // If type = 0, it means we directly edit a people
-    if (m_type != 0)
+    if (m_people.getType() != 0)
     {
-        m_app->debug("[PeopleDialog] validationButtons method: type="+QString::number(m_type));
-        emit(peopleCreated(m_people, m_type));
+        m_app->debug("[PeopleDialog] validationButtons method: type="
+                     +QString::number(m_people.getType()));
+        emit(peopleCreated(m_people));
     }
     else
     {

@@ -29,15 +29,18 @@ public:
     int getId() const;
     void setId(int);
     QString getLastname() const;
-    void setLastname(QString);
+    void setLastname(const QString lastname);
     QString getFirstname() const;
-    void setFirstname(QString);
+    void setFirstname(const QString firstname);
     QString getRealname() const;
-    void setRealname(QString);
+    void setRealname(const QString realname);
     QDate getBirthday() const;
-    void setBirthday(QDate);
+    void setBirthday(const QDate birthday);
     QString getBiography() const;
-    void setBiography(QString);
+    void setBiography(const QString biography);
+    int getType() const;
+    void setType(const int type);
+
     bool operator== (const People&);
     bool operator!= (const People&);
 
@@ -48,6 +51,7 @@ private:
     QString m_realname;
     QDate m_birthday;
     QString m_biography;
+    int m_type;
 };
 
 #endif // PEOPLE_H

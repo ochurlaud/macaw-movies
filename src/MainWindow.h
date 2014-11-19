@@ -67,7 +67,7 @@ signals:
 private:
     Ui::MainWindow *m_ui;
     Application *m_app;
-    QVector<Movie> m_moviesVector;
+    QList<Movie> m_moviesList;
     int m_typePeople;
     int m_typeElement;
     int m_leftPannelSelectedId;
