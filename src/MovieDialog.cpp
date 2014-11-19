@@ -341,6 +341,7 @@ void MovieDialog::delPeopleButton_clicked(int type)
     {
         int l_peopleId = l_itemToDelete->data(Qt::UserRole).toInt();
         People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_peopleId, type);
+        l_people.setType(type);
         delPeople(l_people);
         delete(l_itemToDelete);
     }
