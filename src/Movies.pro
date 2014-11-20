@@ -46,7 +46,11 @@ SOURCES += main.cpp \
     MetadataFetcher.cpp \
     PeopleDialog.cpp \
     MovieDialog.cpp \
-    Entities/Playlist.cpp
+    Entities/Playlist.cpp \
+    DatabaseManager_getters.cpp \
+    DatabaseManager_insert.cpp \
+    DatabaseManager_update.cpp \
+    DatabaseManager_delete.cpp
 
 HEADERS  += \
     DatabaseManager.h \
