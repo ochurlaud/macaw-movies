@@ -128,7 +128,6 @@ private:
     QString m_movieFields;
     QString m_peopleFields;
 
-
 };
 
 #endif // DATABASEMANAGER_H

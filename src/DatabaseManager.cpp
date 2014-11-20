@@ -354,4 +354,3 @@ QStringList DatabaseManager::getTags()
 
     return l_result;
 }
-

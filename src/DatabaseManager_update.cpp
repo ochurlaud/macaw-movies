@@ -148,7 +148,9 @@ bool DatabaseManager::updatePeople(People &people)
  * @param int type
  * @return bool
  */
-bool DatabaseManager::updatePeopleInMovie(People &people, Movie &movie, const int type)
+bool DatabaseManager::updatePeopleInMovie(People &people,
+                                          Movie &movie,
+                                          const int type)
 {
     // If the id is 0, then the director doesn't exist
     if (people.getId() == 0)

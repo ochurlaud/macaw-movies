@@ -48,7 +48,9 @@ bool DatabaseManager::deleteMovie(Movie &movie)
  * @param int type of the person to remove
  * @return boolean
  */
-bool DatabaseManager::removePeopleFromMovie(People &people, Movie &movie, const int type)
+bool DatabaseManager::removePeopleFromMovie(People &people,
+                                            Movie &movie,
+                                            const int type)
 {
     QSqlQuery l_query(m_db);
     l_query.prepare("DELETE FROM movies_people "

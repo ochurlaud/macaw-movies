@@ -363,7 +363,8 @@ QList<People> DatabaseManager::getAllPeople(const int type,
  * @param QString fullname, the string searched
  * @return QList<People>
  */
-QList<People> DatabaseManager::getPeopleByFullname(const QString fullname, const QString fieldOrder)
+QList<People> DatabaseManager::getPeopleByFullname(const QString fullname,
+                                                   const QString fieldOrder)
 {
     QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
