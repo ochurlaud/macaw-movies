@@ -76,6 +76,7 @@ public:
     // Tags
     Tag getOneTagById(const int id);
     QList<Tag> getAllTags(const QString fieldOrder = "name");
+    QList<Tag> getTagsByAny(const QString text, const QString fieldOrder = "name");
 
     // Does element exist ?
     bool existMovie(const QString);
@@ -88,6 +89,7 @@ private:
     void setTagsToMovie(Movie &movie);
     Movie hydrateMovie(QSqlQuery &query);
     People hydratePeople(QSqlQuery &query);
+    Tag hydrateTag(QSqlQuery &query);
 
 //// Inserts - in DatabaseManager_insert.cpp
 public:
@@ -131,6 +133,7 @@ private:
     QStringListModel *m_tagListModel;
     QString m_movieFields;
     QString m_peopleFields;
+    QString m_tagFields;
 
 };
 

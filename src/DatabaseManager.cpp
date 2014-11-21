@@ -35,6 +35,7 @@ DatabaseManager::DatabaseManager(MoviesDebug *moviesDebug)
     createTables();
     m_movieFields = "m.id, m.title, m.original_title, m.release_date, m.country, m.duration, m.synopsis, m.file_path, m.colored, m.format, m.suffix, m.rank";
     m_peopleFields = "p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography";
+    m_tagFields = "t.id, t.name";
     m_moviesPathModel = new QStringListModel();
     m_tagListModel = new QStringListModel();
     debug("[DatabaseManager] object created");

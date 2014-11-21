@@ -404,17 +404,26 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
         {
             l_queryText += "AND ";
         }
-    l_queryText = l_queryText + "(( p.lastname LIKE '%'||:text"+ QString::number(i) +"||'%' "
-                                "OR p.firstname LIKE '%'||:text"+ QString::number(i) +"||'%' ) "
-                                "OR ( SELECT COUNT(*) "
-                                     "FROM movies AS m "
-                                     "WHERE (m.title LIKE '%'||:text"+ QString::number(i) +"||'%' OR m.original_title LIKE '%'||:text"+ QString::number(i) +"||'%' ) "
-                                     "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id) > 0 "
-                                    ") > 0 "
-                              "OR ( SELECT COUNT(*) "
-                                    "FROM tags AS t "
-                                    "WHERE t.name LIKE '%'||:text"+ QString::number(i) +"||'%') > 0 "
-                               ") ";
+    l_queryText = l_queryText
+            + "("
+                    "("
+                           "p.lastname LIKE '%'||:text"+ QString::number(i) +"||'%' "
+                        "OR p.firstname LIKE '%'||:text"+ QString::number(i) +"||'%'"
+                    ") "
+                 "OR ( "
+                      "SELECT COUNT(*) "
+                      "FROM movies AS m "
+                      "WHERE (m.title LIKE '%'||:text"+ QString::number(i) +"||'%' OR m.original_title LIKE '%'||:text"+ QString::number(i) +"||'%' ) "
+                             "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id ) > 0 "
+                     ") > 0 "
+                 "OR ( "
+                      "SELECT COUNT(*) "
+                      "FROM movies AS m, tags AS t "
+                      "WHERE (t.name LIKE '%'||:text"+ QString::number(i) +"||'%' ) "
+                            "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id ) > 0 "
+                            "AND ( SELECT COUNT(*) FROM movies_tags WHERE id_tag = t.id AND id_movie = m.id ) > 0 "
+                    ") > 0 "
+               ") ";
     }
     l_queryText = l_queryText + "AND (SELECT COUNT(*) FROM movies_people AS mp WHERE mp.type = :type) > 0 "
                                 "ORDER BY p." + fieldOrder;
@@ -500,23 +509,22 @@ QList<Tag> DatabaseManager::getAllTags(const QString fieldOrder)
     return l_tagList;
 }
 
-/*
-QList<Tag> DatabaseManager::getTagByAny(QString text, QString fieldOrder)
+QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString fieldOrder)
 {
-    QList<People> l_peopleList;
+    QList<Tag> l_tagList;
     QSqlQuery l_query(m_db);
     QStringList l_splittedText = text.split(" ");
 
     QString l_queryText = "SELECT " + m_tagFields + " FROM tags AS t WHERE ";
-    for( int i = 0 ; i < l_splittedText.size() ; i++)
+    for (int i = 0 ; i < l_splittedText.size() ; i++)
     {
         if (i != 0)
         {
             l_queryText += "AND ";
         }
-    lqueryText = lqueryText + "(  ( p.firstname || ' ' || p.lastname LIKE '%'||:text||'%' "
+    l_queryText = l_queryText + "(  ( p.firstname || ' ' || p.lastname LIKE '%'||:text||'%' "
                                 "OR p.lastname || ' ' || p.firstname LIKE '%'||:text||'%' ) "
-                                "OR ( SELECT COUNT(*) "
+                                "OR ( (SELECT COUNT(*) "
                                      "FROM movies AS m "
                                      "WHERE m.title LIKE '%'||:text||'%' OR m.original_title LIKE '%'||:text||'%' OR m.release_date LIKE '%'||:text||'%' ) "
                                      "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id) > 0 "
@@ -526,7 +534,6 @@ QList<Tag> DatabaseManager::getTagByAny(QString text, QString fieldOrder)
                                     "WHERE t.name LIKE '%'||:text"+ QString::number(i) +"||'%') > 0 "
                                ") ";
     }
-    l_queryText = l_queryText + "AND mp.type = :type"
                                 "ORDER BY p." + fieldOrder;
     l_query.prepare(l_queryText);
 
@@ -544,12 +551,11 @@ QList<Tag> DatabaseManager::getTagByAny(QString text, QString fieldOrder)
     while(l_query.next())
     {
         Tag l_tag = hydrateTag(l_query);
-        l_tagVector.push_back(l_tag);
+        l_tagList.push_back(l_tag);
     }
 
-    return l_tagVector;
+    return l_tagList;
 }
-*/
 
 /**
  * @brief Retuns whether a movie is known by the database or not
@@ -715,4 +721,19 @@ People DatabaseManager::hydratePeople(QSqlQuery &query)
     }
 
     return l_people;
+}
+
+/**
+ * @brief Hydrates a tag from the database
+ *
+ * @param QSqlQuery containing the data
+ * @return Tag hydrated object
+ */
+Tag DatabaseManager::hydrateTag(QSqlQuery &query)
+{
+    Tag l_tag;
+    l_tag.setId(query.value(0).toInt());
+    l_tag.setName(query.value(1).toString());
+
+    return l_tag;
 }
