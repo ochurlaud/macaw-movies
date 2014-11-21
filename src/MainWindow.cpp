@@ -399,32 +399,33 @@ void MainWindow::filterPannels()
         }
 
         // leftPannel
-       /* if (m_typeElement == isTag)
+        if (m_typeElement == isTag)
         {
-            QList<Movie> l_authorizedMoviesList = m_app->getDatabaseManager()->getTagsByAny(l_text);
-            for (int i = 0 ; i < m_ui->mainPannel->rowCount(); i++)
+            QList<Tag> l_authorizedTagList = m_app->getDatabaseManager()->getTagsByAny(l_text);
+            for (int i = 2 ; i < m_ui->leftPannel->count(); i++)
             {
                 bool l_isPresent(false);
-                QTableWidgetItem *l_item = m_ui->mainPannel->item(i);
-                foreach(Movie l_movie, l_authorizedMoviesList)
+                QListWidgetItem *l_item = m_ui->leftPannel->item(i);
+                foreach(Tag l_tag, l_authorizedTagList)
                 {
-                     if (l_movie.getId() == l_item->data(Qt::UserRole))
+                     if (l_tag.getId() == l_item->data(Qt::UserRole))
                      {
                          l_isPresent = true;
                      }
                 }
                 if (l_isPresent == false)
                 {
-                    m_ui->mainPannel->removeRow(i);
+                    delete l_item;
+                    i--; // We remove an item so we have to decrement i
                 }
             }
         }
-        else*/ if (m_typeElement == isPeople)
+        else if (m_typeElement == isPeople)
         {
             QList<People> l_authorizedPeopleList = m_app->getDatabaseManager()->getPeopleByAny(l_text, m_typePeople);
 
-            // We begin at 1 because the first item is "All"
-            for (int i = 1 ; i < m_ui->leftPannel->count() ; i++)
+            // We begin at 2 because the first item is "All", second is "Unknown"
+            for (int i = 2 ; i < m_ui->leftPannel->count() ; i++)
             {
                 bool l_isPresent(false);
                 QListWidgetItem *l_item = m_ui->leftPannel->item(i);

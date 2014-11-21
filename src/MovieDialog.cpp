@@ -326,17 +326,20 @@ void MovieDialog::addPeopleButton_clicked(int type)
 void MovieDialog::on_delDirectorButton_clicked()
 {
     m_app->debug("[MovieDialog] delDirectorButton clicked()");
-    delPeopleButton_clicked(Director);
-}
+    m_app->debug("[MovieDialog] delDirectorButton clicked()");
+    delPeopleButton_clicked(Director);}
 
 void MovieDialog::on_delProducerButton_clicked()
 {
     m_app->debug("[MovieDialog] delProducerButton clicked()");
+    delPeopleButton_clicked(Producer);
+
 }
 
 void MovieDialog::on_delActorButton_clicked()
 {
     m_app->debug("[MovieDialog] delActorButton clicked()");
+    delPeopleButton_clicked(Actor);
 }
 
 void MovieDialog::delPeopleButton_clicked(int type)
