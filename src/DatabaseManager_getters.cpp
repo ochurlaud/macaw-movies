@@ -229,17 +229,25 @@ QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
         {
             l_queryText = l_queryText+ "AND ";
         }
-        l_queryText = l_queryText+ "( (m.title LIKE '%'||:text"+QString::number(i)+"||'%' OR m.original_title LIKE '%'||:text"+ QString::number(i) +"||'%') "
-                                     "OR ( SELECT COUNT(*) "
-                                          "FROM people AS p "
-                                          "WHERE ( p.lastname LIKE '%'||:text"+ QString::number(i) +"||'%' "
-                                               "OR p.firstname LIKE '%'||:text"+ QString::number(i) +"||'%' ) "
-                                               "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id) > 0 "
-                                        ") > 0 "
-                                     "OR ( SELECT COUNT(*) "
-                                           "FROM tags AS t "
-                                           "WHERE t.name LIKE '%'||:text"+ QString::number(i) +"||'%') > 0 "
-                                    ") ";
+        l_queryText = l_queryText
+                + "("
+                     "("
+                           "m.title LIKE '%'||:text"+QString::number(i)+"||'%' OR m.original_title LIKE '%'||:text"+ QString::number(i) +"||'%' "
+                      ") "
+                  "OR ( "
+                            "SELECT COUNT(*) "
+                            "FROM people AS p "
+                            "WHERE ( p.lastname LIKE '%'||:text"+ QString::number(i) +"||'%' "
+                                "OR p.firstname LIKE '%'||:text"+ QString::number(i) +"||'%' ) "
+                                "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id) > 0 "
+                     ") > 0 "
+                  "OR ( "
+                            "SELECT COUNT(*) "
+                            "FROM tags AS t "
+                            "WHERE ( t.name LIKE '%'||:text"+ QString::number(i) +"||'%' ) "
+                            "AND ( SELECT COUNT(*) FROM movies_tags WHERE id_tag = t.id AND id_movie = m.id) > 0 "
+                     ") > 0 "
+                  ") ";
     }
     l_queryText = l_queryText+ "ORDER BY m." + fieldOrder;
     l_query.prepare(l_queryText);
