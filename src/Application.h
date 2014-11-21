@@ -26,12 +26,14 @@
 #include "MoviesDebug.h"
 #include "Entities/Movie.h"
 
+class MovieDebug;
+
 class Application : public QApplication
 {
 Q_OBJECT
 
 public:
-    Application(int&, char**);
+    Application(MoviesDebug*, int&, char**);
     ~Application();
     void showMainWindow();
     bool addFilesPath(QString path);
@@ -39,7 +41,7 @@ public:
     QString getAppName() { return this->m_appName; }
     QIcon getAppIcon() { return this->m_appIcon; }
     DatabaseManager *getDatabaseManager() { return this->m_dbManager; }
-    void debug(QString text) { m_debug.print(text); }
+    void debug(QString text) { m_debug->print(text); }
 
 private:
 //    MainWindow mainWindow;
@@ -47,7 +49,7 @@ private:
     DatabaseManager *m_dbManager;
     QString m_appName;
     QIcon m_appIcon;
-    MoviesDebug m_debug;
+    MoviesDebug *m_debug;
 };
 
 #endif // APPLICATION_H

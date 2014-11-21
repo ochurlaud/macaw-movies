@@ -28,7 +28,7 @@
 class MoviesDebug : public QObject
 {
 public:
-    MoviesDebug();
+    MoviesDebug(bool debug = true);
     void print(QString);
     void setDebug(bool value) { m_debug = value; }
     bool isDebug() { return m_debug; }

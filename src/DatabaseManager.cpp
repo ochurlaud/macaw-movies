@@ -27,8 +27,9 @@
  * @brief Constructor.
  * Opens the Database. If empty, create the schema.
  */
-DatabaseManager::DatabaseManager()
+DatabaseManager::DatabaseManager(MoviesDebug *moviesDebug)
 {
+    m_debug = moviesDebug;
     openDB();
 
     createTables();
@@ -36,6 +37,7 @@ DatabaseManager::DatabaseManager()
     m_peopleFields = "p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography";
     m_moviesPathModel = new QStringListModel();
     m_tagListModel = new QStringListModel();
+    debug("[DatabaseManager] object created");
 }
 
 /**
@@ -45,7 +47,7 @@ DatabaseManager::DatabaseManager()
  */
 bool DatabaseManager::openDB()
 {
-
+    debug("[DatabaseManager] openDB");
     if (QSqlDatabase::contains("Movies-database"))
     {
         m_db = QSqlDatabase::database("Movies-database");        
@@ -222,6 +224,12 @@ bool DatabaseManager::createTables()
 
     return l_ret;
 }
+
+void DatabaseManager::setDebug(MoviesDebug* moviesDebug)
+{
+    m_debug = moviesDebug;
+}
+
 
 bool DatabaseManager::createTag(QString name)
 {

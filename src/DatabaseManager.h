@@ -27,6 +27,7 @@ enum typePeople {None, Director, Producer, Actor};
 #include <QtSql>
 
 #include "Entities/Movie.h"
+#include "MoviesDebug.h"
 
 class DatabaseManager : public QObject
 {
@@ -34,12 +35,13 @@ class DatabaseManager : public QObject
 #define DATE_FORMAT "yyyy.MM.dd"
 
 public:
-    DatabaseManager();
+    DatabaseManager(MoviesDebug *moviesDebug);
     // Database management
     bool openDB();
     bool createTables();
     bool closeDB();
     bool deleteDB();
+    void setDebug(MoviesDebug*);
     QSqlError lastError();
 
     // Getters for paths, config
@@ -122,7 +124,9 @@ public:
     QStringListModel *getTagListModel() {return this->m_tagListModel;}
 
 private:
+    void debug(QString text) { m_debug->print(text);}
     QSqlDatabase m_db;
+    MoviesDebug *m_debug;
     QStringListModel *m_moviesPathModel;
     QStringListModel *m_tagListModel;
     QString m_movieFields;
