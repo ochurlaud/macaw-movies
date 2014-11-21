@@ -73,6 +73,7 @@ private slots:
     void peopleDialog_peopleCreated(People);
     void customMenuRequested(QPoint);
     void showPeopleDialog();
+    void on_resetReleaseDateBtn_clicked();
 
 private:
     Ui::MovieDialog *m_ui;

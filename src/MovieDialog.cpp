@@ -86,13 +86,34 @@ QString MovieDialog::getOriginalTitle() const
 
 void MovieDialog::setReleaseDate(const QDate releaseDate)
 {
-    m_ui->releaseDateEdit->setDate(releaseDate);
-    m_movie.setReleaseDate(releaseDate);
+    m_ui->releaseDateEdit->setSpecialValueText("--/--/----");
+
+    if (releaseDate.isNull() || releaseDate == m_ui->releaseDateEdit->minimumDate())
+    {
+        // The following line is a hack for setting the specialValueText instead of defaultDate
+        m_ui->releaseDateEdit->setDate(QDate::fromString("01/01/0001", "dd/MM/yyyy"));
+    }
+    else
+    {
+        m_ui->releaseDateEdit->setDate(releaseDate);
+        m_movie.setReleaseDate(releaseDate);
+    }
 }
 
 QDate MovieDialog::getReleaseDate() const
 {
-    return m_ui->releaseDateEdit->date();
+    // if the date is the minimum date, it means it's not the good one
+    // so we return a NULL date
+    if (m_ui->releaseDateEdit->date() == m_ui->releaseDateEdit->minimumDate())
+    {
+
+        return QDate();
+    }
+    else
+    {
+
+        return m_ui->releaseDateEdit->date();
+    }
 }
 
 void MovieDialog::setCountry(const QString country)
@@ -525,4 +546,9 @@ QList<People> MovieDialog::getFocusedListPeople()
     }
 
     return l_people;
+}
+
+void MovieDialog::on_resetReleaseDateBtn_clicked()
+{
+    m_ui->releaseDateEdit->setDate(QDate::fromString("01/01/0001", "dd/MM/yyyy"));
 }

@@ -71,52 +71,73 @@ PeopleDialog::~PeopleDialog()
     m_app->debug("[PeopleDialog] Destructed");
 }
 
-void PeopleDialog::setFirstname(QString firstname)
+void PeopleDialog::setFirstname(const QString firstname)
 {
     m_ui->firstnameEdit->setText(firstname);
 }
 
-QString PeopleDialog::getFirstname()
+QString PeopleDialog::getFirstname() const
 {
     return m_ui->firstnameEdit->text();
 }
 
-void PeopleDialog::setLastname(QString lastname)
+void PeopleDialog::setLastname(const QString lastname)
 {
     m_ui->lastnameEdit->setText(lastname);
 }
 
-QString PeopleDialog::getLastname()
+QString PeopleDialog::getLastname() const
 {
     return m_ui->lastnameEdit->text();
 }
 
-void PeopleDialog::setRealname(QString realname)
+void PeopleDialog::setRealname(const QString realname)
 {
     m_ui->realnameEdit->setText(realname);
 }
 
-QString PeopleDialog::getRealname()
+QString PeopleDialog::getRealname() const
 {
     return m_ui->realnameEdit->text();
 }
 
-void PeopleDialog::setBirthday(QDate birthday)
+void PeopleDialog::setBirthday(const QDate birthday)
 {
-    m_ui->birthdayEdit->setDate(birthday);
+    m_ui->birthdayEdit->setSpecialValueText("--/--/----");
+    if (birthday.isNull() || birthday == m_ui->birthdayEdit->minimumDate())
+    {
+        // The following line is a hack for setting the specialValueText instead of defaultDate
+        m_ui->birthdayEdit->setDate(QDate::fromString("01/01/0001", "dd/MM/yyyy"));
+    }
+    else
+    {
+        m_ui->birthdayEdit->setDate(birthday);
+        m_people.setBirthday(birthday);
+    }
 }
 
-QDate PeopleDialog::getBirthday()
+QDate PeopleDialog::getBirthday() const
 {
-    return m_ui->birthdayEdit->date();
+    // if the date is the minimum date, it means it's not the good one
+    // so we return a NULL date
+    if (m_ui->birthdayEdit->date() == m_ui->birthdayEdit->minimumDate())
+    {
+
+        return QDate();
+    }
+    else
+    {
+
+        return m_ui->birthdayEdit->date();
+    }
 }
 
-void PeopleDialog::setBiography(QString biography)
+void PeopleDialog::setBiography(const QString biography)
 {
     m_ui->biographyEdit->setPlainText(biography);
 }
 
-QString PeopleDialog::getBiography()
+QString PeopleDialog::getBiography() const
 {
     return m_ui->biographyEdit->toPlainText();
 }
@@ -145,4 +166,9 @@ void PeopleDialog::on_validationButtons_accepted()
     }
 
     m_app->debug("[PeopleDialog] validationButtons method done");
+}
+
+void PeopleDialog::on_resetBirthdayBtn_clicked()
+{
+    m_ui->birthdayEdit->setDate(QDate::fromString("01/01/0001", "dd/MM/yyyy"));
 }
