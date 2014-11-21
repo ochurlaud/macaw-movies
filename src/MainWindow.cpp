@@ -89,7 +89,7 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             l_item->setSelected(true);
         }
 
-        QList<People> l_peopleList = m_app->getDatabaseManager()->getAllPeople(typePeople);
+        QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByType(typePeople);
         foreach (People l_people, l_peopleList)
         {
             QString l_name(l_people.getLastname());

@@ -334,11 +334,13 @@ People DatabaseManager::getOnePeopleById(const int id, const int type)
 }
 
 /**
- * @brief Gets all the people
+ * @brief Gets all the people of type `type`
  *
+ * @param int type
+ * @param QString fieldOrder
  * @return QList<People>
  */
-QList<People> DatabaseManager::getAllPeople(const int type,
+QList<People> DatabaseManager::getPeopleByType(const int type,
                                             const QString fieldOrder)
 {
     QList<People> l_peopleList;
@@ -352,7 +354,7 @@ QList<People> DatabaseManager::getAllPeople(const int type,
 
     if (!l_query.exec())
     {
-        qDebug() << "In getAllPeople():";
+        qDebug() << "In getPeopleByType():";
         qDebug() << l_query.lastError().text();
     }
 
@@ -361,6 +363,9 @@ QList<People> DatabaseManager::getAllPeople(const int type,
         People l_people = hydratePeople(l_query);
         l_peopleList.push_back(l_people);
     }
+
+    debug("[DatabaseManager] getPeopleByType returns "
+          + QString::number(l_peopleList.count()) + " people");
 
     return l_peopleList;
 }
@@ -396,11 +401,15 @@ QList<People> DatabaseManager::getPeopleByFullname(const QString fullname,
         l_peopleList.push_back(l_people);
     }
 
+    debug("[DatabaseManager] getPeopleByFullname returns "
+          + QString::number(l_peopleList.count()) + " people");
+
     return l_peopleList;
 }
 
 QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fieldOrder)
 {
+    debug("[DatabaseManager] Enters getOnePeopleByAny");
     QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
     QStringList l_splittedText = text.split(" ");
@@ -455,6 +464,9 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
         l_peopleList.push_back(l_people);
     }
 
+    debug("[DatabaseManager] getPeopleByAny returns "
+          + QString::number(l_peopleList.count()) + " people");
+
     return l_peopleList;
 }
 
@@ -466,6 +478,7 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
  */
 Tag DatabaseManager::getOneTagById(const int id)
 {
+    debug("[DatabaseManager] Enters getOneTagById");
     Tag l_tag;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT id, name "
@@ -495,6 +508,7 @@ Tag DatabaseManager::getOneTagById(const int id)
  */
 QList<Tag> DatabaseManager::getAllTags(const QString fieldOrder)
 {
+    debug("[DatabaseManager] Enters getAllTags");
     QList<Tag> l_tagList;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT id, name "
@@ -514,12 +528,15 @@ QList<Tag> DatabaseManager::getAllTags(const QString fieldOrder)
         l_tagList.push_back(l_tag);
     }
 
+    debug("[DatabaseManager] getAllTags returns "
+          + QString::number(l_tagList.count()) + " tags");
+
     return l_tagList;
 }
 
 QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString fieldOrder)
 {
-    debug("[DatabaseManager] getTagsByAny");
+    debug("[DatabaseManager] Enters getTagsByAny");
     QList<Tag> l_tagList;
     QSqlQuery l_query(m_db);
     QStringList l_splittedText = text.split(" ");
@@ -574,6 +591,7 @@ QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString field
 
     debug("[DatabaseManager] getTagsByAny returns "
           + QString::number(l_tagList.count()) + " tags");
+
     return l_tagList;
 }
 

@@ -69,7 +69,7 @@ public:
     // People
     People getOnePeopleById(const int id);
     People getOnePeopleById(const int id , const int type);
-    QList<People> getAllPeople(const int type, const QString fieldOrder = "lastname");
+    QList<People> getPeopleByType(const int type, const QString fieldOrder = "lastname");
     QList<People> getPeopleByFullname(const QString fullname, const QString fieldOrder = "lastname");
     QList<People> getPeopleByAny(const QString text, const int type, const QString fieldOrder = "lastname");
 
