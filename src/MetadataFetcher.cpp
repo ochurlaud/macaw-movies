@@ -23,8 +23,8 @@
 MetadataFetcher::MetadataFetcher(Movie movie, QObject *parent) :
     QObject(parent)
 {
-    m_app->debug("[MetadataFetcher] Constructor");
     m_app = qobject_cast<Application *>(qApp);
+    m_app->debug("[MetadataFetcher] Constructor");
     m_movie = movie;
     m_networkManager = new QNetworkAccessManager(this);
     m_app->debug("[MetadataFetcher] Construction done");
@@ -33,7 +33,11 @@ MetadataFetcher::MetadataFetcher(Movie movie, QObject *parent) :
 void MetadataFetcher::getRelatedMovies(QString title)
 {
     m_app->debug("[MetadataFetcher] Enter getRelatedMovie");
-    connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),this, SLOT(replyRelatedMovies(QNetworkReply*)));
+    connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(replyRelatedMovies(QNetworkReply*)));
+
+    QRegExp l_sep("(\\_|\\-|\\ |\\,|\\.|\\!|\\?)");
+    QStringList l_splittedTitle = title.split(l_sep);
 
     QNetworkRequest l_request;
     l_request.setUrl(QUrl("http://www.omdbapi.com/?s="+title+"&r=XML"));
@@ -47,7 +51,8 @@ void MetadataFetcher::getRelatedMovies(QString title)
 void MetadataFetcher::replyRelatedMovies(QNetworkReply *reply)
 {
     m_app->debug("[MetadataFetcher] Enter replyRelatedMovie");
-    disconnect(m_networkManager, SIGNAL(finished(QNetworkReply*)),this, SLOT(replyRelatedMovies(QNetworkReply*)));
+    disconnect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
+               this, SLOT(replyRelatedMovies(QNetworkReply*)));
     QByteArray l_receivedData = reply->readAll();
 
     QDomDocument l_stream;
@@ -107,7 +112,8 @@ void MetadataFetcher::replyRelatedMovies(QNetworkReply *reply)
             l_item->setData(Qt::UserRole, l_imdbIDs.at(i));
             l_listWidget->addItem(l_item);
         }
-        connect(l_listWidget,SIGNAL(doubleClicked(QModelIndex)), this, SLOT(on_doubleClickedMovie(QModelIndex)));
+        connect(l_listWidget,SIGNAL(doubleClicked(QModelIndex)),
+                this, SLOT(on_doubleClickedMovie(QModelIndex)));
         l_selectWindow->show();
 
     }
@@ -117,7 +123,8 @@ void MetadataFetcher::replyRelatedMovies(QNetworkReply *reply)
 void MetadataFetcher::getMetadata(QString imdbID)
 {
     m_app->debug("[MetadataFetcher] Enter getMetadata, " + imdbID);
-    connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),this, SLOT(replyHydrateMovie(QNetworkReply*)));
+    connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(replyHydrateMovie(QNetworkReply*)));
     QNetworkRequest l_request;
     l_request.setUrl(QUrl("http://www.omdbapi.com/?i="+imdbID+"&plot=full&r=XML&tomatoes=true"));
 
@@ -221,10 +228,13 @@ void MetadataFetcher::fetchMetadata(QString title)
 {
     m_app->debug("[MetadataFetcher] Enter fetchMetadata, " + title);
     this->getRelatedMovies(title);
-    connect(this, SIGNAL(movieHydrated(Movie&)), this, SLOT(updateMovieInDatabase(Movie&)));
+    connect(this, SIGNAL(movieHydrated(Movie&)),
+            this, SLOT(updateMovieInDatabase(Movie&)));
     QEventLoop l_loop;
-    connect(this, SIGNAL(movieHydrated(Movie&)), &l_loop, SLOT(quit()));
-    connect(this, SIGNAL(noMovieFound()), &l_loop, SLOT(quit()));
+    connect(this, SIGNAL(movieHydrated(Movie&)),
+            &l_loop, SLOT(quit()));
+    connect(this, SIGNAL(noMovieFound()),
+            &l_loop, SLOT(quit()));
 
     l_loop.exec();
     m_app->debug("[MetadataFetcher] Exit fetchMetadata");
@@ -238,6 +248,7 @@ bool MetadataFetcher::updateMovieInDatabase(Movie &movie)
 
 void MetadataFetcher::on_doubleClickedMovie(QModelIndex index)
 {
+    m_app->debug("[MetadataFetcher] Movie double-clicked");
     QString l_imdbID = index.data(Qt::UserRole).toString();
     this->getMetadata(l_imdbID);
 }

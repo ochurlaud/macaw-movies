@@ -35,7 +35,7 @@ int main(int argv, char **args)
     MoviesDebug *movieDebug = new MoviesDebug(true);
     Application l_app(movieDebug, argv, args);
     MainWindow  l_mainWindow;
-    l_mainWindow.show();;
+    l_mainWindow.show();
 
     return l_app.exec();
 }

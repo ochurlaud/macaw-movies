@@ -480,14 +480,9 @@ void MainWindow::addNewMovies()
 
                 MetadataFetcher l_metadataFetcher(l_movie);
 
-                // Needed to wait that MetadataFetcher is constructed
-                // A waiting function would be welcomed
-                qDebug() << l_movie.getTitle();
-                qDebug() << l_movie.getId();
+                // Currently a wainting loop is created in MetadataFetcher,
+                // multithreading would be better
                 l_metadataFetcher.fetchMetadata(l_movie.getTitle());
-
-                // The l_metadataFetcher object is directly destructed here...
-                // 2 options: multithread or make fetchMetadata() last longer.
             }
             else
             {
