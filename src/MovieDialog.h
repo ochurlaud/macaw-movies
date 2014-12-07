@@ -33,66 +33,53 @@ class MovieDialog;
 
 class MovieDialog : public QDialog
 {
-    Q_OBJECT
+Q_OBJECT
 
-    public:
-        explicit MovieDialog(int, QWidget *parent = 0);
-        ~MovieDialog();
-        void setTitle(QString);
-        QString getTitle();
-        void setOriginalTitle(QString);
-        QString getOriginalTitle();
-        void setReleaseDate(QDate);
-        QDate getReleaseDate();
-        void setCountry(QString);
-        QString getCountry();
-        void setSynopsis(QString);
-        QString getSynopsis();
-        void setPeople(QVector<People>, int);
-        QVector<People> getPeople(int);
-        void addPeople(People&, int);
-        void delPeople(People&, int);
-        bool updatePeople(People&);
-        void setDirectors(QVector<People>);
-        QVector<People> getDirectors();
-        void addDirector(People&);
-        void delDirector(People&);
-        void setProducers(QVector<People>);
-        QVector<People> getProducers();
-        void addProducer(People&);
-        void delProducer(People&);
-        void setActors(QVector<People>);
-        QVector<People> getActors();
-        void addActor(People&);
-        void delActor(People&);
-        void on_peopleEdit_textEdited(int);
-        void addPeopleButton_clicked(int);
-        void delPeopleButton_clicked(int);
-        QListWidget* getFocusedListWidget();
-        QVector<People> getFocusedListPeople();
+public:
+    explicit MovieDialog(int, QWidget *parent = 0);
+    ~MovieDialog();
+    void setTitle(const QString title);
+    QString getTitle() const;
+    void setOriginalTitle(const QString originalTitle);
+    QString getOriginalTitle() const;
+    void setReleaseDate(const QDate releaseDate);
+    QDate getReleaseDate() const;
+    void setCountry(const QString country);
+    QString getCountry() const;
+    void setSynopsis(const QString synopsis);
+    QString getSynopsis() const;
+    void setPeopleList(const QList<People> &peopleList);
+    QList<People> getPeopleList(int type);
+    void addPeople(const People &people);
+    void delPeople(const People &people);
+    void updatePeople(const People &people);
+    void on_peopleEdit_textEdited(int);
+    void addPeopleButton_clicked(int);
+    void delPeopleButton_clicked(int);
+    QListWidget* getFocusedListWidget();
+    QList<People> getFocusedListPeople();
 
+private slots:
+    void on_validationButtons_accepted();
+    void on_addDirectorButton_clicked();
+    void on_addProducerButton_clicked();
+    void on_addActorButton_clicked();
+    void on_delDirectorButton_clicked();
+    void on_delProducerButton_clicked();
+    void on_delActorButton_clicked();
+    void on_directorEdit_textEdited();
+    void on_producerEdit_textEdited();
+    void on_actorEdit_textEdited();
+    void on_addNewTagButton_clicked();
+    void peopleDialog_peopleCreated(People);
+    void customMenuRequested(QPoint);
+    void showPeopleDialog();
+    void on_resetReleaseDateBtn_clicked();
 
-
-    private slots:
-        void on_validationButtons_accepted();
-        void on_addDirectorButton_clicked();
-        void on_addProducerButton_clicked();
-        void on_addActorButton_clicked();
-        void on_delDirectorButton_clicked();
-        void on_delProducerButton_clicked();
-        void on_delActorButton_clicked();
-        void on_directorEdit_textEdited();
-        void on_producerEdit_textEdited();
-        void on_actorEdit_textEdited();
-        void on_addNewTagButton_clicked();
-        void peopleDialog_peopleCreated(People, int);
-        void customMenuRequested(QPoint);
-        void showPeopleDialog();
-
-    private:
-        Ui::MovieDialog *m_ui;
-        Movie m_movie;
-        Application *m_app;
+private:
+    Ui::MovieDialog *m_ui;
+    Movie m_movie;
+    Application *m_app;
 };
 
 #endif // MOVIEDIALOG_H

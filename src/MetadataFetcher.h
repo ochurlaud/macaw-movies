@@ -28,28 +28,28 @@
 
 class MetadataFetcher : public QObject
 {
-    Q_OBJECT
+Q_OBJECT
 
-    public:
-        explicit MetadataFetcher(Movie movie, QObject *parent = 0);
-        void fetchMetadata(QString title);
+public:
+    explicit MetadataFetcher(Movie movie, QObject *parent = 0);
+    void fetchMetadata(QString title);
 
-    signals:
-        void movieHydrated(Movie&);
-        void noMovieFound();
+signals:
+    void movieHydrated(Movie&);
+    void noMovieFound();
 
-    public slots:
-        void replyRelatedMovies(QNetworkReply *reply);
-        void replyHydrateMovie(QNetworkReply *reply);
-        bool updateMovieInDatabase(Movie &movie);
-        void on_doubleClickedMovie(QModelIndex);
+public slots:
+    void replyRelatedMovies(QNetworkReply *reply);
+    void replyHydrateMovie(QNetworkReply *reply);
+    bool updateMovieInDatabase(Movie &movie);
+    void on_doubleClickedMovie(QModelIndex);
 
-    private:
-        QNetworkAccessManager *m_networkManager;
-        Application *m_app;
-        Movie m_movie;
-        void getRelatedMovies(QString title);
-        void getMetadata(QString imdbID);
+private:
+    QNetworkAccessManager *m_networkManager;
+    Application *m_app;
+    Movie m_movie;
+    void getRelatedMovies(QString title);
+    void getMetadata(QString imdbID);
 };
 
 #endif // METADATAFETCHER_H

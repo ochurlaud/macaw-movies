@@ -17,41 +17,37 @@
  * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PEOPLE_H
-#define PEOPLE_H
+#ifndef PLAYLIST_H
+#define PLAYLIST_H
 
-#include <QtWidgets>
+#include <QWidget>
 
-class People
+#include "Movie.h"
+
+class Playlist
 {
 public:
-    People();
+    Playlist();
     int getId() const;
-    void setId(int);
-    QString getLastname() const;
-    void setLastname(const QString lastname);
-    QString getFirstname() const;
-    void setFirstname(const QString firstname);
-    QString getRealname() const;
-    void setRealname(const QString realname);
-    QDate getBirthday() const;
-    void setBirthday(const QDate birthday);
-    QString getBiography() const;
-    void setBiography(const QString biography);
-    int getType() const;
-    void setType(const int type);
-
-    bool operator== (const People&);
-    bool operator!= (const People&);
+    void setId(const int id);
+    QString getName() const;
+    void setName(const QString name);
+    int getRate() const;
+    void setRate(const int rate);
+    QDateTime getCreationDate() const;
+    void setCreationDate(const QDateTime creationDate);
+    QList<Movie> getMovieList() const;
+    void setMovieList(const QList<Movie> &movieList);
+    void addMovie(const Movie &movie);
+    void removeMovie(const Movie &movie);
+    void updateMovie(const Movie &movie);
 
 private:
     int m_id;
-    QString m_lastname;
-    QString m_firstname;
-    QString m_realname;
-    QDate m_birthday;
-    QString m_biography;
-    int m_type;
+    QString m_name;
+    int m_rate;
+    QDateTime m_creationDate;
+    QList<Movie> m_movieList;
 };
 
-#endif // PEOPLE_H
+#endif // PLAYLIST_H

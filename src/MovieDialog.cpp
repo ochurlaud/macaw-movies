@@ -22,9 +22,6 @@
 #include "Entities/Movie.h"
 
 /* @TODO:
- *   - While typing in a peopleEdit, propose existing names. If none: pop-up "Do you want to create ?"
- *   - Add actions to + and - buttons
- *   - Right-click on a ListWidgetItem allow to edit it the people
  *   - Handle tags
  */
 
@@ -49,9 +46,7 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     setReleaseDate(m_movie.getReleaseDate());
     setCountry(m_movie.getCountry());
     setSynopsis(m_movie.getSynopsis());
-    setDirectors(m_movie.getDirectors());
-    setActors(m_movie.getActors());
-    setProducers(m_movie.getProducers());
+    setPeopleList(m_movie.getPeopleList());
 
     m_ui->directorsWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(m_ui->directorsWidget, SIGNAL(customContextMenuRequested(QPoint)),
@@ -70,91 +65,112 @@ MovieDialog::~MovieDialog()
     delete m_ui;
 }
 
-void MovieDialog::setTitle(QString title)
+void MovieDialog::setTitle(const QString title)
 {
     m_ui->titleEdit->setText(title);
     m_movie.setTitle(title);
 }
 
-QString MovieDialog::getTitle()
+QString MovieDialog::getTitle() const
 {
     return m_ui->titleEdit->text();
 }
 
-void MovieDialog::setOriginalTitle(QString originalTitle)
+void MovieDialog::setOriginalTitle(const QString originalTitle)
 {
     m_ui->originalTitleEdit->setText(originalTitle);
     m_movie.setOriginalTitle(originalTitle);
 }
 
-QString MovieDialog::getOriginalTitle()
+QString MovieDialog::getOriginalTitle() const
 {
     return m_ui->originalTitleEdit->text();
 }
 
-void MovieDialog::setReleaseDate(QDate releaseDate)
+void MovieDialog::setReleaseDate(const QDate releaseDate)
 {
-    m_ui->releaseDateEdit->setDate(releaseDate);
-    m_movie.setReleaseDate(releaseDate);
+    m_ui->releaseDateEdit->setSpecialValueText("--/--/----");
+
+    if (releaseDate.isNull() || releaseDate == m_ui->releaseDateEdit->minimumDate())
+    {
+        // The following line is a hack for setting the specialValueText instead of defaultDate
+        m_ui->releaseDateEdit->setDate(QDate::fromString("01/01/0001", "dd/MM/yyyy"));
+    }
+    else
+    {
+        m_ui->releaseDateEdit->setDate(releaseDate);
+        m_movie.setReleaseDate(releaseDate);
+    }
 }
 
-QDate MovieDialog::getReleaseDate()
+QDate MovieDialog::getReleaseDate() const
 {
-    return m_ui->releaseDateEdit->date();
+    // if the date is the minimum date, it means it's not the good one
+    // so we return a NULL date
+    if (m_ui->releaseDateEdit->date() == m_ui->releaseDateEdit->minimumDate())
+    {
+
+        return QDate();
+    }
+    else
+    {
+
+        return m_ui->releaseDateEdit->date();
+    }
 }
 
-void MovieDialog::setCountry(QString country)
+void MovieDialog::setCountry(const QString country)
 {
     m_ui->countryEdit->setText(country);
     m_movie.setCountry(country);
 }
 
-QString MovieDialog::getCountry()
+QString MovieDialog::getCountry() const
 {
     return m_ui->countryEdit->text();
 }
 
-void MovieDialog::setSynopsis(QString synopsis)
+void MovieDialog::setSynopsis(const QString synopsis)
 {
     m_ui->synopsisEdit->setPlainText(synopsis);
     m_movie.setSynopsis(synopsis);
 }
 
-QString MovieDialog::getSynopsis()
+QString MovieDialog::getSynopsis() const
 {
     return m_ui->synopsisEdit->toPlainText();
 }
 
-void MovieDialog::setPeople(QVector<People> peopleVector, int type)
+void MovieDialog::setPeopleList(const QList<People> &peopleList)
 {
+    m_ui->directorsWidget->clear();
+    m_ui->actorsWidget->clear();
+    m_ui->producersWidget->clear();
+
     QListWidget *l_peopleWidget;
-    int l_type;
-    switch (type)
+    foreach(People l_people, peopleList)
     {
-    case Director:
-        l_peopleWidget = m_ui->directorsWidget;
-        l_type = Director;
-        break;
-    case Producer:
-        l_peopleWidget = m_ui->producersWidget;
-        l_type = Producer;
-        break;
-    case Actor:
-        l_peopleWidget = m_ui->actorsWidget;
-        l_type = Actor;
-        break;
-    }
-    l_peopleWidget->clear();
-    foreach(People l_people, peopleVector)
-    {
+        switch (l_people.getType())
+        {
+        case Director:
+            l_peopleWidget = m_ui->directorsWidget;
+            break;
+        case Producer:
+            l_peopleWidget = m_ui->producersWidget;
+            break;
+        case Actor:
+            l_peopleWidget = m_ui->actorsWidget;
+            break;
+        }
+
         QListWidgetItem *l_item = new QListWidgetItem(l_people.getFirstname() + " " + l_people.getLastname());
         l_item->setData(Qt::UserRole, l_people.getId());
-        l_item->setData(Qt::UserRole+1, l_type);
+        l_item->setData(Qt::UserRole+1, l_people.getType());
         l_peopleWidget->addItem(l_item);
     }
 }
 
-QVector<People> MovieDialog::getPeople(int type)
+QList<People> MovieDialog::getPeopleList(int type)
 {
     QListWidget *l_peopleWidget;
     switch (type)
@@ -169,145 +185,53 @@ QVector<People> MovieDialog::getPeople(int type)
         l_peopleWidget = m_ui->actorsWidget;
         break;
     }
-    QVector<People> l_peopleVector;
+    QList<People> l_peopleList;
     for (int i = 0 ; i < l_peopleWidget->count() ; i++)
     {
         int l_id = l_peopleWidget->item(i)->data(Qt::UserRole).toInt();
         People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_id, type);
-        l_peopleVector.push_back(l_people);
+        l_peopleList.push_back(l_people);
     }
 
-    return l_peopleVector;
+    return l_peopleList;
 }
 
-void MovieDialog::addPeople(People &people, int type)
+void MovieDialog::addPeople(const People &people)
 {
-    m_app->debug("[MovieDialog] addPeople()");
+    m_app->debug("[MovieDialog] Enters addPeople()");
     QListWidget *l_peopleWidget;
-    int l_type;
-    switch (type)
+
+    switch (people.getType())
     {
     case Director:
         l_peopleWidget = m_ui->directorsWidget;
-        l_type = Director;
         break;
     case Producer:
         l_peopleWidget = m_ui->producersWidget;
-        l_type = Producer;
         break;
     case Actor:
         l_peopleWidget = m_ui->actorsWidget;
-        l_type = Actor;
         break;
     }
     QListWidgetItem *l_item = new QListWidgetItem(people.getFirstname() + " " + people.getLastname());
     l_item->setData(Qt::UserRole, people.getId());
-    l_item->setData(Qt::UserRole+1, l_type);
+    l_item->setData(Qt::UserRole+1, people.getType());
     l_peopleWidget->addItem(l_item);
 
-    // If we could do an alias of the function above, it would be prettier I think
-    switch (type)
-    {
-    case Director:
-        m_movie.addDirector(people);
-        break;
-    case Producer:
-        m_movie.addProducer(people);
-        break;
-    case Actor:
-        m_movie.addActor(people);
-        break;
-    }
+    m_movie.addPeople(people);
+    m_app->debug("[MovieDialog] Exists addPeople()");
 }
 
-void MovieDialog::delPeople(People &people, int type)
+void MovieDialog::delPeople(const People &people)
 {
-    switch (type)
-    {
-    case Director:
-        m_movie.removeDirector(people);
-        break;
-    case Producer:
-        m_movie.removeProducer(people);
-        break;
-    case Actor:
-        m_movie.removeActor(people);
-        break;
-    }
+    m_movie.removePeople(people);
 }
 
-bool MovieDialog::updatePeople(People &people)
+void MovieDialog::updatePeople(const People &people)
 {
     m_app->debug("[MovieDialog] updatePeople()");
-    bool l_result;
-    l_result = m_movie.updateDirector(people);
-    l_result = l_result || m_movie.updateProducer(people);
-    l_result = l_result || m_movie.updateActor(people);
-    setDirectors(m_movie.getDirectors());
-    setProducers(m_movie.getProducers());
-    setActors(m_movie.getActors());
-
-    return l_result;
-}
-
-void MovieDialog::setDirectors(QVector<People> directorsVector)
-{
-    setPeople(directorsVector, Director);
-}
-
-QVector<People> MovieDialog::getDirectors()
-{
-    return getPeople(Director);
-}
-
-void MovieDialog::addDirector(People &director)
-{
-    addPeople(director, Director);
-}
-
-void MovieDialog::delDirector(People &director)
-{
-    delPeople(director, Director);
-}
-
-void MovieDialog::setProducers(QVector<People> producersVector)
-{
-    setPeople(producersVector, Producer);
-}
-
-QVector<People> MovieDialog::getProducers()
-{
-    return getPeople(Producer);
-}
-
-void MovieDialog::addProducer(People &producer)
-{
-    addPeople(producer, Producer);
-}
-
-void MovieDialog::delProducer(People &producer)
-{
-    delPeople(producer, Producer);
-}
-
-void MovieDialog::setActors(QVector<People> actorsVector)
-{
-    setPeople(actorsVector, Actor);
-}
-
-QVector<People> MovieDialog::getActors()
-{
-    return getPeople(Actor);
-}
-
-void MovieDialog::addActor(People &actor)
-{
-    addPeople(actor, Actor);
-}
-
-void MovieDialog::delActor(People &actor)
-{
-    delPeople(actor, Actor);
+    m_movie.updatePeople(people);
+    setPeopleList(m_movie.getPeopleList());
 }
 
 void MovieDialog::on_validationButtons_accepted()
@@ -382,9 +306,10 @@ void MovieDialog::addPeopleButton_clicked(int type)
     {
         if(l_peopleWidget->findItems(l_text, Qt::MatchExactly).size() == 0)
         {
-            QVector<People> l_peopleVector = m_app->getDatabaseManager()->getPeopleByFullname(l_text);
-            People l_people = l_peopleVector.at(0);
-            addPeople(l_people, type);
+            QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByFullname(l_text);
+            People l_people = l_peopleList.at(0);
+            l_people.setType(type);
+            addPeople(l_people);
             m_app->debug("[MovieDialog] " + l_text + " added");
         }
         else
@@ -394,35 +319,42 @@ void MovieDialog::addPeopleButton_clicked(int type)
     }
     else
     {
-        PeopleDialog *l_peopleDialog = new PeopleDialog(None, type);
         // We suppose here that a name is composed by N >= 0 firstnames
         // and 1 lastname, separated by spaces
         QStringList l_textExplosed = l_text.split(" ");
         QString l_lastname = l_textExplosed.last();
         l_textExplosed.removeLast();
         QString l_firstname = l_textExplosed.join(" ");
-        l_peopleDialog->setFirstname(l_firstname);
-        l_peopleDialog->setLastname(l_lastname);
+
+        People l_people;
+        l_people.setFirstname(l_firstname);
+        l_people.setLastname(l_lastname);
+        l_people.setType(type);
+        PeopleDialog *l_peopleDialog = new PeopleDialog(l_people);
         l_peopleDialog->show();
-        QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People, int)),
-                         this, SLOT(peopleDialog_peopleCreated(People, int)));
+        QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People)),
+                         this, SLOT(peopleDialog_peopleCreated(People)));
     }
+    l_peopleEdit->clear();
 }
 
 void MovieDialog::on_delDirectorButton_clicked()
 {
     m_app->debug("[MovieDialog] delDirectorButton clicked()");
-    delPeopleButton_clicked(Director);
-}
+    m_app->debug("[MovieDialog] delDirectorButton clicked()");
+    delPeopleButton_clicked(Director);}
 
 void MovieDialog::on_delProducerButton_clicked()
 {
     m_app->debug("[MovieDialog] delProducerButton clicked()");
+    delPeopleButton_clicked(Producer);
+
 }
 
 void MovieDialog::on_delActorButton_clicked()
 {
     m_app->debug("[MovieDialog] delActorButton clicked()");
+    delPeopleButton_clicked(Actor);
 }
 
 void MovieDialog::delPeopleButton_clicked(int type)
@@ -448,7 +380,8 @@ void MovieDialog::delPeopleButton_clicked(int type)
     {
         int l_peopleId = l_itemToDelete->data(Qt::UserRole).toInt();
         People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_peopleId, type);
-        delPeople(l_people, type);
+        l_people.setType(type);
+        delPeople(l_people);
         delete(l_itemToDelete);
     }
     m_app->debug("[MovieDialog] Exits delPeopleButton_clicked()");
@@ -493,12 +426,12 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
     QString l_text =  l_peopleEdit->text();
     if (l_text.size() > 3)
     {
-        QVector<People> l_peopleVector = m_app->getDatabaseManager()->getPeopleByFullname(l_text);
-        if(l_peopleVector.size() > 0)
+        QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByFullname(l_text);
+        if(l_peopleList.size() > 0)
         {
             People l_people;
             QStringList l_propositions;
-            foreach (l_people, l_peopleVector)
+            foreach (l_people, l_peopleList)
             {
                 l_propositions << l_people.getFirstname() + " " + l_people.getLastname();
             }
@@ -526,12 +459,16 @@ void MovieDialog::on_addNewTagButton_clicked()
 
 }
 
-void MovieDialog::peopleDialog_peopleCreated(People people, int type)
+void MovieDialog::peopleDialog_peopleCreated(People people)
 {
     m_app->debug("[MovieDialog] peopleDialog_peopleCreated()");
-    if(!updatePeople(people))
+    if (people.getId() != 0)
     {
-        addPeople(people, type);
+        updatePeople(people);
+    }
+    else
+    {
+        addPeople(people);
     }
 }
 
@@ -564,13 +501,20 @@ void MovieDialog::showPeopleDialog()
 {
     m_app->debug("[MovieDialog] Enters showPeopleDialog()");
     QListWidget *l_widget = getFocusedListWidget();
-    int l_itemRow = l_widget->row(l_widget->selectedItems().at(0));
-    int l_type = l_widget->selectedItems().at(0)->data(Qt::UserRole + 1).toInt();
+    QListWidgetItem *l_selectedItem = l_widget->selectedItems().at(0);
+    int l_itemRow = l_widget->row(l_selectedItem);
     People l_selectedPeople = this->getFocusedListPeople().at(l_itemRow);
-    PeopleDialog *l_peopleDialog = new PeopleDialog(l_selectedPeople, l_type);
+    PeopleDialog *l_peopleDialog = new PeopleDialog(l_selectedPeople);
+
+    // Because we cannot update a people without id, we recreate it.
+    if(l_selectedPeople.getId() == 0)
+    {
+        delPeople(l_selectedPeople);
+        delete(l_selectedItem);
+    }
     l_peopleDialog->show();
-    QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People, int)),
-                     this, SLOT(peopleDialog_peopleCreated(People, int)));
+    QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People)),
+                     this, SLOT(peopleDialog_peopleCreated(People)));
     m_app->debug("[MovieDialog] Exits showPeopleDialog()");
 }
 
@@ -603,21 +547,26 @@ QListWidget* MovieDialog::getFocusedListWidget()
  *
  * @return QList<People>
  */
-QVector<People> MovieDialog::getFocusedListPeople()
+QList<People> MovieDialog::getFocusedListPeople()
 {
-    QVector<People> l_people;
+    QList<People> l_people;
     if (m_ui->directorsWidget->hasFocus())
     {
-        l_people = m_movie.getDirectors();
+        l_people = m_movie.getPeopleList(Director);
     }
     else if (m_ui->producersWidget->hasFocus())
     {
-        l_people = m_movie.getProducers();
+        l_people = m_movie.getPeopleList(Producer);
     }
     else if (m_ui->actorsWidget->hasFocus())
     {
-        l_people = m_movie.getActors();
+        l_people = m_movie.getPeopleList(Actor);
     }
 
     return l_people;
+}
+
+void MovieDialog::on_resetReleaseDateBtn_clicked()
+{
+    m_ui->releaseDateEdit->setDate(QDate::fromString("01/01/0001", "dd/MM/yyyy"));
 }

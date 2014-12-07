@@ -15,7 +15,7 @@
   </property>
   <widget class="QWidget" name="globalWidget">
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="4">
+    <item row="0" column="2">
      <layout class="QVBoxLayout" name="globalLayout">
       <item>
        <layout class="QHBoxLayout" name="topLayout">
@@ -160,10 +160,16 @@
           <item>
            <widget class="QListWidget" name="leftPannel">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="contextMenuPolicy">
              <enum>Qt::CustomContextMenu</enum>
@@ -223,6 +229,9 @@
         </item>
         <item>
          <layout class="QGridLayout" name="metadataPannel">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
           <item row="0" column="2">
            <widget class="QLabel" name="metadataTop">
             <property name="text">
@@ -232,6 +241,18 @@
           </item>
           <item row="2" column="0" colspan="4">
            <widget class="QLabel" name="metadataPlot">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>Plot</string>
             </property>

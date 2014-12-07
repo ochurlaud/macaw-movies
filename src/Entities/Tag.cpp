@@ -51,7 +51,7 @@ void Tag::setName(QString name)
     m_name = name;
 }
 
-bool Tag::operator== (const Tag& other)
+bool Tag::operator== (const Tag &other)
 {
     if ( this->getId() == other.getId() &&
          this->getName() == other.getName() )
@@ -60,4 +60,9 @@ bool Tag::operator== (const Tag& other)
     }
 
     return false;
+}
+
+bool Tag::operator!= (const Tag &other)
+{
+    return !this->operator==(other);
 }

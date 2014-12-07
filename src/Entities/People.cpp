@@ -33,7 +33,7 @@ int People::getId() const
     return m_id;
 }
 
-void People::setId(int id)
+void People::setId(const int id)
 {
     m_id = id;
 }
@@ -43,7 +43,7 @@ QString People::getLastname() const
     return m_lastname;
 }
 
-void People::setLastname(QString lastname)
+void People::setLastname(const QString lastname)
 {
     m_lastname = lastname;
 }
@@ -53,7 +53,7 @@ QString People::getFirstname() const
     return m_firstname;
 }
 
-void People::setFirstname(QString firstname)
+void People::setFirstname(const QString firstname)
 {
     m_firstname = firstname;
 }
@@ -63,7 +63,7 @@ QString People::getRealname() const
     return m_realname;
 }
 
-void People::setRealname(QString realname)
+void People::setRealname(const QString realname)
 {
     m_realname = realname;
 }
@@ -73,7 +73,7 @@ QDate People::getBirthday() const
     return m_birthday;
 }
 
-void People::setBirthday(QDate birthday)
+void People::setBirthday(const QDate birthday)
 {
     m_birthday = birthday;
 }
@@ -83,19 +83,30 @@ QString People::getBiography() const
     return m_biography;
 }
 
-void People::setBiography(QString biography)
+void People::setBiography(const QString biography)
 {
     m_biography = biography;
 }
 
-bool People::operator== (const People& other)
+int People::getType() const
+{
+    return m_type;
+}
+
+void People::setType(const int type)
+{
+    m_type = type;
+}
+
+bool People::operator== (const People &other)
 {
     if ( this->getId() == other.getId() &&
          this->getFirstname() == other.getFirstname() &&
          this->getLastname() == other.getLastname() &&
          this->getRealname() == other.getRealname() &&
          this->getBirthday() == other.getBirthday() &&
-         this->getBiography() == other.getBiography() )
+         this->getBiography() == other.getBiography() &&
+         this->getType() == other.getType() )
     {
         return true;
     }
@@ -103,7 +114,7 @@ bool People::operator== (const People& other)
     return false;
 }
 
-bool People::operator!= (const People& other)
+bool People::operator!= (const People &other)
 {
     return !this->operator==(other);
 }

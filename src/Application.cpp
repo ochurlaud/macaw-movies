@@ -23,15 +23,16 @@
  * @brief Constructor
  *
  */
-Application::Application(int &argc, char **argv) : QApplication(argc, argv)
+Application::Application(MoviesDebug *moviesDebug, int &argc, char **argv) :
+    QApplication(argc, argv)
 {
     m_appName = "Movie-Project";
     m_appIcon = QIcon(":/img/logov0.png");
-    m_debug.setDebug(true);
+    m_debug = moviesDebug;
 
     debug("[Application] started");
 
-    m_dbManager = new DatabaseManager();
+    m_dbManager = new DatabaseManager(moviesDebug);
     debug("[Application] Database initialized");
 
     if (!m_dbManager->getMoviesPath().isEmpty())

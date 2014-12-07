@@ -45,7 +45,12 @@ SOURCES += main.cpp \
     MainWindow.cpp \
     MetadataFetcher.cpp \
     PeopleDialog.cpp \
-    MovieDialog.cpp
+    MovieDialog.cpp \
+    Entities/Playlist.cpp \
+    DatabaseManager_getters.cpp \
+    DatabaseManager_insert.cpp \
+    DatabaseManager_update.cpp \
+    DatabaseManager_delete.cpp
 
 HEADERS  += \
     DatabaseManager.h \
@@ -58,7 +63,8 @@ HEADERS  += \
     MainWindow.h \
     MetadataFetcher.h \
     MovieDialog.h \
-    PeopleDialog.h
+    PeopleDialog.h \
+    Entities/Playlist.h
 
 FORMS    += \
     MainWindow.ui \

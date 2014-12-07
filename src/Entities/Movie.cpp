@@ -39,7 +39,7 @@ int Movie::getId() const
     return m_id;
 }
 
-void Movie::setId(int id)
+void Movie::setId(const int id)
 {
     m_id = id;
 }
@@ -49,7 +49,7 @@ QString Movie::getTitle() const
     return m_title;
 }
 
-void Movie::setTitle(QString title)
+void Movie::setTitle(const QString title)
 {
     m_title = title;
 }
@@ -59,141 +59,62 @@ QString Movie::getOriginalTitle() const
     return m_originalTitle;
 }
 
-void Movie::setOriginalTitle(QString originalTitle)
+void Movie::setOriginalTitle(const QString originalTitle)
 {
     m_originalTitle = originalTitle;
 }
 
-QVector<People> Movie::getDirectors() const
+QList<People> Movie::getPeopleList() const
 {
-    return m_directors;
+    return m_peopleList;
 }
 
-void Movie::setDirectors(QVector<People> directors)
+QList<People> Movie::getPeopleList(const int type)
 {
-    m_directors = directors;
+    QList<People> l_peopleList;
+    foreach (People l_people, m_peopleList)
+    {
+        if (l_people.getType() == type)
+        {
+            l_peopleList.push_back(l_people);
+        }
+    }
+
+    return l_peopleList;
 }
 
-void Movie::addDirector(People director)
+void Movie::setPeopleList(const QList<People> &peopleList)
 {
-    m_directors.push_back(director);
+    m_peopleList = peopleList;
 }
 
-void Movie::removeDirector(People director)
+void Movie::addPeople(const People &people)
 {
-    int l_index = m_directors.indexOf(director);
+    m_peopleList.push_back(people);
+}
+
+void Movie::removePeople(const People &people)
+{
+    int l_index = m_peopleList.indexOf(people);
     if (l_index != -1)
     {
-        m_directors.removeAt(l_index);
+        m_peopleList.removeAt(l_index);
     }
 }
 
 /**
  * @brief Movie::updateDirector
- * @param Director
- * @return bool : true if something updated, else false
+ * @param People
  */
-bool Movie::updateDirector(People director)
+void Movie::updatePeople(const People &people)
 {
-    for (int i = 0 ; i < m_directors.size() ; i++)
+    for (int i = 0 ; i < m_peopleList.size() ; i++)
     {
-        if(m_directors.at(i).getId() == director.getId())
+        if(m_peopleList.at(i).getId() == people.getId())
         {
-            m_directors.replace(i, director);
-
-            return true;
-       }
-   }
-
-   return false;
-}
-
-QVector<People> Movie::getProducers() const
-{
-    return m_producers;
-}
-
-void Movie::setProducers(QVector<People> producers)
-{
-    m_producers = producers;
-}
-
-void Movie::addProducer(People producer)
-{
-    m_producers.push_back(producer);
-}
-
-void Movie::removeProducer(People producer)
-{
-    int l_index = m_producers.indexOf(producer);
-    if (l_index != -1)
-    {
-        m_producers.removeAt(l_index);
-    }
-}
-
-/**
- * @brief Movie::updateProducer
- * @param Producer
- * @return bool : true if something updated, else false
- */
-bool Movie::updateProducer(People producer)
-{
-    for (int i = 0 ; i < m_producers.size() ; i++)
-    {
-        if(m_producers.at(i).getId() == producer.getId())
-        {
-            m_producers.replace(i, producer);
-
-            return true;
-       }
-   }
-
-   return false;
-}
-
-QVector<People> Movie::getActors() const
-{
-    return m_actors;
-}
-
-void Movie::setActors(QVector<People> actors)
-{
-    m_actors = actors;
-}
-
-void Movie::addActor(People actor)
-{
-    m_actors.push_back(actor);
-}
-
-void Movie::removeActor(People actor)
-{
-    int l_index = m_actors.indexOf(actor);
-    if (l_index != -1)
-    {
-        m_actors.removeAt(l_index);
-    }
-}
-
-/**
- * @brief Movie::updateActor
- * @param Actor
- * @return bool : true if something updated, else false
- */
-bool Movie::updateActor(People actor)
-{
-    for (int i = 0 ; i < m_actors.size() ; i++)
-    {
-        if(m_actors.at(i).getId() == actor.getId())
-        {
-             m_actors.replace(i, actor);
-
-             return true;
+            m_peopleList.replace(i, people);
         }
-    }
-
-    return false;
+   }
 }
 
 QDate Movie::getReleaseDate() const
@@ -216,12 +137,12 @@ void Movie::setCountry(QString country)
     m_country = country;
 }
 
-int Movie::getDuration() const
+QTime Movie::getDuration() const
 {
     return m_duration;
 }
 
-void Movie::setDuration(int duration)
+void Movie::setDuration(const QTime duration)
 {
     m_duration = duration;
 }
@@ -231,7 +152,7 @@ QString Movie::getSynopsis() const
     return m_synopsis;
 }
 
-void Movie::setSynopsis(QString synopsis)
+void Movie::setSynopsis(const QString synopsis)
 {
     m_synopsis = synopsis;
 }
@@ -241,7 +162,7 @@ QString Movie::getFilePath() const
     return m_filePath;
 }
 
-void Movie::setFilePath(QString filePath)
+void Movie::setFilePath(const QString filePath)
 {
     m_filePath = filePath;
 }
@@ -251,7 +172,7 @@ bool Movie::isColored() const
     return m_colored;
 }
 
-void Movie::setColored(bool colored)
+void Movie::setColored(const bool colored)
 {
     m_colored = colored;
 }
@@ -261,7 +182,7 @@ QString Movie::getFormat() const
     return m_format;
 }
 
-void Movie::setFormat(QString format)
+void Movie::setFormat(const QString format)
 {
     m_format = format;
 }
@@ -271,7 +192,7 @@ QString Movie::getSuffix() const
     return m_suffix;
 }
 
-void Movie::setSuffix(QString suffix)
+void Movie::setSuffix(const QString suffix)
 {
     m_suffix = suffix;
 }
@@ -281,32 +202,61 @@ int Movie::getRank() const
     return m_rank;
 }
 
-void Movie::setRank(int rank)
+void Movie::setRank(const int rank)
 {
     m_rank = rank;
 }
 
-void Movie::setTags(QVector<Tag> tagVector)
+QList<Tag> Movie::getTagList()  const
 {
-    m_tags = tagVector;
+    return m_tagList;
 }
 
-QVector<Tag> Movie::getTags()  const
+
+void Movie::setTagList(const QList<Tag> &tagList)
 {
-    return m_tags;
+    m_tagList = tagList;
 }
 
-void Movie::addTag(Tag tag)
+void Movie::addTag(const Tag &tag)
 {
-    m_tags.push_back(tag);
+    m_tagList.push_back(tag);
 }
 
-void Movie::removeTag(Tag tag)
+void Movie::removeTag(const Tag &tag)
 {
-    int l_index = m_tags.indexOf(tag);
+    int l_index = m_tagList.indexOf(tag);
     if (l_index != -1)
     {
-        m_tags.removeAt(l_index);
+        m_tagList.removeAt(l_index);
     }
 }
 
+
+bool Movie::operator== (const Movie &other)
+{
+    if ( this->getId() == other.getId() &&
+         this->getTitle() == other.getTitle() &&
+         this->getOriginalTitle() == other.getOriginalTitle() &&
+         this->getCountry() == other.getCountry() &&
+         this->getReleaseDate() == other.getReleaseDate() &&
+         this->getDuration() == other.getDuration() &&
+         this->getFilePath() == other.getFilePath() &&
+         this->getSynopsis() == other.getSynopsis() &&
+         this->getSuffix() == other.getSuffix() &&
+         this->getRank() == other.getRank() &&
+         this->getFormat() == other.getFormat() &&
+         this->isColored() == other.isColored() &&
+         this->getPeopleList() == other.getPeopleList() &&
+         this->getTagList() == other.getTagList() )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool Movie::operator!= (const Movie &other)
+{
+    return !this->operator==(other);
+}

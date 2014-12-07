@@ -27,92 +27,115 @@ enum typePeople {None, Director, Producer, Actor};
 #include <QtSql>
 
 #include "Entities/Movie.h"
+#include "MoviesDebug.h"
 
 class DatabaseManager : public QObject
 {
-    public:
-        DatabaseManager();
-        // Database management
-        bool openDB();
-        bool createTables();
-        bool closeDB();
-        bool deleteDB();
-        QSqlError lastError();
 
-        // Getters for paths, config
-        QStringList getMoviesPath();
-        QSqlQuery getMovies(QString, QVariant);
-        QStringList getTags();
+#define DATE_FORMAT "yyyy.MM.dd"
 
-        // Insertions for paths, config
-        bool saveMoviesPath(QString);
+public:
+    DatabaseManager(MoviesDebug *moviesDebug);
+    // Database management
+    bool openDB();
+    bool createTables();
+    bool closeDB();
+    bool deleteDB();
+    void setDebug(MoviesDebug*);
+    QSqlError lastError();
 
-        // Getters
-        QVector<Movie> getAllMovies(QString fieldOrder = "title");
-        Movie getOneMovieById(int);
-        QVector<Movie> getMoviesByPeople(int id, int type, QString fieldOrder = "title");
-        QVector<Movie> getMoviesByPeople(People const&, int type, QString fieldOrder = "title");
-        QVector<Movie> getMoviesByTag(int id, QString fieldOrder = "title");
-        QVector<Movie> getMoviesByTag(Tag const&, QString fieldOrder = "title");
-        QVector<Movie> getMoviesWithoutTag(QString fieldOrder = "title");
-        QVector<Movie> getMoviesWithoutPeople(int type, QString fieldOrder = "title");
-        QVector<Movie> getMoviesByAny(QString, QString fieldOrder = "title");
-        bool existMovie(QString);
-        bool existTag(QString);
-        bool existPeople(QString);
-        QVector<Tag> getAllTags(QString fieldOrder = "name");
-        Tag getOneTagById(int);
-        Tag getTagByName(QString tagName);
-        People getOnePeopleById(int);
-        People getOnePeopleById(int, int);
-        QVector<People> getPeopleByFullname(QString fullname, QString fieldOrder = "lastname");
-        QVector<People> getPeopleByAny(QString text, int type, QString fieldOrder = "lastname");
-        QVector<People> getAllPeople(int type, QString fieldOrder = "lastname");
-        QVector<People> getAllDirectors(QString fieldOrder = "lastname");
-        People getOneDirectorById(int);
-        QVector<People> getAllActors(QString fieldOrder = "lastname");
-        People getOneActorById(int);
-        People getOneProducerById(int);
-        void setTagsToMovie(Movie&);
-        void setPeopleToMovie(Movie&);
+    // Getters for paths, config
+    QStringList getMoviesPath();
+    QStringList getTags();
 
-        // Insertion
-        bool insertNewMovie(Movie&);
-        bool addPeople(People&);
-        bool addPeopleToMovie(People&, Movie&, int);
-        bool addDirectorToMovie(People&, Movie&);
-        bool addProducerToMovie(People&, Movie&);
-        bool addActorToMovie(People&, Movie&);
-        bool createTag(QString name);
-        bool addTagToMovie(Tag&, Movie&);
+    // Insertions for paths, config
+    bool saveMoviesPath(QString);
+    bool createTag(QString name);
 
 
-        // Update
-        bool updateMovie(Movie&);
-        bool updatePeople(People&);
-        bool updatePeopleInMovie(People&, Movie&, int);
-        bool updateTag(Tag&);
-        bool updateTagInMovie(Tag&, Movie&);
+//// Getters - in DatabaseManager_getters.cpp
+public:
+    // Movies
+    Movie getOneMovieById(const int id);
+    QList<Movie> getAllMovies(const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPeople(const int id, const int type, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPeople(const People &people, const int type, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByTag(const int id, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByTag(const Tag &tag, const QString fieldOrder = "title");
+    QList<Movie> getMoviesWithoutPeople(const int type, const QString fieldOrder = "title");
+    QList<Movie> getMoviesWithoutTag(const QString fieldOrder = "title");
+    QList<Movie> getMoviesByAny(const QString text, const QString fieldOrder = "title");
 
-        // Delete
-        bool deleteMovie(Movie&);
-        bool removePeopleFromMovie(People&, Movie&, int);
-        bool removeTagFromMovie(Tag&, Movie&);
+    // People
+    People getOnePeopleById(const int id);
+    People getOnePeopleById(const int id , const int type);
+    QList<People> getAllPeople(const int type, const QString fieldOrder = "lastname");
+    QList<People> getPeopleByFullname(const QString fullname, const QString fieldOrder = "lastname");
+    QList<People> getPeopleByAny(const QString text, const int type, const QString fieldOrder = "lastname");
 
-        // Models
-        QStringListModel *getMoviesPathModel() {return this->m_moviesPathModel;}
-        QStringListModel *getTagListModel() {return this->m_tagListModel;}
+    // Tags
+    Tag getOneTagById(const int id);
+	Tag getTagByName(QString tagName);
+    QList<Tag> getAllTags(const QString fieldOrder = "name");
+    QList<Tag> getTagsByAny(const QString text, const QString fieldOrder = "name");
 
-    private:
-        QSqlDatabase m_db;
-        QStringListModel *m_moviesPathModel;
-        QStringListModel * m_tagListModel;
-        QString m_movieFields;
-        QString m_peopleFields;
-        bool deletePeople(People&);
-        bool deleteTag(Tag&);
-        Movie hydrateMovie(QSqlQuery&);
-        People hydratePeople(QSqlQuery&);
+    // Does element exist ?
+    bool existMovie(const QString);
+    bool existTag(const QString);
+    bool existPeople(const QString);
+
+private:
+    // Other functions for getters
+    void setPeopleToMovie(Movie &movie);
+    void setTagsToMovie(Movie &movie);
+    Movie hydrateMovie(QSqlQuery &query);
+    People hydratePeople(QSqlQuery &query);
+    Tag hydrateTag(QSqlQuery &query);
+
+//// Inserts - in DatabaseManager_insert.cpp
+public:
+    bool insertNewMovie(Movie &movie);
+    bool addTagToMovie(Tag &tag, Movie &movie);
+    bool addPeopleToMovie(People &people, Movie &movie, const int type);
+
+private:
+    bool insertNewPeople(People &people);
+    bool insertNewTag(Tag &tag);
+
+
+//// Updates - in DatabaseManager_update.cpp
+public:
+    bool updateMovie(Movie &movie);
+    bool updatePeople(People &people);
+    bool updatePeopleInMovie(People &people, Movie &movie, const int type);
+    bool updateTag(Tag &tag);
+    bool updateTagInMovie(Tag &tag, Movie &movie);
+
+//// Delete - in DatabaseManager_delete.cpp
+public:
+    bool deleteMovie(Movie &movie);
+    bool removePeopleFromMovie(People &people, Movie &movie, const int type);
+    bool removeTagFromMovie(Tag &tag, Movie &movie);
+
+private:
+    bool deletePeople(const People &people);
+    bool deleteTag(const Tag &tag);
+
+//// Models
+public:
+    QStringListModel *getMoviesPathModel() {return this->m_moviesPathModel;}
+    QStringListModel *getTagListModel() {return this->m_tagListModel;}
+
+private:
+    void debug(QString text) { m_debug->print(text);}
+    QSqlDatabase m_db;
+    MoviesDebug *m_debug;
+    QStringListModel *m_moviesPathModel;
+    QStringListModel *m_tagListModel;
+    QString m_movieFields;
+    QString m_peopleFields;
+    QString m_tagFields;
+
 };
 
 #endif // DATABASEMANAGER_H

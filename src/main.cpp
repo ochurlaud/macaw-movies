@@ -22,18 +22,18 @@
 
 #define SOFT_VERSION 1  // software version
 #define DB_VERSION 1    //database version, must be updated if the database model have changed
-#define DATE_FORMAT "yyyy.MM.dd"
 
 #include <QApplication>
 #include <QDir>
-#include "MainWindow.h"
-#include "DatabaseManager.h"
+
 #include "Application.h"
-#include "MetadataFetcher.h"
+#include "MainWindow.h"
+#include "MoviesDebug.h"
 
 int main(int argv, char **args)
 {
-    Application l_app(argv, args);
+    MoviesDebug *movieDebug = new MoviesDebug(true);
+    Application l_app(movieDebug, argv, args);
     MainWindow  l_mainWindow;
     l_mainWindow.show();;
 
