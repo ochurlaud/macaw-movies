@@ -27,7 +27,7 @@
 class Playlist
 {
 public:
-    Playlist();
+    Playlist(QString name="");
     int getId() const;
     void setId(const int id);
     QString getName() const;

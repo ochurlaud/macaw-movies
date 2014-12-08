@@ -81,7 +81,7 @@ bool DatabaseManager::openDB()
  */
 bool DatabaseManager::closeDB()
 {
-    // Close database
+    debug("[DatabaseManager] Close database");
     m_db.close();
 
     return true;
@@ -94,19 +94,18 @@ bool DatabaseManager::closeDB()
  */
 bool DatabaseManager::deleteDB()
 {
-    // Close database
+    debug("[DatabaseManager] deleteDB");
     closeDB();
 
-    #ifdef Q_OS_LINUX
-    // NOTE: We have to store database file into user home folder in Linux
+#ifdef Q_OS_LINUX
     QString path(QDir::home().path());
     path.append(QDir::separator()).append("movie-project.sqlite");
     path = QDir::toNativeSeparators(path);
     return QFile::remove(path);
-    #else
+#else
     // Remove created database binary file
     return QFile::remove("movie-project.sqlite");
-    #endif
+#endif
 }
 
 /**
@@ -116,7 +115,7 @@ bool DatabaseManager::deleteDB()
  */
 bool DatabaseManager::createTables()
 {
-    // Create table "movies"
+    debug("[DatabaseManager] createTables");
     bool l_ret = false;
 
     if (m_db.isOpen())
@@ -125,6 +124,7 @@ bool DatabaseManager::createTables()
 
         if(m_db.tables().contains("config"))
         {
+            debug("[DatabaseManager.createTable] config table exists");
             l_query.exec("SELECT db_version FROM config");
             l_query.next();
             if(l_query.value(0) != DB_VERSION) //TODO : make en intelligent upgrade of the database
@@ -140,6 +140,8 @@ bool DatabaseManager::createTables()
         }
         else    //if config table do not exists then the db is empty...
         {
+            debug("[DatabaseManager.createTable] configTable does not exist");
+
             // Movies
             l_ret = l_query.exec("CREATE TABLE IF NOT EXISTS movies("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
@@ -194,8 +196,12 @@ bool DatabaseManager::createTables()
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                       "name VARCHAR(255) UNIQUE NOT NULL, "
                       "rate INTEGER, "
-                      "creation_date VARCHAR(255)"
+                      "creation_date INT"
                       ")");
+
+            // Default Playlist: To Watch
+            l_ret = l_ret && l_query.exec ("INSERT INTO playlists "
+                                           "VALUES(1, 'To Watch', 0, 0)");
 
             // Links between playlist and movies
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies_playlists("
@@ -217,10 +223,7 @@ bool DatabaseManager::createTables()
 
             // Set the database version
             l_ret = l_ret && l_query.exec("INSERT INTO config (`db_version`) VALUES ('" + QString::number(DB_VERSION) + "')");
-
-            //l_ret = l_ret && l_query.exec("INSERT INTO paths_list (movies_path) VALUES ('path')");
         }
-
     }
 
     return l_ret;
@@ -271,11 +274,8 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
         return false;
     }
 
-    //Gets the dataBase
     QSqlQuery l_query(m_db);
-
     l_query.prepare("SELECT movies_path FROM paths_list");
-
     if(!l_query.exec())
     {
         qDebug() << "In saveMoviesPath(), getting existing path:";

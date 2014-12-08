@@ -27,6 +27,7 @@ enum typePeople {None, Director, Producer, Actor};
 #include <QtSql>
 
 #include "Entities/Movie.h"
+#include "Entities/Playlist.h"
 #include "MoviesDebug.h"
 
 class DatabaseManager : public QObject
@@ -78,6 +79,11 @@ public:
     QList<Tag> getAllTags(const QString fieldOrder = "name");
     QList<Tag> getTagsByAny(const QString text, const QString fieldOrder = "name");
 
+    // Playlists
+    Playlist getOnePlaylistById(const int id);
+    QList<Playlist> getAllPlaylists(const QString fieldOrder = "name");
+    QList<Playlist> getPlaylistByAny(const QString text, const QString fieldOrder = "name");
+
     // Does element exist ?
     bool existMovie(const QString);
     bool existTag(const QString);
@@ -87,15 +93,19 @@ private:
     // Other functions for getters
     void setPeopleToMovie(Movie &movie);
     void setTagsToMovie(Movie &movie);
+    void setMoviesToPlaylist(Playlist &playlist);
     Movie hydrateMovie(QSqlQuery &query);
     People hydratePeople(QSqlQuery &query);
     Tag hydrateTag(QSqlQuery &query);
+    Playlist hydratePlaylist(QSqlQuery &query);
 
 //// Inserts - in DatabaseManager_insert.cpp
 public:
     bool insertNewMovie(Movie &movie);
+    bool insertNewPlaylist(Playlist &playlist);
     bool addTagToMovie(Tag &tag, Movie &movie);
     bool addPeopleToMovie(People &people, Movie &movie, const int type);
+    bool addMovieToPlaylist(Movie &movie, Playlist &playlist);
 
 private:
     bool insertNewPeople(People &people);
@@ -115,6 +125,9 @@ public:
     bool deleteMovie(Movie &movie);
     bool removePeopleFromMovie(People &people, Movie &movie, const int type);
     bool removeTagFromMovie(Tag &tag, Movie &movie);
+    bool removeMovieFromPlaylist(Movie &movie, Playlist &playlist);
+    bool deletePlaylist(Playlist &playlist);
+
 
 private:
     bool deletePeople(const People &people);

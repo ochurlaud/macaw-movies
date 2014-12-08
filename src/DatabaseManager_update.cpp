@@ -114,6 +114,8 @@ bool DatabaseManager::updateMovie(Movie &movie)
  */
 bool DatabaseManager::updatePeople(People &people)
 {
+    qDebug() << "[DatabaseManager] Enters updatePeople()";
+
     QSqlQuery l_query(m_db);
     l_query.prepare("UPDATE people "
                     "SET firstname = :firstname, "

@@ -19,7 +19,10 @@
 
 #include "Playlist.h"
 
-Playlist::Playlist()
+Playlist::Playlist(QString name):
+    m_name(name),
+    m_rate(0),
+    m_creationDate(QDateTime::currentDateTime())
 {
 }
 

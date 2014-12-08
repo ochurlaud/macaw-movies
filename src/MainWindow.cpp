@@ -70,12 +70,15 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
     m_typeElement = typeElement;
     m_typePeople = typePeople;
 
-    QListWidgetItem *l_item = new QListWidgetItem("All");
-    l_item->setData(Qt::UserRole, 0);
-    m_ui->leftPannel->addItem(l_item);
-    if (m_leftPannelSelectedId == 0)
+    if (typeElement != isPlaylist)
     {
-        l_item->setSelected(true);
+        QListWidgetItem *l_item = new QListWidgetItem("All");
+        l_item->setData(Qt::UserRole, 0);
+        m_ui->leftPannel->addItem(l_item);
+        if (m_leftPannelSelectedId == 0)
+        {
+            l_item->setSelected(true);
+        }
     }
 
     if (typeElement == isPeople)
@@ -138,6 +141,33 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             }
         }
     }
+    else if(typeElement == isPlaylist)
+    {
+        QListWidgetItem *l_item = new QListWidgetItem("To Watch");
+        l_item->setData(Qt::UserRole, 1);
+        l_item->setData(Qt::UserRole+1, isPlaylist);
+        m_ui->leftPannel->addItem(l_item);
+        if (m_leftPannelSelectedId == 1)
+        {
+            l_item->setSelected(true);
+        }
+
+        QList<Playlist> l_playlistList = m_app->getDatabaseManager()->getAllPlaylists();
+        foreach (Playlist l_playlist, l_playlistList)
+        {
+            QString l_name(l_playlist.getName());
+
+            QListWidgetItem *l_item = new QListWidgetItem(l_name);
+            l_item->setData(Qt::UserRole, l_playlist.getId());
+            l_item->setData(Qt::UserRole+1, isPlaylist);
+
+            m_ui->leftPannel->addItem(l_item);
+            if (m_leftPannelSelectedId == l_playlist.getId())
+            {
+                l_item->setSelected(true);
+            }
+        }
+    }
     this->setLeftPannelLabel();
 }
 
@@ -188,7 +218,9 @@ void MainWindow::on_peopleBox_activated(int type)
 
 void MainWindow::on_playlistsButton_clicked()
 {
-
+    m_app->debug("[MainWindow] playlistsButton clicked");
+    fillLeftPannel(isPlaylist);
+    m_leftPannelSelectedId = 0;
 }
 
 void MainWindow::on_toWatchButton_clicked()
@@ -217,8 +249,36 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
         l_menu->addAction(m_ui->actionEdit_leftPannelMetadata);
         l_menu->exec(m_ui->leftPannel->mapToGlobal(point));
     }
-    else if (m_ui->mainPannel->hasFocus() && m_ui->mainPannel->selectedItems().count() != 0)
+    else if (m_ui->mainPannel->hasFocus() &&
+             m_ui->mainPannel->selectedItems().count() != 0)
     {
+        QMenu *l_addPlaylistMenu = new QMenu("Add to playlist");
+        QAction *l_actionAddInNewPlaylist = new QAction("New playlist",
+                                                        l_addPlaylistMenu);
+        l_actionAddInNewPlaylist->setData(-1);
+        QAction *l_actionAddInToWatch = new QAction("To Watch",
+                                                    l_addPlaylistMenu);
+        l_actionAddInToWatch->setData(1);
+
+        QList<Playlist> l_playlistList = m_app->getDatabaseManager()->getAllPlaylists();
+        foreach (Playlist l_playlist, l_playlistList)
+        {
+            QAction *l_actionAddInPlaylist = new QAction(l_playlist.getName(),
+                                                         l_addPlaylistMenu);
+            l_actionAddInPlaylist->setData(l_playlist.getId());
+            l_addPlaylistMenu->addAction(l_actionAddInPlaylist);
+        }
+        if (l_playlistList.count() != 0)
+        {
+            l_addPlaylistMenu->addSeparator();
+        }
+
+        l_addPlaylistMenu->addAction(l_actionAddInToWatch);
+        l_addPlaylistMenu->addSeparator();
+        l_addPlaylistMenu->addAction(l_actionAddInNewPlaylist);
+        QObject::connect(l_addPlaylistMenu, SIGNAL(triggered(QAction*)),
+                         this, SLOT(addPlaylistMenu_triggered(QAction*)));
+        l_menu->addMenu(l_addPlaylistMenu);
         l_menu->addAction(m_ui->actionEdit_mainPannelMetadata);
         l_menu->exec(m_ui->mainPannel->mapToGlobal(point));
     }
@@ -252,6 +312,33 @@ void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
         {
             qDebug() << "Tag !";
         }
+        else if (l_typeElement == isPlaylist)
+        {
+            qDebug() << "Playlist !";
+        }
+    }
+}
+
+void MainWindow::addPlaylistMenu_triggered(QAction* action)
+{
+    int l_actionId = action->data().toInt();
+    int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Qt::UserRole).toInt();
+    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
+
+    if (l_actionId == -1)
+    {
+        bool l_isNewPlaylist;
+        QString l_playlistName = QInputDialog::getText(this, "New Playlist", "Name of the new Playlist", QLineEdit::Normal, QString(), &l_isNewPlaylist);
+        if (l_isNewPlaylist && !l_playlistName.isEmpty())
+        {
+            Playlist l_playlist(l_playlistName);
+            m_app->getDatabaseManager()->addMovieToPlaylist(l_movie, l_playlist);
+        }
+    }
+    else
+    {
+        Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(l_actionId);
+        m_app->getDatabaseManager()->addMovieToPlaylist(l_movie, l_playlist);
     }
 }
 
@@ -314,6 +401,11 @@ void MainWindow::prepareMoviesToDisplay(int id)
             m_moviesList = m_app->getDatabaseManager()->getMoviesByTag(m_leftPannelSelectedId);
         }
     }
+    else if (m_typeElement == isPlaylist)
+    {
+        Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(m_leftPannelSelectedId);
+        m_moviesList = l_playlist.getMovieList();
+    }
     filterPannels();
 }
 
@@ -342,6 +434,9 @@ void MainWindow::setLeftPannelLabel()
     {
     case isTag:
         m_ui->leftPannelLabel->setText("Tags");
+        break;
+    case isPlaylist:
+        m_ui->leftPannelLabel->setText("Playlists");
         break;
     case isPeople:
         switch (m_typePeople)
@@ -442,6 +537,11 @@ void MainWindow::filterPannels()
                     i--; // We remove an item so we have to decrement i
                 }
             }
+        }
+        else if (m_typeElement == isPlaylist)
+        {
+            // Don't do anything here, we want to see the name of the playlists
+            // also when empty
         }
     }
     for (int i = 0 ; i < m_ui->leftPannel->count() ; i ++)

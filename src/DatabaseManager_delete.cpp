@@ -23,6 +23,14 @@ bool DatabaseManager::deleteMovie(Movie &movie)
             return false;
         }
     }
+    QList<Playlist> l_playlistList;
+    foreach(Playlist l_playlist, l_playlistList)
+    {
+        if (!removeMovieFromPlaylist(movie, l_playlist))
+        {
+            return false;
+        }
+    }
 
     QSqlQuery l_query(m_db);
     l_query.prepare("DELETE FROM movies WHERE id = :id");
@@ -124,6 +132,67 @@ bool DatabaseManager::removeTagFromMovie(Tag &tag, Movie &movie)
     if(!l_query.next())
     {
         deleteTag(tag);
+    }
+
+    return true;
+}
+
+/**
+ * @brief Removes the link between a movie and a playlist
+ *
+ * @param Movie to remove from the playlist
+ * @param Playlist concerned by the deletion
+ * @return boolean
+ */
+bool DatabaseManager::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("DELETE FROM movies_playlists "
+                   "WHERE id_playlist = :id_playlist "
+                     "AND id_movie = :id_movie");
+    l_query.bindValue(":id_playlist", playlist.getId());
+    l_query.bindValue(":id_movie", movie.getId());
+    if(!l_query.exec())
+    {
+        qDebug() << "In removeMovieFromPlaylist():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Deletes a playlist
+ *
+ * @param Playlist to delete
+ * @return boolean
+ */
+bool DatabaseManager::deletePlaylist(Playlist &playlist)
+{
+    if (playlist.getId() == 0)
+    {
+        debug("ToWatch cannot be deleted");
+        return false;
+    }
+
+    foreach (Movie l_movie, playlist.getMovieList())
+    {
+        removeMovieFromPlaylist(l_movie, playlist);
+    }
+
+    QSqlQuery l_query(m_db);
+    l_query.prepare("DELETE FROM playlists "
+                   "WHERE id = :id");
+    l_query.bindValue(":id", playlist.getId());
+
+    if(!l_query.exec())
+    {
+        qDebug() << "In deletePlaylist():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
     }
 
     return true;

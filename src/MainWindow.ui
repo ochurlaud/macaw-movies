@@ -312,6 +312,14 @@
     <string>Edit Metadata</string>
    </property>
   </action>
+  <action name="actionAddToPLaylist">
+   <property name="text">
+    <string>addToPlaylist</string>
+   </property>
+   <property name="toolTip">
+    <string>actionAddToPLaylist</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="images.qrc"/>

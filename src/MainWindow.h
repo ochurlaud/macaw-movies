@@ -59,6 +59,7 @@ private slots:
     void selfUpdate();
     void addNewMovies();
     void on_searchEdit_returnPressed();
+    void addPlaylistMenu_triggered(QAction* action);
 
 
 signals:
@@ -71,7 +72,7 @@ private:
     int m_typePeople;
     int m_typeElement;
     int m_leftPannelSelectedId;
-    enum typeElement {None, isMovie, isPeople, isTag};
+    enum typeElement {None, isMovie, isPeople, isTag, isPlaylist};
     void fillMainPannel();
     void fillLeftPannel(int typeElement, int typePeople);
     void setLeftPannelLabel();

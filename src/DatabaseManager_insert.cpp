@@ -168,3 +168,65 @@ bool DatabaseManager::insertNewTag(Tag &tag)
 
     return true;
 }
+
+/**
+ * @brief Adds a playlist to the database.
+ *
+ * @param Playlist
+ * @return bool
+ */
+bool DatabaseManager::insertNewPlaylist(Playlist &playlist)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("INSERT INTO playlists (name, creation_date, rate) "
+                    "VALUES (:name, :creation_date, :rate)");
+    l_query.bindValue(":name", playlist.getName());
+    l_query.bindValue(":creation_date", playlist.getCreationDate().toTime_t());
+    l_query.bindValue(":rate", playlist.getRate());
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In insertNewPlaylist():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+    playlist.setId(l_query.lastInsertId().toInt());
+
+    return true;
+}
+
+/**
+ * @brief Adds a movie to the database and links it to a playlist
+ *
+ * @param Movie
+ * @param Playlist
+ * @return bool
+ */
+bool DatabaseManager::addMovieToPlaylist(Movie &movie, Playlist &playlist)
+{
+    if (playlist.getId() == 0)
+    {
+        if (!insertNewPlaylist(playlist))
+        {
+            return false;
+        }
+    }
+
+    QSqlQuery l_query(m_db);
+    l_query.prepare("INSERT INTO movies_playlists (id_movie, id_playlist) "
+                    "VALUES (:id_movie, :id_playlist)");
+    l_query.bindValue(":id_movie", movie.getId());
+    l_query.bindValue(":id_playlist", playlist.getId());
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In addMovieToPlaylist():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+    playlist = getOnePlaylistById(playlist.getId());
+
+    return true;
+}

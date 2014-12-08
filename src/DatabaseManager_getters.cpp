@@ -596,6 +596,64 @@ QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString field
 }
 
 /**
+ * @brief Get the playlist having the id `id`
+ *
+ * @param int id of the playlist
+ * @return Playlist
+ */
+Playlist DatabaseManager::getOnePlaylistById(const int id)
+{
+    Playlist l_playlist;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT pl.id, pl.name, pl.rate, pl.creation_date "
+                    "FROM playlists AS pl "
+                    "WHERE pl.id = :id");
+    l_query.bindValue(":id", id);
+
+    if(!l_query.exec())
+    {
+        qDebug() << "In getOnePlaylistById():";
+        qDebug() << l_query.lastError().text();
+    }
+
+    if(l_query.next())
+    {
+        l_playlist = hydratePlaylist(l_query);
+    }
+
+    return l_playlist;
+}
+
+/**
+ * @brief Get the playlists in the database
+ *
+ * @return QList<Playlist>
+ */
+QList<Playlist> DatabaseManager::getAllPlaylists(QString fieldOrder)
+{
+    QList<Playlist> l_playlistList;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT pl.id, pl.name, pl.rate, pl.creation_date "
+                    "FROM playlists AS pl "
+                    "WHERE pl.id != 1 "
+                    "ORDER BY pl." +fieldOrder);
+
+    if(!l_query.exec())
+    {
+        qDebug() << "In getAllPlaylist():";
+        qDebug() << l_query.lastError().text();
+    }
+
+    while(l_query.next())
+    {
+        Playlist l_playlist = hydratePlaylist(l_query);
+        l_playlistList.append(l_playlist);
+    }
+
+    return l_playlistList;
+}
+
+/**
  * @brief Retuns whether a movie is known by the database or not
  *
  * @param QString path of the movie
@@ -712,6 +770,30 @@ void DatabaseManager::setTagsToMovie(Movie &movie)
 }
 
 /**
+ * @brief Gets the movies of a playlist and adds it to the object
+ * @param Playlist
+ */
+void DatabaseManager::setMoviesToPlaylist(Playlist &playlist)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT " +m_movieFields + " "
+                    "FROM movies AS m, movies_playlists AS plm "
+                    "WHERE plm.id_movie = m.id AND plm.id_playlist = :id_playlist");
+    l_query.bindValue(":id_playlist", playlist.getId());
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In setMoviesToPlaylist():";
+        qDebug() << l_query.lastError().text();
+    }
+    while (l_query.next())
+    {
+        Movie l_movie = hydrateMovie(l_query);
+        playlist.addMovie(l_movie);
+    }
+}
+
+/**
  * @brief Hydrates a movie from the database
  *
  * @param QSqlQuery containing the data
@@ -774,4 +856,22 @@ Tag DatabaseManager::hydrateTag(QSqlQuery &query)
     l_tag.setName(query.value(1).toString());
 
     return l_tag;
+}
+
+/**
+ * @brief Hydrates a playlist from the database
+ *
+ * @param QSqlQuery containing the data
+ * @return Playlist hydrated object
+ */
+Playlist DatabaseManager::hydratePlaylist(QSqlQuery &query)
+{
+    Playlist l_playlist;
+    l_playlist.setId(query.value(0).toInt());
+    l_playlist.setName(query.value(1).toString());
+    l_playlist.setRate(query.value(2).toInt());
+    l_playlist.setCreationDate(QDateTime::fromTime_t(query.value(3).toInt()));
+    setMoviesToPlaylist(l_playlist);
+
+    return l_playlist;
 }
