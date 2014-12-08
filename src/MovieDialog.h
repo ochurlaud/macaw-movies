@@ -23,6 +23,7 @@
 #include <QDialog>
 #include "Application.h"
 #include "PeopleDialog.h"
+#include "Entities/Movie.h"
 
 class Application;
 

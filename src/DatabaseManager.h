@@ -76,6 +76,7 @@ public:
 
     // Tags
     Tag getOneTagById(const int id);
+	Tag getTagByName(QString tagName);
     QList<Tag> getAllTags(const QString fieldOrder = "name");
     QList<Tag> getTagsByAny(const QString text, const QString fieldOrder = "name");
 

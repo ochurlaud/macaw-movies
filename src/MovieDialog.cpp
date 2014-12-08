@@ -19,10 +19,12 @@
 
 #include "MovieDialog.h"
 #include "ui_MovieDialog.h"
+#include "Entities/Movie.h"
 
 /* @TODO:
  *   - Handle tags
  */
+
 
 MovieDialog::MovieDialog(int id, QWidget *parent) :
     QDialog(parent),
@@ -37,6 +39,7 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     this->setAttribute(Qt::WA_DeleteOnClose);
 
     m_ui->tagListView->setModel(m_app->getDatabaseManager()->getTagListModel());
+    m_ui->tagListView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     setTitle(m_movie.getTitle());
     setOriginalTitle(m_movie.getOriginalTitle());
@@ -239,6 +242,18 @@ void MovieDialog::on_validationButtons_accepted()
     m_movie.setReleaseDate(getReleaseDate());
     m_movie.setCountry(getCountry());
     m_movie.setSynopsis(getSynopsis());
+
+    QModelIndexList l_indexList = m_ui->tagListView->selectionModel()->selectedIndexes();
+
+    QVector<Tag> l_tagVector;
+    QString l_tagName;
+    foreach(const QModelIndex &index, l_indexList)
+    {
+        l_tagName = index.data().toString();
+        l_tagVector.append(m_app->getDatabaseManager()->getTagByName(l_tagName));
+    }
+
+    m_movie.setTags(l_tagVector);
 
     m_app->getDatabaseManager()->updateMovie(m_movie);
     m_app->debug("[MovieDialog] validationButtons method done");

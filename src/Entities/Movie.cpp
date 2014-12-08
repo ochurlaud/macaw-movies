@@ -25,6 +25,7 @@ Movie::Movie()
     m_title = "";
     m_originalTitle = "";
     m_country =  "";
+    m_duration = 0;
     m_synopsis = "";
     m_filePath = "";
     m_colored = true;
