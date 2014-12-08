@@ -25,8 +25,7 @@
 class Tag
 {
 public:
-    Tag();
-    Tag(QString name);
+    Tag(QString name = "");
     int getId() const;
     void setId(int id);
     QString getName() const;

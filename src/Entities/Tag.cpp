@@ -19,15 +19,13 @@
 
 #include "Tag.h"
 
-Tag::Tag()
-{
-    m_id = 0;
-    m_name = "";
-}
 
-Tag::Tag(QString name) : Tag()
+
+Tag::Tag(QString name) :
+    m_id(0),
+    m_name(name)
 {
-    m_name = name;
+
 }
 
 

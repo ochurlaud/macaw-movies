@@ -245,15 +245,15 @@ void MovieDialog::on_validationButtons_accepted()
 
     QModelIndexList l_indexList = m_ui->tagListView->selectionModel()->selectedIndexes();
 
-    QVector<Tag> l_tagVector;
+    QList<Tag> l_tagList;
     QString l_tagName;
     foreach(const QModelIndex &index, l_indexList)
     {
         l_tagName = index.data().toString();
-        l_tagVector.append(m_app->getDatabaseManager()->getTagByName(l_tagName));
+        l_tagList.append(m_app->getDatabaseManager()->getTagByName(l_tagName));
     }
 
-    m_movie.setTags(l_tagVector);
+    m_movie.setTagList(l_tagList);
 
     m_app->getDatabaseManager()->updateMovie(m_movie);
     m_app->debug("[MovieDialog] validationButtons method done");
