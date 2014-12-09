@@ -58,8 +58,8 @@ bool DatabaseManager::deleteMovie(Movie &movie)
 
     if(!l_query.exec())
     {
-        qDebug() << "In deleteMovie():";
-        qDebug() << l_query.lastError().text();
+        debug("In deleteMovie():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -91,8 +91,8 @@ bool DatabaseManager::removePeopleFromMovie(People &people,
 
     if(!l_query.exec())
     {
-        qDebug() << "In removePeopleFromMovie():";
-        qDebug() << l_query.lastError().text();
+        debug("In removePeopleFromMovie():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -102,8 +102,8 @@ bool DatabaseManager::removePeopleFromMovie(People &people,
     l_query.bindValue(":id_people", people.getId());
     if(!l_query.exec())
     {
-        qDebug() << "In removePeopleFromMovie():";
-        qDebug() << l_query.lastError().text();
+        debug("In removePeopleFromMovie():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -133,8 +133,8 @@ bool DatabaseManager::removeTagFromMovie(Tag &tag, Movie &movie)
     l_query.bindValue(":id_movie", movie.getId());
     if(!l_query.exec())
     {
-        qDebug() << "In removeTagFromMovie():";
-        qDebug() << l_query.lastError().text();
+        debug("In removeTagFromMovie():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -144,8 +144,8 @@ bool DatabaseManager::removeTagFromMovie(Tag &tag, Movie &movie)
     l_query.bindValue(":id_tag", tag.getId());
     if(!l_query.exec())
     {
-        qDebug() << "In removeTagFromMovie():";
-        qDebug() << l_query.lastError().text();
+        debug("In removeTagFromMovie():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -174,8 +174,8 @@ bool DatabaseManager::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
     l_query.bindValue(":id_movie", movie.getId());
     if(!l_query.exec())
     {
-        qDebug() << "In removeMovieFromPlaylist():";
-        qDebug() << l_query.lastError().text();
+        debug("In removeMovieFromPlaylist():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -209,8 +209,8 @@ bool DatabaseManager::deletePlaylist(Playlist &playlist)
 
     if(!l_query.exec())
     {
-        qDebug() << "In deletePlaylist():";
-        qDebug() << l_query.lastError().text();
+        debug("In deletePlaylist():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -236,8 +236,8 @@ bool DatabaseManager::deletePeople(const People &people)
 
     if(!l_query.exec())
     {
-        qDebug() << "In deletePeople():";
-        qDebug() << l_query.lastError().text();
+        debug("In deletePeople():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -247,8 +247,8 @@ bool DatabaseManager::deletePeople(const People &people)
 
     if(!l_query.exec())
     {
-        qDebug() << "In deletePeople():";
-        qDebug() << l_query.lastError().text();
+        debug("In deletePeople():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -274,8 +274,8 @@ bool DatabaseManager::deleteTag(const Tag &tag)
 
     if(!l_query.exec())
     {
-        qDebug() << "In deleteTag():";
-        qDebug() << l_query.lastError().text();
+        debug("In deleteTag():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -285,8 +285,8 @@ bool DatabaseManager::deleteTag(const Tag &tag)
 
     if(!l_query.exec())
     {
-        qDebug() << "In deleteTag():";
-        qDebug() << l_query.lastError().text();
+        debug("In deleteTag():");
+        debug(l_query.lastError().text());
 
         return false;
     }

@@ -27,7 +27,7 @@
  */
 bool DatabaseManager::updateMovie(Movie &movie)
 {
-    qDebug() << "[DatabaseManager] Enters updateMovie()";
+    debug("[DatabaseManager] Enters updateMovie()");
     QSqlQuery l_query(m_db);
     l_query.prepare("UPDATE movies "
                     "SET title = :title, "
@@ -52,8 +52,8 @@ bool DatabaseManager::updateMovie(Movie &movie)
 
     if (!l_query.exec())
     {
-        qDebug() << "In updateMovie():";
-        qDebug() << l_query.lastError().text();
+        debug("In updateMovie():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -76,8 +76,8 @@ bool DatabaseManager::updateMovie(Movie &movie)
     l_query.bindValue(":id_movie", movie.getId());
     if (!l_query.exec())
     {
-        qDebug() << "In updateMovie():";
-        qDebug() << l_query.lastError().text();
+        debug("In updateMovie():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -105,8 +105,8 @@ bool DatabaseManager::updateMovie(Movie &movie)
         l_query.bindValue(":type", type);
         if (!l_query.exec())
         {
-            qDebug() << "In updateMovie():";
-            qDebug() << l_query.lastError().text();
+            debug("In updateMovie():");
+            debug(l_query.lastError().text());
 
             return false;
         }
@@ -120,7 +120,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
         }
     }
 
-    qDebug() << "[DatabaseManager] Movie updated";
+    debug("[DatabaseManager] Movie updated");
 
     return true;
 }
@@ -133,7 +133,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
  */
 bool DatabaseManager::updatePeople(People &people)
 {
-    qDebug() << "[DatabaseManager] Enters updatePeople()";
+    debug("[DatabaseManager] Enters updatePeople()");
 
     QSqlQuery l_query(m_db);
     l_query.prepare("UPDATE people "
@@ -152,8 +152,8 @@ bool DatabaseManager::updatePeople(People &people)
 
     if (!l_query.exec())
     {
-        qDebug() << "In updatePeople():";
-        qDebug() << l_query.lastError().text();
+        debug("In updatePeople():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -176,13 +176,13 @@ bool DatabaseManager::updatePeopleInMovie(People &people,
     // If the id is 0, then the director doesn't exist
     if (people.getId() == 0)
     {
-        qDebug() << "People not known";
+        debug("People not known");
         addPeopleToMovie(people, movie, type);
     }
     // This means that the director exists, so we upgrade
     else
     {
-        qDebug() << "People known";
+        debug("People known");
         updatePeople(people);
 
         // Checks if the people and the movie are connected, if not connects them
@@ -196,15 +196,15 @@ bool DatabaseManager::updatePeopleInMovie(People &people,
 
         if (!l_query.exec())
         {
-            qDebug() << "In updatePeopleInMovie():";
-            qDebug() << l_query.lastError().text();
+            debug("In updatePeopleInMovie():");
+            debug(l_query.lastError().text());
 
             return false;
         }
 
         if (!l_query.next())
         {
-            qDebug() << "People not connected to the movie";
+            debug("People not connected to the movie");
             l_query.prepare("INSERT INTO movies_people(id_movie, id_people, type) "
                             "VALUES(:id_movie, :id_people, :type)");
             l_query.bindValue(":id_movie", movie.getId());
@@ -212,8 +212,8 @@ bool DatabaseManager::updatePeopleInMovie(People &people,
             l_query.bindValue(":type", type);
             if (!l_query.exec())
             {
-                qDebug() << "In updatePeopleInMovie():";
-                qDebug() << l_query.lastError().text();
+                debug("In updatePeopleInMovie():");
+                debug(l_query.lastError().text());
 
                 return false;
             }
@@ -240,8 +240,8 @@ bool DatabaseManager::updateTag(Tag &tag)
 
     if (!l_query.exec())
     {
-        qDebug() << "In updateTag():";
-        qDebug() << l_query.lastError().text();
+        debug("In updateTag():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -261,13 +261,13 @@ bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
     // If the id is 0, then the tag doesn't exist
     if (tag.getId() == 0)
     {
-        qDebug() << "Tag not known";
+        debug("Tag not known");
         addTagToMovie(tag, movie);
     }
     // This means that the tag exists, so we upgrade
     else
     {
-        qDebug() << "Tag known";
+        debug("Tag known");
         updateTag(tag);
 
         // Checks if the people and the movie are connected, if not connects them
@@ -279,23 +279,23 @@ bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
         l_query.bindValue(":id_tag", tag.getId());
         if (!l_query.exec())
         {
-            qDebug() << "In updateTagInMovie():";
-            qDebug() << l_query.lastError().text();
+            debug("In updateTagInMovie():");
+            debug(l_query.lastError().text());
 
             return false;
         }
 
         if (!l_query.next())
         {
-            qDebug() << "Tag not connected to the movie";
+            debug("Tag not connected to the movie");
             l_query.prepare("INSERT INTO movies_tags(id_movie, id_tag) "
                             "VALUES(:id_movie, :id_tag)");
             l_query.bindValue(":id_movie", movie.getId());
             l_query.bindValue(":id_tag", tag.getId());
             if (!l_query.exec())
             {
-                qDebug() << "In updateTagInMovie():";
-                qDebug() << l_query.lastError().text();
+                debug("In updateTagInMovie():");
+                debug(l_query.lastError().text());
 
                 return false;
             }
@@ -325,8 +325,8 @@ bool DatabaseManager::updatePlaylist(Playlist &playlist)
 
     if (!l_query.exec())
     {
-        qDebug() << "In updatePlaylist():";
-        qDebug() << l_query.lastError().text();
+        debug("In updatePlaylist():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -344,8 +344,8 @@ bool DatabaseManager::updatePlaylist(Playlist &playlist)
     l_query.bindValue(":id_playlist", playlist.getId());
     if (!l_query.exec())
     {
-        qDebug() << "In updatePlaylist():";
-        qDebug() << l_query.lastError().text();
+        debug("In updatePlaylist():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -383,23 +383,23 @@ bool DatabaseManager::updateMovieInPlaylist(Movie &movie, Playlist &playlist)
     l_query.bindValue(":id_playlist", playlist.getId());
     if (!l_query.exec())
     {
-        qDebug() << "In updateMovieInPlaylist():";
-        qDebug() << l_query.lastError().text();
+        debug("In updateMovieInPlaylist():");
+        debug(l_query.lastError().text());
 
         return false;
     }
 
     if (!l_query.next())
     {
-        qDebug() << "Movie not connected to the playlist";
+        debug("Movie not connected to the playlist");
         l_query.prepare("INSERT INTO movies_playlists(id_movie, id_playlist) "
                         "VALUES(:id_movie, :id_playlist)");
         l_query.bindValue(":id_movie", movie.getId());
         l_query.bindValue(":id_playlist", playlist.getId());
         if (!l_query.exec())
         {
-            qDebug() << "In updateMovieInPlaylist():";
-            qDebug() << l_query.lastError().text();
+            debug("In updateMovieInPlaylist():");
+            debug(l_query.lastError().text());
 
             return false;
         }

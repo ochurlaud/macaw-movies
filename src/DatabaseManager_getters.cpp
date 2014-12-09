@@ -36,8 +36,8 @@ Movie DatabaseManager::getOneMovieById(const int id)
 
     if (!l_query.exec())
     {
-        qDebug() << "In getOneMovieById(int):";
-        qDebug() << l_query.lastError().text();
+        debug("In getOneMovieById(int):");
+        debug(l_query.lastError().text());
     }
 
     if(l_query.next())
@@ -63,8 +63,8 @@ QList<Movie> DatabaseManager::getAllMovies(const QString fieldOrder)
 
     if (!l_query.exec())
     {
-        qDebug() << "In getAllMovies():";
-        qDebug() << l_query.lastError().text();
+        debug("In getAllMovies():");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -73,7 +73,7 @@ QList<Movie> DatabaseManager::getAllMovies(const QString fieldOrder)
         l_movieList.push_back(l_movie);
     }
 
-    return l_movieList;    Movie getOneMovieById(int);
+    return l_movieList;
 
 }
 
@@ -101,14 +101,13 @@ QList<Movie> DatabaseManager::getMoviesByPeople(const int id,
 
     if (!l_query.exec())
     {
-        qDebug() << "In getMoviesByPeople():";
-        qDebug() << l_query.lastError().text();
+        debug("In getMoviesByPeople():");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-
         l_movieList.push_back(l_movie);
     }
 
@@ -153,8 +152,8 @@ QList<Movie> DatabaseManager::getMoviesByTag(const int id,
 
     if (!l_query.exec())
     {
-        qDebug() << "In getMoviesByTag(Tag):";
-        qDebug() << l_query.lastError().text();
+        debug("In getMoviesByTag(Tag):");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -195,8 +194,8 @@ QList<Movie> DatabaseManager::getMoviesWithoutPeople(const int type,
 
     if (!l_query.exec())
     {
-        qDebug() << "In getMoviesWithoutPeople():";
-        qDebug() << l_query.lastError().text();
+        debug("In getMoviesWithoutPeople():");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -221,8 +220,8 @@ QList<Movie> DatabaseManager::getMoviesWithoutTag(const QString fieldOrder)
 
     if (!l_query.exec())
     {
-        qDebug() << "In getMoviesWithoutTag():";
-        qDebug() << l_query.lastError().text();
+        debug("In getMoviesWithoutTag():");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -277,8 +276,8 @@ QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
 
     if (!l_query.exec())
     {
-        qDebug() << "In getMoviesByAny():";
-        qDebug() << l_query.lastError().text();
+        debug("In getMoviesByAny():");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -308,8 +307,8 @@ People DatabaseManager::getOnePeopleById(const int id)
 
     if (!l_query.exec())
     {
-        qDebug() << "In getOnePeopleBy(int, type):";
-        qDebug() << l_query.lastError().text();
+        debug("In getOnePeopleBy(int, type):");
+        debug(l_query.lastError().text());
     }
 
     if(l_query.next())
@@ -340,8 +339,8 @@ People DatabaseManager::getOnePeopleById(const int id, const int type)
 
     if (!l_query.exec())
     {
-        qDebug() << "In getOnePeopleBy(int, type):";
-        qDebug() << l_query.lastError().text();
+        debug("In getOnePeopleBy(int, type):");
+        debug(l_query.lastError().text());
     }
 
     if(l_query.next())
@@ -373,8 +372,8 @@ QList<People> DatabaseManager::getPeopleByType(const int type,
 
     if (!l_query.exec())
     {
-        qDebug() << "In getPeopleByType():";
-        qDebug() << l_query.lastError().text();
+        debug("In getPeopleByType():");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -410,8 +409,8 @@ QList<People> DatabaseManager::getPeopleByFullname(const QString fullname,
 
     if (!l_query.exec())
     {
-        qDebug() << "In getPeopleByFullname(QString):";
-        qDebug() << l_query.lastError().text();
+        debug("In getPeopleByFullname(QString):");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -473,8 +472,8 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
 
     if (!l_query.exec())
     {
-        qDebug() << "In getPeopleByAny():";
-        qDebug() << l_query.lastError().text();
+        debug("In getPeopleByAny():");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -507,8 +506,8 @@ Tag DatabaseManager::getOneTagById(const int id)
 
     if (!l_query.exec())
     {
-        qDebug() << "In getOneTagBy(int):";
-        qDebug() << l_query.lastError().text();
+        debug("In getOneTagBy(int):");
+        debug(l_query.lastError().text());
     }
 
     if(l_query.next())
@@ -537,8 +536,8 @@ Tag DatabaseManager::getTagByName(QString tagName)
 
     if (!l_query.exec())
     {
-        qDebug() << "In getTagByName(QString):";
-        qDebug() << l_query.lastError().text();
+        debug("In getTagByName(QString):");
+        debug(l_query.lastError().text());
     }
 
     if(l_query.next())
@@ -567,7 +566,8 @@ QList<Tag> DatabaseManager::getAllTags(const QString fieldOrder)
 
     if (!l_query.exec())
     {
-        qDebug() << l_query.lastError().text();
+        debug("In getAllTags():");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -629,8 +629,8 @@ QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString field
 
     if (!l_query.exec())
     {
-        qDebug() << "In getTagsByAny():";
-        qDebug() << l_query.lastError().text();
+        debug("In getTagsByAny():");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -662,8 +662,8 @@ Playlist DatabaseManager::getOnePlaylistById(const int id)
 
     if(!l_query.exec())
     {
-        qDebug() << "In getOnePlaylistById():";
-        qDebug() << l_query.lastError().text();
+        debug("In getOnePlaylistById():");
+        debug(l_query.lastError().text());
     }
 
     if(l_query.next())
@@ -690,8 +690,8 @@ QList<Playlist> DatabaseManager::getAllPlaylists(QString fieldOrder)
 
     if(!l_query.exec())
     {
-        qDebug() << "In getAllPlaylist():";
-        qDebug() << l_query.lastError().text();
+        debug("In getAllPlaylist():");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -717,8 +717,8 @@ bool DatabaseManager::existMovie(const QString filePath)
 
     if (!l_query.exec())
     {
-        qDebug() << "In existMovie():";
-        qDebug() << l_query.lastError().text();
+        debug("In existMovie():");
+        debug(l_query.lastError().text());
     }
 
     return l_query.next();
@@ -740,8 +740,8 @@ bool DatabaseManager::existPeople(const QString fullname)
 
     if (!l_query.exec())
     {
-        qDebug() << "In existPeople():";
-        qDebug() << l_query.lastError().text();
+        debug("In existPeople():");
+        debug(l_query.lastError().text());
     }
 
     return l_query.next();
@@ -761,8 +761,8 @@ bool DatabaseManager::existTag(const QString name)
 
     if (!l_query.exec())
     {
-        qDebug() << "In existTag():";
-        qDebug() << l_query.lastError().text();
+        debug("In existTag():");
+        debug(l_query.lastError().text());
     }
 
     return l_query.next();
@@ -782,14 +782,13 @@ void DatabaseManager::setPeopleToMovie(Movie &movie)
 
     if (!l_query.exec())
     {
-        qDebug() << "In setPeopleToMovie(Movie):";
-        qDebug() << l_query.lastError().text();
+        debug("In setPeopleToMovie(Movie):");
+        debug(l_query.lastError().text());
     }
     while (l_query.next())
     {
         People l_people = hydratePeople(l_query);
         movie.addPeople(l_people);
-
     }
 }
 
@@ -807,8 +806,8 @@ void DatabaseManager::setTagsToMovie(Movie &movie)
 
     if (!l_query.exec())
     {
-        qDebug() << "In setTagToMovie(Movie):";
-        qDebug() << l_query.lastError().text();
+        debug("In setTagToMovie(Movie):");
+        debug(l_query.lastError().text());
     }
     while (l_query.next())
     {
@@ -833,8 +832,8 @@ void DatabaseManager::setMoviesToPlaylist(Playlist &playlist)
 
     if (!l_query.exec())
     {
-        qDebug() << "In setMoviesToPlaylist():";
-        qDebug() << l_query.lastError().text();
+        debug("In setMoviesToPlaylist():");
+        debug(l_query.lastError().text());
     }
     while (l_query.next())
     {

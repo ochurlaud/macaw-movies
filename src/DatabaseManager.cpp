@@ -243,8 +243,8 @@ bool DatabaseManager::createTag(QString name)
 
     if (!l_query.exec())
     {
-        qDebug() << "In createTag():";
-        qDebug() << l_query.lastError().text();
+        debug("In createTag():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -278,8 +278,8 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
     l_query.prepare("SELECT movies_path FROM paths_list");
     if(!l_query.exec())
     {
-        qDebug() << "In saveMoviesPath(), getting existing path:";
-        qDebug() << l_query.lastError().text();
+        debug("In saveMoviesPath(), getting existing path:");
+        debug(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -299,8 +299,8 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
 
     if(!l_query.exec())
     {
-        qDebug() << "In saveMoviesPath():";
-        qDebug() << l_query.lastError().text();
+        debug("In saveMoviesPath():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -320,8 +320,8 @@ QStringList DatabaseManager::getMoviesPath()
 
     if(!l_query.exec())
     {
-        qDebug() << "In getMoviesPath():";
-        qDebug() << l_query.lastError().text();
+        debug("In getMoviesPath():");
+        debug(l_query.lastError().text());
     }
 
     QStringList l_result;
@@ -348,8 +348,8 @@ QStringList DatabaseManager::getTags()
 
     if(!l_query.exec())
     {
-        qDebug() << "In getTags():";
-        qDebug() << l_query.lastError().text();
+        debug("In getTags():");
+        debug(l_query.lastError().text());
     }
 
     QStringList l_result;

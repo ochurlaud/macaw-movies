@@ -46,13 +46,13 @@ bool DatabaseManager::insertNewMovie(Movie &movie)
 
     if (!l_query.exec())
     {
-        qDebug() << "In insertNewMovie():";
-        qDebug() << l_query.lastError().text();
+        debug("In insertNewMovie():");
+        debug(l_query.lastError().text());
 
         return false;
     }
 
-    qDebug() << "[DatabaseManager] Movie added";
+    debug("[DatabaseManager] Movie added");
 
     movie.setId(l_query.lastInsertId().toInt());
 
@@ -90,8 +90,8 @@ bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
 
     if (!l_query.exec())
     {
-        qDebug() << "In addPeopleToMovie():";
-        qDebug() << l_query.lastError().text();
+        debug("In addPeopleToMovie():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -123,8 +123,8 @@ bool DatabaseManager::addTagToMovie(Tag &tag, Movie &movie)
 
     if (!l_query.exec())
     {
-        qDebug() << "In addTagToMovie():";
-        qDebug() << l_query.lastError().text();
+        debug("In addTagToMovie():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -153,8 +153,8 @@ bool DatabaseManager::insertNewPeople(People &people)
 
     if (!l_query.exec())
     {
-        qDebug() << "In insertNewPeople():";
-        qDebug() << l_query.lastError().text();
+        debug("In insertNewPeople():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -179,8 +179,8 @@ bool DatabaseManager::insertNewTag(Tag &tag)
 
     if (!l_query.exec())
     {
-        qDebug() << "In insertNewTag():";
-        qDebug() << l_query.lastError().text();
+        debug("In insertNewTag():");
+        debug(l_query.lastError().text());
 
         return false;
     }
@@ -206,8 +206,8 @@ bool DatabaseManager::insertNewPlaylist(Playlist &playlist)
 
     if (!l_query.exec())
     {
-        qDebug() << "In insertNewPlaylist():";
-        qDebug() << l_query.lastError().text();
+        debug("In insertNewPlaylist():");
+        debug(l_query.lastError().text());
 
         return false;
     }
