@@ -332,14 +332,18 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
         if (l_isNewPlaylist && !l_playlistName.isEmpty())
         {
             Playlist l_playlist(l_playlistName);
-            m_app->getDatabaseManager()->addMovieToPlaylist(l_movie, l_playlist);
+            m_app->getDatabaseManager()->insertNewPlaylist(l_playlist);
+            l_playlist.addMovie(l_movie);
+            m_app->getDatabaseManager()->updatePlaylist(l_playlist);
         }
     }
     else
     {
         Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(l_actionId);
-        m_app->getDatabaseManager()->addMovieToPlaylist(l_movie, l_playlist);
+        l_playlist.addMovie(l_movie);
+        m_app->getDatabaseManager()->updatePlaylist(l_playlist);
     }
+    emit(toUpdate());
 }
 
 void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)

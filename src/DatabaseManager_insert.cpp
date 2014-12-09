@@ -215,38 +215,3 @@ bool DatabaseManager::insertNewPlaylist(Playlist &playlist)
 
     return true;
 }
-
-/**
- * @brief Adds a movie to the database and links it to a playlist
- *
- * @param Movie
- * @param Playlist
- * @return bool
- */
-bool DatabaseManager::addMovieToPlaylist(Movie &movie, Playlist &playlist)
-{
-    if (playlist.getId() == 0)
-    {
-        if (!insertNewPlaylist(playlist))
-        {
-            return false;
-        }
-    }
-
-    QSqlQuery l_query(m_db);
-    l_query.prepare("INSERT INTO movies_playlists (id_movie, id_playlist) "
-                    "VALUES (:id_movie, :id_playlist)");
-    l_query.bindValue(":id_movie", movie.getId());
-    l_query.bindValue(":id_playlist", playlist.getId());
-
-    if (!l_query.exec())
-    {
-        qDebug() << "In addMovieToPlaylist():";
-        qDebug() << l_query.lastError().text();
-
-        return false;
-    }
-    playlist = getOnePlaylistById(playlist.getId());
-
-    return true;
-}

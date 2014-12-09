@@ -106,7 +106,6 @@ public:
     bool insertNewPlaylist(Playlist &playlist);
     bool addTagToMovie(Tag &tag, Movie &movie);
     bool addPeopleToMovie(People &people, Movie &movie, const int type);
-    bool addMovieToPlaylist(Movie &movie, Playlist &playlist);
 
 private:
     bool insertNewPeople(People &people);
@@ -120,6 +119,8 @@ public:
     bool updatePeopleInMovie(People &people, Movie &movie, const int type);
     bool updateTag(Tag &tag);
     bool updateTagInMovie(Tag &tag, Movie &movie);
+    bool updatePlaylist(Playlist &playlist);
+    bool updateMovieInPlaylist(Movie &movie, Playlist &playlist);
 
 //// Delete - in DatabaseManager_delete.cpp
 public:

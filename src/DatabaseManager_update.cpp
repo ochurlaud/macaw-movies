@@ -304,3 +304,106 @@ bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
 
     return true;
 }
+
+/**
+ * @brief Updates a playlist from database
+ *
+ * @param Playlist
+ * @return bool
+ */
+bool DatabaseManager::updatePlaylist(Playlist &playlist)
+{
+    debug("[DatabaseManager] Enters updatePlaylist()");
+    QSqlQuery l_query(m_db);
+    l_query.prepare("UPDATE playlists "
+                    "SET name = :name, "
+                        "rate = :rate "
+                    "WHERE id = :id");
+    l_query.bindValue(":name", playlist.getName());
+    l_query.bindValue(":rate", playlist.getRate());
+    l_query.bindValue(":id", playlist.getId());
+
+    if (!l_query.exec())
+    {
+        qDebug() << "In updatePlaylist():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+
+    // Insertions/Updates of the linked elements
+    foreach (Movie l_movie, playlist.getMovieList())
+    {
+        updateMovieInPlaylist(l_movie, playlist);
+    }
+
+    // Deletion of the old linked elements
+    l_query.prepare("SELECT " + m_movieFields + " "
+                    "FROM movies AS m, movies_playlists AS mpl "
+                    "WHERE mpl.id_movie = m.id AND mpl.id_playlist = :id_playlist");
+    l_query.bindValue(":id_playlist", playlist.getId());
+    if (!l_query.exec())
+    {
+        qDebug() << "In updatePlaylist():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+    while(l_query.next())
+    {
+        Movie l_movie = hydrateMovie(l_query);
+        if(playlist.getMovieList().indexOf(l_movie) < 0)
+        {
+            removeMovieFromPlaylist(l_movie, playlist);
+        }
+    }
+
+    debug("[DatabaseManager] Playlist updated");
+
+    return true;
+}
+
+/**
+ * @brief Updates a movie linked to a playlist
+ *
+ * @param Movie
+ * @param Playlist
+ * @return bool
+ */
+bool DatabaseManager::updateMovieInPlaylist(Movie &movie, Playlist &playlist)
+{
+    updateMovie(movie);
+
+    // Checks if the people and the movie are connected, if not connects them
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT id "
+                    "FROM movies_playlists "
+                    "WHERE id_movie = :id_movie AND id_playlist = :id_playlist");
+    l_query.bindValue(":id_movie", movie.getId());
+    l_query.bindValue(":id_playlist", playlist.getId());
+    if (!l_query.exec())
+    {
+        qDebug() << "In updateMovieInPlaylist():";
+        qDebug() << l_query.lastError().text();
+
+        return false;
+    }
+
+    if (!l_query.next())
+    {
+        qDebug() << "Movie not connected to the playlist";
+        l_query.prepare("INSERT INTO movies_playlists(id_movie, id_playlist) "
+                        "VALUES(:id_movie, :id_playlist)");
+        l_query.bindValue(":id_movie", movie.getId());
+        l_query.bindValue(":id_playlist", playlist.getId());
+        if (!l_query.exec())
+        {
+            qDebug() << "In updateMovieInPlaylist():";
+            qDebug() << l_query.lastError().text();
+
+            return false;
+        }
+    }
+
+    return true;
+}
