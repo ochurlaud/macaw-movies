@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.8)
-project(Movie-Organizer)
+project(Movie-Project)
 set(EXECUTABLE_NAME "movie-project")
 find_package(Qt5 COMPONENTS Widgets Network Xml Sql REQUIRED)
 set(CMAKE_AUTOMOC ON)
