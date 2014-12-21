@@ -31,6 +31,9 @@ namespace Ui {
 class MovieDialog;
 }
 
+/**
+ * @brief Dialog to edit the metadata of a Movie
+ */
 class MovieDialog : public QDialog
 {
 Q_OBJECT

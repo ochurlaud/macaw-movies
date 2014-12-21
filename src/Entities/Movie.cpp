@@ -101,10 +101,6 @@ void Movie::removePeople(const People &people)
     }
 }
 
-/**
- * @brief Movie::updateDirector
- * @param People
- */
 void Movie::updatePeople(const People &people)
 {
     for (int i = 0 ; i < m_peopleList.size() ; i++)

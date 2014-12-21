@@ -29,6 +29,9 @@ namespace Ui {
 class PeopleDialog;
 }
 
+/**
+ * @brief Dialog to edit the metadata of a People
+ */
 class PeopleDialog : public QDialog
 {
 Q_OBJECT

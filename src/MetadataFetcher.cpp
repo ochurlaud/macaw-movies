@@ -39,7 +39,9 @@ void MetadataFetcher::getRelatedMovies(QString title)
     QRegExp l_sep("(\\_|\\-|\\ |\\,|\\.|\\!|\\?)");
     QStringList l_splittedTitle = title.split(l_sep);
 
-    QNetworkRequest l_request;
+    QRegExp l_alphaOnly("(^[À-Ÿà-ÿA-Za-z]*$)");
+    l_splittedTitle = l_splittedTitle.filter(l_alphaOnly); QNetworkRequest l_request;
+
     l_request.setUrl(QUrl("http://www.omdbapi.com/?s="+title+"&r=XML"));
     m_networkManager->get(l_request);
 

@@ -5,3 +5,7 @@ Movies.pro.user.*
 src/Movies.pro.user
 moc_*
 *.ui.autosave
+doc/*
+
+# Don't ignore
+!doc/doxygen.conf

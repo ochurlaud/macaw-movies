@@ -25,6 +25,9 @@
 
 #include <QtDebug>
 
+/**
+ * @brief Debug mode using qDebug()
+ */
 class MoviesDebug : public QObject
 {
 public:

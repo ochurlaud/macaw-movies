@@ -30,6 +30,9 @@ enum typePeople {None, Director, Producer, Actor};
 #include "Entities/Playlist.h"
 #include "MoviesDebug.h"
 
+/**
+ * @brief Manages all the access to the database
+ */
 class DatabaseManager : public QObject
 {
 
