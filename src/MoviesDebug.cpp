@@ -19,10 +19,8 @@
 
 #include "MoviesDebug.h"
 
-MoviesDebug::MoviesDebug(bool debug)
-{
-    m_debug = debug;
-}
+MoviesDebug::MoviesDebug(bool debug): m_debug(debug)
+{}
 
 void MoviesDebug::print(QString text)
 {

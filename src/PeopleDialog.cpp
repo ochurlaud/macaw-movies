@@ -170,5 +170,6 @@ void PeopleDialog::on_validationButtons_accepted()
 
 void PeopleDialog::on_resetBirthdayBtn_clicked()
 {
+    // We set the date to a QDate < date_min so that it prints the specialValueText
     m_ui->birthdayEdit->setDate(QDate::fromString("01/01/0001", "dd/MM/yyyy"));
 }

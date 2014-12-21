@@ -25,7 +25,11 @@
  *   - Handle tags
  */
 
-
+/**
+ * @brief Constructor
+ * @param id of the movie to edit
+ * @param parent
+ */
 MovieDialog::MovieDialog(int id, QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::MovieDialog)
@@ -60,6 +64,9 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     m_app->debug("[MovieDialog] Construction done");
 }
 
+/**
+ * @brief Destructor
+ */
 MovieDialog::~MovieDialog()
 {
     delete m_ui;
@@ -341,7 +348,6 @@ void MovieDialog::addPeopleButton_clicked(int type)
 void MovieDialog::on_delDirectorButton_clicked()
 {
     m_app->debug("[MovieDialog] delDirectorButton clicked()");
-    m_app->debug("[MovieDialog] delDirectorButton clicked()");
     delPeopleButton_clicked(Director);}
 
 void MovieDialog::on_delProducerButton_clicked()
@@ -445,8 +451,8 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
 }
 
 /**
- * @brief add the tag in newTagLineEdit field to the tag list
- *
+ * @brief when NewTagButton is clicked
+ * Adds the tag in newTagLineEdit field to the tag list and clear the lineEdit
  * @param QPoint position of the cursor
  */
 void MovieDialog::on_addNewTagButton_clicked()
@@ -454,9 +460,7 @@ void MovieDialog::on_addNewTagButton_clicked()
     QString newTag =  m_ui->newTagLineEdit->text();
 
     m_app->getDatabaseManager()->createTag(newTag);
-
     m_ui->newTagLineEdit->clear();
-
 }
 
 void MovieDialog::peopleDialog_peopleCreated(People people)
@@ -568,5 +572,6 @@ QList<People> MovieDialog::getFocusedListPeople()
 
 void MovieDialog::on_resetReleaseDateBtn_clicked()
 {
+    // We set the date to a QDate < date_min so that it prints the specialValueText
     m_ui->releaseDateEdit->setDate(QDate::fromString("01/01/0001", "dd/MM/yyyy"));
 }
