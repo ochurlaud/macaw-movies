@@ -183,9 +183,11 @@ void MainWindow::fillMainPannel()
     m_app->debug("[MainWindow] Enters fillMainPannel()");
 
     m_ui->mainPannel->clear();
-    m_ui->mainPannel->setColumnCount(4);
-    QHeaderView* header = m_ui->mainPannel->horizontalHeader();
-    header->setSectionResizeMode(QHeaderView::Stretch);
+    int l_columnCount = 4;
+    m_ui->mainPannel->setColumnCount(l_columnCount);
+    QHeaderView* l_headerView = m_ui->mainPannel->horizontalHeader();
+    l_headerView->setStretchLastSection(true);
+    l_headerView->setSectionsMovable(true);
     QStringList l_headers;
     l_headers << "Title" << "Original Title" << "Release Date" << "Path of the file";
     m_ui->mainPannel->setHorizontalHeaderLabels(l_headers);
