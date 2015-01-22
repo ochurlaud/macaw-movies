@@ -78,7 +78,7 @@ bool DatabaseManager::openDB()
     ///TO_DO: find a way to find the Appplication.name instead of hard coding!
     // NOTE: We have to store database file into user home folder in Linux
     QString l_configPath(QDir::home().path().append(QDir::separator())
-                            .append("AppData").append(QDir::separator()))
+                            .append("AppData").append(QDir::separator())
                             .append("Local").append(QDir::separator()));
     l_configPath = QDir::toNativeSeparators(l_configPath);
 
