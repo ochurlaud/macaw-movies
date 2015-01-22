@@ -141,7 +141,7 @@
       <item>
        <layout class="QHBoxLayout" name="pannelsLayout">
         <property name="sizeConstraint">
-         <enum>QLayout::SetMinAndMaxSize</enum>
+         <enum>QLayout::SetNoConstraint</enum>
         </property>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -174,6 +174,9 @@
             <property name="contextMenuPolicy">
              <enum>Qt::CustomContextMenu</enum>
             </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
             <property name="editTriggers">
              <set>QAbstractItemView::EditKeyPressed</set>
             </property>
@@ -187,13 +190,22 @@
         <item>
          <widget class="QTableWidget" name="mainPannel">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="sizeIncrement">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustIgnored</enum>
           </property>
           <property name="editTriggers">
            <set>QAbstractItemView::EditKeyPressed</set>
@@ -255,6 +267,9 @@
             </property>
             <property name="text">
              <string>Plot</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
