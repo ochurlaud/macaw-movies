@@ -34,7 +34,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->setupUi(this);
     this->setWindowTitle(m_app->getAppName());
     this->setWindowIcon(m_app->getAppIcon());
-    m_ui->metadataTop->setWordWrap(true);
 
     connect(m_ui->mainPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
