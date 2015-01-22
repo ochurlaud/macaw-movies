@@ -59,12 +59,20 @@ bool DatabaseManager::openDB()
     }
 
 #ifdef Q_OS_LINUX
+    ///TO_DO: find a way to find the Appplication.name instead of hard coding!
     // NOTE: We have to store database file into user home folder in Linux
-    QString path(QDir::home().path());
-    path.append(QDir::separator()).append("movie-project.sqlite");
-    path = QDir::toNativeSeparators(path);
+    QString l_configPath(QDir::home().path().append(QDir::separator()).append(".config").append(QDir::separator()));
+    l_configPath = QDir::toNativeSeparators(l_configPath);
 
-    m_db.setDatabaseName(path);
+    QFileInfo checkFolder(l_configPath + "movie-project");
+    if (!checkFolder.exists())
+    {
+        QDir(l_configPath).mkdir("movie-project");
+    }
+
+    QString l_dbPath = l_configPath + "movie-project" + QDir::separator() + "database.sqlite";
+    l_dbPath = QDir::toNativeSeparators(l_dbPath);
+    m_db.setDatabaseName(l_dbPath);
 #else
     // NOTE: File exists in the application private folder, in Symbian Qt implementation
     m_db.setDatabaseName("movie-project.sqlite");
