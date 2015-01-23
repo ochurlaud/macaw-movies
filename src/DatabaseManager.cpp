@@ -59,7 +59,8 @@ bool DatabaseManager::openDB()
 #ifdef Q_OS_LINUX
     // File in ~\.config
     QString l_configPath(QDir::home().path().append(QDir::separator())
-                             .append(".config").append(QDir::separator()));
+                                            .append(".config")
+                                            .append(QDir::separator()));
 #endif
 
 #ifdef Q_OS_WIN
@@ -118,15 +119,7 @@ bool DatabaseManager::deleteDB()
     debug("[DatabaseManager] deleteDB");
     closeDB();
 
-#ifdef Q_OS_LINUX
-    QString path(QDir::home().path());
-    path.append(QDir::separator()).append("movie-project.sqlite");
-    path = QDir::toNativeSeparators(path);
-    return QFile::remove(path);
-#else
-    // Remove created database binary file
-    return QFile::remove("movie-project.sqlite");
-#endif
+    return QFile::remove(m_db.databaseName());
 }
 
 /**
