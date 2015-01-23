@@ -26,7 +26,7 @@
 Application::Application(MoviesDebug *moviesDebug, int &argc, char **argv) :
     QApplication(argc, argv)
 {
-    m_appName = "Movie-Project";
+    m_appName = APP_NAME;
     m_appIcon = QIcon(":/img/logov0.png");
     m_debug = moviesDebug;
 
@@ -54,8 +54,6 @@ Application::Application(MoviesDebug *moviesDebug, int &argc, char **argv) :
     {
         debug("[Application] No tags found");
     }
-
- //   mainWindow.setFixedSize(800,600);
 }
 
 /**

@@ -19,8 +19,6 @@
 
 #include "DatabaseManager.h"
 
-#include "main.cpp" //needed for the DB_VERSION
-
 #include <QtDebug>
 
 /**
@@ -58,10 +56,6 @@ bool DatabaseManager::openDB()
         m_db = QSqlDatabase::addDatabase("QSQLITE", "Movies-database");
     }
 
-
-    ///TO_DO: find a way to find the Appplication.name instead of hard coding!
-    // NOTE: We have to store database file into user home folder in Linux
-
 #ifdef Q_OS_LINUX
     // File in ~\.config
     QString l_configPath(QDir::home().path().append(QDir::separator())
@@ -87,13 +81,13 @@ bool DatabaseManager::openDB()
 #endif
 
     l_configPath = QDir::toNativeSeparators(l_configPath);
-    QFileInfo checkFolder(l_configPath + "movie-project");
+    QFileInfo checkFolder(l_configPath + APP_NAME_SMALL);
     if (!checkFolder.exists())
     {
-        QDir(l_configPath).mkdir("movie-project");
+        QDir(l_configPath).mkdir(APP_NAME_SMALL);
     }
 
-    QString l_dbPath = l_configPath + "movie-project" + QDir::separator() + "database.sqlite";
+    QString l_dbPath = l_configPath + APP_NAME_SMALL + QDir::separator() + "database.sqlite";
     l_dbPath = QDir::toNativeSeparators(l_dbPath);
 
     m_db.setDatabaseName(l_dbPath);

@@ -26,6 +26,7 @@ enum typePeople {None, Director, Producer, Actor};
 #include <QtCore>
 #include <QtSql>
 
+#include "include_var.h"
 #include "Entities/Movie.h"
 #include "Entities/Playlist.h"
 #include "MoviesDebug.h"

@@ -21,6 +21,7 @@
 #define APPLICATION_H
 
 #include <QApplication>
+#include "include_var.h"
 #include "MainWindow.h"
 #include "DatabaseManager.h"
 #include "MoviesDebug.h"

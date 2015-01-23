@@ -20,9 +20,6 @@
 #ifndef MAIN
 #define MAIN
 
-#define SOFT_VERSION 1  // software version
-#define DB_VERSION 1    //database version, must be updated if the database model have changed
-
 #include <QApplication>
 #include <QDir>
 

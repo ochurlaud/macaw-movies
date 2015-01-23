@@ -64,7 +64,8 @@ HEADERS  += \
     MetadataFetcher.h \
     MovieDialog.h \
     PeopleDialog.h \
-    Entities/Playlist.h
+    Entities/Playlist.h \
+    include_var.h
 
 FORMS    += \
     MainWindow.ui \
@@ -79,3 +80,5 @@ OTHER_FILES += \
 
 RESOURCES += \
     images.qrc
+
+DISTFILES +=
