@@ -58,30 +58,35 @@ bool DatabaseManager::openDB()
         m_db = QSqlDatabase::addDatabase("QSQLITE", "Movies-database");
     }
 
-#ifdef Q_OS_LINUX
+
     ///TO_DO: find a way to find the Appplication.name instead of hard coding!
     // NOTE: We have to store database file into user home folder in Linux
-    QString l_configPath(QDir::home().path().append(QDir::separator()).append(".config").append(QDir::separator()));
-    l_configPath = QDir::toNativeSeparators(l_configPath);
 
-    QFileInfo checkFolder(l_configPath + "movie-project");
-    if (!checkFolder.exists())
-    {
-        QDir(l_configPath).mkdir("movie-project");
-    }
-
-    QString l_dbPath = l_configPath + "movie-project" + QDir::separator() + "database.sqlite";
-    l_dbPath = QDir::toNativeSeparators(l_dbPath);
+#ifdef Q_OS_LINUX
+    // File in ~\.config
+    QString l_configPath(QDir::home().path().append(QDir::separator())
+                             .append(".config").append(QDir::separator()));
 #endif
 
 #ifdef Q_OS_WIN
-    ///TO_DO: find a way to find the Appplication.name instead of hard coding!
-    // NOTE: We have to store database file into user home folder in Linux
+    // File in $USER\AppData\Local
     QString l_configPath(QDir::home().path().append(QDir::separator())
-                            .append("AppData").append(QDir::separator())
-                            .append("Local").append(QDir::separator()));
-    l_configPath = QDir::toNativeSeparators(l_configPath);
+                                            .append("AppData")
+                                            .append(QDir::separator())
+                                            .append("Local")
+                                            .append(QDir::separator()));
+#endif
 
+#ifdef Q_OS_OSX
+    // File in ~/Library/Application Support
+    QString l_configPath(QDir::home().path().append(QDir::separator())
+                                            .append("Library")
+                                            .append(QDir::separator())
+                                            .append("Application Support")
+                                            .append(QDir::separator()));
+#endif
+
+    l_configPath = QDir::toNativeSeparators(l_configPath);
     QFileInfo checkFolder(l_configPath + "movie-project");
     if (!checkFolder.exists())
     {
@@ -90,15 +95,9 @@ bool DatabaseManager::openDB()
 
     QString l_dbPath = l_configPath + "movie-project" + QDir::separator() + "database.sqlite";
     l_dbPath = QDir::toNativeSeparators(l_dbPath);
-#endif
-
-#ifdef Q_OS_OSX
-    // I don't know the architecture
-#endif
 
     m_db.setDatabaseName(l_dbPath);
 
-    // Open databasee
     return m_db.open();
 }
 
