@@ -48,8 +48,10 @@ private:
     QNetworkAccessManager *m_networkManager;
     Application *m_app;
     Movie m_movie;
+    QString m_key;
     void getRelatedMovies(QString title);
-    void getMetadata(QString imdbID);
+    void getMetadata(QString tmdbID);
+    QString loadKey();
 };
 
 #endif // METADATAFETCHER_H

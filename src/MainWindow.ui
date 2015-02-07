@@ -92,6 +92,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="playlistsButton">
+            <property name="text">
+             <string>Playlists</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="toWatchButton">
             <property name="text">
              <string>To Watch</string>
