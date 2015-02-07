@@ -82,7 +82,7 @@ private:
     void prepareMoviesToDisplay(int id);
     void filterPannels();
     void fillMetadataPannel(Movie movie);
-
+    void fillPlaylistPannel();
 
 };
 

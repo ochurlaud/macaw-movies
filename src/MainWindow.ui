@@ -6,105 +6,46 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>684</width>
+    <height>557</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="globalWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <layout class="QHBoxLayout" name="topLayout">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="topLeftSpacer">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>48</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="images.qrc">:/img/logov0.png</pixmap>
-        </property>
-        <property name="scaledContents">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="logoSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout"/>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="buttonsLayout">
+       <layout class="QHBoxLayout" name="topLayout">
         <item>
-         <widget class="QComboBox" name="peopleBox">
-          <property name="currentText">
-           <string>Directors</string>
+         <widget class="QLabel" name="topLeftSpacer">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <item>
-           <property name="text">
-            <string>Directors</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Producers</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Actors</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="tagsButton">
+          <property name="maximumSize">
+           <size>
+            <width>48</width>
+            <height>48</height>
+           </size>
+          </property>
           <property name="text">
-           <string>Tags</string>
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="images.qrc">:/img/logov0.png</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="playlistsButton">
-          <property name="text">
-           <string>Playlists</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="toWatchButton">
-          <property name="text">
-           <string>To Watch</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="topRightSpacer">
+         <spacer name="logoSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -116,172 +57,247 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="buttonsLayout">
+          <item>
+           <widget class="QComboBox" name="peopleBox">
+            <property name="currentText">
+             <string>Directors</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>Directors</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Producers</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Actors</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="tagsButton">
+            <property name="text">
+             <string>Tags</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="toWatchButton">
+            <property name="text">
+             <string>To Watch</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="topRightSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="searchEdit">
+          <property name="toolTip">
+           <string/>
+          </property>
+          <property name="inputMask">
+           <string/>
+          </property>
+          <property name="placeholderText">
+           <string>Search here</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="searchEdit">
-        <property name="toolTip">
-         <string/>
+       <widget class="QSplitter" name="splitter_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-        <property name="inputMask">
-         <string/>
-        </property>
-        <property name="placeholderText">
-         <string>Search here</string>
-        </property>
+        <widget class="QSplitter" name="splitter">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <widget class="QWidget" name="">
+          <layout class="QVBoxLayout" name="leftPannelLayout">
+           <item>
+            <widget class="QLabel" name="leftPannelLabel">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Directors</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QListWidget" name="leftPannel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::EditKeyPressed</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="">
+          <layout class="QVBoxLayout" name="playlistLayout">
+           <item>
+            <widget class="QLabel" name="playlistLabel">
+             <property name="text">
+              <string>Playlists</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QListWidget" name="playlistPannel"/>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+        <widget class="QTableWidget" name="mainPannel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="sizeIncrement">
+          <size>
+           <width>1</width>
+           <height>1</height>
+          </size>
+         </property>
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustIgnored</enum>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::EditKeyPressed</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="textElideMode">
+          <enum>Qt::ElideRight</enum>
+         </property>
+         <property name="showGrid">
+          <bool>false</bool>
+         </property>
+         <property name="gridStyle">
+          <enum>Qt::CustomDashLine</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="horizontalHeaderHighlightSections">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+        </widget>
+        <widget class="QWidget" name="layoutWidget">
+         <layout class="QGridLayout" name="metadataPannel">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
+          <item row="0" column="2">
+           <widget class="QLabel" name="metadataTop">
+            <property name="text">
+             <string>Topdata</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="4">
+           <widget class="QLabel" name="metadataPlot">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Plot</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="metadataCover">
+            <property name="text">
+             <string>Cover</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
      </layout>
-    </item>
-    <item>
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <widget class="QWidget" name="">
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QLabel" name="leftPannelLabel">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Directors</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QListWidget" name="leftPannel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="contextMenuPolicy">
-           <enum>Qt::CustomContextMenu</enum>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="editTriggers">
-           <set>QAbstractItemView::EditKeyPressed</set>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QTableWidget" name="mainPannel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="sizeIncrement">
-        <size>
-         <width>1</width>
-         <height>1</height>
-        </size>
-       </property>
-       <property name="contextMenuPolicy">
-        <enum>Qt::CustomContextMenu</enum>
-       </property>
-       <property name="sizeAdjustPolicy">
-        <enum>QAbstractScrollArea::AdjustIgnored</enum>
-       </property>
-       <property name="editTriggers">
-        <set>QAbstractItemView::EditKeyPressed</set>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
-       </property>
-       <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectRows</enum>
-       </property>
-       <property name="textElideMode">
-        <enum>Qt::ElideRight</enum>
-       </property>
-       <property name="showGrid">
-        <bool>false</bool>
-       </property>
-       <property name="gridStyle">
-        <enum>Qt::CustomDashLine</enum>
-       </property>
-       <property name="sortingEnabled">
-        <bool>true</bool>
-       </property>
-       <attribute name="horizontalHeaderHighlightSections">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-        <bool>true</bool>
-       </attribute>
-       <attribute name="verticalHeaderVisible">
-        <bool>false</bool>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="">
-       <layout class="QGridLayout" name="metadataPannel">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetDefaultConstraint</enum>
-        </property>
-        <item row="0" column="2">
-         <widget class="QLabel" name="metadataTop">
-          <property name="text">
-           <string>Topdata</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="4">
-         <widget class="QLabel" name="metadataPlot">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>150</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Plot</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="metadataCover">
-          <property name="text">
-           <string>Cover</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
     </item>
    </layout>
   </widget>
@@ -290,13 +306,13 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>684</width>
      <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
-     <string>Settings</string>
+     <string>Settin&amp;gs</string>
     </property>
     <addaction name="actionEdit_Settings"/>
    </widget>
@@ -305,7 +321,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionEdit_Settings">
    <property name="text">
-    <string>Edit Settings</string>
+    <string>&amp;Edit Settings</string>
    </property>
   </action>
   <action name="actionEdit_mainPannelMetadata">

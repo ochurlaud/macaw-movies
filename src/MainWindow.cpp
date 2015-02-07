@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_leftPannelSelectedId = 0;
     fillMainPannel();
     fillLeftPannel(isPeople, Director);
+    fillPlaylistPannel();
     m_app->debug("[MainWindow] Construction done");
 }
 
@@ -214,6 +215,19 @@ void MainWindow::fillMainPannel()
     }
 
     m_app->debug("[MainWindow] Exits fillMainPannel()");
+}
+
+void MainWindow::fillPlaylistPannel()
+{
+    m_app->debug("[MainWindow] Enters fillPlaylistPannel()");
+    QList<Playlist> l_playlistList = m_app->getDatabaseManager()->getAllPlaylists();
+
+    foreach(Playlist l_playlist, l_playlistList)
+    {
+        QListWidgetItem *l_playlistItem = new QListWidgetItem(l_playlist.getName());
+        l_playlistItem->setData(Qt::UserRole, l_playlist.getId());
+        m_ui->playlistPannel->addItem(l_playlistItem);
+    }
 }
 
 void MainWindow::on_peopleBox_activated(int type)
