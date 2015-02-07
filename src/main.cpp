@@ -35,6 +35,7 @@ int main(int argv, char **args)
     MainWindow  l_mainWindow;
     l_mainWindow.show();
 
+
 /* FOR TESTING PURPOSES
     Movie movie = l_app.getDatabaseManager()->getOneMovieById(2);
     MetadataFetcher metadata(movie);
