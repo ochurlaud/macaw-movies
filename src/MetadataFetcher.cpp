@@ -62,9 +62,11 @@ void MetadataFetcher::getRelatedMovies(QString title)
     QStringList l_splittedTitle = title.split(l_sep);
 
     QRegExp l_alphaOnly("(^[À-Ÿà-ÿA-Za-z]*$)");
-    l_splittedTitle = l_splittedTitle.filter(l_alphaOnly); QNetworkRequest l_request;
+    l_splittedTitle = l_splittedTitle.filter(l_alphaOnly);
+    QString l_filteredTitle = l_splittedTitle.join("%20");
+    QNetworkRequest l_request;
 
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/search/movie?api_key="+m_key+"&query="+title));
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/search/movie?api_key="+m_key+"&query="+l_filteredTitle));
     m_networkManager->get(l_request);
 
     /*connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
