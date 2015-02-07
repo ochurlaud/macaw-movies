@@ -89,7 +89,11 @@ void MetadataFetcher::replyRelatedMovies(QNetworkReply *reply)
 
         QJsonArray l_jsonResults = l_jsonObject.value("results").toArray();
 
-        if (l_numberMovies == 1)
+        if (l_numberMovies == 0)
+        {
+
+        }
+        else if (l_numberMovies == 1)
         {
             QString l_id = l_jsonResults.at(0).toObject().value("id").toString();
             this->getMetadata(l_id);
@@ -112,7 +116,10 @@ void MetadataFetcher::replyRelatedMovies(QNetworkReply *reply)
 
             // This should go in another class
             QDialog *l_selectWindow = new QDialog;
+            l_selectWindow->setWindowTitle("Chose the right movie");
+            l_selectWindow->setFixedSize(400,400);
             QListWidget *l_listWidget = new QListWidget(l_selectWindow);
+
             for (int i = 0 ; i < l_printableStrings.size() ; i++)
             {
                 QListWidgetItem *l_item = new QListWidgetItem(l_printableStrings.at(i));
@@ -121,6 +128,8 @@ void MetadataFetcher::replyRelatedMovies(QNetworkReply *reply)
             }
             connect(l_listWidget,SIGNAL(doubleClicked(QModelIndex)),
                     this, SLOT(on_doubleClickedMovie(QModelIndex)));
+            connect(l_listWidget,SIGNAL(doubleClicked(QModelIndex)),
+                    l_selectWindow, SLOT(close()));
             l_selectWindow->show();
 
         }

@@ -30,16 +30,16 @@
 
 int main(int argv, char **args)
 {
-
-    QLocale locale(QLocale::English, QLocale::UnitedStates);
-    QString t("1992-04-07");
-    QDate l_releaseDate = locale.toDate(t,"yyyy-MM-dd");
-    qDebug()<<l_releaseDate.toString("dd/MM/yyyy");
     MoviesDebug *movieDebug = new MoviesDebug(true);
     Application l_app(movieDebug, argv, args);
     MainWindow  l_mainWindow;
     l_mainWindow.show();
 
+/* FOR TESTING PURPOSES
+    Movie movie = l_app.getDatabaseManager()->getOneMovieById(2);
+    MetadataFetcher metadata(movie);
+    metadata.fetchMetadata(movie.getTitle());
+*/
     return l_app.exec();
 }
 
