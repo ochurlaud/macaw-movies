@@ -91,59 +91,48 @@ void MetadataFetcher::replyRelatedMovies(QNetworkReply *reply)
 
         if (l_numberMovies == 0)
         {
-
+            m_app->debug("0 Movie found");
+            emit(noMovieFound());
         }
         else if (l_numberMovies == 1)
         {
-            QString l_id = l_jsonResults.at(0).toObject().value("id").toString();
+            m_app->debug("1 Movie found, metadata being updated");
+            int l_id = l_jsonResults.at(0).toObject().value("id").toInt();
             this->getMetadata(l_id);
         }
-
         else
         {
-            QStringList l_printableStrings;
-            QStringList l_tmdbIDs;
             m_app->debug("[MetadataFetcher] replyRelatedMovies: "
                          + QString::number(l_numberMovies)
                          + " movies found");
+
+            QList<Movie> l_moviesPropositionList;
+
             for (int i = 0 ; i < l_jsonResults.size() ; i++)
             {
                 QJsonObject l_currentObject = l_jsonResults.at(i).toObject();
-                l_printableStrings << l_currentObject.value("title").toString()
-                                 + " [" + l_currentObject.value("release_date").toString() + "]";
-                l_tmdbIDs << QString::number(l_currentObject.value("id").toInt());
+                Movie l_movieProposition;
+                l_movieProposition.setId(l_currentObject.value("id").toInt());
+                l_movieProposition.setTitle(l_currentObject.value("title").toString());
+                l_movieProposition.setReleaseDate(QDate::fromString(l_currentObject.value("release_date").toString(),"yyyy-MM-dd"));
+                l_moviesPropositionList.append(l_movieProposition);
             }
 
-            // This should go in another class
-            QDialog *l_selectWindow = new QDialog;
-            l_selectWindow->setWindowTitle("Chose the right movie");
-            l_selectWindow->setFixedSize(400,400);
-            QListWidget *l_listWidget = new QListWidget(l_selectWindow);
-
-            for (int i = 0 ; i < l_printableStrings.size() ; i++)
-            {
-                QListWidgetItem *l_item = new QListWidgetItem(l_printableStrings.at(i));
-                l_item->setData(Qt::UserRole, l_tmdbIDs.at(i));
-                l_listWidget->addItem(l_item);
-            }
-            connect(l_listWidget,SIGNAL(doubleClicked(QModelIndex)),
-                    this, SLOT(on_doubleClickedMovie(QModelIndex)));
-            connect(l_listWidget,SIGNAL(doubleClicked(QModelIndex)),
-                    l_selectWindow, SLOT(close()));
+            MetadataFetcherDialog *l_selectWindow = new MetadataFetcherDialog(m_movie.getTitle(), l_moviesPropositionList);
             l_selectWindow->show();
-
+            connect(l_selectWindow, SIGNAL(selectedMovie(int)), this, SLOT(callGetMetadata(int)));
         }
     }
     m_app->debug("[MetadataFetcher] Exit replyRelatedMovie");
 }
 
-void MetadataFetcher::getMetadata(QString tmdbID)
+void MetadataFetcher::getMetadata(int tmdbID)
 {
-    m_app->debug("[MetadataFetcher] Enter getMetadata, " + tmdbID);
+    m_app->debug("[MetadataFetcher] Enter getMetadata, " + QString::number(tmdbID));
     connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(replyHydrateMovie(QNetworkReply*)));
     QNetworkRequest l_request;
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/movie/"+tmdbID+"?api_key="+m_key+"&language=en"));
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/movie/"+QString::number(tmdbID)+"?api_key="+m_key+"&language=en"));
 
     m_networkManager->get(l_request);
     m_app->debug("[MetadataFetcher] Exit getMetadata");
@@ -251,6 +240,7 @@ void MetadataFetcher::fetchMetadata(QString title)
     this->getRelatedMovies(title);
     connect(this, SIGNAL(movieHydrated(Movie&)),
             this, SLOT(updateMovieInDatabase(Movie&)));
+
     QEventLoop l_loop;
     connect(this, SIGNAL(movieHydrated(Movie&)),
             &l_loop, SLOT(quit()));
@@ -267,9 +257,9 @@ bool MetadataFetcher::updateMovieInDatabase(Movie &movie)
     return m_app->getDatabaseManager()->updateMovie(movie);
 }
 
-void MetadataFetcher::on_doubleClickedMovie(QModelIndex index)
+void MetadataFetcher::callGetMetadata(int tmdbID)
 {
-    m_app->debug("[MetadataFetcher] Movie double-clicked");
-    QString l_tmdbID = index.data(Qt::UserRole).toString();
-    this->getMetadata(l_tmdbID);
+    m_app->debug("[MetadataFetcher] callGetMetada");
+
+    this->getMetadata(tmdbID);
 }

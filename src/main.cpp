@@ -36,11 +36,11 @@ int main(int argv, char **args)
     l_mainWindow.show();
 
 
-/* FOR TESTING PURPOSES
+/*/ FOR TESTING PURPOSES
     Movie movie = l_app.getDatabaseManager()->getOneMovieById(2);
     MetadataFetcher metadata(movie);
     metadata.fetchMetadata(movie.getTitle());
-*/
+/*/
     return l_app.exec();
 }
 

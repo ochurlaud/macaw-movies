@@ -23,7 +23,9 @@
 #include <QObject>
 #include <QtNetwork>
 #include <QLocale>
-#include <Application.h>
+
+#include "Application.h"
+#include "MetadataFetcherDialog.h"
 
 class MetadataFetcher : public QObject
 {
@@ -41,7 +43,7 @@ public slots:
     void replyRelatedMovies(QNetworkReply *reply);
     void replyHydrateMovie(QNetworkReply *reply);
     bool updateMovieInDatabase(Movie &movie);
-    void on_doubleClickedMovie(QModelIndex);
+    void callGetMetadata(int tmdbID);
 
 private:
     QNetworkAccessManager *m_networkManager;
@@ -49,7 +51,7 @@ private:
     Movie m_movie;
     QString m_key;
     void getRelatedMovies(QString title);
-    void getMetadata(QString tmdbID);
+    void getMetadata(int tmdbID);
     QString loadKey();
 };
 
