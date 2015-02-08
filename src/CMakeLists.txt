@@ -7,6 +7,7 @@ list(APPEND SRCS DatabaseManager_insert.cpp)
 list(APPEND SRCS DatabaseManager_update.cpp)
 list(APPEND SRCS MainWindow.cpp)
 list(APPEND SRCS MetadataFetcher.cpp)
+list(APPEND SRCS MetadataFetcherDialog.cpp)
 list(APPEND SRCS MovieDialog.cpp)
 list(APPEND SRCS MoviesDebug.cpp)
 list(APPEND SRCS PeopleDialog.cpp)
@@ -20,8 +21,10 @@ list(APPEND SRCS Entities/Tag.cpp)
 
 # Forms
 list(APPEND FORMS MainWindow.ui)
+list(APPEND FORMS MetadataFetcherDialog.ui)
 list(APPEND FORMS MovieDialog.ui)
 list(APPEND FORMS PeopleDialog.ui)
+list(APPEND FORMS SettingsWindow.ui)
 
 
 
