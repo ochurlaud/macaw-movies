@@ -37,7 +37,6 @@ TEMPLATE = app
 SOURCES += main.cpp \
     DatabaseManager.cpp \
     Application.cpp \
-    SettingsWindow.cpp \
     MoviesDebug.cpp \
     Entities/Movie.cpp \
     Entities/People.cpp \
@@ -51,12 +50,12 @@ SOURCES += main.cpp \
     DatabaseManager_insert.cpp \
     DatabaseManager_update.cpp \
     DatabaseManager_delete.cpp \
-    MetadataFetcherDialog.cpp
+    MetadataFetcherDialog.cpp \
+    SettingsWindow.cpp
 
 HEADERS  += \
     DatabaseManager.h \
     Application.h \
-    SettingsWindow.h \
     MoviesDebug.h \
     Entities/Movie.h \
     Entities/People.h \
@@ -67,13 +66,15 @@ HEADERS  += \
     PeopleDialog.h \
     Entities/Playlist.h \
     include_var.h \
-    MetadataFetcherDialog.h
+    MetadataFetcherDialog.h \
+    SettingsWindow.h
 
 FORMS    += \
     MainWindow.ui \
     MovieDialog.ui \
     PeopleDialog.ui \
-    MetadataFetcherDialog.ui
+    MetadataFetcherDialog.ui \
+    SettingsWindow.ui
 
 OTHER_FILES += \
     ../.gitignore \
