@@ -15,12 +15,12 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="3" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    <widget class="QListWidget" name="listWidget"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Explain what to do here</string>
      </property>
     </widget>
    </item>
@@ -30,7 +30,7 @@
       <widget class="QLineEdit" name="lineEdit"/>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="searchButton">
        <property name="text">
         <string>Search</string>
        </property>
@@ -38,13 +38,20 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
-    <widget class="QListWidget" name="listWidget"/>
+   <item row="4" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
+   <item row="2" column="0">
+    <widget class="QLabel" name="moviePathLabel">
      <property name="text">
-      <string>Explain what to do here</string>
+      <string>TextLabel</string>
      </property>
     </widget>
    </item>

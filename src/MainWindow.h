@@ -65,6 +65,8 @@ private slots:
     void addPlaylistMenu_triggered(QAction* action);
 
 
+    void on_actionAbout_triggered();
+
 signals:
     void toUpdate();
 

@@ -681,3 +681,18 @@ void MainWindow::fillMetadataPannel(Movie movie)
     m_ui->metadataPlot->setText(movie.getSynopsis());
     m_app->debug("[MainWindow] Exit fillMetadataPannel");
 }
+
+void MainWindow::on_actionAbout_triggered()
+{
+    QMessageBox::about(this, "About " APP_NAME,
+                       "<h1>" APP_NAME "</h1><br />"
+                       "<em>Copyright (C) 2014 Movie-Project<br />"
+                       "(Olivier CHURLAUD, Sébastien TOUZÉ)</em>"
+                       "<br /><br />"
+                       "Based on Qt5, uses the API of <a href='http://www.themoviedb.org/'>TMDB</a>"
+                       "<br /><br />"
+                       "Movie-Project is distributed in the hope that it will be useful, "
+                       "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+                       "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br />"
+                       "See the GNU General Public License for more details.");
+}

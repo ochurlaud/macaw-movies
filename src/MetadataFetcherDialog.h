@@ -37,7 +37,7 @@ class MetadataFetcherDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit MetadataFetcherDialog(QString title, QList<Movie> moviesPropositionList, QWidget *parent = 0);
+    explicit MetadataFetcherDialog(Movie movie, QList<Movie> moviesPropositionList, QWidget *parent = 0);
     ~MetadataFetcherDialog();
     QListWidget *getListWidget();
 

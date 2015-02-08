@@ -118,7 +118,7 @@ void MetadataFetcher::replyRelatedMovies(QNetworkReply *reply)
                 l_moviesPropositionList.append(l_movieProposition);
             }
 
-            MetadataFetcherDialog *l_selectWindow = new MetadataFetcherDialog(m_movie.getTitle(), l_moviesPropositionList);
+            MetadataFetcherDialog *l_selectWindow = new MetadataFetcherDialog(m_movie, l_moviesPropositionList);
             l_selectWindow->show();
             connect(l_selectWindow, SIGNAL(selectedMovie(int)), this, SLOT(callGetMetadata(int)));
         }

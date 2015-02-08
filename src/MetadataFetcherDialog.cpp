@@ -20,7 +20,7 @@
 #include "MetadataFetcherDialog.h"
 #include "ui_MetadataFetcherDialog.h"
 
-MetadataFetcherDialog::MetadataFetcherDialog(QString title, QList<Movie> moviesPropositionList, QWidget *parent):
+MetadataFetcherDialog::MetadataFetcherDialog(Movie movie, QList<Movie> moviesPropositionList, QWidget *parent):
     QDialog(parent),
     m_ui(new Ui::MetadataFetcherDialog)
 {
@@ -28,7 +28,8 @@ MetadataFetcherDialog::MetadataFetcherDialog(QString title, QList<Movie> moviesP
     m_app->debug("[MetadataFetcherDialog] Constructor called");
     m_ui->setupUi(this);
 
-    m_ui->lineEdit->setText(title);
+    m_ui->lineEdit->setText(movie.getTitle());
+    m_ui->moviePathLabel->setText(movie.getFilePath());
     foreach (Movie l_movieProposition, moviesPropositionList)
     {
         QListWidgetItem *l_item = new QListWidgetItem;
