@@ -58,9 +58,6 @@
          </spacer>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout"/>
-        </item>
-        <item>
          <layout class="QHBoxLayout" name="buttonsLayout">
           <item>
            <widget class="QComboBox" name="peopleBox">
@@ -96,6 +93,9 @@
             <property name="text">
              <string>Playlists</string>
             </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -119,9 +119,6 @@
            </spacer>
           </item>
          </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2"/>
         </item>
         <item>
          <widget class="QLineEdit" name="searchEdit">
@@ -364,7 +361,7 @@
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>&amp;About</string>
    </property>
   </action>
  </widget>
