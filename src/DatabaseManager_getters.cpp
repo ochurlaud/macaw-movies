@@ -134,7 +134,7 @@ QList<Movie> DatabaseManager::getMoviesByPeople(const People &people,
 /**
  * @brief Gets all the movies tagged by the tag having the id `id`
  *
- * @param Tag tag
+ * @param id id
  * @return QList<Movie>
  */
 QList<Movie> DatabaseManager::getMoviesByTag(const int id,
@@ -143,7 +143,7 @@ QList<Movie> DatabaseManager::getMoviesByTag(const int id,
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT " + m_movieFields + " "
-                    "FROM movies AS m"
+                    "FROM movies AS m "
                     "WHERE id IN (SELECT id_movie "
                                  "FROM movies_tags "
                                  "WHERE id_tag = :id) "
@@ -175,6 +175,54 @@ QList<Movie> DatabaseManager::getMoviesByTag(const Tag &tag,
                                              const QString fieldOrder)
 {
     QList<Movie> l_movieList = getMoviesByTag(tag.getId(), fieldOrder);
+
+    return l_movieList;
+}
+
+/**
+ * @brief Gets all the movies from a playlist determined by its id
+ *
+ * @param int id
+ * @return QList<Movie>
+ */
+QList<Movie> DatabaseManager::getMoviesByPlaylist(const int id,
+                                                  const QString fieldOrder)
+{
+    QList<Movie> l_movieList;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT " + m_movieFields + " "
+                    "FROM movies AS m "
+                    "WHERE m.id IN (SELECT id_movie "
+                                 "FROM movies_playlists "
+                                 "WHERE id_playlist = :id) "
+                                 "ORDER BY " + fieldOrder);
+    l_query.bindValue(":id", id);
+
+    if (!l_query.exec())
+    {
+        debug("In getMoviesByPlaylist(Playlist):");
+        debug(l_query.lastError().text());
+    }
+
+    while(l_query.next())
+    {
+        Movie l_movie = hydrateMovie(l_query);
+        l_movieList.push_back(l_movie);
+    }
+
+    return l_movieList;
+}
+
+/**
+ * @brief Gets all the movies from a playlist
+ *
+ * @param Playlist
+ * @return QList<Movie>
+ */
+QList<Movie> DatabaseManager::getMoviesByPlaylist(const Playlist &playlist,
+                                             const QString fieldOrder)
+{
+    QList<Movie> l_movieList = getMoviesByPlaylist(playlist.getId(), fieldOrder);
 
     return l_movieList;
 }

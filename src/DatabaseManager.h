@@ -67,6 +67,8 @@ public:
     QList<Movie> getMoviesByPeople(const People &people, const int type, const QString fieldOrder = "title");
     QList<Movie> getMoviesByTag(const int id, const QString fieldOrder = "title");
     QList<Movie> getMoviesByTag(const Tag &tag, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPlaylist(const int id, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPlaylist(const Playlist &playlist, const QString fieldOrder = "title");
     QList<Movie> getMoviesWithoutPeople(const int type, const QString fieldOrder = "title");
     QList<Movie> getMoviesWithoutTag(const QString fieldOrder = "title");
     QList<Movie> getMoviesByAny(const QString text, const QString fieldOrder = "title");
