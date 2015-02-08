@@ -50,7 +50,8 @@ SOURCES += main.cpp \
     DatabaseManager_getters.cpp \
     DatabaseManager_insert.cpp \
     DatabaseManager_update.cpp \
-    DatabaseManager_delete.cpp
+    DatabaseManager_delete.cpp \
+    MetadataFetcherDialog.cpp
 
 HEADERS  += \
     DatabaseManager.h \
@@ -65,12 +66,14 @@ HEADERS  += \
     MovieDialog.h \
     PeopleDialog.h \
     Entities/Playlist.h \
-    include_var.h
+    include_var.h \
+    MetadataFetcherDialog.h
 
 FORMS    += \
     MainWindow.ui \
     MovieDialog.ui \
-    PeopleDialog.ui
+    PeopleDialog.ui \
+    MetadataFetcherDialog.ui
 
 OTHER_FILES += \
     ../.gitignore \
