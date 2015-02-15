@@ -51,6 +51,7 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     setCountry(m_movie.getCountry());
     setSynopsis(m_movie.getSynopsis());
     setPeopleList(m_movie.getPeopleList());
+    setMovieSelectedTagList(m_movie.getTagList());
 
     m_ui->directorsWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(m_ui->directorsWidget, SIGNAL(customContextMenuRequested(QPoint)),
@@ -201,6 +202,33 @@ QList<People> MovieDialog::getPeopleList(int type)
     }
 
     return l_peopleList;
+}
+
+/**
+ * @brief Set the tag list of selected movie in the MovieDialog as selected
+ * @param tag list for the movie
+ */
+void MovieDialog::setMovieSelectedTagList(const QList<Tag> &tagList)
+{
+    //QModelIndexList l_indexList = m_ui->tagListView->selectionModel()->;
+    QStringListModel * l_indexList = m_app->getDatabaseManager()->getTagListModel();
+    QString l_tagName;
+
+    foreach(const Tag tagToSelect, tagList)
+    {
+        l_tagName = tagToSelect.getName();
+
+
+        for(int i=0; i < l_indexList->rowCount();i++)
+        {
+            if(l_indexList->index(i,0).data().toString() == l_tagName)
+            {
+                m_ui->tagListView->selectionModel()->setCurrentIndex(l_indexList->index(i,0), QItemSelectionModel::Select);
+                break;
+            }
+        }
+    }
+
 }
 
 void MovieDialog::addPeople(const People &people)

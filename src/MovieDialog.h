@@ -53,6 +53,7 @@ public:
     QString getSynopsis() const;
     void setPeopleList(const QList<People> &peopleList);
     QList<People> getPeopleList(int type);
+    void setMovieSelectedTagList(const QList<Tag> &tagList);
     void addPeople(const People &people);
     void delPeople(const People &people);
     void updatePeople(const People &people);
