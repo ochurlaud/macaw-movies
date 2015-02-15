@@ -67,6 +67,8 @@ private slots:
 
     void on_actionAbout_triggered();
 
+    void on_playlistPannel_doubleClicked(const QModelIndex &index);
+
 signals:
     void toUpdate();
 

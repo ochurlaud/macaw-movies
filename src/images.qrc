@@ -21,4 +21,7 @@
     <qresource prefix="/">
         <file>img/logov0.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>img/logov0_1.png</file>
+    </qresource>
 </RCC>

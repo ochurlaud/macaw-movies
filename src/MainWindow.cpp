@@ -220,7 +220,10 @@ void MainWindow::fillMainPannel()
 void MainWindow::fillPlaylistPannel()
 {
     m_app->debug("[MainWindow] Enters fillPlaylistPannel()");
+
+    m_ui->playlistPannel->clear();
     QList<Playlist> l_playlistList = m_app->getDatabaseManager()->getAllPlaylists();
+    l_playlistList.insert(0, m_app->getDatabaseManager()->getOnePlaylistById(1));
 
     foreach(Playlist l_playlist, l_playlistList)
     {
@@ -242,12 +245,22 @@ void MainWindow::on_peopleBox_activated(int type)
 void MainWindow::on_playlistsButton_clicked()
 {
     m_app->debug("[MainWindow] playlistsButton clicked");
-    fillLeftPannel(isPlaylist);
-    m_leftPannelSelectedId = 0;
+    if (!m_ui->playlistsButton->isChecked())
+    {
+        foreach (QListWidgetItem *l_item, m_ui->playlistPannel->selectedItems())
+        {
+            l_item->setSelected(false);
+        }
+        selfUpdate();
+    }
 }
 
 void MainWindow::on_toWatchButton_clicked()
 {
+    m_moviesList = m_app->getDatabaseManager()->getMoviesByPlaylist(1);
+    fillMainPannel();
+    fillLeftPannel(isPeople, Director);
+    filterPannels();
 
 }
 
@@ -356,6 +369,7 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
         {
             Playlist l_playlist(l_playlistName);
             m_app->getDatabaseManager()->insertNewPlaylist(l_playlist);
+            fillPlaylistPannel();
             l_playlist.addMovie(l_movie);
             m_app->getDatabaseManager()->updatePlaylist(l_playlist);
         }
@@ -695,4 +709,12 @@ void MainWindow::on_actionAbout_triggered()
                        "but WITHOUT ANY WARRANTY; without even the implied warranty of "
                        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br />"
                        "See the GNU General Public License for more details.");
+}
+
+void MainWindow::on_playlistPannel_doubleClicked(const QModelIndex &index)
+{
+    m_ui->playlistsButton->setChecked(true);
+    int l_id = index.data(Qt::UserRole).toInt();
+    m_moviesList = m_app->getDatabaseManager()->getMoviesByPlaylist(l_id);
+    fillMainPannel();
 }
