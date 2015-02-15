@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
     connect(this, SIGNAL(toUpdate()), this, SLOT(selfUpdate()));
+    connect(m_app->getDatabaseManager(),SIGNAL(orphanTagDetected(Tag)), this, SLOT(askForOrphanTagDeletion(Tag)));
 
     m_moviesList = m_app->getDatabaseManager()->getAllMovies();
     m_leftPannelSelectedId = 0;
@@ -381,6 +382,21 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
         m_app->getDatabaseManager()->updatePlaylist(l_playlist);
     }
     emit(toUpdate());
+}
+
+void MainWindow::askForOrphanTagDeletion(Tag orphanTag)
+{
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setText("The"+ orphanTag.getName() +" tag is not used in any movie now. ");
+    msgBox.setInformativeText("Do you want to delete this tag?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+
+    if(msgBox.exec() == QMessageBox::Yes)
+    {
+        m_app->getDatabaseManager()->deleteTag(orphanTag);
+    }
 }
 
 void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)

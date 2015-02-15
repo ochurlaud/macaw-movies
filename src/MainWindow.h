@@ -24,6 +24,7 @@
 #include <QtWidgets>
 #include "Application.h"
 #include "Entities/Movie.h"
+#include "Entities/Tag.h"
 #include "SettingsWindow.h"
 #include "MovieDialog.h"
 #include "PeopleDialog.h"
@@ -63,6 +64,7 @@ private slots:
     void addNewMovies();
     void on_searchEdit_returnPressed();
     void addPlaylistMenu_triggered(QAction* action);
+    void askForOrphanTagDeletion(Tag orphanTag);
 
 
     void on_actionAbout_triggered();

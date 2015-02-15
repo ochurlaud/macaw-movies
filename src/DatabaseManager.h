@@ -36,6 +36,7 @@ enum typePeople {None, Director, Producer, Actor};
  */
 class DatabaseManager : public QObject
 {
+    Q_OBJECT
 
 #define DATE_FORMAT "yyyy.MM.dd"
 
@@ -57,6 +58,8 @@ public:
     bool saveMoviesPath(QString);
     bool createTag(QString name);
 
+signals:
+    void orphanTagDetected(Tag tag);
 
 //// Getters - in DatabaseManager_getters.cpp
 public:
@@ -135,11 +138,10 @@ public:
     bool removeTagFromMovie(Tag &tag, Movie &movie);
     bool removeMovieFromPlaylist(Movie &movie, Playlist &playlist);
     bool deletePlaylist(Playlist &playlist);
-
+    bool deleteTag(const Tag &tag);
 
 private:
     bool deletePeople(const People &people);
-    bool deleteTag(const Tag &tag);
 
 //// Models
 public:

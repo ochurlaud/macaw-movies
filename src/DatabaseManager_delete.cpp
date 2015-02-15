@@ -139,8 +139,8 @@ bool DatabaseManager::removeTagFromMovie(Tag &tag, Movie &movie)
         return false;
     }
 
-    // Checks if this tag is still used, if not deletes it.
-    l_query.prepare("SELECT id FROM movies_tags WHERE id_tag = :id_tag");
+    // Checks if this tag is still used, if not asks for deleting it.
+    l_query.prepare("SELECT count(id) FROM movies_tags WHERE id_tag = :id_tag");
     l_query.bindValue(":id_tag", tag.getId());
     if(!l_query.exec())
     {
@@ -149,9 +149,10 @@ bool DatabaseManager::removeTagFromMovie(Tag &tag, Movie &movie)
 
         return false;
     }
-    if(!l_query.next())
+    l_query.next();
+    if(l_query.value(0).toInt() <= 0)
     {
-        deleteTag(tag);
+        emit orphanTagDetected(tag);
     }
 
     return true;
@@ -257,9 +258,7 @@ bool DatabaseManager::deletePeople(const People &people)
 }
 
 /**
- * @brief Remove a Tag from the database
- * /\  Should be called only by removeTagFromMovie() !
- *
+ * @brief Remove a Tag from the database with all references to this tag in movies_tags table
  * @param Tag to remove
  * @return boolean
  */
@@ -267,8 +266,7 @@ bool DatabaseManager::deleteTag(const Tag &tag)
 {
     QSqlQuery l_query(m_db);
 
-    // This should not do anything, because deleteTag()
-    // must be called only by removeTagFromMovie()
+    // Deleting all references to the tag in movies_tags
     l_query.prepare("DELETE FROM movies_tags WHERE id_tag = :id");
     l_query.bindValue(":id", tag.getId());
 
@@ -280,6 +278,7 @@ bool DatabaseManager::deleteTag(const Tag &tag)
         return false;
     }
 
+    // Delete the tag
     l_query.prepare("DELETE FROM tags WHERE id = :id");
     l_query.bindValue(":id", tag.getId());
 

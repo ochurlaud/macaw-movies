@@ -210,7 +210,6 @@ QList<People> MovieDialog::getPeopleList(int type)
  */
 void MovieDialog::setMovieSelectedTagList(const QList<Tag> &tagList)
 {
-    //QModelIndexList l_indexList = m_ui->tagListView->selectionModel()->;
     QStringListModel * l_indexList = m_app->getDatabaseManager()->getTagListModel();
     QString l_tagName;
 
