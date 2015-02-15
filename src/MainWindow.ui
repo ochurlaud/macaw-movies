@@ -33,11 +33,17 @@
             <height>48</height>
            </size>
           </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
           <property name="text">
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="images.qrc">:/img/logov0.png</pixmap>
+           <pixmap resource="images.qrc">:/img/logov0_1.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>

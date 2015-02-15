@@ -27,7 +27,7 @@ Application::Application(MoviesDebug *moviesDebug, int &argc, char **argv) :
     QApplication(argc, argv)
 {
     m_appName = APP_NAME;
-    m_appIcon = QIcon(":/img/logov0.png");
+    m_appIcon = QIcon(":/img/logov0_1.png");
     m_debug = moviesDebug;
 
     debug("[Application] started");
