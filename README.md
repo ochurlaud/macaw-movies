@@ -1,4 +1,4 @@
-# Movie-Project
+# Macaw-Movies
 
 Movies organizer. Qt/C++/Sqlite
 

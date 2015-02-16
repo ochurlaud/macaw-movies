@@ -150,7 +150,7 @@
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <widget class="QWidget" name="layoutWidget">
+         <widget class="QWidget" name="leftPannelWidget">
           <layout class="QVBoxLayout" name="leftPannelLayout">
            <item>
             <widget class="QLabel" name="leftPannelLabel">
@@ -194,7 +194,7 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="layoutWidget">
+         <widget class="QWidget" name="playlistWidget">
           <layout class="QVBoxLayout" name="playlistLayout">
            <item>
             <widget class="QLabel" name="playlistLabel">
