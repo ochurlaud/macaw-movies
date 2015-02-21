@@ -51,7 +51,6 @@ public:
 private slots:
     void on_actionEdit_Settings_triggered();
     void on_peopleBox_activated(int type);
-    void on_playlistsButton_clicked();
     void on_toWatchButton_clicked();
     void on_tagsButton_clicked();
     void on_customContextMenuRequested(const QPoint &);
@@ -65,11 +64,7 @@ private slots:
     void on_searchEdit_returnPressed();
     void addPlaylistMenu_triggered(QAction* action);
     void askForOrphanTagDeletion(Tag orphanTag);
-
-
     void on_actionAbout_triggered();
-
-    void on_playlistPannel_doubleClicked(const QModelIndex &index);
 
 signals:
     void toUpdate();
@@ -88,7 +83,6 @@ private:
     void prepareMoviesToDisplay(int id);
     void filterPannels();
     void fillMetadataPannel(Movie movie);
-    void fillPlaylistPannel();
 
 };
 

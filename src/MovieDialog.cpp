@@ -217,7 +217,6 @@ void MovieDialog::setMovieSelectedTagList(const QList<Tag> &tagList)
     {
         l_tagName = tagToSelect.getName();
 
-
         for (int i=0; i < l_indexList->rowCount();i++)
         {
             if(l_indexList->index(i,0).data().toString() == l_tagName)
@@ -227,7 +226,6 @@ void MovieDialog::setMovieSelectedTagList(const QList<Tag> &tagList)
             }
         }
     }
-
 }
 
 void MovieDialog::addPeople(const People &people)

@@ -46,7 +46,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_leftPannelSelectedId = 0;
     fillMainPannel();
     fillLeftPannel(isPeople, Director);
-    fillPlaylistPannel();
     m_app->debug("[MainWindow] Construction done");
 }
 
@@ -218,22 +217,6 @@ void MainWindow::fillMainPannel()
     m_app->debug("[MainWindow] Exits fillMainPannel()");
 }
 
-void MainWindow::fillPlaylistPannel()
-{
-    m_app->debug("[MainWindow] Enters fillPlaylistPannel()");
-
-    m_ui->playlistPannel->clear();
-    QList<Playlist> l_playlistList = m_app->getDatabaseManager()->getAllPlaylists();
-    l_playlistList.insert(0, m_app->getDatabaseManager()->getOnePlaylistById(1));
-
-    foreach(Playlist l_playlist, l_playlistList)
-    {
-        QListWidgetItem *l_playlistItem = new QListWidgetItem(l_playlist.getName());
-        l_playlistItem->setData(Qt::UserRole, l_playlist.getId());
-        m_ui->playlistPannel->addItem(l_playlistItem);
-    }
-}
-
 void MainWindow::on_peopleBox_activated(int type)
 {
     m_app->debug("[MainWindow] Enters on_peopleBox_activated()");
@@ -241,19 +224,6 @@ void MainWindow::on_peopleBox_activated(int type)
     int peopleType = type + 1;
     fillLeftPannel(isPeople, peopleType);
     m_leftPannelSelectedId = 0;
-}
-
-void MainWindow::on_playlistsButton_clicked()
-{
-    m_app->debug("[MainWindow] playlistsButton clicked");
-    if (!m_ui->playlistsButton->isChecked())
-    {
-        foreach (QListWidgetItem *l_item, m_ui->playlistPannel->selectedItems())
-        {
-            l_item->setSelected(false);
-        }
-        selfUpdate();
-    }
 }
 
 void MainWindow::on_toWatchButton_clicked()
@@ -290,32 +260,15 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
              m_ui->mainPannel->selectedItems().count() != 0)
     {
         QMenu *l_addPlaylistMenu = new QMenu("Add to playlist");
-        QAction *l_actionAddInNewPlaylist = new QAction("New playlist",
-                                                        l_addPlaylistMenu);
-        l_actionAddInNewPlaylist->setData(-1);
         QAction *l_actionAddInToWatch = new QAction("To Watch",
                                                     l_addPlaylistMenu);
         l_actionAddInToWatch->setData(1);
 
-        QList<Playlist> l_playlistList = m_app->getDatabaseManager()->getAllPlaylists();
-        foreach (Playlist l_playlist, l_playlistList)
-        {
-            QAction *l_actionAddInPlaylist = new QAction(l_playlist.getName(),
-                                                         l_addPlaylistMenu);
-            l_actionAddInPlaylist->setData(l_playlist.getId());
-            l_addPlaylistMenu->addAction(l_actionAddInPlaylist);
-        }
-        if (l_playlistList.count() != 0)
-        {
-            l_addPlaylistMenu->addSeparator();
-        }
-
         l_addPlaylistMenu->addAction(l_actionAddInToWatch);
-        l_addPlaylistMenu->addSeparator();
-        l_addPlaylistMenu->addAction(l_actionAddInNewPlaylist);
+
         QObject::connect(l_addPlaylistMenu, SIGNAL(triggered(QAction*)),
                          this, SLOT(addPlaylistMenu_triggered(QAction*)));
-        l_menu->addMenu(l_addPlaylistMenu);
+        l_menu->addAction(l_actionAddInToWatch);;
         l_menu->addAction(m_ui->actionEdit_mainPannelMetadata);
         l_menu->exec(m_ui->mainPannel->mapToGlobal(point));
     }
@@ -361,26 +314,9 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
     int l_actionId = action->data().toInt();
     int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Qt::UserRole).toInt();
     Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
-
-    if (l_actionId == -1)
-    {
-        bool l_isNewPlaylist;
-        QString l_playlistName = QInputDialog::getText(this, "New Playlist", "Name of the new Playlist", QLineEdit::Normal, QString(), &l_isNewPlaylist);
-        if (l_isNewPlaylist && !l_playlistName.isEmpty())
-        {
-            Playlist l_playlist(l_playlistName);
-            m_app->getDatabaseManager()->insertNewPlaylist(l_playlist);
-            fillPlaylistPannel();
-            l_playlist.addMovie(l_movie);
-            m_app->getDatabaseManager()->updatePlaylist(l_playlist);
-        }
-    }
-    else
-    {
-        Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(l_actionId);
-        l_playlist.addMovie(l_movie);
-        m_app->getDatabaseManager()->updatePlaylist(l_playlist);
-    }
+    Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(l_actionId);
+    l_playlist.addMovie(l_movie);
+    m_app->getDatabaseManager()->updatePlaylist(l_playlist);
     emit(toUpdate());
 }
 
@@ -725,12 +661,4 @@ void MainWindow::on_actionAbout_triggered()
                        "but WITHOUT ANY WARRANTY; without even the implied warranty of "
                        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br />"
                        "See the GNU General Public License for more details.");
-}
-
-void MainWindow::on_playlistPannel_doubleClicked(const QModelIndex &index)
-{
-    m_ui->playlistsButton->setChecked(true);
-    int l_id = index.data(Qt::UserRole).toInt();
-    m_moviesList = m_app->getDatabaseManager()->getMoviesByPlaylist(l_id);
-    fillMainPannel();
 }
