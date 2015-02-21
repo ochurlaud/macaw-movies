@@ -23,11 +23,12 @@
  * @brief Constructor
  *
  */
-Application::Application(MoviesDebug *moviesDebug, int &argc, char **argv) :
+Application::Application(int &argc, char **argv, MoviesDebug *moviesDebug) :
     QApplication(argc, argv)
 {
-    m_appName = APP_NAME;
-    m_appIcon = QIcon(":/img/logov0_1.png");
+    this->setApplicationName(APP_NAME);
+    this->setApplicationVersion(APP_VERSION);
+    this->setWindowIcon(QIcon(":/img/logov0_1.png"));
     m_debug = moviesDebug;
 
     debug("[Application] started");

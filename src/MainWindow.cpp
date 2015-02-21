@@ -32,8 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_app->debug("[MainWindow] Constructor called");
 
     m_ui->setupUi(this);
-    this->setWindowTitle(m_app->getAppName());
-    this->setWindowIcon(m_app->getAppIcon());
+    this->setWindowTitle(m_app->applicationDisplayName());
+    this->setWindowIcon(m_app->windowIcon());
 
     connect(m_ui->mainPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
@@ -719,7 +719,7 @@ void MainWindow::on_actionAbout_triggered()
                        "<em>Copyright (C) 2014 Macaw-Movies<br />"
                        "(Olivier CHURLAUD, Sébastien TOUZÉ)</em>"
                        "<br /><br />"
-                       "Based on Qt5, uses the API of <a href='http://www.themoviedb.org/'>TMDB</a>"
+                       "Compiled with Qt " QT_VERSION_STR ", uses the API of <a href='http://www.themoviedb.org/'>TMDB</a>"
                        "<br /><br />"
                        "Macaw-Movies is distributed in the hope that it will be useful, "
                        "but WITHOUT ANY WARRANTY; without even the implied warranty of "
