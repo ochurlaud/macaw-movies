@@ -83,6 +83,6 @@ OTHER_FILES += \
     ../DDB_SCHEMA.md
 
 RESOURCES += \
-    images.qrc
+    images.qrc \
 
 DISTFILES +=
