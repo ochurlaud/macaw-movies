@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>836</width>
+    <width>856</width>
     <height>388</height>
    </rect>
   </property>
@@ -19,9 +19,9 @@
   <widget class="QDialogButtonBox" name="validationButtons">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>560</x>
      <y>340</y>
-     <width>531</width>
+     <width>261</width>
      <height>32</height>
     </rect>
    </property>
@@ -36,8 +36,8 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>50</y>
-     <width>371</width>
+     <y>20</y>
+     <width>421</width>
      <height>205</height>
     </rect>
    </property>
@@ -164,7 +164,7 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>430</x>
+     <x>450</x>
      <y>20</y>
      <width>371</width>
      <height>313</height>
@@ -308,14 +308,27 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>259</y>
-     <width>371</width>
-     <height>77</height>
+     <y>237</y>
+     <width>421</width>
+     <height>131</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Add a tag here</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
@@ -340,7 +353,19 @@
      </layout>
     </item>
     <item>
-     <widget class="QListView" name="tagListView"/>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Tag list, select the tags for this movie.  
+Multi-selection with &lt;Ctrl&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QListView" name="tagListView"/>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
