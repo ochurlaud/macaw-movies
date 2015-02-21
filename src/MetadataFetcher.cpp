@@ -27,29 +27,7 @@ MetadataFetcher::MetadataFetcher(Movie movie, QObject *parent) :
     m_app->debug("[MetadataFetcher] Constructor");
     m_movie = movie;
     m_networkManager = new QNetworkAccessManager(this);
-    m_key = loadKey(); // The key is key.txt at the root of the executable
     m_app->debug("[MetadataFetcher] Construction done");
-}
-
-QString MetadataFetcher::loadKey()
-{
-    QFile keyfile("key.txt");
-    if (!keyfile.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        m_app->debug("[ERROR] A key.txt file should be near the executable !");
-        QDialog *l_errorDialog = new QDialog();
-        QLabel *l_msg = new QLabel(l_errorDialog);
-        l_msg->setText("[ERROR] A key.txt file should be near the executable !");
-        l_errorDialog->show();
-        l_errorDialog->setModal(true);
-        l_errorDialog->setWindowTitle("ERROR");
-        l_errorDialog->resize(QSize(600,50));
-        return "0";
-    }
-
-    QTextStream in(&keyfile);
-
-    return in.readLine();
 }
 
 void MetadataFetcher::getRelatedMovies(QString title)
@@ -66,7 +44,7 @@ void MetadataFetcher::getRelatedMovies(QString title)
     QString l_filteredTitle = l_splittedTitle.join("%20");
     QNetworkRequest l_request;
 
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/search/movie?api_key="+m_key+"&query="+l_filteredTitle));
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/search/movie?api_key="+ m_app->tmdbkey() +"&query="+l_filteredTitle));
     m_networkManager->get(l_request);
 
     /*connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
@@ -132,7 +110,7 @@ void MetadataFetcher::getMetadata(int tmdbID)
     connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(replyHydrateMovie(QNetworkReply*)));
     QNetworkRequest l_request;
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/movie/"+QString::number(tmdbID)+"?api_key="+m_key+"&language=en"));
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/movie/"+QString::number(tmdbID)+"?api_key=" + m_app->tmdbkey() + "&language=en"));
 
     m_networkManager->get(l_request);
     m_app->debug("[MetadataFetcher] Exit getMetadata");

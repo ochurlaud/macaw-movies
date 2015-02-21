@@ -29,6 +29,8 @@ Application::Application(int &argc, char **argv, MoviesDebug *moviesDebug) :
     this->setApplicationName(APP_NAME);
     this->setApplicationVersion(APP_VERSION);
     this->setWindowIcon(QIcon(":/img/logov0_1.png"));
+    m_tmdbkey = "6e4cbac7861ad5b847ef8f60489dc04e";
+
     m_debug = moviesDebug;
 
     debug("[Application] started");

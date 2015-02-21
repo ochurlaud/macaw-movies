@@ -38,11 +38,13 @@ public:
     ~Application();
     bool addFilesPath(QString path);
     QString getFilesPath();
-    DatabaseManager *getDatabaseManager() { return this->m_dbManager; }
+    DatabaseManager *getDatabaseManager() { return m_dbManager; }
     void debug(QString text) { m_debug->print(text); }
+    QString tmdbkey() { return m_tmdbkey; }
 
 private:
     QString m_filesPath;
+    QString m_tmdbkey;
     DatabaseManager *m_dbManager;
     MoviesDebug *m_debug;
 };
