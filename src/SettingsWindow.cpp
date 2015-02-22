@@ -29,7 +29,9 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
 
     m_ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
-    m_ui->knownPathList->setModel(m_app->getDatabaseManager()->getMoviesPathModel());
+
+    QStringList l_moviePathsList = m_app->getDatabaseManager()->getMoviePaths();
+    m_ui->knownPathsList->addItems(l_moviePathsList);
 }
 
 SettingsWindow::~SettingsWindow()
@@ -47,19 +49,52 @@ void SettingsWindow::on_browseButton_clicked()
     m_app->debug("[SettingsWindow] Exits browseFilesPathDialog()");
 }
 
+
 void SettingsWindow::on_buttonBox_accepted()
 {
-    m_app->debug("[SettingsWindow] Enters on_buttonBox_accepted()");
-    if(QDir(m_ui->folderPathEdit->text()).exists())
-    {
-        m_app->addFilesPath(m_ui->folderPathEdit->text());
-        emit closeAndSave();
-        close();
+    QString l_newPath = m_ui->folderPathEdit->text();
+    addToKnownPathsList(l_newPath);
+
+    for (int i=0 ; i < m_ui->knownPathsList->count() ; i++) {
+        QString l_path = m_ui->knownPathsList->item(i)->text();
+        m_app->getDatabaseManager()->addMoviePath(l_path);
+        if (m_ui->recheckBox->isChecked()) {
+            m_app->getDatabaseManager()->setMoviePathImported(l_path, false);
+        }
     }
-    else
-    {
-        m_ui->folderPathEdit->setText("");
-        m_ui->folderPathMessage->setText("Choose an existant path");
-    }
+    emit closeAndSave();
+    close();
     m_app->debug("[SettingsWindow] Exits on_buttonBox_accepted()");
+}
+
+void SettingsWindow::on_folderPathEdit_textChanged(const QString string)
+{
+    if (!string.isEmpty()) {
+        m_ui->addButton->setEnabled(true);
+    } else {
+        m_ui->addButton->setDisabled(true);
+    }
+}
+
+void SettingsWindow::on_addButton_clicked()
+{
+    QString l_newPath = m_ui->folderPathEdit->text();
+    addToKnownPathsList(l_newPath);
+}
+
+void SettingsWindow::on_removeButton_clicked()
+{
+
+}
+
+void SettingsWindow::addToKnownPathsList(QString path)
+{
+    if (!QDir(path).exists() || path.isEmpty()) {
+        m_ui->folderPathMessage->setText("Choose an existant path");
+    } else if (m_ui->knownPathsList->findItems(path,Qt::MatchExactly).count()) {
+        m_ui->folderPathMessage->setText("This path is already known");
+    } else {
+        m_ui->knownPathsList->addItem(path);
+    }
+    m_ui->folderPathEdit->clear();
 }

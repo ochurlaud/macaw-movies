@@ -45,9 +45,17 @@ public slots:
 signals:
     void closeAndSave();
 
+private slots:
+    void on_folderPathEdit_textChanged(const QString string);
+    void on_addButton_clicked();
+    void on_removeButton_clicked();
+
 private:
     Ui::SettingsWindow *m_ui;
     Application *m_app;
+    QStringListModel *m_moviePathsModel;
+    void addToKnownPathsList(QString path);
+
 };
 
 #endif // SETTINGSWINDOW_H

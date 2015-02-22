@@ -38,17 +38,6 @@ Application::Application(int &argc, char **argv, MoviesDebug *moviesDebug) :
     m_dbManager = new DatabaseManager(moviesDebug);
     debug("[Application] Database initialized");
 
-    if (!m_dbManager->getMoviesPath().isEmpty())
-    {
-        debug("[Application] MoviesPaths founded");
-        m_filesPath = m_dbManager->getMoviesPath().at(0);
-    }
-    else
-    {
-        debug("[Application] No MoviesPaths founded");
-        m_filesPath = "./";
-    }
-
     if (!m_dbManager->getTags().isEmpty())
     {
         debug("[Application] Tags founded");
@@ -65,30 +54,4 @@ Application::Application(int &argc, char **argv, MoviesDebug *moviesDebug) :
 Application::~Application()
 {
     debug("[Application] Destructed");
-}
-
-/**
- * @brief Add a path.
- *
- * @param QString path to add
- * @return bool
- */
-bool Application::addFilesPath(QString path)
-{
-    debug("[Application] Enters addFilesPath()");
-    m_filesPath = path;
-    m_dbManager->saveMoviesPath(this->m_filesPath);
-    debug("[Application] Exits addFilesPath()");
-    return true;
-}
-
-/**
- * @brief Gets the the files_Path (TO BE REMOVED)
- *
- */
-QString Application::getFilesPath()
-{
-    debug("[Application] Enters getFilesPath()");
-    debug("[Application] Exits getFilesPath()");
-    return m_filesPath;
 }

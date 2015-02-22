@@ -551,37 +551,44 @@ void MainWindow::addNewMovies()
 {
     m_app->debug("[MainWindow] Enter addNewMovies");
 
-    QString l_directoryName = m_app->getFilesPath();
-    QDirIterator l_path(l_directoryName, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
-    while (l_path.hasNext())
-    {
-        l_path.next();
-        QString l_filePath = l_path.fileInfo().absoluteFilePath();
-        QString l_fileSuffix = l_path.fileInfo().suffix();
-        if (l_fileSuffix == "mkv" || l_fileSuffix == "avi" || l_fileSuffix == "mp4" || l_fileSuffix == "mpg" || l_fileSuffix == "flv" || l_fileSuffix == "mov")
+    bool l_imported = false;
+    QStringList l_moviePathsList = m_app->getDatabaseManager()->getMoviePaths(l_imported);
+    foreach (QString l_moviePath, l_moviePathsList) {
+        QDirIterator l_file(l_moviePath, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
+        while (l_file.hasNext())
         {
-            m_app->debug("[MainWindow.updateApp()] Suffix accepted");
-            bool l_movieExists = m_app->getDatabaseManager()->existMovie(l_filePath);
-            if(!l_movieExists)
-            {
-                m_app->debug("[MainWindow.updateApp()] Movie not already known");
-                Movie l_movie;
-                l_movie.setTitle(l_path.fileInfo().completeBaseName());
-                l_movie.setFilePath(l_path.fileInfo().absoluteFilePath());
-                l_movie.setSuffix(l_fileSuffix);
-                m_app->getDatabaseManager()->insertNewMovie(l_movie);
+            l_file.next();
+            QString l_filePath = l_file.fileInfo().absoluteFilePath();
+            QString l_fileSuffix = l_file.fileInfo().suffix();
+            QStringList l_authorizedSuffixList;
+            l_authorizedSuffixList << "mkv"
+                                   << "avi"
+                                   << "mp4"
+                                   << "mpg"
+                                   << "flv"
+                                   << "mov";
+            if (l_authorizedSuffixList.contains(l_fileSuffix, Qt::CaseInsensitive)) {
+                m_app->debug("[MainWindow.updateApp()] Suffix accepted");
+                bool l_movieExists = m_app->getDatabaseManager()->existMovie(l_filePath);
+                if (!l_movieExists) {
+                    m_app->debug("[MainWindow.updateApp()] Movie not already known");
+                    Movie l_movie;
+                    l_movie.setTitle(l_file.fileInfo().completeBaseName());
+                    l_movie.setFilePath(l_file.fileInfo().absoluteFilePath());
+                    l_movie.setSuffix(l_fileSuffix);
+                    m_app->getDatabaseManager()->insertNewMovie(l_movie);
 
-                MetadataFetcher l_metadataFetcher(l_movie);
+                    MetadataFetcher l_metadataFetcher(l_movie);
 
-                // Currently a wainting loop is created in MetadataFetcher,
-                // multithreading would be better
-                l_metadataFetcher.fetchMetadata(l_movie.getTitle());
-            }
-            else
-            {
-                m_app->debug("[MainWindow.updateApp()] Movie already known. Skipped");
+                    // Currently a wainting loop is created in MetadataFetcher,
+                    // multithreading would be better
+                    l_metadataFetcher.fetchMetadata(l_movie.getTitle());
+                } else {
+                    m_app->debug("[MainWindow.updateApp()] Movie already known. Skipped");
+                }
             }
         }
+        m_app->getDatabaseManager()->setMoviePathImported(l_moviePath,true);
     }
 
     emit(toUpdate());

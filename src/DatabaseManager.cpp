@@ -34,7 +34,6 @@ DatabaseManager::DatabaseManager(MoviesDebug *moviesDebug)
     m_movieFields = "m.id, m.title, m.original_title, m.release_date, m.country, m.duration, m.synopsis, m.file_path, m.colored, m.format, m.suffix, m.rank";
     m_peopleFields = "p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography";
     m_tagFields = "t.id, t.name";
-    m_moviesPathModel = new QStringListModel();
     m_tagListModel = new QStringListModel();
     debug("[DatabaseManager] object created");
 }
@@ -228,7 +227,8 @@ bool DatabaseManager::createTables()
             // List of paths where the movies are stored
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS paths_list("
                                           "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                                          "movies_path VARCHAR(255) UNIQUE"
+                                          "movies_path VARCHAR(255) UNIQUE,"
+                                          "imported BOOLEAN DEFAULT 0"
                                           ")");
 
             // Config table (for update purposes)
@@ -270,25 +270,46 @@ bool DatabaseManager::createTag(QString name)
 }
 
 /**
- * @brief Saves the movies directory
+ * @brief Adds a movies directory
  *
  * @param QString moviePath: containing the path to the movies directory
  *
  * @return true if the paths list have been updated correctly
  */
-bool DatabaseManager::saveMoviesPath(QString moviePath)
+bool DatabaseManager::addMoviePath(QString moviePath)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("INSERT INTO paths_list (movies_path) VALUES (:path)");
-    l_query.bindValue(":path", moviePath);
-
-    //updates the movies path list in the settings window
-    m_moviesPathModel->insertRow(m_moviesPathModel->rowCount());
-    m_moviesPathModel->setData(m_moviesPathModel->index(m_moviesPathModel->rowCount()-1), moviePath);
+    l_query.prepare("INSERT INTO paths_list (movies_path) VALUES (:movie_path)");
+    l_query.bindValue(":movie_path", moviePath);
 
     if(!l_query.exec())
     {
-        debug("In saveMoviesPath():");
+        debug("In addMoviePath():");
+        debug(l_query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Adds a movies directory
+ *
+ * @param QString moviePath: containing the path to the movies directory
+ *
+ * @return true if the paths list have been updated correctly
+ */
+bool DatabaseManager::setMoviePathImported(QString moviePath, bool imported)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("UPDATE paths_list SET imported=:imported WHERE movies_path = :movie_path");
+    l_query.bindValue(":movie_path", moviePath);
+    l_query.bindValue(":imported", imported);
+
+    if(!l_query.exec())
+    {
+        debug("In setMoviePathImported():");
         debug(l_query.lastError().text());
 
         return false;
@@ -302,28 +323,28 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
  *
  * @return QStringList containing the paths of these directories
  */
-QStringList DatabaseManager::getMoviesPath()
+QStringList DatabaseManager::getMoviePaths(bool imported)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT movies_path FROM paths_list");
+    l_query.prepare("SELECT movies_path FROM paths_list where imported=:imported");
+    l_query.bindValue(":imported", imported);
 
     if(!l_query.exec())
     {
-        debug("In getMoviesPath():");
+        debug("In getMoviePaths():");
         debug(l_query.lastError().text());
     }
 
-    QStringList l_result;
+    QStringList l_moviePathsList;
 
     while(l_query.next())
     {
-        l_result.append(l_query.value(0).toString());
+        l_moviePathsList.append(l_query.value(0).toString());
     }
 
-    m_moviesPathModel->setStringList(l_result);
-
-    return l_result;
+    return l_moviePathsList;
 }
+
 
 /**
  * @brief Get the tags in the database

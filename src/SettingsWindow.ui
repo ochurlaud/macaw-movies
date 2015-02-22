@@ -23,10 +23,20 @@
    <item row="2" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QListView" name="knownPathList"/>
+      <widget class="QListWidget" name="knownPathsList"/>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QPushButton" name="addButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Add</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QPushButton" name="removeButton">
          <property name="text">
@@ -35,7 +45,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="recheckButton">
+        <widget class="QCheckBox" name="recheckBox">
          <property name="text">
           <string>Recheck</string>
          </property>
