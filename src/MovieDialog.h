@@ -38,9 +38,12 @@ class MovieDialog : public QDialog
 {
 Q_OBJECT
 
+    //Methods
 public:
     explicit MovieDialog(int, QWidget *parent = 0);
     ~MovieDialog();
+
+private:
     void setTitle(const QString title);
     QString getTitle() const;
     void setOriginalTitle(const QString originalTitle);
@@ -53,15 +56,16 @@ public:
     QString getSynopsis() const;
     void setPeopleList(const QList<People> &peopleList);
     QList<People> getPeopleList(int type);
-    void setMovieSelectedTagList(const QList<Tag> &tagList);
     void addPeople(const People &people);
     void delPeople(const People &people);
     void updatePeople(const People &people);
+    void setMovieSelectedTagList(const QList<Tag> &tagList);
     void on_peopleEdit_textEdited(int);
     void addPeopleButton_clicked(int);
     void delPeopleButton_clicked(int);
     QListWidget* getFocusedListWidget();
     QList<People> getFocusedListPeople();
+
 
 private slots:
     void on_validationButtons_accepted();
@@ -80,6 +84,7 @@ private slots:
     void showPeopleDialog();
     void on_resetReleaseDateBtn_clicked();
 
+    // Atributs
 private:
     Ui::MovieDialog *m_ui;
     Movie m_movie;

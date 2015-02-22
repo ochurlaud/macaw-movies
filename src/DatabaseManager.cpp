@@ -357,29 +357,3 @@ QStringList DatabaseManager::getMoviesPath()
 
     return l_result;
 }
-
-/**
- * @brief Get the tags in the database
- *
- * @return QStringList containing all the tags
- */
-QStringList DatabaseManager::getTags()
-{
-    QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT name FROM tags");
-
-    if(!l_query.exec())
-    {
-        debug("In getTags():");
-        debug(l_query.lastError().text());
-    }
-
-    QStringList l_result;
-
-    while(l_query.next())
-    {
-        l_result.append(l_query.value(0).toString());
-    }
-
-    return l_result;
-}

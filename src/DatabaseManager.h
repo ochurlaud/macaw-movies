@@ -52,11 +52,9 @@ public:
 
     // Getters for paths, config
     QStringList getMoviesPath();
-    QStringList getTags();
 
     // Insertions for paths, config
     bool saveMoviesPath(QString);
-    int createTag(QString name);
 
 signals:
     void orphanTagDetected(Tag tag);
@@ -113,6 +111,7 @@ private:
 public:
     bool insertNewMovie(Movie &movie);
     bool insertNewPlaylist(Playlist &playlist);
+    int createTag(QString name);
     bool addTagToMovie(Tag &tag, Movie &movie);
     bool addPeopleToMovie(People &people, Movie &movie, const int type);
 

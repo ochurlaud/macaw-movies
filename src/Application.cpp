@@ -46,7 +46,7 @@ Application::Application(MoviesDebug *moviesDebug, int &argc, char **argv) :
         m_filesPath = "./";
     }
 
-    if (!m_dbManager->getTags().isEmpty())
+    if (!m_dbManager->getAllTags().isEmpty())
     {
         debug("[Application] Tags founded");
     }

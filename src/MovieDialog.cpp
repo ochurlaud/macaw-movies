@@ -53,8 +53,6 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
         item->setData(Qt::UserRole, tag.getId());
     }
 
-
-
     setTitle(m_movie.getTitle());
     setOriginalTitle(m_movie.getOriginalTitle());
     setReleaseDate(m_movie.getReleaseDate());
