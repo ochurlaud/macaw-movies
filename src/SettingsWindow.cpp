@@ -30,8 +30,8 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     m_ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    QStringList l_moviePathsList = m_app->getDatabaseManager()->getMoviePaths();
-    m_ui->knownPathsList->addItems(l_moviePathsList);
+    QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths();
+    m_ui->knownPathsList->addItems(l_moviesPathsList);
 }
 
 SettingsWindow::~SettingsWindow()
@@ -55,11 +55,19 @@ void SettingsWindow::on_buttonBox_accepted()
     QString l_newPath = m_ui->folderPathEdit->text();
     addToKnownPathsList(l_newPath);
 
+    QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths();
+    foreach (QString l_moviesPath, l_moviesPathsList) {
+        if (!m_ui->knownPathsList->findItems(l_moviesPath, Qt::MatchExactly).count()) {
+            // We remove the path and all the movies behind
+            m_app->getDatabaseManager()->deleteMoviesPath(l_moviesPath);
+        }
+    }
+
     for (int i=0 ; i < m_ui->knownPathsList->count() ; i++) {
         QString l_path = m_ui->knownPathsList->item(i)->text();
-        m_app->getDatabaseManager()->addMoviePath(l_path);
+        m_app->getDatabaseManager()->addMoviesPath(l_path);
         if (m_ui->recheckBox->isChecked()) {
-            m_app->getDatabaseManager()->setMoviePathImported(l_path, false);
+            m_app->getDatabaseManager()->setMoviesPathImported(l_path, false);
         }
     }
     emit closeAndSave();
@@ -84,7 +92,10 @@ void SettingsWindow::on_addButton_clicked()
 
 void SettingsWindow::on_removeButton_clicked()
 {
-
+    QList<QListWidgetItem*> l_selectedItemsList = m_ui->knownPathsList->selectedItems();
+    foreach (QListWidgetItem *l_selectedItem, l_selectedItemsList) {
+        delete l_selectedItem;
+    }
 }
 
 void SettingsWindow::addToKnownPathsList(QString path)

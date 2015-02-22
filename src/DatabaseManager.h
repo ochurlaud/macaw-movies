@@ -51,13 +51,15 @@ public:
     QSqlError lastError();
 
     // Getters for paths, config
-    QStringList getMoviePaths(bool imported = true);
+    QStringList getMoviesPaths(bool imported = true);
     QStringList getTags();
 
     // Insertions for paths, config
-    bool addMoviePath(QString);
+    bool addMoviesPath(QString moviesPath);
     bool createTag(QString name);
-    bool setMoviePathImported(QString moviePath, bool imported);
+    bool setMoviesPathImported(QString moviesPath, bool imported);
+
+    bool deleteMoviesPath(QString moviesPath);
 
 signals:
     void orphanTagDetected(Tag tag);

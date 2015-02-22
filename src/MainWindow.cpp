@@ -552,9 +552,9 @@ void MainWindow::addNewMovies()
     m_app->debug("[MainWindow] Enter addNewMovies");
 
     bool l_imported = false;
-    QStringList l_moviePathsList = m_app->getDatabaseManager()->getMoviePaths(l_imported);
-    foreach (QString l_moviePath, l_moviePathsList) {
-        QDirIterator l_file(l_moviePath, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
+    QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths(l_imported);
+    foreach (QString l_moviesPath, l_moviesPathsList) {
+        QDirIterator l_file(l_moviesPath, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
         while (l_file.hasNext())
         {
             l_file.next();
@@ -588,7 +588,7 @@ void MainWindow::addNewMovies()
                 }
             }
         }
-        m_app->getDatabaseManager()->setMoviePathImported(l_moviePath,true);
+        m_app->getDatabaseManager()->setMoviesPathImported(l_moviesPath,true);
     }
 
     emit(toUpdate());

@@ -53,7 +53,6 @@ private slots:
 private:
     Ui::SettingsWindow *m_ui;
     Application *m_app;
-    QStringListModel *m_moviePathsModel;
     void addToKnownPathsList(QString path);
 
 };

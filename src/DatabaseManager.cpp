@@ -272,19 +272,19 @@ bool DatabaseManager::createTag(QString name)
 /**
  * @brief Adds a movies directory
  *
- * @param QString moviePath: containing the path to the movies directory
+ * @param QString moviesPath: containing the path to the movies directory
  *
  * @return true if the paths list have been updated correctly
  */
-bool DatabaseManager::addMoviePath(QString moviePath)
+bool DatabaseManager::addMoviesPath(QString moviesPath)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("INSERT INTO paths_list (movies_path) VALUES (:movie_path)");
-    l_query.bindValue(":movie_path", moviePath);
+    l_query.prepare("INSERT INTO paths_list (movies_path) VALUES (:movies_path)");
+    l_query.bindValue(":movies_path", moviesPath);
 
     if(!l_query.exec())
     {
-        debug("In addMoviePath():");
+        debug("In addMoviesPath():");
         debug(l_query.lastError().text());
 
         return false;
@@ -294,22 +294,23 @@ bool DatabaseManager::addMoviePath(QString moviePath)
 }
 
 /**
- * @brief Adds a movies directory
+ * @brief Set the imported boolean of the movie path
  *
- * @param QString moviePath: containing the path to the movies directory
+ * @param QString moviesPath: containing the path to the movies directory
+ * @param bool imported: true if the movies have been imported, false else
  *
- * @return true if the paths list have been updated correctly
+ * @return true if the request succeed
  */
-bool DatabaseManager::setMoviePathImported(QString moviePath, bool imported)
+bool DatabaseManager::setMoviesPathImported(QString moviesPath, bool imported)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("UPDATE paths_list SET imported=:imported WHERE movies_path = :movie_path");
-    l_query.bindValue(":movie_path", moviePath);
+    l_query.prepare("UPDATE paths_list SET imported=:imported WHERE movies_path = :movies_path");
+    l_query.bindValue(":movies_path", moviesPath);
     l_query.bindValue(":imported", imported);
 
     if(!l_query.exec())
     {
-        debug("In setMoviePathImported():");
+        debug("In setMoviesPathImported():");
         debug(l_query.lastError().text());
 
         return false;
@@ -323,7 +324,7 @@ bool DatabaseManager::setMoviePathImported(QString moviePath, bool imported)
  *
  * @return QStringList containing the paths of these directories
  */
-QStringList DatabaseManager::getMoviePaths(bool imported)
+QStringList DatabaseManager::getMoviesPaths(bool imported)
 {
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT movies_path FROM paths_list where imported=:imported");
@@ -331,20 +332,46 @@ QStringList DatabaseManager::getMoviePaths(bool imported)
 
     if(!l_query.exec())
     {
-        debug("In getMoviePaths():");
+        debug("In getMoviesPaths():");
         debug(l_query.lastError().text());
     }
 
-    QStringList l_moviePathsList;
+    QStringList l_moviesPathsList;
 
     while(l_query.next())
     {
-        l_moviePathsList.append(l_query.value(0).toString());
+        l_moviesPathsList.append(l_query.value(0).toString());
     }
 
-    return l_moviePathsList;
+    return l_moviesPathsList;
 }
 
+bool DatabaseManager::deleteMoviesPath(QString moviesPath)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("DELETE FROM movies WHERE file_path LIKE :movies_path||'%'");
+    l_query.bindValue(":movies_path", moviesPath);
+
+    if(!l_query.exec())
+    {
+        debug("In removeMoviesPath():");
+        debug(l_query.lastError().text());
+
+        return false;
+    }
+
+    l_query.prepare("DELETE FROM paths_list WHERE movies_path LIKE :movies_path||'%'");
+    l_query.bindValue(":movies_path", moviesPath);
+    if(!l_query.exec())
+    {
+        debug("In removeMoviesPath():");
+        debug(l_query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
 
 /**
  * @brief Get the tags in the database
