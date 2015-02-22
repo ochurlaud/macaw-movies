@@ -35,7 +35,6 @@ DatabaseManager::DatabaseManager(MoviesDebug *moviesDebug)
     m_peopleFields = "p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography";
     m_tagFields = "t.id, t.name";
     m_moviesPathModel = new QStringListModel();
-    m_tagListModel = new QStringListModel();
     debug("[DatabaseManager] object created");
 }
 
@@ -248,8 +247,13 @@ void DatabaseManager::setDebug(MoviesDebug* moviesDebug)
     m_debug = moviesDebug;
 }
 
-
-bool DatabaseManager::createTag(QString name)
+/**
+ * @brief add a new tag with specifed name to the database.
+ * Returns the id of created tag, -1 if an error occured.
+ * @param name new tag's name
+ * @returns the id of newly created tag in the db
+ */
+int DatabaseManager::createTag(QString name)
 {
     QSqlQuery l_query(m_db);
     l_query.prepare("INSERT INTO `tags` (name) VALUES (:name)");
@@ -260,13 +264,17 @@ bool DatabaseManager::createTag(QString name)
         debug("In createTag():");
         debug(l_query.lastError().text());
 
-        return false;
+        return -1;
     }
 
-    m_tagListModel->insertRow(m_tagListModel->rowCount());
-    m_tagListModel->setData(m_tagListModel->index(m_tagListModel->rowCount()-1), name);
 
-    return true;
+    if(l_query.exec("SELECT last_insert_rowid()"));
+    {
+        l_query.next();
+        return l_query.value(0).toInt();
+    }
+
+    return -1;
 }
 
 /**
@@ -372,8 +380,6 @@ QStringList DatabaseManager::getTags()
     {
         l_result.append(l_query.value(0).toString());
     }
-
-    m_tagListModel->setStringList(l_result);
 
     return l_result;
 }

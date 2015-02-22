@@ -42,8 +42,18 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     this->setWindowTitle("Edit Metadata of: " + m_movie.getTitle());
     this->setAttribute(Qt::WA_DeleteOnClose);
 
-    m_ui->tagListView->setModel(m_app->getDatabaseManager()->getTagListModel());
-    m_ui->tagListView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    m_ui->tagListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    QList<Tag> l_tagList;
+    l_tagList = m_app->getDatabaseManager()->getAllTags();
+
+    foreach (Tag tag, l_tagList)
+    {
+        QListWidgetItem * item = new QListWidgetItem(tag.getName(), m_ui->tagListWidget);
+        item->setData(Qt::UserRole, tag.getId());
+    }
+
+
 
     setTitle(m_movie.getTitle());
     setOriginalTitle(m_movie.getOriginalTitle());
@@ -210,19 +220,17 @@ QList<People> MovieDialog::getPeopleList(int type)
  */
 void MovieDialog::setMovieSelectedTagList(const QList<Tag> &tagList)
 {
-    QStringListModel * l_indexList = m_app->getDatabaseManager()->getTagListModel();
-    QString l_tagName;
+    int l_tagId;
 
     foreach(const Tag tagToSelect, tagList)
     {
-        l_tagName = tagToSelect.getName();
+        l_tagId = tagToSelect.getId();
 
-
-        for(int i=0; i < l_indexList->rowCount();i++)
+        for(int i=0; i < m_ui->tagListWidget->count(); i++)
         {
-            if(l_indexList->index(i,0).data().toString() == l_tagName)
+            if(m_ui->tagListWidget->item(i)->data(Qt::UserRole).toInt() == l_tagId)
             {
-                m_ui->tagListView->selectionModel()->setCurrentIndex(l_indexList->index(i,0), QItemSelectionModel::Select);
+                m_ui->tagListWidget->item(i)->setSelected(true);
                 break;
             }
         }
@@ -277,7 +285,7 @@ void MovieDialog::on_validationButtons_accepted()
     m_movie.setCountry(getCountry());
     m_movie.setSynopsis(getSynopsis());
 
-    QModelIndexList l_indexList = m_ui->tagListView->selectionModel()->selectedIndexes();
+    QModelIndexList l_indexList = m_ui->tagListWidget->selectionModel()->selectedIndexes();
 
     QList<Tag> l_tagList;
     QString l_tagName;
@@ -486,7 +494,14 @@ void MovieDialog::on_addNewTagButton_clicked()
 {
     QString newTag =  m_ui->newTagLineEdit->text();
 
-    m_app->getDatabaseManager()->createTag(newTag);
+    int newTagId = m_app->getDatabaseManager()->createTag(newTag);
+
+    if(newTagId > 0)
+    {
+        QListWidgetItem * item = new QListWidgetItem(newTag, m_ui->tagListWidget);
+        item->setData(Qt::UserRole, newTagId);
+    }
+
     m_ui->newTagLineEdit->clear();
 }
 

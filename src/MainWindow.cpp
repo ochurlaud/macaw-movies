@@ -388,7 +388,7 @@ void MainWindow::askForOrphanTagDeletion(Tag orphanTag)
 {
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Question);
-    msgBox.setText("The"+ orphanTag.getName() +" tag is not used in any movie now. ");
+    msgBox.setText("The "+ orphanTag.getName() +" tag is not used in any movie now. ");
     msgBox.setInformativeText("Do you want to delete this tag?");
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);

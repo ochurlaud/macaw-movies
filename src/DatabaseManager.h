@@ -56,7 +56,7 @@ public:
 
     // Insertions for paths, config
     bool saveMoviesPath(QString);
-    bool createTag(QString name);
+    int createTag(QString name);
 
 signals:
     void orphanTagDetected(Tag tag);
@@ -146,14 +146,12 @@ private:
 //// Models
 public:
     QStringListModel *getMoviesPathModel() {return this->m_moviesPathModel;}
-    QStringListModel *getTagListModel() {return this->m_tagListModel;}
 
 private:
     void debug(QString text) { m_debug->print(text);}
     QSqlDatabase m_db;
     MoviesDebug *m_debug;
     QStringListModel *m_moviesPathModel;
-    QStringListModel *m_tagListModel;
     QString m_movieFields;
     QString m_peopleFields;
     QString m_tagFields;

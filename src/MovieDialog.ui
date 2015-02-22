@@ -363,7 +363,7 @@ Multi-selection with &lt;Ctrl&gt;</string>
        </widget>
       </item>
       <item>
-       <widget class="QListView" name="tagListView"/>
+       <widget class="QListWidget" name="tagListWidget"/>
       </item>
      </layout>
     </item>
