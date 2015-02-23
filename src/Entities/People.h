@@ -44,6 +44,8 @@ public:
     bool operator== (const People&);
     bool operator!= (const People&);
 
+    enum typePeople {None, Director, Producer, Actor};
+
 private:
     int m_id;
     QString m_lastname;

@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_moviesList = m_app->getDatabaseManager()->getAllMovies();
     m_leftPannelSelectedId = 0;
     fillMainPannel();
-    fillLeftPannel(isPeople, Director);
+    fillLeftPannel(isPeople, People::Director);
     m_app->debug("[MainWindow] Construction done");
 }
 
@@ -80,7 +80,7 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
     if (typeElement != isPlaylist)
     {
         QListWidgetItem *l_item = new QListWidgetItem("All");
-        l_item->setData(Qt::UserRole, 0);
+        l_item->setData(Macaw::ObjectId, 0);
         m_ui->leftPannel->addItem(l_item);
         if (m_leftPannelSelectedId == 0)
         {
@@ -91,8 +91,8 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
     if (typeElement == isPeople)
     {
         QListWidgetItem *l_item = new QListWidgetItem("Unknown");
-        l_item->setData(Qt::UserRole, -1);
-        l_item->setData(Qt::UserRole+1, isPeople);
+        l_item->setData(Macaw::ObjectId, -1);
+        l_item->setData(Macaw::ObjectType, isPeople);
         m_ui->leftPannel->addItem(l_item);
         if (m_leftPannelSelectedId == -1)
         {
@@ -110,9 +110,9 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             l_name = l_name  + " (" + QString::number(l_people.getBirthday().year()) + ")";
 
             QListWidgetItem *l_item = new QListWidgetItem(l_name);
-            l_item->setData(Qt::UserRole, l_people.getId());
-            l_item->setData(Qt::UserRole+1, isPeople);
-            l_item->setData(Qt::UserRole+2, typePeople);
+            l_item->setData(Macaw::ObjectId, l_people.getId());
+            l_item->setData(Macaw::ObjectType, isPeople);
+            l_item->setData(Macaw::PeopleType, typePeople);
             if (m_leftPannelSelectedId == l_people.getId())
             {
                 l_item->setSelected(true);
@@ -124,8 +124,8 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
     else if(typeElement == isTag)
     {
         QListWidgetItem *l_item = new QListWidgetItem("No Tag");
-        l_item->setData(Qt::UserRole, -1);
-        l_item->setData(Qt::UserRole+1, isTag);
+        l_item->setData(Macaw::ObjectId, -1);
+        l_item->setData(Macaw::ObjectType, isTag);
         m_ui->leftPannel->addItem(l_item);
         if (m_leftPannelSelectedId == -1)
         {
@@ -138,8 +138,8 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             QString l_name(l_tag.getName());
 
             QListWidgetItem *l_item = new QListWidgetItem(l_name);
-            l_item->setData(Qt::UserRole, l_tag.getId());
-            l_item->setData(Qt::UserRole+1, isTag);
+            l_item->setData(Macaw::ObjectId, l_tag.getId());
+            l_item->setData(Macaw::ObjectType, isTag);
 
             m_ui->leftPannel->addItem(l_item);
             if (m_leftPannelSelectedId == l_tag.getId())
@@ -151,8 +151,8 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
     else if(typeElement == isPlaylist)
     {
         QListWidgetItem *l_item = new QListWidgetItem("To Watch");
-        l_item->setData(Qt::UserRole, 1);
-        l_item->setData(Qt::UserRole+1, isPlaylist);
+        l_item->setData(Macaw::ObjectId, 1);
+        l_item->setData(Macaw::ObjectType, isPlaylist);
         m_ui->leftPannel->addItem(l_item);
         if (m_leftPannelSelectedId == 1)
         {
@@ -165,8 +165,8 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             QString l_name(l_playlist.getName());
 
             QListWidgetItem *l_item = new QListWidgetItem(l_name);
-            l_item->setData(Qt::UserRole, l_playlist.getId());
-            l_item->setData(Qt::UserRole+1, isPlaylist);
+            l_item->setData(Macaw::ObjectId, l_playlist.getId());
+            l_item->setData(Macaw::ObjectType, isPlaylist);
 
             m_ui->leftPannel->addItem(l_item);
             if (m_leftPannelSelectedId == l_playlist.getId())
@@ -206,8 +206,8 @@ void MainWindow::fillMainPannel()
         foreach(QTableWidgetItem *l_item, l_itemList)
         {
             l_item = new QTableWidgetItem(l_movieData.at(l_column));
-            l_item->setData(Qt::UserRole, l_movie.getId());
-            l_item->setData(Qt::UserRole+1, isMovie);
+            l_item->setData(Macaw::ObjectId, l_movie.getId());
+            l_item->setData(Macaw::ObjectType, isMovie);
             m_ui->mainPannel->setItem(l_row, l_column, l_item);
             l_column++;
         }
@@ -230,7 +230,7 @@ void MainWindow::on_toWatchButton_clicked()
 {
     m_moviesList = m_app->getDatabaseManager()->getMoviesByPlaylist(1);
     fillMainPannel();
-    fillLeftPannel(isPeople, Director);
+    fillLeftPannel(isPeople, People::Director);
     filterPannels();
 
 }
@@ -251,7 +251,7 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
     // (not to be "All" or "Unknown")
     if(m_ui->leftPannel->hasFocus()
             && m_ui->leftPannel->selectedItems().count() != 0
-            && m_ui->leftPannel->selectedItems().at(0)->data(Qt::UserRole) != 0)
+            && m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId) != 0)
     {
         l_menu->addAction(m_ui->actionEdit_leftPannelMetadata);
         l_menu->exec(m_ui->leftPannel->mapToGlobal(point));
@@ -277,7 +277,7 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
 void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
 {
     m_app->debug("[MainWindow] actionEdit_Metadata_triggered()");
-    int l_id = m_ui->mainPannel->selectedItems().at(0)->data(Qt::UserRole).toInt();
+    int l_id = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
 
     MovieDialog *l_movieDialog = new MovieDialog(l_id);
     connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
@@ -286,12 +286,12 @@ void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
 
 void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
 {
-    int l_id = m_ui->leftPannel->selectedItems().at(0)->data(Qt::UserRole).toInt();
+    int l_id = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
 
     // It's editable only if id is not 0
     if(l_id != 0)
     {
-        int l_typeElement = m_ui->leftPannel->selectedItems().at(0)->data(Qt::UserRole+1).toInt();
+        int l_typeElement = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectType).toInt();
         if (l_typeElement == isPeople)
         {
             PeopleDialog *l_movieDialog = new PeopleDialog(l_id);
@@ -312,7 +312,7 @@ void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
 void MainWindow::addPlaylistMenu_triggered(QAction* action)
 {
     int l_actionId = action->data().toInt();
-    int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Qt::UserRole).toInt();
+    int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
     Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
     Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(l_actionId);
     l_playlist.addMovie(l_movie);
@@ -339,7 +339,7 @@ void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
 {
     m_app->debug("[MainWindow] itemDoubleClicked on mainPannel()");
 
-    int l_movieId = item->data(Qt::UserRole).toInt();
+    int l_movieId = item->data(Macaw::ObjectId).toInt();
     Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
 
     m_app->debug("[MainWindow.startMovie()] Opened movie: " + l_movie.getFilePath());
@@ -350,14 +350,14 @@ void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
 void MainWindow::on_leftPannel_clicked(const QModelIndex &item)
 {
     m_app->debug("[MainWindow] itemClicked on leftPannel()");
-    m_leftPannelSelectedId = item.data(Qt::UserRole).toInt();
+    m_leftPannelSelectedId = item.data(Macaw::ObjectId).toInt();
     this->prepareMoviesToDisplay(m_leftPannelSelectedId);
 }
 
 void MainWindow::on_mainPannel_clicked(const QModelIndex &index)
 {
     m_app->debug("[MainWindow] mainPannel clicked");
-    int l_idMovie = index.data(Qt::UserRole).toInt();
+    int l_idMovie = index.data(Macaw::ObjectId).toInt();
     Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_idMovie);
     this->fillMetadataPannel(l_movie);
 
@@ -411,11 +411,11 @@ void MainWindow::selfUpdate()
     for (int i = 0 ; i < m_ui->leftPannel->count() ; i++)
     {
         QListWidgetItem *l_item = m_ui->leftPannel->item(i);
-        if (l_item->data(Qt::UserRole).toInt() == m_leftPannelSelectedId)
+        if (l_item->data(Macaw::ObjectId).toInt() == m_leftPannelSelectedId)
         {
 
             l_item->setSelected(true);
-            this->prepareMoviesToDisplay(l_item->data(Qt::UserRole).toInt());
+            this->prepareMoviesToDisplay(l_item->data(Macaw::ObjectId).toInt());
             break;
         }
     }
@@ -434,13 +434,13 @@ void MainWindow::setLeftPannelLabel()
     case isPeople:
         switch (m_typePeople)
         {
-        case Director:
+        case People::Director:
             m_ui->leftPannelLabel->setText("Directors");
             break;
-        case Producer:
+        case People::Producer:
             m_ui->leftPannelLabel->setText("Producers");
             break;
-        case Actor:
+        case People::Actor:
             m_ui->leftPannelLabel->setText("Actors");
             break;
         }
@@ -474,7 +474,7 @@ void MainWindow::filterPannels()
             QTableWidgetItem *l_item = m_ui->mainPannel->item(i, 0);
             foreach(Movie l_movie, l_authorizedMoviesList)
             {
-                 if (l_movie.getId() == l_item->data(Qt::UserRole))
+                 if (l_movie.getId() == l_item->data(Macaw::ObjectId))
                  {
                      l_isPresent = true;
                  }
@@ -496,7 +496,7 @@ void MainWindow::filterPannels()
                 QListWidgetItem *l_item = m_ui->leftPannel->item(i);
                 foreach(Tag l_tag, l_authorizedTagList)
                 {
-                     if (l_tag.getId() == l_item->data(Qt::UserRole))
+                     if (l_tag.getId() == l_item->data(Macaw::ObjectId))
                      {
                          l_isPresent = true;
                      }
@@ -519,7 +519,7 @@ void MainWindow::filterPannels()
                 QListWidgetItem *l_item = m_ui->leftPannel->item(i);
                 foreach(People l_people, l_authorizedPeopleList)
                 {
-                     if (l_people.getId() == l_item->data(Qt::UserRole))
+                     if (l_people.getId() == l_item->data(Macaw::ObjectId))
                      {
                          l_isPresent = true;
                      }
@@ -540,7 +540,7 @@ void MainWindow::filterPannels()
     for (int i = 0 ; i < m_ui->leftPannel->count() ; i ++)
     {
         QListWidgetItem *l_item = m_ui->leftPannel->item(i);
-        if (m_leftPannelSelectedId == l_item->data(Qt::UserRole))
+        if (m_leftPannelSelectedId == l_item->data(Macaw::ObjectId))
         {
             l_item->setSelected(true);
         }
@@ -609,21 +609,21 @@ void MainWindow::fillMetadataPannel(Movie movie)
     {
         switch (l_people.getType())
         {
-        case Director:
+        case People::Director:
             if (l_people.getFirstname() != "")
             {
                 l_directors += l_people.getFirstname() + " ";
             }
             l_directors += l_people.getLastname() + ", ";
             break;
-        case Producer:
+        case People::Producer:
             if (l_people.getFirstname() != "")
             {
                 l_producers += l_people.getFirstname() + " ";
             }
             l_producers += l_people.getLastname() + ", ";
             break;
-        case Actor:
+        case People::Actor:
             if(l_people.getFirstname() != "")
             {
                 l_actors += l_people.getFirstname() + " ";

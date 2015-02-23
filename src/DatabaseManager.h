@@ -20,8 +20,6 @@
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 
-enum typePeople {None, Director, Producer, Actor};
-
 #include <QObject>
 #include <QtCore>
 #include <QtSql>

@@ -37,7 +37,7 @@ MetadataFetcherDialog::MetadataFetcherDialog(Movie movie, QList<Movie> moviesPro
                 + " [" + QString::number(l_movieProposition.getReleaseDate().year())
                 + "]";
         l_item->setText(l_textItem);
-        l_item->setData(Qt::UserRole, l_movieProposition.getId());
+        l_item->setData(Macaw::ObjectId, l_movieProposition.getId());
         m_ui->listWidget->addItem(l_item);
     }
 }
@@ -56,7 +56,7 @@ void MetadataFetcherDialog::on_buttonBox_accepted()
     }
     else
     {
-        int tmdbID = m_ui->listWidget->selectedItems().at(0)->data(Qt::UserRole).toInt();
+        int tmdbID = m_ui->listWidget->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
         emit(selectedMovie(tmdbID));
         this->accept();
     }
@@ -64,7 +64,7 @@ void MetadataFetcherDialog::on_buttonBox_accepted()
 
 void MetadataFetcherDialog::on_listWidget_doubleClicked(const QModelIndex &index)
 {
-    int tmdbID = index.data(Qt::UserRole).toInt();
+    int tmdbID = index.data(Macaw::ObjectId).toInt();
     emit(selectedMovie(tmdbID));
     this->accept();
 }

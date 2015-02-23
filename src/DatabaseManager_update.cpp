@@ -93,7 +93,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
     }
 
     QList<int> types;
-    types << Director << Producer << Actor;
+    types << People::Director << People::Producer << People::Actor;
     foreach (int type, types)
     {
         l_query.prepare("SELECT " + m_peopleFields + ", mp.type "

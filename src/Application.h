@@ -27,6 +27,16 @@
 #include "MoviesDebug.h"
 #include "Entities/Movie.h"
 
+namespace Macaw
+{
+    enum fields
+    {
+        ObjectId = Qt::UserRole,
+        ObjectType = Qt::UserRole+1,
+        PeopleType = Qt::UserRole+2
+    };
+}
+
 class MovieDebug;
 
 class Application : public QApplication

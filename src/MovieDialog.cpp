@@ -50,7 +50,7 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     foreach (Tag tag, l_tagList)
     {
         QListWidgetItem * item = new QListWidgetItem(tag.getName(), m_ui->tagListWidget);
-        item->setData(Qt::UserRole, tag.getId());
+        item->setData(Macaw::ObjectId, tag.getId());
     }
 
     setTitle(m_movie.getTitle());
@@ -168,20 +168,20 @@ void MovieDialog::setPeopleList(const QList<People> &peopleList)
     {
         switch (l_people.getType())
         {
-        case Director:
+        case People::Director:
             l_peopleWidget = m_ui->directorsWidget;
             break;
-        case Producer:
+        case People::Producer:
             l_peopleWidget = m_ui->producersWidget;
             break;
-        case Actor:
+        case People::Actor:
             l_peopleWidget = m_ui->actorsWidget;
             break;
         }
 
         QListWidgetItem *l_item = new QListWidgetItem(l_people.getFirstname() + " " + l_people.getLastname());
-        l_item->setData(Qt::UserRole, l_people.getId());
-        l_item->setData(Qt::UserRole+1, l_people.getType());
+        l_item->setData(Macaw::ObjectId, l_people.getId());
+        l_item->setData(Macaw::PeopleType, l_people.getType());
         l_peopleWidget->addItem(l_item);
     }
 }
@@ -191,20 +191,20 @@ QList<People> MovieDialog::getPeopleList(int type)
     QListWidget *l_peopleWidget;
     switch (type)
     {
-    case Director:
+    case People::Director:
         l_peopleWidget = m_ui->directorsWidget;
         break;
-    case Producer:
+    case People::Producer:
         l_peopleWidget = m_ui->producersWidget;
         break;
-    case Actor:
+    case People::Actor:
         l_peopleWidget = m_ui->actorsWidget;
         break;
     }
     QList<People> l_peopleList;
     for (int i = 0 ; i < l_peopleWidget->count() ; i++)
     {
-        int l_id = l_peopleWidget->item(i)->data(Qt::UserRole).toInt();
+        int l_id = l_peopleWidget->item(i)->data(Macaw::ObjectId).toInt();
         People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_id, type);
         l_peopleList.push_back(l_people);
     }
@@ -226,7 +226,7 @@ void MovieDialog::setMovieSelectedTagList(const QList<Tag> &tagList)
 
         for(int i=0; i < m_ui->tagListWidget->count(); i++)
         {
-            if(m_ui->tagListWidget->item(i)->data(Qt::UserRole).toInt() == l_tagId)
+            if(m_ui->tagListWidget->item(i)->data(Macaw::ObjectId).toInt() == l_tagId)
             {
                 m_ui->tagListWidget->item(i)->setSelected(true);
                 break;
@@ -243,19 +243,19 @@ void MovieDialog::addPeople(const People &people)
 
     switch (people.getType())
     {
-    case Director:
+    case People::Director:
         l_peopleWidget = m_ui->directorsWidget;
         break;
-    case Producer:
+    case People::Producer:
         l_peopleWidget = m_ui->producersWidget;
         break;
-    case Actor:
+    case People::Actor:
         l_peopleWidget = m_ui->actorsWidget;
         break;
     }
     QListWidgetItem *l_item = new QListWidgetItem(people.getFirstname() + " " + people.getLastname());
-    l_item->setData(Qt::UserRole, people.getId());
-    l_item->setData(Qt::UserRole+1, people.getType());
+    l_item->setData(Macaw::ObjectId, people.getId());
+    l_item->setData(Macaw::PeopleType, people.getType());
     l_peopleWidget->addItem(l_item);
 
     m_movie.addPeople(people);
@@ -302,19 +302,19 @@ void MovieDialog::on_validationButtons_accepted()
 void MovieDialog::on_addDirectorButton_clicked()
 {
     m_app->debug("[MovieDialog] addDirectorButton clicked()");
-    addPeopleButton_clicked(Director);
+    addPeopleButton_clicked(People::Director);
 }
 
 void MovieDialog::on_addProducerButton_clicked()
 {
     m_app->debug("[MovieDialog] addProducerButton clicked()");
-    addPeopleButton_clicked(Producer);
+    addPeopleButton_clicked(People::Producer);
 }
 
 void MovieDialog::on_addActorButton_clicked()
 {
     m_app->debug("[MovieDialog] addActorButton clicked()");
-    addPeopleButton_clicked(Actor);
+    addPeopleButton_clicked(People::Actor);
 }
 
 void MovieDialog::addPeopleButton_clicked(int type)
@@ -325,15 +325,15 @@ void MovieDialog::addPeopleButton_clicked(int type)
     QListWidget *l_peopleWidget;
     switch (type)
     {
-    case Director:
+    case People::Director:
         l_peopleEdit = m_ui->directorEdit;
         l_peopleWidget = m_ui->directorsWidget;
         break;
-    case Producer:
+    case People::Producer:
         l_peopleEdit = m_ui->producerEdit;
         l_peopleWidget = m_ui->producersWidget;
         break;
-    case Actor:
+    case People::Actor:
         l_peopleEdit = m_ui->actorEdit;
         l_peopleWidget = m_ui->actorsWidget;
         break;
@@ -381,19 +381,19 @@ void MovieDialog::addPeopleButton_clicked(int type)
 void MovieDialog::on_delDirectorButton_clicked()
 {
     m_app->debug("[MovieDialog] delDirectorButton clicked()");
-    delPeopleButton_clicked(Director);}
+    delPeopleButton_clicked(People::Director);}
 
 void MovieDialog::on_delProducerButton_clicked()
 {
     m_app->debug("[MovieDialog] delProducerButton clicked()");
-    delPeopleButton_clicked(Producer);
+    delPeopleButton_clicked(People::Producer);
 
 }
 
 void MovieDialog::on_delActorButton_clicked()
 {
     m_app->debug("[MovieDialog] delActorButton clicked()");
-    delPeopleButton_clicked(Actor);
+    delPeopleButton_clicked(People::Actor);
 }
 
 void MovieDialog::delPeopleButton_clicked(int type)
@@ -403,13 +403,13 @@ void MovieDialog::delPeopleButton_clicked(int type)
     QListWidget *l_peopleWidget;
     switch (type)
     {
-    case Director:
+    case People::Director:
         l_peopleWidget = m_ui->directorsWidget;
         break;
-    case Producer:
+    case People::Producer:
         l_peopleWidget = m_ui->producersWidget;
         break;
-    case Actor:
+    case People::Actor:
         l_peopleWidget = m_ui->actorsWidget;
         break;
     }
@@ -417,7 +417,7 @@ void MovieDialog::delPeopleButton_clicked(int type)
     QList<QListWidgetItem*> l_itemsListToDelete = l_peopleWidget->selectedItems();
     foreach (QListWidgetItem *l_itemToDelete, l_itemsListToDelete)
     {
-        int l_peopleId = l_itemToDelete->data(Qt::UserRole).toInt();
+        int l_peopleId = l_itemToDelete->data(Macaw::ObjectId).toInt();
         People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_peopleId, type);
         l_people.setType(type);
         delPeople(l_people);
@@ -429,19 +429,19 @@ void MovieDialog::delPeopleButton_clicked(int type)
 void MovieDialog::on_directorEdit_textEdited()
 {
     m_app->debug("[MovieDialog] directorEdit textEdited()");
-    on_peopleEdit_textEdited(Director);
+    on_peopleEdit_textEdited(People::Director);
 }
 
 void MovieDialog::on_producerEdit_textEdited()
 {
     m_app->debug("[MovieDialog] producerEdit textEdited()");
-    on_peopleEdit_textEdited(Producer);
+    on_peopleEdit_textEdited(People::Producer);
 }
 
 void MovieDialog::on_actorEdit_textEdited()
 {
     m_app->debug("[MovieDialog] actorEdit textEdited()");
-    on_peopleEdit_textEdited(Actor);
+    on_peopleEdit_textEdited(People::Actor);
 }
 
 void MovieDialog::on_peopleEdit_textEdited(int type)
@@ -451,13 +451,13 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
     QLineEdit *l_peopleEdit;
     switch (type)
     {
-    case Director:
+    case People::Director:
         l_peopleEdit = m_ui->directorEdit;
         break;
-    case Producer:
+    case People::Producer:
         l_peopleEdit = m_ui->producerEdit;
         break;
-    case Actor:
+    case People::Actor:
         l_peopleEdit = m_ui->actorEdit;
         break;
     }
@@ -497,7 +497,7 @@ void MovieDialog::on_addNewTagButton_clicked()
     if(newTagId > 0)
     {
         QListWidgetItem * item = new QListWidgetItem(newTag, m_ui->tagListWidget);
-        item->setData(Qt::UserRole, newTagId);
+        item->setData(Macaw::ObjectId, newTagId);
     }
 
     m_ui->newTagLineEdit->clear();
@@ -596,15 +596,15 @@ QList<People> MovieDialog::getFocusedListPeople()
     QList<People> l_people;
     if (m_ui->directorsWidget->hasFocus())
     {
-        l_people = m_movie.getPeopleList(Director);
+        l_people = m_movie.getPeopleList(People::Director);
     }
     else if (m_ui->producersWidget->hasFocus())
     {
-        l_people = m_movie.getPeopleList(Producer);
+        l_people = m_movie.getPeopleList(People::Producer);
     }
     else if (m_ui->actorsWidget->hasFocus())
     {
-        l_people = m_movie.getPeopleList(Actor);
+        l_people = m_movie.getPeopleList(People::Actor);
     }
 
     return l_people;
