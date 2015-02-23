@@ -540,7 +540,7 @@ void MainWindow::addNewMovies()
 
                     // Currently a wainting loop is created in FetchMetadata,
                     // multithreading would be better
-                    l_fetchMetadata.fetchMetadata(l_movie.title());
+                  //  l_fetchMetadata(l_movie.title());
                 } else {
                     m_app->debug("[MainWindow.updateApp()] Movie already known. Skipped");
                 }
