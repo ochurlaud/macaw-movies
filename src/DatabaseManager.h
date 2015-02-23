@@ -93,6 +93,9 @@ public:
     Playlist getOnePlaylistById(const int id);
     QList<Playlist> getAllPlaylists(const QString fieldOrder = "name");
     QList<Playlist> getPlaylistByAny(const QString text, const QString fieldOrder = "name");
+    bool isMovieInPlaylist(int movieId, int playlistId);
+    bool isMovieInPlaylist(Movie &movie, int playlistId);
+    bool isMovieInPlaylist(Movie &movie, Playlist &playlist);
 
     // Does element exist ?
     bool existMovie(const QString);

@@ -221,26 +221,32 @@ void MainWindow::on_peopleBox_activated(int type)
 {
     m_app->debug("[MainWindow] Enters on_peopleBox_activated()");
 
-    int peopleType = type + 1;
-    fillLeftPannel(Macaw::isPeople, peopleType);
+    m_ui->tagsButton->setChecked(false);
+    int l_peopleType = type + 1;
+    fillLeftPannel(Macaw::isPeople, l_peopleType);
+    fillMainPannel();
     m_leftPannelSelectedId = 0;
 }
 
 void MainWindow::on_toWatchButton_clicked()
 {
-    m_ui->toWatchButton->setChecked(true);
-    m_ui->tagsButton->setChecked(false);
-    m_moviesList = m_app->getDatabaseManager()->getMoviesByPlaylist(1);
-    fillMainPannel();
-    fillLeftPannel(Macaw::isPeople, People::Director);
+    // When clicked,  the state of the button is toggled
+    // so we toggle again to give precedent state
+    /*m_ui->toWatchButton->toggle();
+    if (!m_ui->toWatchButton->isChecked()) {
+        m_ui->toWatchButton->setChecked(true);
+      //  m_moviesList = m_app->getDatabaseManager()->getMoviesByPlaylist(1);
+    } else {
+        m_ui->toWatchButton->setChecked(false);
+        m_moviesList = m_app->getDatabaseManager()->getAllMovies();
+    }*/
     filterPannels();
 }
 
 void MainWindow::on_tagsButton_clicked()
 {
     m_app->debug("[MainWindow] tagsButton clicked");
-    m_ui->toWatchButton->setChecked(true);
-    m_ui->tagsButton->setChecked(false);
+    m_ui->tagsButton->setChecked(true);
 
     fillLeftPannel(Macaw::isTag);
     m_leftPannelSelectedId = 0;
@@ -435,68 +441,73 @@ void MainWindow::on_searchEdit_returnPressed()
 
 void MainWindow::filterPannels()
 {
-    m_app->debug("[MainWindow] Enters filterPeople()");
+    m_app->debug("[MainWindow] Enters filterPannels()");
 
     fillMainPannel();
     fillLeftPannel(m_typeElement, m_typePeople);
 
     QString l_text = m_ui->searchEdit->text();
 
-    if (l_text != "") {
-        // mainPannel
-        QList<Movie> l_authorizedMoviesList = m_app->getDatabaseManager()->getMoviesByAny(l_text);
-        for (int i = 0 ; i < m_ui->mainPannel->rowCount(); i++) {
+    // mainPannel
+    QList<Movie> l_authorizedMoviesList = m_app->getDatabaseManager()->getMoviesByAny(l_text);
+    for (int i = 0 ; i < m_ui->mainPannel->rowCount(); i++) {
+        bool l_isPresent(false);
+        QTableWidgetItem *l_item = m_ui->mainPannel->item(i, 0);
+        int l_itemMovieId = l_item->data(Macaw::ObjectId).toInt();
+
+        foreach(Movie l_movie, l_authorizedMoviesList) {
+             if (l_movie.getId() == l_itemMovieId) {
+                 l_isPresent = true;
+             }
+        }
+        if (l_isPresent
+                 && m_ui->toWatchButton->isChecked()) {
+             l_isPresent = m_app->getDatabaseManager()->isMovieInPlaylist(l_itemMovieId, Playlist::ToWatch);
+        }
+        if (l_isPresent == false) {
+            m_ui->mainPannel->removeRow(i);
+            i--; // We remove a line, so we have to decrement i...
+        }
+    }
+
+    // leftPannel
+    if (m_typeElement == Macaw::isTag) {
+        QList<Tag> l_authorizedTagList = m_app->getDatabaseManager()->getTagsByAny(l_text);
+        for (int i = 2 ; i < m_ui->leftPannel->count(); i++) {
             bool l_isPresent(false);
-            QTableWidgetItem *l_item = m_ui->mainPannel->item(i, 0);
-            foreach(Movie l_movie, l_authorizedMoviesList) {
-                 if (l_movie.getId() == l_item->data(Macaw::ObjectId)) {
+            QListWidgetItem *l_item = m_ui->leftPannel->item(i);
+            foreach(Tag l_tag, l_authorizedTagList) {
+                 if (l_tag.getId() == l_item->data(Macaw::ObjectId)) {
                      l_isPresent = true;
                  }
             }
             if (l_isPresent == false) {
-                m_ui->mainPannel->removeRow(i);
-                i--; // We remove a line, so we have to decrement i...
+                delete l_item;
+                i--; // We remove an item so we have to decrement i
             }
         }
+    } else if (m_typeElement == Macaw::isPeople) {
+        QList<People> l_authorizedPeopleList = m_app->getDatabaseManager()->getPeopleByAny(l_text, m_typePeople);
 
-        // leftPannel
-        if (m_typeElement == Macaw::isTag) {
-            QList<Tag> l_authorizedTagList = m_app->getDatabaseManager()->getTagsByAny(l_text);
-            for (int i = 2 ; i < m_ui->leftPannel->count(); i++) {
-                bool l_isPresent(false);
-                QListWidgetItem *l_item = m_ui->leftPannel->item(i);
-                foreach(Tag l_tag, l_authorizedTagList) {
-                     if (l_tag.getId() == l_item->data(Macaw::ObjectId)) {
-                         l_isPresent = true;
-                     }
-                }
-                if (l_isPresent == false) {
-                    delete l_item;
-                    i--; // We remove an item so we have to decrement i
-                }
+        // We begin at 2 because the first item is "All", second is "Unknown"
+        for (int i = 2 ; i < m_ui->leftPannel->count() ; i++) {
+            bool l_isPresent(false);
+            QListWidgetItem *l_item = m_ui->leftPannel->item(i);
+            foreach(People l_people, l_authorizedPeopleList) {
+                 if (l_people.getId() == l_item->data(Macaw::ObjectId)) {
+                     l_isPresent = true;
+                 }
             }
-        } else if (m_typeElement == Macaw::isPeople) {
-            QList<People> l_authorizedPeopleList = m_app->getDatabaseManager()->getPeopleByAny(l_text, m_typePeople);
-
-            // We begin at 2 because the first item is "All", second is "Unknown"
-            for (int i = 2 ; i < m_ui->leftPannel->count() ; i++) {
-                bool l_isPresent(false);
-                QListWidgetItem *l_item = m_ui->leftPannel->item(i);
-                foreach(People l_people, l_authorizedPeopleList) {
-                     if (l_people.getId() == l_item->data(Macaw::ObjectId)) {
-                         l_isPresent = true;
-                     }
-                }
-                if (l_isPresent == false) {
-                    delete l_item;
-                    i--; // We remove an item so we have to decrement i
-                }
+            if (l_isPresent == false) {
+                delete l_item;
+                i--; // We remove an item so we have to decrement i
             }
-        } else if (m_typeElement == Macaw::isPlaylist) {
-            // Don't do anything here, we want to see the name of the playlists
-            // also when empty
         }
+    } else if (m_typeElement == Macaw::isPlaylist) {
+        // Don't do anything here, we want to see the name of the playlists
+        // also when empty
     }
+
     for (int i = 0 ; i < m_ui->leftPannel->count() ; i ++) {
         QListWidgetItem *l_item = m_ui->leftPannel->item(i);
         if (m_leftPannelSelectedId == l_item->data(Macaw::ObjectId)) {

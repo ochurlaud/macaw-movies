@@ -41,6 +41,7 @@ public:
     void addMovie(const Movie &movie);
     void removeMovie(const Movie &movie);
     void updateMovie(const Movie &movie);
+    enum typePlaylist { New = -1, None = 0, ToWatch = 1 };
 
 private:
     int m_id;

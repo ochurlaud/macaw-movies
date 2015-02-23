@@ -751,6 +751,35 @@ QList<Playlist> DatabaseManager::getAllPlaylists(QString fieldOrder)
     return l_playlistList;
 }
 
+bool DatabaseManager::isMovieInPlaylist(int movieId, int playlistId)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT id "
+                    "FROM movies_playlists "
+                    "WHERE id_movie = :id_movie "
+                        "AND id_playlist = :id_playlist");
+    l_query.bindValue(":id_movie", movieId);
+    l_query.bindValue(":id_playlist", playlistId);
+
+    if (!l_query.exec())
+    {
+        debug("In isMovieInPlaylist():");
+        debug(l_query.lastError().text());
+    }
+
+    return l_query.next();
+}
+
+bool DatabaseManager::isMovieInPlaylist(Movie &movie, int playlistId)
+{
+    return isMovieInPlaylist(movie.getId(), playlistId);
+}
+
+bool DatabaseManager::isMovieInPlaylist(Movie &movie, Playlist &playlist)
+{
+    return isMovieInPlaylist(movie.getId(), playlist.getId());
+}
+
 /**
  * @brief Retuns whether a movie is known by the database or not
  *
