@@ -188,7 +188,7 @@ void MovieDialog::setPeopleList(const QList<People> &peopleList)
 
 QList<People> MovieDialog::getPeopleList(int type)
 {
-    QListWidget *l_peopleWidget;
+    QListWidget *l_peopleWidget = NULL;
     switch (type)
     {
     case People::Director:
@@ -201,14 +201,17 @@ QList<People> MovieDialog::getPeopleList(int type)
         l_peopleWidget = m_ui->actorsWidget;
         break;
     }
-    QList<People> l_peopleList;
-    for (int i = 0 ; i < l_peopleWidget->count() ; i++)
-    {
-        int l_id = l_peopleWidget->item(i)->data(Macaw::ObjectId).toInt();
-        People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_id, type);
-        l_peopleList.push_back(l_people);
-    }
 
+    QList<People> l_peopleList;
+
+    if (l_peopleWidget != NULL) {
+        for (int i = 0 ; i < l_peopleWidget->count() ; i++)
+        {
+            int l_id = l_peopleWidget->item(i)->data(Macaw::ObjectId).toInt();
+            People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_id, type);
+            l_peopleList.push_back(l_people);
+        }
+    }
     return l_peopleList;
 }
 
@@ -321,8 +324,8 @@ void MovieDialog::addPeopleButton_clicked(int type)
 {
     m_app->debug("[MovieDialog] Enters addPeopleButton_clicked(), type = "+QString::number(type));
 
-    QLineEdit *l_peopleEdit;
-    QListWidget *l_peopleWidget;
+    QLineEdit *l_peopleEdit = NULL;
+    QListWidget *l_peopleWidget = NULL;
     switch (type)
     {
     case People::Director:
@@ -339,43 +342,40 @@ void MovieDialog::addPeopleButton_clicked(int type)
         break;
     }
 
-    QString l_text = l_peopleEdit->text();
+    if (l_peopleEdit != NULL
+            && l_peopleWidget != NULL) {
+        QString l_text = l_peopleEdit->text();
 
-    // To be simply added, the person must exist and not be already in the list
-    if (m_app->getDatabaseManager()->existPeople(l_text))
-    {
-        if(l_peopleWidget->findItems(l_text, Qt::MatchExactly).size() == 0)
-        {
-            QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByFullname(l_text);
-            People l_people = l_peopleList.at(0);
+        // To be simply added, the person must exist and not be already in the list
+        if (m_app->getDatabaseManager()->existPeople(l_text)) {
+            if(l_peopleWidget->findItems(l_text, Qt::MatchExactly).size() == 0) {
+                QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByFullname(l_text);
+                People l_people = l_peopleList.at(0);
+                l_people.setType(type);
+                addPeople(l_people);
+                m_app->debug("[MovieDialog] " + l_text + " added");
+            } else {
+                m_app->debug("[MovieDialog] " + l_text + " already in the list");
+            }
+        } else {
+            // We suppose here that a name is composed by N >= 0 firstnames
+            // and 1 lastname, separated by spaces
+            QStringList l_textExplosed = l_text.split(" ");
+            QString l_lastname = l_textExplosed.last();
+            l_textExplosed.removeLast();
+            QString l_firstname = l_textExplosed.join(" ");
+
+            People l_people;
+            l_people.setFirstname(l_firstname);
+            l_people.setLastname(l_lastname);
             l_people.setType(type);
-            addPeople(l_people);
-            m_app->debug("[MovieDialog] " + l_text + " added");
+            PeopleDialog *l_peopleDialog = new PeopleDialog(l_people);
+            l_peopleDialog->show();
+            QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People)),
+                             this, SLOT(peopleDialog_peopleCreated(People)));
         }
-        else
-        {
-            m_app->debug("[MovieDialog] " + l_text + " already in the list");
-        }
+        l_peopleEdit->clear();
     }
-    else
-    {
-        // We suppose here that a name is composed by N >= 0 firstnames
-        // and 1 lastname, separated by spaces
-        QStringList l_textExplosed = l_text.split(" ");
-        QString l_lastname = l_textExplosed.last();
-        l_textExplosed.removeLast();
-        QString l_firstname = l_textExplosed.join(" ");
-
-        People l_people;
-        l_people.setFirstname(l_firstname);
-        l_people.setLastname(l_lastname);
-        l_people.setType(type);
-        PeopleDialog *l_peopleDialog = new PeopleDialog(l_people);
-        l_peopleDialog->show();
-        QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People)),
-                         this, SLOT(peopleDialog_peopleCreated(People)));
-    }
-    l_peopleEdit->clear();
 }
 
 void MovieDialog::on_delDirectorButton_clicked()
@@ -400,7 +400,7 @@ void MovieDialog::delPeopleButton_clicked(int type)
 {
     m_app->debug("[MovieDialog] Enters delPeopleButton_clicked()");
 
-    QListWidget *l_peopleWidget;
+    QListWidget *l_peopleWidget = NULL;
     switch (type)
     {
     case People::Director:
@@ -414,14 +414,16 @@ void MovieDialog::delPeopleButton_clicked(int type)
         break;
     }
 
+    if (l_peopleWidget != NULL) {
     QList<QListWidgetItem*> l_itemsListToDelete = l_peopleWidget->selectedItems();
-    foreach (QListWidgetItem *l_itemToDelete, l_itemsListToDelete)
-    {
-        int l_peopleId = l_itemToDelete->data(Macaw::ObjectId).toInt();
-        People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_peopleId, type);
-        l_people.setType(type);
-        delPeople(l_people);
-        delete(l_itemToDelete);
+        foreach (QListWidgetItem *l_itemToDelete, l_itemsListToDelete)
+        {
+            int l_peopleId = l_itemToDelete->data(Macaw::ObjectId).toInt();
+            People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_peopleId, type);
+            l_people.setType(type);
+            delPeople(l_people);
+            delete(l_itemToDelete);
+        }
     }
     m_app->debug("[MovieDialog] Exits delPeopleButton_clicked()");
 }
@@ -448,7 +450,7 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
 {
     m_app->debug("[MovieDialog] Enters on_peopleEdit_textEdited()");
 
-    QLineEdit *l_peopleEdit;
+    QLineEdit *l_peopleEdit = NULL;
     switch (type)
     {
     case People::Director:
@@ -569,7 +571,7 @@ void MovieDialog::showPeopleDialog()
  */
 QListWidget* MovieDialog::getFocusedListWidget()
 {
-    QListWidget *l_widget;
+    QListWidget *l_widget = NULL;
     if (m_ui->directorsWidget->hasFocus())
     {
         l_widget = m_ui->directorsWidget;

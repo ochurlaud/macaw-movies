@@ -92,13 +92,6 @@
             <property name="text">
              <string>Tags</string>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="playlistsButton">
-            <property name="text">
-             <string>Playlists</string>
-            </property>
             <property name="checkable">
              <bool>true</bool>
             </property>
@@ -108,6 +101,9 @@
            <widget class="QPushButton" name="toWatchButton">
             <property name="text">
              <string>To Watch</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

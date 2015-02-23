@@ -228,16 +228,20 @@ void MainWindow::on_peopleBox_activated(int type)
 
 void MainWindow::on_toWatchButton_clicked()
 {
+    m_ui->toWatchButton->setChecked(true);
+    m_ui->tagsButton->setChecked(false);
     m_moviesList = m_app->getDatabaseManager()->getMoviesByPlaylist(1);
     fillMainPannel();
     fillLeftPannel(Macaw::isPeople, People::Director);
     filterPannels();
-
 }
 
 void MainWindow::on_tagsButton_clicked()
 {
     m_app->debug("[MainWindow] tagsButton clicked");
+    m_ui->toWatchButton->setChecked(true);
+    m_ui->tagsButton->setChecked(false);
+
     fillLeftPannel(Macaw::isTag);
     m_leftPannelSelectedId = 0;
 }
