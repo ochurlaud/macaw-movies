@@ -29,7 +29,7 @@ Tag::Tag(QString name) :
 }
 
 
-int Tag::getId() const
+int Tag::id() const
 {
     return m_id;
 }
@@ -39,7 +39,7 @@ void Tag::setId(int id)
     m_id = id;
 }
 
-QString Tag::getName() const
+QString Tag::name() const
 {
     return m_name;
 }
@@ -51,8 +51,8 @@ void Tag::setName(QString name)
 
 bool Tag::operator== (const Tag &other)
 {
-    if ( this->getId() == other.getId() &&
-         this->getName() == other.getName() )
+    if ( this->id() == other.id() &&
+         this->name() == other.name() )
     {
         return true;
     }

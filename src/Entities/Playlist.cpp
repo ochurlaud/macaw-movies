@@ -26,7 +26,7 @@ Playlist::Playlist(QString name):
 {
 }
 
-int Playlist::getId() const
+int Playlist::id() const
 {
     return m_id;
 }
@@ -36,7 +36,7 @@ void Playlist::setId(const int id)
     m_id = id;
 }
 
-QString Playlist::getName() const
+QString Playlist::name() const
 {
     return m_name;
 }
@@ -46,7 +46,7 @@ void Playlist::setName(const QString name)
     m_name = name;
 }
 
-int Playlist::getRate() const
+int Playlist::rate() const
 {
     return m_rate;
 }
@@ -56,7 +56,7 @@ void Playlist::setRate(const int rate)
     m_rate = rate;
 }
 
-QDateTime Playlist::getCreationDate() const
+QDateTime Playlist::creationDate() const
 {
     return m_creationDate;
 }
@@ -66,7 +66,7 @@ void Playlist::setCreationDate(const QDateTime creationDate)
     m_creationDate = creationDate;
 }
 
-QList<Movie> Playlist::getMovieList() const
+QList<Movie> Playlist::movieList() const
 {
     return m_movieList;
 }
@@ -97,7 +97,7 @@ void Playlist::updateMovie(const Movie &movie)
 {
     for (int i = 0 ; i < m_movieList.size() ; i++)
     {
-        if(m_movieList.at(i).getId() == movie.getId())
+        if(m_movieList.at(i).id() == movie.id())
         {
             m_movieList.replace(i, movie);
         }

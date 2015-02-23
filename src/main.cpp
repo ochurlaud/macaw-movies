@@ -26,7 +26,7 @@
 #include "Application.h"
 #include "MainWindow.h"
 #include "MoviesDebug.h"
-#include "MetadataFetcher.h"
+#include "FetchMetadata/FetchMetadata.h"
 
 int main(int argv, char **args)
 {
@@ -71,7 +71,7 @@ int main(int argv, char **args)
 /*/ FOR TESTING PURPOSES
     Movie movie = l_app.getDatabaseManager()->getOneMovieById(2);
     MetadataFetcher metadata(movie);
-    metadata.fetchMetadata(movie.getTitle());
+    metadata.fetchMetadata(movie.title());
 /*/
     return l_app.exec();
 }

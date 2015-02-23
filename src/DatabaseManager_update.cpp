@@ -39,15 +39,15 @@ bool DatabaseManager::updateMovie(Movie &movie)
                         "format = :format, "
                         "rank = :rank "
                     "WHERE id = :id");
-    l_query.bindValue(":title", movie.getTitle());
-    l_query.bindValue(":original_title", movie.getOriginalTitle());
-    l_query.bindValue(":release_date", movie.getReleaseDate().toString(DATE_FORMAT));
-    l_query.bindValue(":country", movie.getCountry());
-    l_query.bindValue(":synopsis", movie.getSynopsis());
+    l_query.bindValue(":title", movie.title());
+    l_query.bindValue(":original_title", movie.originalTitle());
+    l_query.bindValue(":release_date", movie.releaseDate().toString(DATE_FORMAT));
+    l_query.bindValue(":country", movie.country());
+    l_query.bindValue(":synopsis", movie.synopsis());
     l_query.bindValue(":colored", movie.isColored());
-    l_query.bindValue(":format", movie.getFormat());
-    l_query.bindValue(":rank", movie.getRank());
-    l_query.bindValue(":id", movie.getId());
+    l_query.bindValue(":format", movie.format());
+    l_query.bindValue(":rank", movie.rank());
+    l_query.bindValue(":id", movie.id());
 
 
     if (!l_query.exec())
@@ -59,12 +59,12 @@ bool DatabaseManager::updateMovie(Movie &movie)
     }
 
     // Insertions/Updates of the linked elements
-    foreach (People l_people, movie.getPeopleList())
+    foreach (People l_people, movie.peopleList())
     {
-        updatePeopleInMovie(l_people, movie, l_people.getType());
+        updatePeopleInMovie(l_people, movie, l_people.type());
     }
 
-    foreach (Tag l_tag, movie.getTagList())
+    foreach (Tag l_tag, movie.tagList())
     {
         updateTagInMovie(l_tag, movie);
     }
@@ -73,7 +73,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
     l_query.prepare("SELECT t.id, t.name "
                     "FROM tags AS t, movies_tags AS mt "
                     "WHERE mt.id_movie = :id_movie AND mt.id_tag = t.id");
-    l_query.bindValue(":id_movie", movie.getId());
+    l_query.bindValue(":id_movie", movie.id());
     if (!l_query.exec())
     {
         debug("In updateMovie():");
@@ -86,7 +86,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
         Tag l_tag;
         l_tag.setId(l_query.value(0).toInt());
         l_tag.setName(l_query.value(1).toString());
-        if(movie.getTagList().indexOf(l_tag) < 0)
+        if(movie.tagList().indexOf(l_tag) < 0)
         {
             removeTagFromMovie(l_tag, movie);
         }
@@ -101,7 +101,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
                         "WHERE mp.id_movie = :id_movie "
                           "AND mp.type = :type "
                           "AND mp.id_people = p.id");
-        l_query.bindValue(":id_movie", movie.getId());
+        l_query.bindValue(":id_movie", movie.id());
         l_query.bindValue(":type", type);
         if (!l_query.exec())
         {
@@ -113,9 +113,9 @@ bool DatabaseManager::updateMovie(Movie &movie)
         while(l_query.next())
         {
             People l_people = hydratePeople(l_query);
-            if(movie.getPeopleList().indexOf(l_people) < 0)
+            if(movie.peopleList().indexOf(l_people) < 0)
             {
-                removePeopleFromMovie(l_people, movie, l_people.getType());
+                removePeopleFromMovie(l_people, movie, l_people.type());
             }
         }
     }
@@ -143,12 +143,12 @@ bool DatabaseManager::updatePeople(People &people)
                         "birthday = :birthday, "
                         "biography = :biography "
                     "WHERE id = :id");
-    l_query.bindValue(":firstname", people.getFirstname());
-    l_query.bindValue(":lastname", people.getLastname());
-    l_query.bindValue(":realname",  people.getRealname());
-    l_query.bindValue(":birthday",  people.getBirthday().toString(DATE_FORMAT));
-    l_query.bindValue(":biography", people.getBiography());
-    l_query.bindValue(":id", people.getId());
+    l_query.bindValue(":firstname", people.firstname());
+    l_query.bindValue(":lastname", people.lastname());
+    l_query.bindValue(":realname",  people.realname());
+    l_query.bindValue(":birthday",  people.birthday().toString(DATE_FORMAT));
+    l_query.bindValue(":biography", people.biography());
+    l_query.bindValue(":id", people.id());
 
     if (!l_query.exec())
     {
@@ -174,7 +174,7 @@ bool DatabaseManager::updatePeopleInMovie(People &people,
                                           const int type)
 {
     // If the id is 0, then the director doesn't exist
-    if (people.getId() == 0)
+    if (people.id() == 0)
     {
         debug("People not known");
         addPeopleToMovie(people, movie, type);
@@ -190,8 +190,8 @@ bool DatabaseManager::updatePeopleInMovie(People &people,
         l_query.prepare("SELECT id "
                         "FROM movies_people "
                         "WHERE id_movie = :id_movie AND id_people = :id_people AND type = :type");
-        l_query.bindValue(":id_movie", movie.getId());
-        l_query.bindValue(":id_people", people.getId());
+        l_query.bindValue(":id_movie", movie.id());
+        l_query.bindValue(":id_people", people.id());
         l_query.bindValue(":type", type);
 
         if (!l_query.exec())
@@ -207,8 +207,8 @@ bool DatabaseManager::updatePeopleInMovie(People &people,
             debug("People not connected to the movie");
             l_query.prepare("INSERT INTO movies_people(id_movie, id_people, type) "
                             "VALUES(:id_movie, :id_people, :type)");
-            l_query.bindValue(":id_movie", movie.getId());
-            l_query.bindValue(":id_people", people.getId());
+            l_query.bindValue(":id_movie", movie.id());
+            l_query.bindValue(":id_people", people.id());
             l_query.bindValue(":type", type);
             if (!l_query.exec())
             {
@@ -235,8 +235,8 @@ bool DatabaseManager::updateTag(Tag &tag)
     l_query.prepare("UPDATE tags "
                     "SET name = :name "
                     "WHERE id = :id");
-    l_query.bindValue(":name", tag.getName());
-    l_query.bindValue(":id", tag.getId());
+    l_query.bindValue(":name", tag.name());
+    l_query.bindValue(":id", tag.id());
 
     if (!l_query.exec())
     {
@@ -259,7 +259,7 @@ bool DatabaseManager::updateTag(Tag &tag)
 bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
 {
     // If the id is 0, then the tag doesn't exist
-    if (tag.getId() == 0)
+    if (tag.id() == 0)
     {
         debug("Tag not known");
         addTagToMovie(tag, movie);
@@ -275,8 +275,8 @@ bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
         l_query.prepare("SELECT id "
                         "FROM movies_tags "
                         "WHERE id_movie = :id_movie AND id_tag = :id_tag");
-        l_query.bindValue(":id_movie", movie.getId());
-        l_query.bindValue(":id_tag", tag.getId());
+        l_query.bindValue(":id_movie", movie.id());
+        l_query.bindValue(":id_tag", tag.id());
         if (!l_query.exec())
         {
             debug("In updateTagInMovie():");
@@ -290,8 +290,8 @@ bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
             debug("Tag not connected to the movie");
             l_query.prepare("INSERT INTO movies_tags(id_movie, id_tag) "
                             "VALUES(:id_movie, :id_tag)");
-            l_query.bindValue(":id_movie", movie.getId());
-            l_query.bindValue(":id_tag", tag.getId());
+            l_query.bindValue(":id_movie", movie.id());
+            l_query.bindValue(":id_tag", tag.id());
             if (!l_query.exec())
             {
                 debug("In updateTagInMovie():");
@@ -319,9 +319,9 @@ bool DatabaseManager::updatePlaylist(Playlist &playlist)
                     "SET name = :name, "
                         "rate = :rate "
                     "WHERE id = :id");
-    l_query.bindValue(":name", playlist.getName());
-    l_query.bindValue(":rate", playlist.getRate());
-    l_query.bindValue(":id", playlist.getId());
+    l_query.bindValue(":name", playlist.name());
+    l_query.bindValue(":rate", playlist.rate());
+    l_query.bindValue(":id", playlist.id());
 
     if (!l_query.exec())
     {
@@ -332,7 +332,7 @@ bool DatabaseManager::updatePlaylist(Playlist &playlist)
     }
 
     // Insertions/Updates of the linked elements
-    foreach (Movie l_movie, playlist.getMovieList())
+    foreach (Movie l_movie, playlist.movieList())
     {
         updateMovieInPlaylist(l_movie, playlist);
     }
@@ -341,7 +341,7 @@ bool DatabaseManager::updatePlaylist(Playlist &playlist)
     l_query.prepare("SELECT " + m_movieFields + " "
                     "FROM movies AS m, movies_playlists AS mpl "
                     "WHERE mpl.id_movie = m.id AND mpl.id_playlist = :id_playlist");
-    l_query.bindValue(":id_playlist", playlist.getId());
+    l_query.bindValue(":id_playlist", playlist.id());
     if (!l_query.exec())
     {
         debug("In updatePlaylist():");
@@ -352,7 +352,7 @@ bool DatabaseManager::updatePlaylist(Playlist &playlist)
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        if(playlist.getMovieList().indexOf(l_movie) < 0)
+        if(playlist.movieList().indexOf(l_movie) < 0)
         {
             removeMovieFromPlaylist(l_movie, playlist);
         }
@@ -379,8 +379,8 @@ bool DatabaseManager::updateMovieInPlaylist(Movie &movie, Playlist &playlist)
     l_query.prepare("SELECT id "
                     "FROM movies_playlists "
                     "WHERE id_movie = :id_movie AND id_playlist = :id_playlist");
-    l_query.bindValue(":id_movie", movie.getId());
-    l_query.bindValue(":id_playlist", playlist.getId());
+    l_query.bindValue(":id_movie", movie.id());
+    l_query.bindValue(":id_playlist", playlist.id());
     if (!l_query.exec())
     {
         debug("In updateMovieInPlaylist():");
@@ -394,8 +394,8 @@ bool DatabaseManager::updateMovieInPlaylist(Movie &movie, Playlist &playlist)
         debug("Movie not connected to the playlist");
         l_query.prepare("INSERT INTO movies_playlists(id_movie, id_playlist) "
                         "VALUES(:id_movie, :id_playlist)");
-        l_query.bindValue(":id_movie", movie.getId());
-        l_query.bindValue(":id_playlist", playlist.getId());
+        l_query.bindValue(":id_movie", movie.id());
+        l_query.bindValue(":id_playlist", playlist.id());
         if (!l_query.exec())
         {
             debug("In updateMovieInPlaylist():");

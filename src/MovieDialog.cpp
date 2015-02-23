@@ -39,7 +39,7 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     m_movie = m_app->getDatabaseManager()->getOneMovieById(id);
 
     m_ui->setupUi(this);
-    this->setWindowTitle("Edit Metadata of: " + m_movie.getTitle());
+    this->setWindowTitle("Edit Metadata of: " + m_movie.title());
     this->setAttribute(Qt::WA_DeleteOnClose);
 
     m_ui->tagListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -49,17 +49,17 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
 
     foreach (Tag tag, l_tagList)
     {
-        QListWidgetItem * item = new QListWidgetItem(tag.getName(), m_ui->tagListWidget);
-        item->setData(Macaw::ObjectId, tag.getId());
+        QListWidgetItem * item = new QListWidgetItem(tag.name(), m_ui->tagListWidget);
+        item->setData(Macaw::ObjectId, tag.id());
     }
 
-    setTitle(m_movie.getTitle());
-    setOriginalTitle(m_movie.getOriginalTitle());
-    setReleaseDate(m_movie.getReleaseDate());
-    setCountry(m_movie.getCountry());
-    setSynopsis(m_movie.getSynopsis());
-    setPeopleList(m_movie.getPeopleList());
-    setMovieSelectedTagList(m_movie.getTagList());
+    setTitle(m_movie.title());
+    setOriginalTitle(m_movie.originalTitle());
+    setReleaseDate(m_movie.releaseDate());
+    setCountry(m_movie.country());
+    setSynopsis(m_movie.synopsis());
+    setPeopleList(m_movie.peopleList());
+    setMovieSelectedTagList(m_movie.tagList());
 
     m_ui->directorsWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(m_ui->directorsWidget, SIGNAL(customContextMenuRequested(QPoint)),
@@ -166,7 +166,7 @@ void MovieDialog::setPeopleList(const QList<People> &peopleList)
     QListWidget *l_peopleWidget;
     foreach(People l_people, peopleList)
     {
-        switch (l_people.getType())
+        switch (l_people.type())
         {
         case People::Director:
             l_peopleWidget = m_ui->directorsWidget;
@@ -179,9 +179,9 @@ void MovieDialog::setPeopleList(const QList<People> &peopleList)
             break;
         }
 
-        QListWidgetItem *l_item = new QListWidgetItem(l_people.getFirstname() + " " + l_people.getLastname());
-        l_item->setData(Macaw::ObjectId, l_people.getId());
-        l_item->setData(Macaw::PeopleType, l_people.getType());
+        QListWidgetItem *l_item = new QListWidgetItem(l_people.firstname() + " " + l_people.lastname());
+        l_item->setData(Macaw::ObjectId, l_people.id());
+        l_item->setData(Macaw::PeopleType, l_people.type());
         l_peopleWidget->addItem(l_item);
     }
 }
@@ -225,7 +225,7 @@ void MovieDialog::setMovieSelectedTagList(const QList<Tag> &tagList)
 
     foreach(const Tag tagToSelect, tagList)
     {
-        l_tagId = tagToSelect.getId();
+        l_tagId = tagToSelect.id();
 
         for(int i=0; i < m_ui->tagListWidget->count(); i++)
         {
@@ -244,7 +244,7 @@ void MovieDialog::addPeople(const People &people)
     m_app->debug("[MovieDialog] Enters addPeople()");
     QListWidget *l_peopleWidget;
 
-    switch (people.getType())
+    switch (people.type())
     {
     case People::Director:
         l_peopleWidget = m_ui->directorsWidget;
@@ -256,9 +256,9 @@ void MovieDialog::addPeople(const People &people)
         l_peopleWidget = m_ui->actorsWidget;
         break;
     }
-    QListWidgetItem *l_item = new QListWidgetItem(people.getFirstname() + " " + people.getLastname());
-    l_item->setData(Macaw::ObjectId, people.getId());
-    l_item->setData(Macaw::PeopleType, people.getType());
+    QListWidgetItem *l_item = new QListWidgetItem(people.firstname() + " " + people.lastname());
+    l_item->setData(Macaw::ObjectId, people.id());
+    l_item->setData(Macaw::PeopleType, people.type());
     l_peopleWidget->addItem(l_item);
 
     m_movie.addPeople(people);
@@ -274,7 +274,7 @@ void MovieDialog::updatePeople(const People &people)
 {
     m_app->debug("[MovieDialog] updatePeople()");
     m_movie.updatePeople(people);
-    setPeopleList(m_movie.getPeopleList());
+    setPeopleList(m_movie.peopleList());
 }
 
 void MovieDialog::on_validationButtons_accepted()
@@ -474,7 +474,7 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
             QStringList l_propositions;
             foreach (l_people, l_peopleList)
             {
-                l_propositions << l_people.getFirstname() + " " + l_people.getLastname();
+                l_propositions << l_people.firstname() + " " + l_people.lastname();
             }
             QCompleter *l_completer = new QCompleter(l_propositions);
             l_completer->setCaseSensitivity(Qt::CaseInsensitive);
@@ -508,7 +508,7 @@ void MovieDialog::on_addNewTagButton_clicked()
 void MovieDialog::peopleDialog_peopleCreated(People people)
 {
     m_app->debug("[MovieDialog] peopleDialog_peopleCreated()");
-    if (people.getId() != 0)
+    if (people.id() != 0)
     {
         updatePeople(people);
     }
@@ -553,7 +553,7 @@ void MovieDialog::showPeopleDialog()
     PeopleDialog *l_peopleDialog = new PeopleDialog(l_selectedPeople);
 
     // Because we cannot update a people without id, we recreate it.
-    if(l_selectedPeople.getId() == 0)
+    if(l_selectedPeople.id() == 0)
     {
         delPeople(l_selectedPeople);
         delete(l_selectedItem);
@@ -598,15 +598,15 @@ QList<People> MovieDialog::getFocusedListPeople()
     QList<People> l_people;
     if (m_ui->directorsWidget->hasFocus())
     {
-        l_people = m_movie.getPeopleList(People::Director);
+        l_people = m_movie.peopleList(People::Director);
     }
     else if (m_ui->producersWidget->hasFocus())
     {
-        l_people = m_movie.getPeopleList(People::Producer);
+        l_people = m_movie.peopleList(People::Producer);
     }
     else if (m_ui->actorsWidget->hasFocus())
     {
-        l_people = m_movie.getPeopleList(People::Actor);
+        l_people = m_movie.peopleList(People::Actor);
     }
 
     return l_people;

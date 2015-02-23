@@ -33,7 +33,7 @@ Movie::Movie()
     m_rank = 0;
 }
 
-int Movie::getId() const
+int Movie::id() const
 {
     return m_id;
 }
@@ -43,7 +43,7 @@ void Movie::setId(const int id)
     m_id = id;
 }
 
-QString Movie::getTitle() const
+QString Movie::title() const
 {
     return m_title;
 }
@@ -53,7 +53,7 @@ void Movie::setTitle(const QString title)
     m_title = title;
 }
 
-QString Movie::getOriginalTitle() const
+QString Movie::originalTitle() const
 {
     return m_originalTitle;
 }
@@ -63,17 +63,17 @@ void Movie::setOriginalTitle(const QString originalTitle)
     m_originalTitle = originalTitle;
 }
 
-QList<People> Movie::getPeopleList() const
+QList<People> Movie::peopleList() const
 {
     return m_peopleList;
 }
 
-QList<People> Movie::getPeopleList(const int type)
+QList<People> Movie::peopleList(const int type)
 {
     QList<People> l_peopleList;
     foreach (People l_people, m_peopleList)
     {
-        if (l_people.getType() == type)
+        if (l_people.type() == type)
         {
             l_peopleList.push_back(l_people);
         }
@@ -105,14 +105,14 @@ void Movie::updatePeople(const People &people)
 {
     for (int i = 0 ; i < m_peopleList.size() ; i++)
     {
-        if(m_peopleList.at(i).getId() == people.getId())
+        if(m_peopleList.at(i).id() == people.id())
         {
             m_peopleList.replace(i, people);
         }
    }
 }
 
-QDate Movie::getReleaseDate() const
+QDate Movie::releaseDate() const
 {
     return m_releaseDate;
 }
@@ -122,7 +122,7 @@ void Movie::setReleaseDate(QDate releaseDate)
     m_releaseDate = releaseDate;
 }
 
-QString Movie::getCountry() const
+QString Movie::country() const
 {
     return m_country;
 }
@@ -132,7 +132,7 @@ void Movie::setCountry(QString country)
     m_country = country;
 }
 
-QTime Movie::getDuration() const
+QTime Movie::duration() const
 {
     return m_duration;
 }
@@ -142,7 +142,7 @@ void Movie::setDuration(const QTime duration)
     m_duration = duration;
 }
 
-QString Movie::getSynopsis() const
+QString Movie::synopsis() const
 {
     return m_synopsis;
 }
@@ -152,7 +152,7 @@ void Movie::setSynopsis(const QString synopsis)
     m_synopsis = synopsis;
 }
 
-QString Movie::getFilePath() const
+QString Movie::filePath() const
 {
     return m_filePath;
 }
@@ -172,7 +172,7 @@ void Movie::setColored(const bool colored)
     m_colored = colored;
 }
 
-QString Movie::getFormat() const
+QString Movie::format() const
 {
     return m_format;
 }
@@ -182,7 +182,7 @@ void Movie::setFormat(const QString format)
     m_format = format;
 }
 
-QString Movie::getSuffix() const
+QString Movie::suffix() const
 {
     return m_suffix;
 }
@@ -192,7 +192,7 @@ void Movie::setSuffix(const QString suffix)
     m_suffix = suffix;
 }
 
-int Movie::getRank() const
+int Movie::rank() const
 {
     return m_rank;
 }
@@ -202,7 +202,7 @@ void Movie::setRank(const int rank)
     m_rank = rank;
 }
 
-QList<Tag> Movie::getTagList()  const
+QList<Tag> Movie::tagList()  const
 {
     return m_tagList;
 }
@@ -230,20 +230,20 @@ void Movie::removeTag(const Tag &tag)
 
 bool Movie::operator== (const Movie &other)
 {
-    if ( this->getId() == other.getId() &&
-         this->getTitle() == other.getTitle() &&
-         this->getOriginalTitle() == other.getOriginalTitle() &&
-         this->getCountry() == other.getCountry() &&
-         this->getReleaseDate() == other.getReleaseDate() &&
-         this->getDuration() == other.getDuration() &&
-         this->getFilePath() == other.getFilePath() &&
-         this->getSynopsis() == other.getSynopsis() &&
-         this->getSuffix() == other.getSuffix() &&
-         this->getRank() == other.getRank() &&
-         this->getFormat() == other.getFormat() &&
+    if ( this->id() == other.id() &&
+         this->title() == other.title() &&
+         this->originalTitle() == other.originalTitle() &&
+         this->country() == other.country() &&
+         this->releaseDate() == other.releaseDate() &&
+         this->duration() == other.duration() &&
+         this->filePath() == other.filePath() &&
+         this->synopsis() == other.synopsis() &&
+         this->suffix() == other.suffix() &&
+         this->rank() == other.rank() &&
+         this->format() == other.format() &&
          this->isColored() == other.isColored() &&
-         this->getPeopleList() == other.getPeopleList() &&
-         this->getTagList() == other.getTagList() )
+         this->peopleList() == other.peopleList() &&
+         this->tagList() == other.tagList() )
     {
         return true;
     }

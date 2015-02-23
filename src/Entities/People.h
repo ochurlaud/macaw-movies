@@ -26,19 +26,19 @@ class People
 {
 public:
     People();
-    int getId() const;
+    int id() const;
     void setId(int);
-    QString getLastname() const;
+    QString lastname() const;
     void setLastname(const QString lastname);
-    QString getFirstname() const;
+    QString firstname() const;
     void setFirstname(const QString firstname);
-    QString getRealname() const;
+    QString realname() const;
     void setRealname(const QString realname);
-    QDate getBirthday() const;
+    QDate birthday() const;
     void setBirthday(const QDate birthday);
-    QString getBiography() const;
+    QString biography() const;
     void setBiography(const QString biography);
-    int getType() const;
+    int type() const;
     void setType(const int type);
 
     bool operator== (const People&);

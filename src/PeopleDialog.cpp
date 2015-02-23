@@ -35,11 +35,11 @@ PeopleDialog::PeopleDialog(int id, QWidget *parent) :
     if (id != 0)
     {
         m_people = m_app->getDatabaseManager()->getOnePeopleById(id);
-        setFirstname(m_people.getFirstname());
-        setLastname(m_people.getLastname());
-        setRealname(m_people.getRealname());
-        setBirthday(m_people.getBirthday());
-        setBiography(m_people.getBiography());
+        setFirstname(m_people.firstname());
+        setLastname(m_people.lastname());
+        setRealname(m_people.realname());
+        setBirthday(m_people.birthday());
+        setBiography(m_people.biography());
     }
     m_app->debug("[PeopleDialog] Construction done");
 }
@@ -56,11 +56,11 @@ PeopleDialog::PeopleDialog(People people, QWidget *parent):
     this->setWindowTitle("Edit People Metadata");
     this->setAttribute(Qt::WA_DeleteOnClose);
 
-    setFirstname(m_people.getFirstname());
-    setLastname(m_people.getLastname());
-    setRealname(m_people.getRealname());
-    setBirthday(m_people.getBirthday());
-    setBiography(m_people.getBiography());
+    setFirstname(m_people.firstname());
+    setLastname(m_people.lastname());
+    setRealname(m_people.realname());
+    setBirthday(m_people.birthday());
+    setBiography(m_people.biography());
 
     m_app->debug("[PeopleDialog] Construction done (People arg)");
 }
@@ -153,10 +153,10 @@ void PeopleDialog::on_validationButtons_accepted()
 
     // If type != 0, it means we come from the movie dialog
     // If type = 0, it means we directly edit a people
-    if (m_people.getType() != 0)
+    if (m_people.type() != 0)
     {
         m_app->debug("[PeopleDialog] validationButtons method: type="
-                     +QString::number(m_people.getType()));
+                     +QString::number(m_people.type()));
         emit(peopleCreated(m_people));
     }
     else

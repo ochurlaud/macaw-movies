@@ -42,7 +42,6 @@ SOURCES += main.cpp \
     Entities/People.cpp \
     Entities/Tag.cpp \
     MainWindow.cpp \
-    MetadataFetcher.cpp \
     PeopleDialog.cpp \
     MovieDialog.cpp \
     Entities/Playlist.cpp \
@@ -50,8 +49,10 @@ SOURCES += main.cpp \
     DatabaseManager_insert.cpp \
     DatabaseManager_update.cpp \
     DatabaseManager_delete.cpp \
-    MetadataFetcherDialog.cpp \
-    SettingsWindow.cpp
+    SettingsWindow.cpp \
+    FetchMetadata/FetchMetadata.cpp \
+    FetchMetadata/FetchMetadataDialog.cpp \
+    FetchMetadata/FetchMetadataQuery.cpp
 
 HEADERS  += \
     DatabaseManager.h \
@@ -61,19 +62,20 @@ HEADERS  += \
     Entities/People.h \
     Entities/Tag.h \
     MainWindow.h \
-    MetadataFetcher.h \
     MovieDialog.h \
     PeopleDialog.h \
     Entities/Playlist.h \
     include_var.h \
-    MetadataFetcherDialog.h \
-    SettingsWindow.h
+    SettingsWindow.h \
+    FetchMetadata/FetchMetadataDialog.h \
+    FetchMetadata/FetchMetadata.h \
+    FetchMetadata/FetchMetadataQuery.h
 
 FORMS    += \
     MainWindow.ui \
     MovieDialog.ui \
     PeopleDialog.ui \
-    MetadataFetcherDialog.ui \
+    FetchMetadata/FetchMetadataDialog.ui \
     SettingsWindow.ui
 
 OTHER_FILES += \

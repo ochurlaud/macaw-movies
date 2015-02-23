@@ -126,7 +126,7 @@ QList<Movie> DatabaseManager::getMoviesByPeople(const People &people,
                                                 const int type,
                                                 const QString fieldOrder)
 {
-    QList<Movie> l_movieList = getMoviesByPeople(people.getId(), type, fieldOrder);
+    QList<Movie> l_movieList = getMoviesByPeople(people.id(), type, fieldOrder);
 
     return l_movieList;
 }
@@ -174,7 +174,7 @@ QList<Movie> DatabaseManager::getMoviesByTag(const int id,
 QList<Movie> DatabaseManager::getMoviesByTag(const Tag &tag,
                                              const QString fieldOrder)
 {
-    QList<Movie> l_movieList = getMoviesByTag(tag.getId(), fieldOrder);
+    QList<Movie> l_movieList = getMoviesByTag(tag.id(), fieldOrder);
 
     return l_movieList;
 }
@@ -222,7 +222,7 @@ QList<Movie> DatabaseManager::getMoviesByPlaylist(const int id,
 QList<Movie> DatabaseManager::getMoviesByPlaylist(const Playlist &playlist,
                                              const QString fieldOrder)
 {
-    QList<Movie> l_movieList = getMoviesByPlaylist(playlist.getId(), fieldOrder);
+    QList<Movie> l_movieList = getMoviesByPlaylist(playlist.id(), fieldOrder);
 
     return l_movieList;
 }
@@ -420,7 +420,7 @@ QList<People> DatabaseManager::getPeopleByType(const int type,
 
     if (!l_query.exec())
     {
-        debug("In getPeopleByType():");
+        debug("In peopleByType():");
         debug(l_query.lastError().text());
     }
 
@@ -430,7 +430,7 @@ QList<People> DatabaseManager::getPeopleByType(const int type,
         l_peopleList.push_back(l_people);
     }
 
-    debug("[DatabaseManager] getPeopleByType returns "
+    debug("[DatabaseManager] peopleByType returns "
           + QString::number(l_peopleList.count()) + " people");
 
     return l_peopleList;
@@ -457,7 +457,7 @@ QList<People> DatabaseManager::getPeopleByFullname(const QString fullname,
 
     if (!l_query.exec())
     {
-        debug("In getPeopleByFullname(QString):");
+        debug("In peopleByFullname(QString):");
         debug(l_query.lastError().text());
     }
 
@@ -467,7 +467,7 @@ QList<People> DatabaseManager::getPeopleByFullname(const QString fullname,
         l_peopleList.push_back(l_people);
     }
 
-    debug("[DatabaseManager] getPeopleByFullname returns "
+    debug("[DatabaseManager] peopleByFullname returns "
           + QString::number(l_peopleList.count()) + " people");
 
     return l_peopleList;
@@ -520,7 +520,7 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
 
     if (!l_query.exec())
     {
-        debug("In getPeopleByAny():");
+        debug("In peopleByAny():");
         debug(l_query.lastError().text());
     }
 
@@ -530,7 +530,7 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
         l_peopleList.push_back(l_people);
     }
 
-    debug("[DatabaseManager] getPeopleByAny returns "
+    debug("[DatabaseManager] peopleByAny returns "
           + QString::number(l_peopleList.count()) + " people");
 
     return l_peopleList;
@@ -584,7 +584,7 @@ Tag DatabaseManager::getTagByName(QString tagName)
 
     if (!l_query.exec())
     {
-        debug("In getTagByName(QString):");
+        debug("In tagByName(QString):");
         debug(l_query.lastError().text());
     }
 
@@ -634,7 +634,7 @@ QList<Tag> DatabaseManager::getAllTags(const QString fieldOrder)
 
 QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString fieldOrder)
 {
-    debug("[DatabaseManager] Enters getTagsByAny");
+    debug("[DatabaseManager] Enters tagsByAny");
     QList<Tag> l_tagList;
     QSqlQuery l_query(m_db);
     QStringList l_splittedText = text.split(" ");
@@ -677,7 +677,7 @@ QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString field
 
     if (!l_query.exec())
     {
-        debug("In getTagsByAny():");
+        debug("In tagsByAny():");
         debug(l_query.lastError().text());
     }
 
@@ -687,7 +687,7 @@ QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString field
         l_tagList.push_back(l_tag);
     }
 
-    debug("[DatabaseManager] getTagsByAny returns "
+    debug("[DatabaseManager] tagsByAny returns "
           + QString::number(l_tagList.count()) + " tags");
 
     return l_tagList;
@@ -772,12 +772,12 @@ bool DatabaseManager::isMovieInPlaylist(int movieId, int playlistId)
 
 bool DatabaseManager::isMovieInPlaylist(Movie &movie, int playlistId)
 {
-    return isMovieInPlaylist(movie.getId(), playlistId);
+    return isMovieInPlaylist(movie.id(), playlistId);
 }
 
 bool DatabaseManager::isMovieInPlaylist(Movie &movie, Playlist &playlist)
 {
-    return isMovieInPlaylist(movie.getId(), playlist.getId());
+    return isMovieInPlaylist(movie.id(), playlist.id());
 }
 
 /**
@@ -855,7 +855,7 @@ void DatabaseManager::setPeopleToMovie(Movie &movie)
     l_query.prepare("SELECT " + m_peopleFields + ", pm.type "
                     "FROM people AS p, movies_people AS pm "
                     "WHERE pm.id_movie = :id_movie AND pm.id_people = p.id");
-    l_query.bindValue(":id_movie", movie.getId());
+    l_query.bindValue(":id_movie", movie.id());
 
     if (!l_query.exec())
     {
@@ -879,7 +879,7 @@ void DatabaseManager::setTagsToMovie(Movie &movie)
     l_query.prepare("SELECT tag.id, tag.name "
                     "FROM tags AS tag, movies_tags AS tm "
                     "WHERE tm.id_movie = :id_movie AND tm.id_tag = tag.id");
-    l_query.bindValue(":id_movie", movie.getId());
+    l_query.bindValue(":id_movie", movie.id());
 
     if (!l_query.exec())
     {
@@ -905,7 +905,7 @@ void DatabaseManager::setMoviesToPlaylist(Playlist &playlist)
     l_query.prepare("SELECT " +m_movieFields + " "
                     "FROM movies AS m, movies_playlists AS plm "
                     "WHERE plm.id_movie = m.id AND plm.id_playlist = :id_playlist");
-    l_query.bindValue(":id_playlist", playlist.getId());
+    l_query.bindValue(":id_playlist", playlist.id());
 
     if (!l_query.exec())
     {

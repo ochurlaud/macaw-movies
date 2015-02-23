@@ -28,7 +28,7 @@ People::People()
     m_biography = "";
 }
 
-int People::getId() const
+int People::id() const
 {
     return m_id;
 }
@@ -38,7 +38,7 @@ void People::setId(const int id)
     m_id = id;
 }
 
-QString People::getLastname() const
+QString People::lastname() const
 {
     return m_lastname;
 }
@@ -48,7 +48,7 @@ void People::setLastname(const QString lastname)
     m_lastname = lastname;
 }
 
-QString People::getFirstname() const
+QString People::firstname() const
 {
     return m_firstname;
 }
@@ -58,7 +58,7 @@ void People::setFirstname(const QString firstname)
     m_firstname = firstname;
 }
 
-QString People::getRealname() const
+QString People::realname() const
 {
     return m_realname;
 }
@@ -68,7 +68,7 @@ void People::setRealname(const QString realname)
     m_realname = realname;
 }
 
-QDate People::getBirthday() const
+QDate People::birthday() const
 {
     return m_birthday;
 }
@@ -78,7 +78,7 @@ void People::setBirthday(const QDate birthday)
     m_birthday = birthday;
 }
 
-QString People::getBiography() const
+QString People::biography() const
 {
     return m_biography;
 }
@@ -88,7 +88,7 @@ void People::setBiography(const QString biography)
     m_biography = biography;
 }
 
-int People::getType() const
+int People::type() const
 {
     return m_type;
 }
@@ -100,13 +100,13 @@ void People::setType(const int type)
 
 bool People::operator== (const People &other)
 {
-    if ( this->getId() == other.getId() &&
-         this->getFirstname() == other.getFirstname() &&
-         this->getLastname() == other.getLastname() &&
-         this->getRealname() == other.getRealname() &&
-         this->getBirthday() == other.getBirthday() &&
-         this->getBiography() == other.getBiography() &&
-         this->getType() == other.getType() )
+    if ( this->id() == other.id() &&
+         this->firstname() == other.firstname() &&
+         this->lastname() == other.lastname() &&
+         this->realname() == other.realname() &&
+         this->birthday() == other.birthday() &&
+         this->biography() == other.biography() &&
+         this->type() == other.type() )
     {
         return true;
     }

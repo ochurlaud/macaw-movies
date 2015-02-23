@@ -26,9 +26,9 @@ class Tag
 {
 public:
     Tag(QString name = "");
-    int getId() const;
+    int id() const;
     void setId(int id);
-    QString getName() const;
+    QString name() const;
     void setName(QString name);
     bool operator== (const Tag &other);
     bool operator!= (const Tag &other);

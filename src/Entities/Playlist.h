@@ -28,15 +28,15 @@ class Playlist
 {
 public:
     Playlist(QString name="");
-    int getId() const;
+    int id() const;
     void setId(const int id);
-    QString getName() const;
+    QString name() const;
     void setName(const QString name);
-    int getRate() const;
+    int rate() const;
     void setRate(const int rate);
-    QDateTime getCreationDate() const;
+    QDateTime creationDate() const;
     void setCreationDate(const QDateTime creationDate);
-    QList<Movie> getMovieList() const;
+    QList<Movie> movieList() const;
     void setMovieList(const QList<Movie> &movieList);
     void addMovie(const Movie &movie);
     void removeMovie(const Movie &movie);

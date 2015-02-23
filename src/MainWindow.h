@@ -28,7 +28,7 @@
 #include "SettingsWindow.h"
 #include "MovieDialog.h"
 #include "PeopleDialog.h"
-#include "MetadataFetcher.h"
+#include "FetchMetadata/FetchMetadata.h"
 
 
 class Application;

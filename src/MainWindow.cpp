@@ -102,18 +102,18 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
         QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByType(typePeople);
         foreach (People l_people, l_peopleList)
         {
-            QString l_name(l_people.getLastname());
-            if (l_people.getFirstname() != "")
+            QString l_name(l_people.lastname());
+            if (l_people.firstname() != "")
             {
-                l_name = l_name + ", " + l_people.getFirstname();
+                l_name = l_name + ", " + l_people.firstname();
             }
-            l_name = l_name  + " (" + QString::number(l_people.getBirthday().year()) + ")";
+            l_name = l_name  + " (" + QString::number(l_people.birthday().year()) + ")";
 
             QListWidgetItem *l_item = new QListWidgetItem(l_name);
-            l_item->setData(Macaw::ObjectId, l_people.getId());
+            l_item->setData(Macaw::ObjectId, l_people.id());
             l_item->setData(Macaw::ObjectType, Macaw::isPeople);
             l_item->setData(Macaw::PeopleType, typePeople);
-            if (m_leftPannelSelectedId == l_people.getId())
+            if (m_leftPannelSelectedId == l_people.id())
             {
                 l_item->setSelected(true);
             }
@@ -135,14 +135,14 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
         QList<Tag> l_tagsList = m_app->getDatabaseManager()->getAllTags();
         foreach (Tag l_tag, l_tagsList)
         {
-            QString l_name(l_tag.getName());
+            QString l_name(l_tag.name());
 
             QListWidgetItem *l_item = new QListWidgetItem(l_name);
-            l_item->setData(Macaw::ObjectId, l_tag.getId());
+            l_item->setData(Macaw::ObjectId, l_tag.id());
             l_item->setData(Macaw::ObjectType, Macaw::isTag);
 
             m_ui->leftPannel->addItem(l_item);
-            if (m_leftPannelSelectedId == l_tag.getId())
+            if (m_leftPannelSelectedId == l_tag.id())
             {
                 l_item->setSelected(true);
             }
@@ -162,14 +162,14 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
         QList<Playlist> l_playlistList = m_app->getDatabaseManager()->getAllPlaylists();
         foreach (Playlist l_playlist, l_playlistList)
         {
-            QString l_name(l_playlist.getName());
+            QString l_name(l_playlist.name());
 
             QListWidgetItem *l_item = new QListWidgetItem(l_name);
-            l_item->setData(Macaw::ObjectId, l_playlist.getId());
+            l_item->setData(Macaw::ObjectId, l_playlist.id());
             l_item->setData(Macaw::ObjectType, Macaw::isPlaylist);
 
             m_ui->leftPannel->addItem(l_item);
-            if (m_leftPannelSelectedId == l_playlist.getId())
+            if (m_leftPannelSelectedId == l_playlist.id())
             {
                 l_item->setSelected(true);
             }
@@ -198,15 +198,15 @@ void MainWindow::fillMainPannel()
     {
         int l_column = 0;
         QStringList l_movieData;
-        l_movieData << l_movie.getTitle()
-                    << l_movie.getOriginalTitle()
-                    << l_movie.getReleaseDate().toString("dd MMM yyyy")
-                    << l_movie.getFilePath();
+        l_movieData << l_movie.title()
+                    << l_movie.originalTitle()
+                    << l_movie.releaseDate().toString("dd MMM yyyy")
+                    << l_movie.filePath();
         QVector<QTableWidgetItem*> l_itemList(4);
         foreach(QTableWidgetItem *l_item, l_itemList)
         {
             l_item = new QTableWidgetItem(l_movieData.at(l_column));
-            l_item->setData(Macaw::ObjectId, l_movie.getId());
+            l_item->setData(Macaw::ObjectId, l_movie.id());
             l_item->setData(Macaw::ObjectType, Macaw::isMovie);
             m_ui->mainPannel->setItem(l_row, l_column, l_item);
             l_column++;
@@ -230,16 +230,6 @@ void MainWindow::on_peopleBox_activated(int type)
 
 void MainWindow::on_toWatchButton_clicked()
 {
-    // When clicked,  the state of the button is toggled
-    // so we toggle again to give precedent state
-    /*m_ui->toWatchButton->toggle();
-    if (!m_ui->toWatchButton->isChecked()) {
-        m_ui->toWatchButton->setChecked(true);
-      //  m_moviesList = m_app->getDatabaseManager()->getMoviesByPlaylist(1);
-    } else {
-        m_ui->toWatchButton->setChecked(false);
-        m_moviesList = m_app->getDatabaseManager()->getAllMovies();
-    }*/
     filterPannels();
 }
 
@@ -326,7 +316,7 @@ void MainWindow::askForOrphanTagDeletion(Tag orphanTag)
 {
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Question);
-    msgBox.setText("The "+ orphanTag.getName() +" tag is not used in any movie now. ");
+    msgBox.setText("The "+ orphanTag.name() +" tag is not used in any movie now. ");
     msgBox.setInformativeText("Do you want to delete this tag?");
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
@@ -343,9 +333,9 @@ void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
     int l_movieId = item->data(Macaw::ObjectId).toInt();
     Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
 
-    m_app->debug("[MainWindow.startMovie()] Opened movie: " + l_movie.getFilePath());
+    m_app->debug("[MainWindow.startMovie()] Opened movie: " + l_movie.filePath());
 
-    QDesktopServices::openUrl(QUrl("file://" + l_movie.getFilePath(), QUrl::TolerantMode));
+    QDesktopServices::openUrl(QUrl("file://" + l_movie.filePath(), QUrl::TolerantMode));
 }
 
 void MainWindow::on_leftPannel_clicked(const QModelIndex &item)
@@ -385,7 +375,7 @@ void MainWindow::prepareMoviesToDisplay(int id)
         }
     } else if (m_typeElement == Macaw::isPlaylist) {
         Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(m_leftPannelSelectedId);
-        m_moviesList = l_playlist.getMovieList();
+        m_moviesList = l_playlist.movieList();
     }
     filterPannels();
 }
@@ -456,7 +446,7 @@ void MainWindow::filterPannels()
         int l_itemMovieId = l_item->data(Macaw::ObjectId).toInt();
 
         foreach(Movie l_movie, l_authorizedMoviesList) {
-             if (l_movie.getId() == l_itemMovieId) {
+             if (l_movie.id() == l_itemMovieId) {
                  l_isPresent = true;
              }
         }
@@ -477,7 +467,7 @@ void MainWindow::filterPannels()
             bool l_isPresent(false);
             QListWidgetItem *l_item = m_ui->leftPannel->item(i);
             foreach(Tag l_tag, l_authorizedTagList) {
-                 if (l_tag.getId() == l_item->data(Macaw::ObjectId)) {
+                 if (l_tag.id() == l_item->data(Macaw::ObjectId)) {
                      l_isPresent = true;
                  }
             }
@@ -494,7 +484,7 @@ void MainWindow::filterPannels()
             bool l_isPresent(false);
             QListWidgetItem *l_item = m_ui->leftPannel->item(i);
             foreach(People l_people, l_authorizedPeopleList) {
-                 if (l_people.getId() == l_item->data(Macaw::ObjectId)) {
+                 if (l_people.id() == l_item->data(Macaw::ObjectId)) {
                      l_isPresent = true;
                  }
             }
@@ -546,11 +536,11 @@ void MainWindow::addNewMovies()
                     l_movie.setSuffix(l_fileSuffix);
                     m_app->getDatabaseManager()->insertNewMovie(l_movie);
 
-                    MetadataFetcher l_metadataFetcher(l_movie);
+                    FetchMetadata l_fetchMetadata(l_movie);
 
-                    // Currently a wainting loop is created in MetadataFetcher,
+                    // Currently a wainting loop is created in FetchMetadata,
                     // multithreading would be better
-                    l_metadataFetcher.fetchMetadata(l_movie.getTitle());
+                    l_fetchMetadata.fetchMetadata(l_movie.title());
                 } else {
                     m_app->debug("[MainWindow.updateApp()] Movie already known. Skipped");
                 }
@@ -567,32 +557,32 @@ void MainWindow::fillMetadataPannel(Movie movie)
 {
     m_app->debug("[MainWindow] Enter fillMetadataPannel");
 
-    QString l_title = "<html>"+movie.getTitle()+"<br />";
-    QString l_originalTitle = "<i>"+movie.getOriginalTitle()+"</i></br /><br />";
+    QString l_title = "<html>"+movie.title()+"<br />";
+    QString l_originalTitle = "<i>"+movie.originalTitle()+"</i></br /><br />";
     QString l_directors = "<i>Directed by</i><br />";
     QString l_producers = "<i>Produced by</i><br />";
     QString l_actors = "<i>With</i><br />";
 
-    foreach (People l_people, movie.getPeopleList()) {
-        switch (l_people.getType())
+    foreach (People l_people, movie.peopleList()) {
+        switch (l_people.type())
         {
         case People::Director:
-            if (l_people.getFirstname() != "") {
-                l_directors += l_people.getFirstname() + " ";
+            if (l_people.firstname() != "") {
+                l_directors += l_people.firstname() + " ";
             }
-            l_directors += l_people.getLastname() + ", ";
+            l_directors += l_people.lastname() + ", ";
             break;
         case People::Producer:
-            if (l_people.getFirstname() != "") {
-                l_producers += l_people.getFirstname() + " ";
+            if (l_people.firstname() != "") {
+                l_producers += l_people.firstname() + " ";
             }
-            l_producers += l_people.getLastname() + ", ";
+            l_producers += l_people.lastname() + ", ";
             break;
         case People::Actor:
-            if(l_people.getFirstname() != "") {
-                l_actors += l_people.getFirstname() + " ";
+            if(l_people.firstname() != "") {
+                l_actors += l_people.firstname() + " ";
             }
-            l_actors += l_people.getLastname() + ", ";
+            l_actors += l_people.lastname() + ", ";
             break;
         }
     }
@@ -612,7 +602,7 @@ void MainWindow::fillMetadataPannel(Movie movie)
     l_actors += "</html>";
 
     m_ui->metadataTop->setText(l_title+l_originalTitle + l_directors +l_producers + l_actors);
-    m_ui->metadataPlot->setText(movie.getSynopsis());
+    m_ui->metadataPlot->setText(movie.synopsis());
     m_app->debug("[MainWindow] Exit fillMetadataPannel");
 }
 
