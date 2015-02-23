@@ -267,7 +267,7 @@ int DatabaseManager::createTag(QString name)
         return -1;
     }
 
-    if(l_query.exec("SELECT last_insert_rowid()"));
+    if(l_query.exec("SELECT last_insert_rowid()"))
     {
         l_query.next();
         return l_query.value(0).toInt();
