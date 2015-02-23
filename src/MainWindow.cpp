@@ -289,18 +289,13 @@ void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
     if(l_id != 0)
     {
         int l_typeElement = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectType).toInt();
-        if (l_typeElement == Macaw::isPeople)
-        {
+        if (l_typeElement == Macaw::isPeople) {
             PeopleDialog *l_movieDialog = new PeopleDialog(l_id);
             connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
             l_movieDialog->show();
-        }
-        else if (l_typeElement == Macaw::isTag)
-        {
+        } else if (l_typeElement == Macaw::isTag) {
             qDebug() << "Tag !";
-        }
-        else if (l_typeElement == Macaw::isPlaylist)
-        {
+        } else if (l_typeElement == Macaw::isPlaylist) {
             qDebug() << "Playlist !";
         }
     }
@@ -326,8 +321,7 @@ void MainWindow::askForOrphanTagDeletion(Tag orphanTag)
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
 
-    if(msgBox.exec() == QMessageBox::Yes)
-    {
+    if(msgBox.exec() == QMessageBox::Yes) {
         m_app->getDatabaseManager()->deleteTag(orphanTag);
     }
 }
@@ -365,34 +359,21 @@ void MainWindow::prepareMoviesToDisplay(int id)
     m_app->debug("[MainWindow] prepareMoviesToDisplay()");
 
     m_leftPannelSelectedId = id;
-    if(m_leftPannelSelectedId == 0)
-    {
+    if(m_leftPannelSelectedId == 0) {
         m_moviesList = m_app->getDatabaseManager()->getAllMovies();
-    }
-    else if(m_typeElement == Macaw::isPeople)
-    {
-        if (m_leftPannelSelectedId == -1)
-        {
+    } else if(m_typeElement == Macaw::isPeople) {
+        if (m_leftPannelSelectedId == -1) {
             m_moviesList = m_app->getDatabaseManager()->getMoviesWithoutPeople(m_typePeople);
-        }
-        else
-        {
+        } else {
             m_moviesList = m_app->getDatabaseManager()->getMoviesByPeople(m_leftPannelSelectedId, m_typePeople);
         }
-    }
-    else if (m_typeElement == Macaw::isTag)
-    {
-        if (m_leftPannelSelectedId == -1)
-        {
+    } else if (m_typeElement == Macaw::isTag) {
+        if (m_leftPannelSelectedId == -1) {
             m_moviesList = m_app->getDatabaseManager()->getMoviesWithoutTag();
-        }
-        else
-        {
+        } else {
             m_moviesList = m_app->getDatabaseManager()->getMoviesByTag(m_leftPannelSelectedId);
         }
-    }
-    else if (m_typeElement == Macaw::isPlaylist)
-    {
+    } else if (m_typeElement == Macaw::isPlaylist) {
         Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(m_leftPannelSelectedId);
         m_moviesList = l_playlist.getMovieList();
     }
@@ -405,12 +386,9 @@ void MainWindow::selfUpdate()
     m_moviesList.clear();
     fillLeftPannel(m_typeElement, m_typePeople);
 
-    for (int i = 0 ; i < m_ui->leftPannel->count() ; i++)
-    {
+    for (int i = 0 ; i < m_ui->leftPannel->count() ; i++) {
         QListWidgetItem *l_item = m_ui->leftPannel->item(i);
-        if (l_item->data(Macaw::ObjectId).toInt() == m_leftPannelSelectedId)
-        {
-
+        if (l_item->data(Macaw::ObjectId).toInt() == m_leftPannelSelectedId) {
             l_item->setSelected(true);
             this->prepareMoviesToDisplay(l_item->data(Macaw::ObjectId).toInt());
             break;
@@ -448,7 +426,6 @@ void MainWindow::on_searchEdit_returnPressed()
 {
     m_app->debug("[MainWindow] editing finished on searchEdit");
 
-    QString l_text = m_ui->searchEdit->text();
     filterPannels();
 }
 
@@ -461,84 +438,64 @@ void MainWindow::filterPannels()
 
     QString l_text = m_ui->searchEdit->text();
 
-    if (l_text != "")
-    {
+    if (l_text != "") {
         // mainPannel
         QList<Movie> l_authorizedMoviesList = m_app->getDatabaseManager()->getMoviesByAny(l_text);
-        for (int i = 0 ; i < m_ui->mainPannel->rowCount(); i++)
-        {
+        for (int i = 0 ; i < m_ui->mainPannel->rowCount(); i++) {
             bool l_isPresent(false);
             QTableWidgetItem *l_item = m_ui->mainPannel->item(i, 0);
-            foreach(Movie l_movie, l_authorizedMoviesList)
-            {
-                 if (l_movie.getId() == l_item->data(Macaw::ObjectId))
-                 {
+            foreach(Movie l_movie, l_authorizedMoviesList) {
+                 if (l_movie.getId() == l_item->data(Macaw::ObjectId)) {
                      l_isPresent = true;
                  }
             }
-            if (l_isPresent == false)
-            {
+            if (l_isPresent == false) {
                 m_ui->mainPannel->removeRow(i);
                 i--; // We remove a line, so we have to decrement i...
             }
         }
 
         // leftPannel
-        if (m_typeElement == Macaw::isTag)
-        {
+        if (m_typeElement == Macaw::isTag) {
             QList<Tag> l_authorizedTagList = m_app->getDatabaseManager()->getTagsByAny(l_text);
-            for (int i = 2 ; i < m_ui->leftPannel->count(); i++)
-            {
+            for (int i = 2 ; i < m_ui->leftPannel->count(); i++) {
                 bool l_isPresent(false);
                 QListWidgetItem *l_item = m_ui->leftPannel->item(i);
-                foreach(Tag l_tag, l_authorizedTagList)
-                {
-                     if (l_tag.getId() == l_item->data(Macaw::ObjectId))
-                     {
+                foreach(Tag l_tag, l_authorizedTagList) {
+                     if (l_tag.getId() == l_item->data(Macaw::ObjectId)) {
                          l_isPresent = true;
                      }
                 }
-                if (l_isPresent == false)
-                {
+                if (l_isPresent == false) {
                     delete l_item;
                     i--; // We remove an item so we have to decrement i
                 }
             }
-        }
-        else if (m_typeElement == Macaw::isPeople)
-        {
+        } else if (m_typeElement == Macaw::isPeople) {
             QList<People> l_authorizedPeopleList = m_app->getDatabaseManager()->getPeopleByAny(l_text, m_typePeople);
 
             // We begin at 2 because the first item is "All", second is "Unknown"
-            for (int i = 2 ; i < m_ui->leftPannel->count() ; i++)
-            {
+            for (int i = 2 ; i < m_ui->leftPannel->count() ; i++) {
                 bool l_isPresent(false);
                 QListWidgetItem *l_item = m_ui->leftPannel->item(i);
-                foreach(People l_people, l_authorizedPeopleList)
-                {
-                     if (l_people.getId() == l_item->data(Macaw::ObjectId))
-                     {
+                foreach(People l_people, l_authorizedPeopleList) {
+                     if (l_people.getId() == l_item->data(Macaw::ObjectId)) {
                          l_isPresent = true;
                      }
                 }
-                if (l_isPresent == false)
-                {
+                if (l_isPresent == false) {
                     delete l_item;
                     i--; // We remove an item so we have to decrement i
                 }
             }
-        }
-        else if (m_typeElement == Macaw::isPlaylist)
-        {
+        } else if (m_typeElement == Macaw::isPlaylist) {
             // Don't do anything here, we want to see the name of the playlists
             // also when empty
         }
     }
-    for (int i = 0 ; i < m_ui->leftPannel->count() ; i ++)
-    {
+    for (int i = 0 ; i < m_ui->leftPannel->count() ; i ++) {
         QListWidgetItem *l_item = m_ui->leftPannel->item(i);
-        if (m_leftPannelSelectedId == l_item->data(Macaw::ObjectId))
-        {
+        if (m_leftPannelSelectedId == l_item->data(Macaw::ObjectId)) {
             l_item->setSelected(true);
         }
     }
@@ -552,8 +509,7 @@ void MainWindow::addNewMovies()
     QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths(l_imported);
     foreach (QString l_moviesPath, l_moviesPathsList) {
         QDirIterator l_file(l_moviesPath, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
-        while (l_file.hasNext())
-        {
+        while (l_file.hasNext()) {
             l_file.next();
             QString l_filePath = l_file.fileInfo().absoluteFilePath();
             QString l_fileSuffix = l_file.fileInfo().suffix();
@@ -602,27 +558,23 @@ void MainWindow::fillMetadataPannel(Movie movie)
     QString l_producers = "<i>Produced by</i><br />";
     QString l_actors = "<i>With</i><br />";
 
-    foreach (People l_people, movie.getPeopleList())
-    {
+    foreach (People l_people, movie.getPeopleList()) {
         switch (l_people.getType())
         {
         case People::Director:
-            if (l_people.getFirstname() != "")
-            {
+            if (l_people.getFirstname() != "") {
                 l_directors += l_people.getFirstname() + " ";
             }
             l_directors += l_people.getLastname() + ", ";
             break;
         case People::Producer:
-            if (l_people.getFirstname() != "")
-            {
+            if (l_people.getFirstname() != "") {
                 l_producers += l_people.getFirstname() + " ";
             }
             l_producers += l_people.getLastname() + ", ";
             break;
         case People::Actor:
-            if(l_people.getFirstname() != "")
-            {
+            if(l_people.getFirstname() != "") {
                 l_actors += l_people.getFirstname() + " ";
             }
             l_actors += l_people.getLastname() + ", ";
@@ -630,18 +582,15 @@ void MainWindow::fillMetadataPannel(Movie movie)
         }
     }
     // Need to remove ", " = 2 chars
-    if (l_directors.right(2) == ", ")
-    {
+    if (l_directors.right(2) == ", ") {
         l_directors = l_directors.remove(l_directors.size(),-2);
     }
     l_directors += "<br /><br />";
-    if (l_producers.right(2) == ", ")
-    {
+    if (l_producers.right(2) == ", ") {
         l_producers = l_producers.remove(l_producers.size(),-2);
     }
     l_producers += "<br /><br />";
-    if (l_actors.right(2) == ", ")
-    {
+    if (l_actors.right(2) == ", ") {
         l_actors = l_actors.remove(l_actors.size(),-2);
     }
     l_actors += "<br /><br />";
