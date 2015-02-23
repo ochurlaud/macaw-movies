@@ -87,15 +87,13 @@ void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply *reply)
 
 void FetchMetadataQuery::sendFinalRequest(int tmdbID)
 {
-    QNetworkAccessManager *a = new QNetworkAccessManager;
-    connect(a, SIGNAL(finished(QNetworkReply*)),
+    connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(on_finalRequestResponse(QNetworkReply*)));
+
     QNetworkRequest l_request;
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/movie/"+QString::number(tmdbID)+"?api_key=" + m_app->tmdbkey() + "&language=en"));
 
-    QString l_url("http://api.themoviedb.org/3/movie/"+QString::number(tmdbID)+"?api_key=" + m_app->tmdbkey() + "&language=en");
-    l_request.setUrl(QUrl(l_url));
-
-    a->get(l_request);
+    m_networkManager->get(l_request);
 
     m_app->debug("[FetchMetadataQuery] Final Request response sent");
 }

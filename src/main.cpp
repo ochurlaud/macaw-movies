@@ -68,11 +68,11 @@ int main(int argv, char **args)
     MainWindow  l_mainWindow;
     l_mainWindow.show();
 
-// FOR TESTING PURPOSES
+/*/ FOR TESTING PURPOSES
     Movie movie = l_app.getDatabaseManager()->getOneMovieById(8);
-    movie.setTitle("La menace-fantome.xds98IU");
+    movie.setTitle("La menace.xds98IU");
     FetchMetadata metadata(movie);
-//
+/*/
     return l_app.exec();
 }
 

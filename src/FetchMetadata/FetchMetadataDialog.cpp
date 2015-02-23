@@ -28,18 +28,11 @@ FetchMetadataDialog::FetchMetadataDialog(Movie movie, QList<Movie> moviesProposi
     m_app->debug("[FetchMetadataDialog] Constructor called");
     m_ui->setupUi(this);
 
-    m_ui->lineEdit->setText(movie.title());
-    m_ui->moviePathLabel->setText(movie.filePath());
-    foreach (Movie l_movieProposition, moviesPropositionList)
-    {
-        QListWidgetItem *l_item = new QListWidgetItem;
-        QString l_textItem = l_movieProposition.title()
-                + " [" + QString::number(l_movieProposition.releaseDate().year())
-                + "]";
-        l_item->setText(l_textItem);
-        l_item->setData(Macaw::ObjectId, l_movieProposition.id());
-        m_ui->listWidget->addItem(l_item);
-    }
+    m_movie = movie;
+    m_ui->lineEdit->setText(m_movie.title());
+    m_ui->moviePathLabel->setText(m_movie.filePath());
+
+    setMovieList(moviesPropositionList);
 }
 
 FetchMetadataDialog::~FetchMetadataDialog()
@@ -57,7 +50,8 @@ void FetchMetadataDialog::on_buttonBox_accepted()
     else
     {
         int tmdbID = m_ui->listWidget->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
-        emit(selectedMovie(tmdbID));
+        m_movie.setId(tmdbID);
+        emit(selectedMovie(m_movie));
         this->accept();
     }
 }
@@ -65,6 +59,43 @@ void FetchMetadataDialog::on_buttonBox_accepted()
 void FetchMetadataDialog::on_listWidget_doubleClicked(const QModelIndex &index)
 {
     int tmdbID = index.data(Macaw::ObjectId).toInt();
-    emit(selectedMovie(tmdbID));
+    m_movie.setId(tmdbID);
+    emit(selectedMovie(m_movie));
+    this->accept();
+}
+
+void FetchMetadataDialog::on_searchButton_clicked()
+{
+    emit(searchMovies(m_ui->lineEdit->text()));
+}
+
+void FetchMetadataDialog::on_lineEdit_returnPressed()
+{
+    emit(searchMovies(m_ui->lineEdit->text()));
+}
+
+void FetchMetadataDialog::setMovieList(QList<Movie> &movieList)
+{
+    m_ui->listWidget->clear();
+    if (movieList.count() != 0) {
+        foreach (Movie l_movie, movieList) {
+            QListWidgetItem *l_item = new QListWidgetItem;
+            QString l_textItem = l_movie.title()
+                    + " [" + QString::number(l_movie.releaseDate().year())
+                    + "]";
+            l_item->setText(l_textItem);
+            l_item->setData(Macaw::ObjectId, l_movie.id());
+            m_ui->listWidget->addItem(l_item);
+        }
+    }
+}
+
+void FetchMetadataDialog::on_resetButton_clicked()
+{
+    m_ui->lineEdit->setText(m_movie.title());
+}
+
+void FetchMetadataDialog::on_buttonBox_rejected()
+{
     this->accept();
 }

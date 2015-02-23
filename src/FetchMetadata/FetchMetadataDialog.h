@@ -39,19 +39,26 @@ class FetchMetadataDialog : public QDialog
 public:
     explicit FetchMetadataDialog(Movie movie, QList<Movie> moviesPropositionList, QWidget *parent = 0);
     ~FetchMetadataDialog();
-    QListWidget *getListWidget();
+    void setMovieList(QList<Movie> &movieList);
 
 signals:
-    void selectedMovie(int tmdbID);
+    void selectedMovie(Movie &movie);
+    void searchMovies(QString newTitle);
 
 private slots:
     void on_buttonBox_accepted();
-
     void on_listWidget_doubleClicked(const QModelIndex &index);
+    void on_searchButton_clicked();
+    void on_resetButton_clicked();
+
+    void on_lineEdit_returnPressed();
+
+    void on_buttonBox_rejected();
 
 private:
     Ui::FetchMetadataDialog *m_ui;
     Application *m_app;
+    Movie m_movie;
 };
 
 #endif // FETCHMETADATADIALOG_H

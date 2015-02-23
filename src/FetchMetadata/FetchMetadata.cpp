@@ -27,12 +27,13 @@ FetchMetadata::FetchMetadata(Movie movie, QObject *parent) :
     m_app = qobject_cast<Application *>(qApp);
     m_app->debug("[FetchMetadata] Constructor");
 
-    FetchMetadataQuery l_fetchMetadataQuery;
-    QObject::connect(&l_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>)),
-            this, SLOT(processPrimaryResponse(QList<Movie>)));
+    m_fetchMetadataQuery = new FetchMetadataQuery(this);
+
+    connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
+            this, SLOT(processPrimaryResponse(QList<Movie>&)));
 
     QString l_cleanedTitle = cleanString(m_movie.title());
-    l_fetchMetadataQuery.sendPrimaryRequest(l_cleanedTitle);
+    m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
 
     QEventLoop l_loop;
     connect(this, SIGNAL(jobDone()),
@@ -42,24 +43,11 @@ FetchMetadata::FetchMetadata(Movie movie, QObject *parent) :
     m_app->debug("[FetchMetadata] Construction done");
 }
 
-/*
-void FetchMetadata::fetchMetadata(QString title)
+FetchMetadata::~FetchMetadata()
 {
-    m_app->debug("[FetchMetadata] Enter fetchMetadata, " + title);
-    this->getRelatedMovies(title);
-    connect(this, SIGNAL(movieHydrated(Movie&)),
-            this, SLOT(updateMovieInDatabase(Movie&)));
-
-    QEventLoop l_loop;
-    connect(this, SIGNAL(movieHydrated(Movie&)),
-            &l_loop, SLOT(quit()));
-    connect(this, SIGNAL(noMovieFound()),
-            &l_loop, SLOT(quit()));
-
-    l_loop.exec();
-    m_app->debug("[FetchMetadata] Exit fetchMetadata");
+    delete m_fetchMetadataQuery;
+    delete m_fetchMetadataDialog;
 }
-*/
 
 QString FetchMetadata::cleanString(QString title)
 {
@@ -72,26 +60,36 @@ QString FetchMetadata::cleanString(QString title)
     return l_splittedTitle.join("%20");
 }
 
-void FetchMetadata::processPrimaryResponse(const QList<Movie> movieList)
+void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
 {
+    disconnect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
+            this, SLOT(processPrimaryResponse(QList<Movie>&)));
+
     m_app->debug("[FetchMetadata] Signal from primary request received");
-    qDebug() << movieList[0].title();
-    qDebug() << movieList[0].id();
+
     if (movieList.count() == 1) {
         Movie l_movie = movieList.at(0);
-        FetchMetadataQuery l_fetchMetadataQuery;
-        QObject::connect(&l_fetchMetadataQuery, SIGNAL(finalResponse(Movie)),
-                this, SLOT(processFinalResponse(Movie)));
+
+        connect(m_fetchMetadataQuery, SIGNAL(finalResponse(Movie&)),
+                this, SLOT(processFinalResponse(Movie&)));
         m_app->debug("[FetchMetadata] Final request to be sent");
-        l_fetchMetadataQuery.sendFinalRequest(l_movie.id());
+        m_fetchMetadataQuery->sendFinalRequest(l_movie.id());
     } else {
-        FetchMetadataDialog l_fetchMetadataDialog(m_movie, movieList);
+        m_fetchMetadataDialog = new FetchMetadataDialog(m_movie, movieList);
+        connect(m_fetchMetadataDialog, SIGNAL(selectedMovie(Movie&)),
+                this, SLOT(on_selectedMovie(Movie&)));
+        connect(m_fetchMetadataDialog, SIGNAL(searchMovies(QString)),
+                this, SLOT(on_searchMovies(QString)));
+        m_fetchMetadataDialog->show();
     }
 }
 
-void FetchMetadata::processFinalResponse(const Movie receivedMovie)
+void FetchMetadata::processFinalResponse(Movie &receivedMovie)
 {
     m_app->debug("[FetchMetadata] Signal from final request received");
+
+    disconnect(m_fetchMetadataQuery, SIGNAL(finalResponse(Movie&)),
+            this, SLOT(processFinalResponse(Movie&)));
 
     m_movie.setTitle(receivedMovie.title());
     m_movie.setOriginalTitle(receivedMovie.originalTitle());
@@ -104,4 +102,25 @@ void FetchMetadata::processFinalResponse(const Movie receivedMovie)
 
     m_app->getDatabaseManager()->updateMovie(m_movie);
     emit(jobDone());
+}
+
+void FetchMetadata::on_selectedMovie(Movie &movie)
+{
+    QList<Movie> l_movieList;
+    l_movieList.append(movie);
+    processPrimaryResponse(l_movieList);
+}
+
+void FetchMetadata::on_searchMovies(QString title)
+{
+    connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
+            this, SLOT(processPrimaryResponseDialog(QList<Movie>&)));
+
+    QString l_cleanedTitle = cleanString(title);
+    m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
+}
+
+void FetchMetadata::processPrimaryResponseDialog(QList<Movie> &movieList)
+{
+    m_fetchMetadataDialog->setMovieList(movieList);
 }

@@ -21,7 +21,7 @@
 #define FETCHMETADATAQUERY_H
 
 #include <QtNetwork>
-#include <QObject>
+#include <QWidget>
 
 #include "Application.h"
 #include "Entities/Movie.h"
@@ -37,8 +37,8 @@ public:
     void sendFinalRequest(int tmdbID);
 
 signals:
-    void primaryResponse(QList<Movie>);
-    void finalResponse(Movie);
+    void primaryResponse(QList<Movie>&);
+    void finalResponse(Movie&);
 
 private slots:
     void on_primaryRequestResponse(QNetworkReply *reply);
