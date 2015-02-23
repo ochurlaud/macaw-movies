@@ -1,20 +1,20 @@
-/* Copyright (C) 2014 Movie-Project
+/* Copyright (C) 2014 Macaw-Movies
  * (Olivier CHURLAUD, Sébastien TOUZÉ)
  *
- * This file is part of Movie-Project.
+ * This file is part of Macaw-Movies.
  *
- * Movie-Project is free software: you can redistribute it and/or modify
+ * Macaw-Movies is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Movie-Project is distributed in the hope that it will be useful,
+ * Macaw-Movies is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef APPLICATION_H
@@ -34,22 +34,18 @@ class Application : public QApplication
 Q_OBJECT
 
 public:
-    Application(MoviesDebug*, int&, char**);
+    Application(int &argc, char **argv, MoviesDebug*);
     ~Application();
-    void showMainWindow();
     bool addFilesPath(QString path);
     QString getFilesPath();
-    QString getAppName() { return this->m_appName; }
-    QIcon getAppIcon() { return this->m_appIcon; }
-    DatabaseManager *getDatabaseManager() { return this->m_dbManager; }
+    DatabaseManager *getDatabaseManager() { return m_dbManager; }
     void debug(QString text) { m_debug->print(text); }
+    QString tmdbkey() { return m_tmdbkey; }
 
 private:
-//    MainWindow mainWindow;
     QString m_filesPath;
+    QString m_tmdbkey;
     DatabaseManager *m_dbManager;
-    QString m_appName;
-    QIcon m_appIcon;
     MoviesDebug *m_debug;
 };
 

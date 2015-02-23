@@ -1,20 +1,20 @@
-/* Copyright (C) 2014 Movie-Project
+/* Copyright (C) 2014 Macaw-Movies
  * (Olivier CHURLAUD, Sébastien TOUZÉ)
  *
- * This file is part of Movie-Project.
+ * This file is part of Macaw-Movies.
  *
- * Movie-Project is free software: you can redistribute it and/or modify
+ * Macaw-Movies is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Movie-Project is distributed in the hope that it will be useful,
+ * Macaw-Movies is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "SettingsWindow.h"
@@ -29,7 +29,9 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
 
     m_ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
-    m_ui->knownPathList->setModel(m_app->getDatabaseManager()->getMoviesPathModel());
+
+    QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths();
+    m_ui->knownPathsList->addItems(l_moviesPathsList);
 }
 
 SettingsWindow::~SettingsWindow()
@@ -47,19 +49,63 @@ void SettingsWindow::on_browseButton_clicked()
     m_app->debug("[SettingsWindow] Exits browseFilesPathDialog()");
 }
 
+
 void SettingsWindow::on_buttonBox_accepted()
 {
-    m_app->debug("[SettingsWindow] Enters on_buttonBox_accepted()");
-    if(QDir(m_ui->folderPathEdit->text()).exists())
-    {
-        m_app->addFilesPath(m_ui->folderPathEdit->text());
-        emit closeAndSave();
-        close();
+    QString l_newPath = m_ui->folderPathEdit->text();
+    addToKnownPathsList(l_newPath);
+
+    QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths();
+    foreach (QString l_moviesPath, l_moviesPathsList) {
+        if (!m_ui->knownPathsList->findItems(l_moviesPath, Qt::MatchExactly).count()) {
+            // We remove the path and all the movies behind
+            m_app->getDatabaseManager()->deleteMoviesPath(l_moviesPath);
+        }
     }
-    else
-    {
-        m_ui->folderPathEdit->setText("");
-        m_ui->folderPathMessage->setText("Choose an existant path");
+
+    for (int i=0 ; i < m_ui->knownPathsList->count() ; i++) {
+        QString l_path = m_ui->knownPathsList->item(i)->text();
+        m_app->getDatabaseManager()->addMoviesPath(l_path);
+        if (m_ui->recheckBox->isChecked()) {
+            m_app->getDatabaseManager()->setMoviesPathImported(l_path, false);
+        }
     }
+    emit closeAndSave();
+    close();
     m_app->debug("[SettingsWindow] Exits on_buttonBox_accepted()");
+}
+
+void SettingsWindow::on_folderPathEdit_textChanged(const QString string)
+{
+    if (!string.isEmpty()) {
+        m_ui->addButton->setEnabled(true);
+    } else {
+        m_ui->addButton->setDisabled(true);
+    }
+}
+
+void SettingsWindow::on_addButton_clicked()
+{
+    QString l_newPath = m_ui->folderPathEdit->text();
+    addToKnownPathsList(l_newPath);
+}
+
+void SettingsWindow::on_removeButton_clicked()
+{
+    QList<QListWidgetItem*> l_selectedItemsList = m_ui->knownPathsList->selectedItems();
+    foreach (QListWidgetItem *l_selectedItem, l_selectedItemsList) {
+        delete l_selectedItem;
+    }
+}
+
+void SettingsWindow::addToKnownPathsList(QString path)
+{
+    if (!QDir(path).exists() || path.isEmpty()) {
+        m_ui->folderPathMessage->setText("Choose an existant path");
+    } else if (m_ui->knownPathsList->findItems(path,Qt::MatchExactly).count()) {
+        m_ui->folderPathMessage->setText("This path is already known");
+    } else {
+        m_ui->knownPathsList->addItem(path);
+    }
+    m_ui->folderPathEdit->clear();
 }

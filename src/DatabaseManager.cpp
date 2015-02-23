@@ -1,20 +1,20 @@
-/* Copyright (C) 2014 Movie-Project
+/* Copyright (C) 2014 Macaw-Movies
  * (Olivier CHURLAUD, Sébastien TOUZÉ)
  *
- * This file is part of Movie-Project.
+ * This file is part of Macaw-Movies.
  *
- * Movie-Project is free software: you can redistribute it and/or modify
+ * Macaw-Movies is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
 
- * Movie-Project is distributed in the hope that it will be useful,
+ * Macaw-Movies is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
- * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "DatabaseManager.h"
@@ -34,7 +34,6 @@ DatabaseManager::DatabaseManager(MoviesDebug *moviesDebug)
     m_movieFields = "m.id, m.title, m.original_title, m.release_date, m.country, m.duration, m.synopsis, m.file_path, m.colored, m.format, m.suffix, m.rank";
     m_peopleFields = "p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography";
     m_tagFields = "t.id, t.name";
-    m_moviesPathModel = new QStringListModel();
     debug("[DatabaseManager] object created");
 }
 
@@ -227,7 +226,8 @@ bool DatabaseManager::createTables()
             // List of paths where the movies are stored
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS paths_list("
                                           "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                                          "movies_path VARCHAR(255) UNIQUE"
+                                          "movies_path VARCHAR(255) UNIQUE,"
+                                          "imported BOOLEAN DEFAULT 0"
                                           ")");
 
             // Config table (for update purposes)
@@ -267,7 +267,6 @@ int DatabaseManager::createTag(QString name)
         return -1;
     }
 
-
     if(l_query.exec("SELECT last_insert_rowid()"));
     {
         l_query.next();
@@ -278,50 +277,47 @@ int DatabaseManager::createTag(QString name)
 }
 
 /**
- * @brief Saves the movies directory
+ * @brief Adds a movies directory
  *
- * @param QString moviePath: containing the path to the movies directory
+ * @param QString moviesPath: containing the path to the movies directory
  *
  * @return true if the paths list have been updated correctly
  */
-bool DatabaseManager::saveMoviesPath(QString moviePath)
+bool DatabaseManager::addMoviesPath(QString moviesPath)
 {
-    //TODO : is this test really usefull ? this value "sould" be validated before...
-    if(moviePath.isEmpty())
-    {
-        return false;
-    }
-    else if (!QDir(moviePath).exists())
-    {
-        return false;
-    }
-
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT movies_path FROM paths_list");
+    l_query.prepare("INSERT INTO paths_list (movies_path) VALUES (:movies_path)");
+    l_query.bindValue(":movies_path", moviesPath);
+
     if(!l_query.exec())
     {
-        debug("In saveMoviesPath(), getting existing path:");
+        debug("In addMoviesPath():");
         debug(l_query.lastError().text());
+
+        return false;
     }
 
-    while(l_query.next())
-    {
-        if(l_query.value(0).toString() == moviePath)
-        {
-            return false;
-        }
-    }
+    return true;
+}
 
-    l_query.prepare("INSERT INTO paths_list (movies_path) VALUES (:path)");
-    l_query.bindValue(":path", moviePath);
-
-    //updates the movies path list in the settings window
-    m_moviesPathModel->insertRow(m_moviesPathModel->rowCount());
-    m_moviesPathModel->setData(m_moviesPathModel->index(m_moviesPathModel->rowCount()-1), moviePath);
+/**
+ * @brief Set the imported boolean of the movie path
+ *
+ * @param QString moviesPath: containing the path to the movies directory
+ * @param bool imported: true if the movies have been imported, false else
+ *
+ * @return true if the request succeed
+ */
+bool DatabaseManager::setMoviesPathImported(QString moviesPath, bool imported)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("UPDATE paths_list SET imported=:imported WHERE movies_path = :movies_path");
+    l_query.bindValue(":movies_path", moviesPath);
+    l_query.bindValue(":imported", imported);
 
     if(!l_query.exec())
     {
-        debug("In saveMoviesPath():");
+        debug("In setMoviesPathImported():");
         debug(l_query.lastError().text());
 
         return false;
@@ -332,28 +328,54 @@ bool DatabaseManager::saveMoviesPath(QString moviePath)
 
 /**
  * @brief Get the movies directories
- *
+ * @param imported boolean telling if the movies of this path have already been imported
  * @return QStringList containing the paths of these directories
  */
-QStringList DatabaseManager::getMoviesPath()
+QStringList DatabaseManager::getMoviesPaths(bool imported)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT movies_path FROM paths_list");
+    l_query.prepare("SELECT movies_path FROM paths_list where imported=:imported");
+    l_query.bindValue(":imported", imported);
 
     if(!l_query.exec())
     {
-        debug("In getMoviesPath():");
+        debug("In getMoviesPaths():");
         debug(l_query.lastError().text());
     }
 
-    QStringList l_result;
+    QStringList l_moviesPathsList;
 
     while(l_query.next())
     {
-        l_result.append(l_query.value(0).toString());
+        l_moviesPathsList.append(l_query.value(0).toString());
     }
 
-    m_moviesPathModel->setStringList(l_result);
+    return l_moviesPathsList;
+}
 
-    return l_result;
+bool DatabaseManager::deleteMoviesPath(QString moviesPath)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("DELETE FROM movies WHERE file_path LIKE :movies_path||'%'");
+    l_query.bindValue(":movies_path", moviesPath);
+
+    if(!l_query.exec())
+    {
+        debug("In removeMoviesPath():");
+        debug(l_query.lastError().text());
+
+        return false;
+    }
+
+    l_query.prepare("DELETE FROM paths_list WHERE movies_path LIKE :movies_path||'%'");
+    l_query.bindValue(":movies_path", moviesPath);
+    if(!l_query.exec())
+    {
+        debug("In removeMoviesPath():");
+        debug(l_query.lastError().text());
+
+        return false;
+    }
+
+    return true;
 }

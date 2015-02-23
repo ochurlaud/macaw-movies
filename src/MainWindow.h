@@ -1,20 +1,20 @@
-/* Copyright (C) 2014 Movie-Project
+/* Copyright (C) 2014 Macaw-Movies
  * (Olivier CHURLAUD, Sébastien TOUZÉ)
  *
- * This file is part of Movie-Project.
+ * This file is part of Macaw-Movies.
  *
- * Movie-Project is free software: you can redistribute it and/or modify
+ * Macaw-Movies is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Movie-Project is distributed in the hope that it will be useful,
+ * Macaw-Movies is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef MainWindow_H
@@ -51,7 +51,6 @@ public:
 private slots:
     void on_actionEdit_Settings_triggered();
     void on_peopleBox_activated(int type);
-    void on_playlistsButton_clicked();
     void on_toWatchButton_clicked();
     void on_tagsButton_clicked();
     void on_customContextMenuRequested(const QPoint &);
@@ -65,11 +64,7 @@ private slots:
     void on_searchEdit_returnPressed();
     void addPlaylistMenu_triggered(QAction* action);
     void askForOrphanTagDeletion(Tag orphanTag);
-
-
     void on_actionAbout_triggered();
-
-    void on_playlistPannel_doubleClicked(const QModelIndex &index);
 
 signals:
     void toUpdate();
@@ -88,7 +83,6 @@ private:
     void prepareMoviesToDisplay(int id);
     void filterPannels();
     void fillMetadataPannel(Movie movie);
-    void fillPlaylistPannel();
 
 };
 

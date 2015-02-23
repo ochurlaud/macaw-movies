@@ -1,20 +1,20 @@
-/* Copyright (C) 2014 Movie-Project
+/* Copyright (C) 2014 Macaw-Movies
  * (Olivier CHURLAUD, Sébastien TOUZÉ)
  *
- * This file is part of Movie-Project.
+ * This file is part of Macaw-Movies.
  *
- * Movie-Project is free software: you can redistribute it and/or modify
+ * Macaw-Movies is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Movie-Project is distributed in the hope that it will be useful,
+ * Macaw-Movies is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Movie-Project.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef DATABASEMANAGER_H
@@ -51,10 +51,14 @@ public:
     QSqlError lastError();
 
     // Getters for paths, config
-    QStringList getMoviesPath();
+    QStringList getMoviesPaths(bool imported = true);
 
     // Insertions for paths, config
-    bool saveMoviesPath(QString);
+    bool addMoviesPath(QString moviesPath);
+    int createTag(QString name);
+    bool setMoviesPathImported(QString moviesPath, bool imported);
+
+    bool deleteMoviesPath(QString moviesPath);
 
 signals:
     void orphanTagDetected(Tag tag);
@@ -111,7 +115,6 @@ private:
 public:
     bool insertNewMovie(Movie &movie);
     bool insertNewPlaylist(Playlist &playlist);
-    int createTag(QString name);
     bool addTagToMovie(Tag &tag, Movie &movie);
     bool addPeopleToMovie(People &people, Movie &movie, const int type);
 
@@ -142,15 +145,10 @@ public:
 private:
     bool deletePeople(const People &people);
 
-//// Models
-public:
-    QStringListModel *getMoviesPathModel() {return this->m_moviesPathModel;}
-
 private:
     void debug(QString text) { m_debug->print(text);}
     QSqlDatabase m_db;
     MoviesDebug *m_debug;
-    QStringListModel *m_moviesPathModel;
     QString m_movieFields;
     QString m_peopleFields;
     QString m_tagFields;
