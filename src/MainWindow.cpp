@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_moviesList = m_app->getDatabaseManager()->getAllMovies();
     m_leftPannelSelectedId = 0;
     fillMainPannel();
-    fillLeftPannel(isPeople, People::Director);
+    fillLeftPannel(Macaw::isPeople, People::Director);
     m_app->debug("[MainWindow] Construction done");
 }
 
@@ -77,7 +77,7 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
     m_typeElement = typeElement;
     m_typePeople = typePeople;
 
-    if (typeElement != isPlaylist)
+    if (typeElement != Macaw::isPlaylist)
     {
         QListWidgetItem *l_item = new QListWidgetItem("All");
         l_item->setData(Macaw::ObjectId, 0);
@@ -88,11 +88,11 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
         }
     }
 
-    if (typeElement == isPeople)
+    if (typeElement == Macaw::isPeople)
     {
         QListWidgetItem *l_item = new QListWidgetItem("Unknown");
         l_item->setData(Macaw::ObjectId, -1);
-        l_item->setData(Macaw::ObjectType, isPeople);
+        l_item->setData(Macaw::ObjectType, Macaw::isPeople);
         m_ui->leftPannel->addItem(l_item);
         if (m_leftPannelSelectedId == -1)
         {
@@ -111,7 +111,7 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
 
             QListWidgetItem *l_item = new QListWidgetItem(l_name);
             l_item->setData(Macaw::ObjectId, l_people.getId());
-            l_item->setData(Macaw::ObjectType, isPeople);
+            l_item->setData(Macaw::ObjectType, Macaw::isPeople);
             l_item->setData(Macaw::PeopleType, typePeople);
             if (m_leftPannelSelectedId == l_people.getId())
             {
@@ -121,11 +121,11 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             m_ui->leftPannel->addItem(l_item);
         }
     }
-    else if(typeElement == isTag)
+    else if(typeElement == Macaw::isTag)
     {
         QListWidgetItem *l_item = new QListWidgetItem("No Tag");
         l_item->setData(Macaw::ObjectId, -1);
-        l_item->setData(Macaw::ObjectType, isTag);
+        l_item->setData(Macaw::ObjectType, Macaw::isTag);
         m_ui->leftPannel->addItem(l_item);
         if (m_leftPannelSelectedId == -1)
         {
@@ -139,7 +139,7 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
 
             QListWidgetItem *l_item = new QListWidgetItem(l_name);
             l_item->setData(Macaw::ObjectId, l_tag.getId());
-            l_item->setData(Macaw::ObjectType, isTag);
+            l_item->setData(Macaw::ObjectType, Macaw::isTag);
 
             m_ui->leftPannel->addItem(l_item);
             if (m_leftPannelSelectedId == l_tag.getId())
@@ -148,11 +148,11 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             }
         }
     }
-    else if(typeElement == isPlaylist)
+    else if(typeElement == Macaw::isPlaylist)
     {
         QListWidgetItem *l_item = new QListWidgetItem("To Watch");
         l_item->setData(Macaw::ObjectId, 1);
-        l_item->setData(Macaw::ObjectType, isPlaylist);
+        l_item->setData(Macaw::ObjectType, Macaw::isPlaylist);
         m_ui->leftPannel->addItem(l_item);
         if (m_leftPannelSelectedId == 1)
         {
@@ -166,7 +166,7 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
 
             QListWidgetItem *l_item = new QListWidgetItem(l_name);
             l_item->setData(Macaw::ObjectId, l_playlist.getId());
-            l_item->setData(Macaw::ObjectType, isPlaylist);
+            l_item->setData(Macaw::ObjectType, Macaw::isPlaylist);
 
             m_ui->leftPannel->addItem(l_item);
             if (m_leftPannelSelectedId == l_playlist.getId())
@@ -207,7 +207,7 @@ void MainWindow::fillMainPannel()
         {
             l_item = new QTableWidgetItem(l_movieData.at(l_column));
             l_item->setData(Macaw::ObjectId, l_movie.getId());
-            l_item->setData(Macaw::ObjectType, isMovie);
+            l_item->setData(Macaw::ObjectType, Macaw::isMovie);
             m_ui->mainPannel->setItem(l_row, l_column, l_item);
             l_column++;
         }
@@ -222,7 +222,7 @@ void MainWindow::on_peopleBox_activated(int type)
     m_app->debug("[MainWindow] Enters on_peopleBox_activated()");
 
     int peopleType = type + 1;
-    fillLeftPannel(isPeople, peopleType);
+    fillLeftPannel(Macaw::isPeople, peopleType);
     m_leftPannelSelectedId = 0;
 }
 
@@ -230,7 +230,7 @@ void MainWindow::on_toWatchButton_clicked()
 {
     m_moviesList = m_app->getDatabaseManager()->getMoviesByPlaylist(1);
     fillMainPannel();
-    fillLeftPannel(isPeople, People::Director);
+    fillLeftPannel(Macaw::isPeople, People::Director);
     filterPannels();
 
 }
@@ -238,7 +238,7 @@ void MainWindow::on_toWatchButton_clicked()
 void MainWindow::on_tagsButton_clicked()
 {
     m_app->debug("[MainWindow] tagsButton clicked");
-    fillLeftPannel(isTag);
+    fillLeftPannel(Macaw::isTag);
     m_leftPannelSelectedId = 0;
 }
 
@@ -251,14 +251,11 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
     // (not to be "All" or "Unknown")
     if(m_ui->leftPannel->hasFocus()
             && m_ui->leftPannel->selectedItems().count() != 0
-            && m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId) != 0)
-    {
+            && m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId) != 0) {
         l_menu->addAction(m_ui->actionEdit_leftPannelMetadata);
         l_menu->exec(m_ui->leftPannel->mapToGlobal(point));
-    }
-    else if (m_ui->mainPannel->hasFocus() &&
-             m_ui->mainPannel->selectedItems().count() != 0)
-    {
+    } else if (m_ui->mainPannel->hasFocus()
+               && m_ui->mainPannel->selectedItems().count() != 0) {
         QMenu *l_addPlaylistMenu = new QMenu("Add to playlist");
         QAction *l_actionAddInToWatch = new QAction("To Watch",
                                                     l_addPlaylistMenu);
@@ -292,17 +289,17 @@ void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
     if(l_id != 0)
     {
         int l_typeElement = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectType).toInt();
-        if (l_typeElement == isPeople)
+        if (l_typeElement == Macaw::isPeople)
         {
             PeopleDialog *l_movieDialog = new PeopleDialog(l_id);
             connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
             l_movieDialog->show();
         }
-        else if (l_typeElement == isTag)
+        else if (l_typeElement == Macaw::isTag)
         {
             qDebug() << "Tag !";
         }
-        else if (l_typeElement == isPlaylist)
+        else if (l_typeElement == Macaw::isPlaylist)
         {
             qDebug() << "Playlist !";
         }
@@ -372,7 +369,7 @@ void MainWindow::prepareMoviesToDisplay(int id)
     {
         m_moviesList = m_app->getDatabaseManager()->getAllMovies();
     }
-    else if(m_typeElement == isPeople)
+    else if(m_typeElement == Macaw::isPeople)
     {
         if (m_leftPannelSelectedId == -1)
         {
@@ -383,7 +380,7 @@ void MainWindow::prepareMoviesToDisplay(int id)
             m_moviesList = m_app->getDatabaseManager()->getMoviesByPeople(m_leftPannelSelectedId, m_typePeople);
         }
     }
-    else if (m_typeElement == isTag)
+    else if (m_typeElement == Macaw::isTag)
     {
         if (m_leftPannelSelectedId == -1)
         {
@@ -394,7 +391,7 @@ void MainWindow::prepareMoviesToDisplay(int id)
             m_moviesList = m_app->getDatabaseManager()->getMoviesByTag(m_leftPannelSelectedId);
         }
     }
-    else if (m_typeElement == isPlaylist)
+    else if (m_typeElement == Macaw::isPlaylist)
     {
         Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(m_leftPannelSelectedId);
         m_moviesList = l_playlist.getMovieList();
@@ -425,13 +422,13 @@ void MainWindow::setLeftPannelLabel()
 {
     switch (m_typeElement)
     {
-    case isTag:
+    case Macaw::isTag:
         m_ui->leftPannelLabel->setText("Tags");
         break;
-    case isPlaylist:
+    case Macaw::isPlaylist:
         m_ui->leftPannelLabel->setText("Playlists");
         break;
-    case isPeople:
+    case Macaw::isPeople:
         switch (m_typePeople)
         {
         case People::Director:
@@ -487,7 +484,7 @@ void MainWindow::filterPannels()
         }
 
         // leftPannel
-        if (m_typeElement == isTag)
+        if (m_typeElement == Macaw::isTag)
         {
             QList<Tag> l_authorizedTagList = m_app->getDatabaseManager()->getTagsByAny(l_text);
             for (int i = 2 ; i < m_ui->leftPannel->count(); i++)
@@ -508,7 +505,7 @@ void MainWindow::filterPannels()
                 }
             }
         }
-        else if (m_typeElement == isPeople)
+        else if (m_typeElement == Macaw::isPeople)
         {
             QList<People> l_authorizedPeopleList = m_app->getDatabaseManager()->getPeopleByAny(l_text, m_typePeople);
 
@@ -531,7 +528,7 @@ void MainWindow::filterPannels()
                 }
             }
         }
-        else if (m_typeElement == isPlaylist)
+        else if (m_typeElement == Macaw::isPlaylist)
         {
             // Don't do anything here, we want to see the name of the playlists
             // also when empty

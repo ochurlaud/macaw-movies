@@ -29,12 +29,19 @@
 
 namespace Macaw
 {
-    enum fields
-    {
+    enum fields {
         ObjectId = Qt::UserRole,
         ObjectType = Qt::UserRole+1,
         PeopleType = Qt::UserRole+2
     };
+    enum typeElement {
+        None,
+        isMovie,
+        isPeople,
+        isTag,
+        isPlaylist
+    };
+
 }
 
 class MovieDebug;
