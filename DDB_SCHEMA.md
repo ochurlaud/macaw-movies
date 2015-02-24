@@ -1,5 +1,7 @@
 # Here is the last DDB schema
 
+**_Not the last version TO BE UPDATED_**
+
 ## movies
 | Column Name   | Type | Link |
 | ------------- | ---- | ---- |
