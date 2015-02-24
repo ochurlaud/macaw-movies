@@ -11,32 +11,7 @@ Movies organizer. Qt/C++/Sqlite
 
 ## 1. Rules for coding
 
- - English is used for all names (class, function, variable…)
- - Abreviations are not tolerated anywhere in the code. All names must be as explicit as possible
- - class names start with a capital letter
- - members start with `m_`
- - local variables start with `l_`
- - function parameter names do not have a specific prefix
- - global variables are prohibited, the few accepted are capitalized
- - function names do not have a prefix, start with a lowercase character and use upper case characters for each new word (no underscore)
- - curly brackets always stand alone on new lines
- - if / else blocks always have curly brackets, even if only one call is to be done
- - identation should follow the rules: always indent after curly bracket, except in switch/case
-
-````
-switch (var)
-{
-case 1:
-    fct();
-    break;
-case 2:
-    otherFct();
-    break;
-}
-````
-
- - blank line before calling return
- - blank line before two logical blocs
+See [Code rules](https://github.com/macaw-movies/macaw-movies/wiki/Code-rules) on the Wiki.
 
 ## 2. Presentation of the project
 
