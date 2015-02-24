@@ -20,23 +20,28 @@ This application is a movie organizer. It only let the user order and find the m
 We should be able do add several metadata to each movie. To make it easily, the application will get and fill theses data thanks to an Internet movie database (like gracenote for the music).
 
 ### Metadata to add 
-* Title (I)
-* Original title (I)
-* Release date (I)
+* **Bold** means that it's implemented
+* *Italic* means that the field exists but is not used
+* Regular means that it has to be done
+
+
+* **Title (I)**
+* **Original title (I)**
+* **Release date (I)**
 * Type of movie (Drama, documentary, romance, ... - multiple choice (I)
-* Director (I)
-* Country
-* Synopsis
-* Path to movie, subtitle (sometimes several movie for part 1, 2)
-* Duration (read on file)
+* **Director (I)**
+* **Country**
+* **Synopsis**
+* **Path to movie**, subtitle (sometimes several movie for part 1, 2)
+* *Duration (read on file)*
 * Language available so on the file
-* Color/B&W
-* Format (16/9, 4/3, etc) (read on the file)
+* *Color/B&W*
+* *Format* (16/9, 4/3, etc) (read on the file)
 * Image size (620x420, 1920x1080, etc (read on the file)
 * Cover
 * Writer
-* Star 1, star 2, star 3 , star 4, etc (I)
-* Producer (I)
+* **Actors (I)**
+* **Producer (I)**
 * Music by
 * official website
 * Box office
