@@ -6,8 +6,6 @@ list(APPEND SRCS DatabaseManager_getters.cpp)
 list(APPEND SRCS DatabaseManager_insert.cpp)
 list(APPEND SRCS DatabaseManager_update.cpp)
 list(APPEND SRCS MainWindow.cpp)
-list(APPEND SRCS MetadataFetcher.cpp)
-list(APPEND SRCS MetadataFetcherDialog.cpp)
 list(APPEND SRCS MovieDialog.cpp)
 list(APPEND SRCS MoviesDebug.cpp)
 list(APPEND SRCS PeopleDialog.cpp)
@@ -17,14 +15,17 @@ list(APPEND SRCS Entities/Movie.cpp)
 list(APPEND SRCS Entities/People.cpp)
 list(APPEND SRCS Entities/Playlist.cpp)
 list(APPEND SRCS Entities/Tag.cpp)
+list(APPEND SRCS FetchMetadata/FetchMetadata.cpp)
+list(APPEND SRCS FetchMetadata/FetchMetadataDialog.cpp)
+list(APPEND SRCS FetchMetadata/FetchMetadataQuery.cpp)
 
 
 # Forms
 list(APPEND FORMS MainWindow.ui)
-list(APPEND FORMS MetadataFetcherDialog.ui)
 list(APPEND FORMS MovieDialog.ui)
 list(APPEND FORMS PeopleDialog.ui)
 list(APPEND FORMS SettingsWindow.ui)
+list(APPEND FORMS FetchMetadata/FetchMetadataDialog.ui)
 
 
 
