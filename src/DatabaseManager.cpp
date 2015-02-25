@@ -55,11 +55,11 @@ bool DatabaseManager::openDB()
     }
 
 #ifdef Q_OS_LINUX
-    // File in ~\.config
+    // File in ~/.local/config
     QString l_configPath(QDir::home().path().append(QDir::separator())
                                             .append(".local")
                                             .append(QDir::separator())
-                                            .append(".share")
+                                            .append("share")
                                             .append(QDir::separator()));
 #endif
 
