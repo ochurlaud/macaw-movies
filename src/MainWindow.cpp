@@ -611,17 +611,21 @@ void MainWindow::fillMetadataPannel(Movie movie)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    QSettings settings("Macaw-Movies", "Macaw-Movies");
-    settings.setValue("geometry", saveGeometry());
-    settings.setValue("windowState", saveState());
+    QSettings l_settings("Macaw-Movies", "Macaw-Movies");
+    l_settings.setValue("geometry", saveGeometry());
+    l_settings.setValue("windowState", saveState());
+    l_settings.setValue("mainSplitter/geometry", m_ui->mainSplitter->saveGeometry());
+    l_settings.setValue("mainSplitter/state", m_ui->mainSplitter->saveState());
     QMainWindow::closeEvent(event);
 }
 
 void MainWindow::readSettings()
 {
-    QSettings settings("Macaw-Movies", "Macaw-Movies");
-    restoreGeometry(settings.value("geometry").toByteArray());
-    restoreState(settings.value("windowState").toByteArray());
+    QSettings l_settings("Macaw-Movies", "Macaw-Movies");
+    restoreGeometry(l_settings.value("geometry").toByteArray());
+    restoreState(l_settings.value("windowState").toByteArray());
+    m_ui->mainSplitter->restoreGeometry(l_settings.value("mainSplitter/geometry").toByteArray());
+    m_ui->mainSplitter->restoreState(l_settings.value("mainSplitter/state").toByteArray());
 }
 
 void MainWindow::on_actionAbout_triggered()
