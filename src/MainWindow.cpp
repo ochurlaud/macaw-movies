@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_app->debug("[MainWindow] Constructor called");
 
     m_ui->setupUi(this);
+    m_ui->leftPannelWidget->setContentsMargins(0,1,1,0);
     this->setWindowTitle(m_app->applicationDisplayName());
     this->setWindowIcon(m_app->windowIcon());
 
