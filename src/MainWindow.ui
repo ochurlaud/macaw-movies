@@ -143,8 +143,29 @@
          <enum>Qt::Horizontal</enum>
         </property>
         <widget class="QSplitter" name="splitter">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>400</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="orientation">
           <enum>Qt::Vertical</enum>
+         </property>
+         <property name="opaqueResize">
+          <bool>true</bool>
          </property>
          <widget class="QWidget" name="leftPannelWidget">
           <layout class="QVBoxLayout" name="leftPannelLayout">
@@ -174,6 +195,12 @@
                <height>0</height>
               </size>
              </property>
+             <property name="baseSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="contextMenuPolicy">
               <enum>Qt::CustomContextMenu</enum>
              </property>
@@ -197,6 +224,12 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>400</width>
+           <height>0</height>
+          </size>
          </property>
          <property name="sizeIncrement">
           <size>
@@ -266,7 +299,7 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>150</width>
+              <width>100</width>
               <height>0</height>
              </size>
             </property>

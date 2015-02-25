@@ -65,6 +65,7 @@ private slots:
     void addPlaylistMenu_triggered(QAction* action);
     void askForOrphanTagDeletion(Tag orphanTag);
     void on_actionAbout_triggered();
+    void closeEvent(QCloseEvent *event);
 
 signals:
     void toUpdate();
@@ -76,6 +77,7 @@ private:
     int m_typePeople;
     int m_typeElement;
     int m_leftPannelSelectedId;
+    void readSettings();
     void fillMainPannel();
     void fillLeftPannel(int typeElement, int typePeople);
     void setLeftPannelLabel();

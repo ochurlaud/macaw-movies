@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle(m_app->applicationDisplayName());
     this->setWindowIcon(m_app->windowIcon());
 
+    this->readSettings();
+
     connect(m_ui->mainPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
     connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
@@ -604,6 +606,21 @@ void MainWindow::fillMetadataPannel(Movie movie)
     m_ui->metadataTop->setText(l_title+l_originalTitle + l_directors +l_producers + l_actors);
     m_ui->metadataPlot->setText(movie.synopsis());
     m_app->debug("[MainWindow] Exit fillMetadataPannel");
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QSettings settings("Macaw-Movies", "Macaw-Movies");
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("windowState", saveState());
+    QMainWindow::closeEvent(event);
+}
+
+void MainWindow::readSettings()
+{
+    QSettings settings("Macaw-Movies", "Macaw-Movies");
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("windowState").toByteArray());
 }
 
 void MainWindow::on_actionAbout_triggered()
