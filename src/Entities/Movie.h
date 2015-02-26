@@ -36,7 +36,7 @@ public:
     QString originalTitle() const;
     void setOriginalTitle(const QString originalTitle);
     QList<People> peopleList() const;
-    QList<People> peopleList(const int type);
+    QList<People> peopleList(const int type) const;
     void setPeopleList(const QList<People> &peopleList);
     void addPeople(const People &people);
     void removePeople(const People &people);

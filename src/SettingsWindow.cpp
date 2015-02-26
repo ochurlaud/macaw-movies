@@ -30,7 +30,8 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     m_ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths();
+    QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths(0);
+    l_moviesPathsList << m_app->getDatabaseManager()->getMoviesPaths(1);
     m_ui->knownPathsList->addItems(l_moviesPathsList);
 }
 

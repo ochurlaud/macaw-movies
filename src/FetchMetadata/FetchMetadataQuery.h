@@ -52,7 +52,6 @@ private slots:
 
 private:
     QNetworkAccessManager *m_networkManager;
-    QNetworkReply *m_reply;
     Application *m_app;
     Movie m_movie;
     QList<int> m_peopleRequestList;

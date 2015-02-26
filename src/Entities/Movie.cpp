@@ -68,7 +68,7 @@ QList<People> Movie::peopleList() const
     return m_peopleList;
 }
 
-QList<People> Movie::peopleList(const int type)
+QList<People> Movie::peopleList(const int type) const
 {
     QList<People> l_peopleList;
     foreach (People l_people, m_peopleList)

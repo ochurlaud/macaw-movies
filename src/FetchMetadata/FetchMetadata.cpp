@@ -48,20 +48,19 @@ FetchMetadata::FetchMetadata(Movie movie, QObject *parent) :
 FetchMetadata::~FetchMetadata()
 {
     delete m_fetchMetadataQuery;
-    delete m_fetchMetadataDialog;
     m_app->debug("[FetchMetadata] Object destructed");
 
 }
 
 QString FetchMetadata::cleanString(QString title)
 {
-    QRegExp l_sep("(\\_|\\-|\\ |\\,|\\.|\\!|\\?)");
+    QRegExp l_sep("(\\_|\\-|\\ |\\,|\\)|\\(|\\]|\\[|\\.|\\!|\\?)");
     QStringList l_splittedTitle = title.split(l_sep);
 
     QRegExp l_alphaOnly("(^[À-Ÿà-ÿA-Za-z]*$)");
     l_splittedTitle = l_splittedTitle.filter(l_alphaOnly);
 
-    return l_splittedTitle.join("%20");
+    return l_splittedTitle.join(" ");
 }
 
 void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)

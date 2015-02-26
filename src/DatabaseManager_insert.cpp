@@ -75,7 +75,7 @@ bool DatabaseManager::insertNewMovie(Movie &movie)
  * @param Movie
  * @return bool
  */
-bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, int type)
+bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, const int type)
 {
     if (!insertNewPeople(people))
     {

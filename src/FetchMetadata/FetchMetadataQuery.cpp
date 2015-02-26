@@ -33,7 +33,6 @@ FetchMetadataQuery::FetchMetadataQuery(QObject *parent) :
 FetchMetadataQuery::~FetchMetadataQuery()
 {
     delete m_networkManager;
-    delete m_reply;
 }
 
 void FetchMetadataQuery::sendPrimaryRequest(QString title)
@@ -43,10 +42,9 @@ void FetchMetadataQuery::sendPrimaryRequest(QString title)
 
     QNetworkRequest l_request;
 
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/search/movie?api_key="+ m_app->tmdbkey() +"&query="+ title));
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/search/movie?api_key="+ m_app->tmdbkey() +"&query="+ title, QUrl::TolerantMode));
 
-    m_reply = m_networkManager->get(l_request);
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
+    m_networkManager->get(l_request);
 
     m_app->debug("[FetchMetadataQuery] Primary request sent");
 }
@@ -57,11 +55,9 @@ void FetchMetadataQuery::sendMovieRequest(int tmdbID)
             this, SLOT(on_movieRequestResponse(QNetworkReply*)));
 
     QNetworkRequest l_request;
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/movie/"+QString::number(tmdbID)+"?api_key=" + m_app->tmdbkey() + "&append_to_response=credits&language=en"));
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/movie/"+QString::number(tmdbID)+"?api_key=" + m_app->tmdbkey() + "&append_to_response=credits&language=en", QUrl::TolerantMode));
 
-    m_reply = m_networkManager->get(l_request);
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
-            this, SLOT(slotError(QNetworkReply::NetworkError)));
+    m_networkManager->get(l_request);
 
     m_app->debug("[FetchMetadataQuery] Movie Request sent");
 }
@@ -72,11 +68,9 @@ void FetchMetadataQuery::sendPeopleRequest(int tmdbID)
             this, SLOT(on_peopleRequestResponse(QNetworkReply*)));
 
     QNetworkRequest l_request;
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/person/"+QString::number(tmdbID)+"/credits?api_key="+ m_app->tmdbkey()));
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/person/"+QString::number(tmdbID)+"?api_key="+ m_app->tmdbkey(), QUrl::StrictMode));
 
-    m_reply = m_networkManager->get(l_request);
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
-            this, SLOT(slotError(QNetworkReply::NetworkError)));
+    m_networkManager->get(l_request);
 
     m_app->debug("[FetchMetadataQuery] People request sent");
 }
@@ -153,8 +147,6 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
                 m_peopleRequestList.append(l_personId);
             }
 
-            emit(peopleResponse());
-
             QJsonArray l_jsonCrewArray = l_jsonObject.value("credits").toObject().value("crew").toArray();
             for (int i = 0 ; i < l_jsonCrewArray.size() ; i++) {
                 QString l_job = l_jsonCrewArray.at(i).toObject().value("job").toString();
@@ -177,6 +169,7 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
         }
         // else: error!
     }
+    emit(peopleResponse());
 }
 
 void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
@@ -195,7 +188,6 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
     QJsonDocument l_stream = QJsonDocument::fromJson(l_receivedData);
     if (!l_stream.isEmpty()) {
         QJsonObject l_jsonObject = l_stream.object();
-
         if (!l_jsonObject.isEmpty()) {
             int tmdbID = l_jsonObject.value("id").toInt();
             l_people.setLastname(l_jsonObject.value("name").toString());
@@ -204,20 +196,21 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
             QLocale locale(QLocale::English, QLocale::UnitedStates);
             QDate l_birthday = locale.toDate(l_jsonObject.value("birthday").toString(),"yyyy-MM-dd");
             l_people.setBirthday(l_birthday);
+            QList<People> l_peopleList = m_movie.peopleList();
             for (int i = 0 ; i < m_movie.peopleList().count(); i++) {
                 if (m_movie.peopleList().at(i).id() == tmdbID)
                 {
-                    l_people.setType(m_movie.peopleList().at(i).type());
-                    m_movie.peopleList().replace(i, l_people);
+                    l_people.setType(l_peopleList.at(i).type());
+                    l_peopleList.replace(i, l_people);
                     // Do not break in case 1 person has 2 roles
                 }
             }
+            m_movie.setPeopleList(l_peopleList);
         }
     }
     // If all request are done, the object is construct, send to FetchMetadata
     if (m_peopleRequestList.count() == 0) {
         // We send a signal to tell the movie is hydrated
-        m_app->debug("[FetchMetadataQuery] Signal emitted to FetchMetadata for movie response");
         emit(movieResponse(m_movie));
     }
 }
@@ -232,6 +225,6 @@ void FetchMetadataQuery::on_peopleResponse()
 {
     // If all people are fetched, send next request
     if (m_peopleRequestList.count() > 0) {
-        sendPeopleRequest(m_peopleRequestList.takeFirst());
+        sendPeopleRequest(m_peopleRequestList.takeLast());
     }
 }
