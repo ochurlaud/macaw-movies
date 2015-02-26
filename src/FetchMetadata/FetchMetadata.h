@@ -43,18 +43,18 @@ signals:
 
 private slots:
     void processPrimaryResponse(QList<Movie> &movieList);
-    void processFinalResponse(Movie &receivedMovie);
+    void processMovieResponse(Movie &receivedMovie);
     void on_selectedMovie(Movie &movie);
     void on_searchMovies(QString title);
     void processPrimaryResponseDialog(QList<Movie> &movieList);
+    void on_searchCanceled();
+    void networkError(QString error);
 
 private:
     Application *m_app;
     FetchMetadataQuery *m_fetchMetadataQuery;
     FetchMetadataDialog *m_fetchMetadataDialog;
     Movie m_movie;
-    void getRelatedMovies(QString title);
-    void getMetadata(int tmdbID);
     QString cleanString(QString title);
 };
 

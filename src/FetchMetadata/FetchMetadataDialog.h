@@ -44,6 +44,7 @@ public:
 signals:
     void selectedMovie(Movie &movie);
     void searchMovies(QString newTitle);
+    void searchCanceled();
 
 private slots:
     void on_buttonBox_accepted();

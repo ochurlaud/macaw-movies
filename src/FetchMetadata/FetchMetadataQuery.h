@@ -34,19 +34,28 @@ public:
     FetchMetadataQuery(QObject *parent = 0);
     ~FetchMetadataQuery();
     void sendPrimaryRequest(QString title);
-    void sendFinalRequest(int tmdbID);
+    void sendMovieRequest(int tmdbID);
+    void sendPeopleRequest(int tmdbID);
 
 signals:
     void primaryResponse(QList<Movie>&);
-    void finalResponse(Movie&);
+    void movieResponse(Movie&);
+    void networkError(QString);
+    void peopleResponse();
 
 private slots:
     void on_primaryRequestResponse(QNetworkReply *reply);
-    void on_finalRequestResponse(QNetworkReply *reply);
+    void on_movieRequestResponse(QNetworkReply *reply);
+    void on_peopleRequestResponse(QNetworkReply *reply);
+    void on_peopleResponse();
+    void slotError(QNetworkReply::NetworkError error);
 
 private:
     QNetworkAccessManager *m_networkManager;
+    QNetworkReply *m_reply;
     Application *m_app;
+    Movie m_movie;
+    QList<int> m_peopleRequestList;
 
 };
 

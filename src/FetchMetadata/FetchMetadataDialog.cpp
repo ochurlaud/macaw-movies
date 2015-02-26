@@ -97,5 +97,6 @@ void FetchMetadataDialog::on_resetButton_clicked()
 
 void FetchMetadataDialog::on_buttonBox_rejected()
 {
+    emit(searchCanceled());
     this->accept();
 }

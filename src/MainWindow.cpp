@@ -35,16 +35,14 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->leftPannelWidget->setContentsMargins(0,1,1,0);
     this->setWindowTitle(m_app->applicationDisplayName());
     this->setWindowIcon(m_app->windowIcon());
-
     this->readSettings();
-
     connect(m_ui->mainPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
     connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
-    connect(this, SIGNAL(toUpdate()), this, SLOT(selfUpdate()));
     connect(m_app->getDatabaseManager(),SIGNAL(orphanTagDetected(Tag)), this, SLOT(askForOrphanTagDeletion(Tag)));
-
+    connect(this, SIGNAL(toUpdate()),
+            this, SLOT(selfUpdate()));
     m_moviesList = m_app->getDatabaseManager()->getAllMovies();
     m_leftPannelSelectedId = 0;
     fillMainPannel();

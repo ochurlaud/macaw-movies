@@ -179,7 +179,7 @@ bool DatabaseManager::updatePeopleInMovie(People &people,
         debug("People not known");
         addPeopleToMovie(people, movie, type);
     }
-    // This means that the director exists, so we upgrade
+    // This means that the people exists, so we upgrade
     else
     {
         debug("People known");

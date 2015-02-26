@@ -23,12 +23,17 @@ FetchMetadataQuery::FetchMetadataQuery(QObject *parent) :
     QObject(parent)
 {
     m_app = qobject_cast<Application *>(qApp);
+    m_app->debug("[FetchMetadataQuery] Constructor");
+
     m_networkManager = new QNetworkAccessManager;
+    connect(this, SIGNAL(peopleResponse()),
+            this, SLOT(on_peopleResponse()));
 }
 
 FetchMetadataQuery::~FetchMetadataQuery()
 {
-
+    delete m_networkManager;
+    delete m_reply;
 }
 
 void FetchMetadataQuery::sendPrimaryRequest(QString title)
@@ -38,17 +43,45 @@ void FetchMetadataQuery::sendPrimaryRequest(QString title)
 
     QNetworkRequest l_request;
 
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/search/movie?api_key="+ m_app->tmdbkey() +"&query="+title));
-    m_networkManager->get(l_request);
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/search/movie?api_key="+ m_app->tmdbkey() +"&query="+ title));
+
+    m_reply = m_networkManager->get(l_request);
+    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
 
     m_app->debug("[FetchMetadataQuery] Primary request sent");
-
-    /*connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
-    connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(slotSslErrors(QList<QSslError>)));*/
-
 }
 
-void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply *reply)
+void FetchMetadataQuery::sendMovieRequest(int tmdbID)
+{
+    connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(on_movieRequestResponse(QNetworkReply*)));
+
+    QNetworkRequest l_request;
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/movie/"+QString::number(tmdbID)+"?api_key=" + m_app->tmdbkey() + "&append_to_response=credits&language=en"));
+
+    m_reply = m_networkManager->get(l_request);
+    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(slotError(QNetworkReply::NetworkError)));
+
+    m_app->debug("[FetchMetadataQuery] Movie Request sent");
+}
+
+void FetchMetadataQuery::sendPeopleRequest(int tmdbID)
+{
+    connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(on_peopleRequestResponse(QNetworkReply*)));
+
+    QNetworkRequest l_request;
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/person/"+QString::number(tmdbID)+"/credits?api_key="+ m_app->tmdbkey()));
+
+    m_reply = m_networkManager->get(l_request);
+    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(slotError(QNetworkReply::NetworkError)));
+
+    m_app->debug("[FetchMetadataQuery] People request sent");
+}
+
+void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply* reply)
 {
     m_app->debug("[FetchMetadataQuery] Primary Request response received");
     disconnect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
@@ -57,10 +90,10 @@ void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply *reply)
     QList<Movie> l_moviesPropositionList;
 
     QByteArray l_receivedData = reply->readAll();
+    reply->deleteLater();
     QJsonDocument l_stream = QJsonDocument::fromJson(l_receivedData);
 
-    if (!l_stream.isEmpty())
-    {
+    if (!l_stream.isEmpty()) {
         QJsonObject l_jsonObject = l_stream.object();
         int l_numberMovies = l_jsonObject.value("total_results").toInt();
 
@@ -79,125 +112,126 @@ void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply *reply)
         }
         m_app->debug("[FetchMetadataQuery] Signal to be emitted to FetchMetadata for primary request");
         emit(primaryResponse(l_moviesPropositionList));
-
     } else {
         // error !!
     }
 }
 
-void FetchMetadataQuery::sendFinalRequest(int tmdbID)
+void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
 {
-    connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(on_finalRequestResponse(QNetworkReply*)));
-
-    QNetworkRequest l_request;
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/movie/"+QString::number(tmdbID)+"?api_key=" + m_app->tmdbkey() + "&language=en"));
-
-    m_networkManager->get(l_request);
-
-    m_app->debug("[FetchMetadataQuery] Final Request response sent");
-}
-
-
-void FetchMetadataQuery::on_finalRequestResponse(QNetworkReply *reply)
-{
-    m_app->debug("[FetchMetadataQuery] Final Request response received");
+    m_app->debug("[FetchMetadataQuery] Movie Request response received");
     disconnect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
-               this, SLOT(on_primaryRequestResponse(QNetworkReply*)));
+               this, SLOT(on_movieRequestResponse(QNetworkReply*)));
 
-    Movie l_movie;
     QByteArray l_receivedData = reply->readAll();
+    reply->deleteLater();
     QJsonDocument l_stream = QJsonDocument::fromJson(l_receivedData);
 
-    if (!l_stream.isEmpty())
-    {
+    if (!l_stream.isEmpty()) {
         QJsonObject l_jsonObject = l_stream.object();
+        if (!l_jsonObject.isEmpty()) {
+            m_movie.setId(l_jsonObject.value("id").toInt());
+            m_movie.setTitle(l_jsonObject.value("title").toString());
+            m_movie.setOriginalTitle(l_jsonObject.value("original_title").toString());
+            m_movie.setCountry(l_jsonObject.value("production_countries").toArray().at(1).toObject().value("name").toString());
 
-        if (!l_jsonObject.isEmpty())
-        {
-            l_movie.setTitle(l_jsonObject.value("title").toString());
-            l_movie.setOriginalTitle(l_jsonObject.value("original_title").toString());
-            l_movie.setCountry(l_jsonObject.value("production_countries").toArray().at(1).toObject().value("name").toString());
             QLocale locale(QLocale::English, QLocale::UnitedStates);
             QDate l_releaseDate = locale.toDate(l_jsonObject.value("release_date").toString(),"yyyy-MM-dd");
+            m_movie.setReleaseDate(l_releaseDate);
 
-            l_movie.setReleaseDate(l_releaseDate);
+            m_movie.setSynopsis(l_jsonObject.value("overview").toString());
 
-            l_movie.setSynopsis(l_jsonObject.value("overview").toString());
+            People l_people;
+            int l_personId;
 
-            // Typical Answer:
-            /*
-             * {
-             *      "adult":false,
-             *      "backdrop_path":"/uK831vMfGfvZIAmam29IozN0XDe.jpg",
-             *      "belongs_to_collection": {
-             *              "id":239766,
-             *              "name":"The Klapisch Trilogy",
-             *              "poster_path":"/woD0gFHbZgwi9RpLL0uSQ56hnJA.jpg",
-             *              "backdrop_path":"/3ahNzWAv20FlJ0i2wrrgKPOjQCT.jpg"
-             *          },
-             *      "budget":0,
-             *      "genres":   [
-             *              {
-             *                  "id":35,
-             *                  "name":"Comedy"
-             *              },
-             *              {
-             *                  "id":18,
-             *                  "name":"Drama"},
-             *              {
-             *                  "id":10749,
-             *                  "name":"Romance"
-             *              }
-             *          ],
-             *      "homepage":"",
-             *      "id":1555,
-             *      "imdb_id":"tt0283900",
-             *      "original_language":"en",
-             *      "original_title":"L'Auberge Espagnole",
-             *      "overview":"A strait-laced French.... of love and friendship.",
-             *      "popularity":0.407367422824576,
-             *      "poster_path":"/j8WacqRgpvsWU9oFSi0nfJf1pWt.jpg",
-             *      "production_companies": [
-             *              {
-             *                  "name":"Mate Producciones S.A.",
-             *                  "id":732
-             *              }
-             *          ],
-             *      "production_countries":  [
-             *              {
-             *                  "iso_3166_1":"FR",
-             *                  "name":"France"
-             *              }
-             *          ],
-             *      "release_date":"2002-05-17",
-             *      "revenue":0,
-             *      "runtime":122,
-             *      "spoken_languages": [
-             *              {
-             *                  "iso_639_1":"fr",
-             *                  "name":"Français"
-             *              }
-             *          ],
-             *      "status":"Released",
-             *      "tagline":"",
-             *      "title":"The Spanish Apartment",
-             *      "video":false,
-             *      "vote_average":6.8,
-             *      "vote_count":49
-             *  }
-             */
+            QJsonArray l_jsonCastArray = l_jsonObject.value("credits").toObject().value("cast").toArray();
+            for (int i = 0 ; i < l_jsonCastArray.size() ; i++) {
+                l_personId = l_jsonCastArray.at(i).toObject().value("id").toInt();
+                l_people.setId(l_personId);
+                l_people.setType(People::Actor);
+                m_movie.addPeople(l_people);
+                m_peopleRequestList.append(l_personId);
+            }
 
-            // For people: /movie/{id}/credits
-            // for cover:  /movie/{id}/images
+            emit(peopleResponse());
 
-            // We send a signal to tell the movie is hydrated
-            emit(finalResponse(l_movie));
-            m_app->debug("[FetchMetadataQuery] Signal emit to FetchMetadata for final response");
+            QJsonArray l_jsonCrewArray = l_jsonObject.value("credits").toObject().value("crew").toArray();
+            for (int i = 0 ; i < l_jsonCrewArray.size() ; i++) {
+                QString l_job = l_jsonCrewArray.at(i).toObject().value("job").toString();
+                if (l_job == "Director") {
+                    l_personId = l_jsonCastArray.at(i).toObject().value("id").toInt();
+                    l_people.setId(l_personId);
+                    l_people.setType(People::Director);
+                    m_movie.addPeople(l_people);
+                    m_peopleRequestList.append(l_personId);
+                } else if (l_job ==  "Producer") {
+                    l_personId = l_jsonCastArray.at(i).toObject().value("id").toInt();
+                    l_people.setId(l_personId);
+                    l_people.setType(People::Producer);
+                    m_movie.addPeople(l_people);
+                    m_peopleRequestList.append(l_personId);
+                }
+            }
         } else {
             m_app->debug("[FetchMetadataQuery] Error");
         }
         // else: error!
     }
+}
 
+void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
+{
+    m_app->debug("[FetchMetadataQuery] People Request response received");
+
+    disconnect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
+                this, SLOT(on_peopleRequestResponse(QNetworkReply*)));
+
+    People l_people;
+
+    QByteArray l_receivedData = reply->readAll();
+    reply->deleteLater();
+    emit(peopleResponse());
+
+    QJsonDocument l_stream = QJsonDocument::fromJson(l_receivedData);
+    if (!l_stream.isEmpty()) {
+        QJsonObject l_jsonObject = l_stream.object();
+
+        if (!l_jsonObject.isEmpty()) {
+            int tmdbID = l_jsonObject.value("id").toInt();
+            l_people.setLastname(l_jsonObject.value("name").toString());
+            l_people.setBiography(l_jsonObject.value("biography").toString());
+
+            QLocale locale(QLocale::English, QLocale::UnitedStates);
+            QDate l_birthday = locale.toDate(l_jsonObject.value("birthday").toString(),"yyyy-MM-dd");
+            l_people.setBirthday(l_birthday);
+            for (int i = 0 ; i < m_movie.peopleList().count(); i++) {
+                if (m_movie.peopleList().at(i).id() == tmdbID)
+                {
+                    l_people.setType(m_movie.peopleList().at(i).type());
+                    m_movie.peopleList().replace(i, l_people);
+                    // Do not break in case 1 person has 2 roles
+                }
+            }
+        }
+    }
+    // If all request are done, the object is construct, send to FetchMetadata
+    if (m_peopleRequestList.count() == 0) {
+        // We send a signal to tell the movie is hydrated
+        m_app->debug("[FetchMetadataQuery] Signal emitted to FetchMetadata for movie response");
+        emit(movieResponse(m_movie));
+    }
+}
+
+void FetchMetadataQuery::slotError(QNetworkReply::NetworkError error)
+{
+    m_app->debug("[FetchMetadataQuery] Error " + QString::number(error));
+    emit(networkError(QString::number(error)));
+}
+
+void FetchMetadataQuery::on_peopleResponse()
+{
+    // If all people are fetched, send next request
+    if (m_peopleRequestList.count() > 0) {
+        sendPeopleRequest(m_peopleRequestList.takeFirst());
+    }
 }

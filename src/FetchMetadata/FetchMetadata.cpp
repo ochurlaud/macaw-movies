@@ -31,6 +31,8 @@ FetchMetadata::FetchMetadata(Movie movie, QObject *parent) :
 
     connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
             this, SLOT(processPrimaryResponse(QList<Movie>&)));
+    connect(m_fetchMetadataQuery, SIGNAL(networkError(QString)),
+            this, SLOT(networkError(QString)));
 
     QString l_cleanedTitle = cleanString(m_movie.title());
     m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
@@ -47,6 +49,8 @@ FetchMetadata::~FetchMetadata()
 {
     delete m_fetchMetadataQuery;
     delete m_fetchMetadataDialog;
+    m_app->debug("[FetchMetadata] Object destructed");
+
 }
 
 QString FetchMetadata::cleanString(QString title)
@@ -70,10 +74,10 @@ void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
     if (movieList.count() == 1) {
         Movie l_movie = movieList.at(0);
 
-        connect(m_fetchMetadataQuery, SIGNAL(finalResponse(Movie&)),
-                this, SLOT(processFinalResponse(Movie&)));
-        m_app->debug("[FetchMetadata] Final request to be sent");
-        m_fetchMetadataQuery->sendFinalRequest(l_movie.id());
+        connect(m_fetchMetadataQuery, SIGNAL(movieResponse(Movie&)),
+                this, SLOT(processMovieResponse(Movie&)));
+        m_app->debug("[FetchMetadata] Movie request to be sent");
+        m_fetchMetadataQuery->sendMovieRequest(l_movie.id());
     } else {
         m_fetchMetadataDialog = new FetchMetadataDialog(m_movie, movieList);
         connect(m_fetchMetadataDialog, SIGNAL(selectedMovie(Movie&)),
@@ -84,13 +88,14 @@ void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
     }
 }
 
-void FetchMetadata::processFinalResponse(Movie &receivedMovie)
+void FetchMetadata::processMovieResponse(Movie &receivedMovie)
 {
-    m_app->debug("[FetchMetadata] Signal from final request received");
+    m_app->debug("[FetchMetadata] Signal from movie request received");
 
-    disconnect(m_fetchMetadataQuery, SIGNAL(finalResponse(Movie&)),
-            this, SLOT(processFinalResponse(Movie&)));
+    disconnect(m_fetchMetadataQuery, SIGNAL(movieResponse(Movie&)),
+            this, SLOT(processMovieResponse(Movie&)));
 
+    // Do not set the id since receivedMovie's id is from TMDB
     m_movie.setTitle(receivedMovie.title());
     m_movie.setOriginalTitle(receivedMovie.originalTitle());
     m_movie.setReleaseDate(receivedMovie.releaseDate());
@@ -99,8 +104,14 @@ void FetchMetadata::processFinalResponse(Movie &receivedMovie)
     m_movie.setSynopsis(receivedMovie.synopsis());
     m_movie.setPeopleList(receivedMovie.peopleList());
     m_movie.setColored(receivedMovie.isColored());
+    m_movie.setPeopleList(receivedMovie.peopleList());
 
     m_app->getDatabaseManager()->updateMovie(m_movie);
+    emit(jobDone());
+}
+
+void FetchMetadata::on_searchCanceled()
+{
     emit(jobDone());
 }
 
@@ -123,4 +134,13 @@ void FetchMetadata::on_searchMovies(QString title)
 void FetchMetadata::processPrimaryResponseDialog(QList<Movie> &movieList)
 {
     m_fetchMetadataDialog->setMovieList(movieList);
+}
+
+void FetchMetadata::networkError(QString error)
+{
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Critical);
+    msgBox.setText("Network error: " + error);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.exec();
 }

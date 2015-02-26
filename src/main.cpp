@@ -26,7 +26,7 @@
 #include "Application.h"
 #include "MainWindow.h"
 #include "MoviesDebug.h"
-#include "FetchMetadata/FetchMetadata.h"
+//#include "FetchMetadata/FetchMetadata.h"
 
 int main(int argv, char **args)
 {
