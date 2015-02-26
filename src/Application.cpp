@@ -36,15 +36,6 @@ Application::Application(int &argc, char **argv, MoviesDebug *moviesDebug) :
 
     m_dbManager = new DatabaseManager(moviesDebug);
     debug("[Application] Database initialized");
-
-    if (!m_dbManager->getAllTags().isEmpty())
-    {
-        debug("[Application] Tags founded");
-    }
-    else
-    {
-        debug("[Application] No tags found");
-    }
 }
 
 /**
