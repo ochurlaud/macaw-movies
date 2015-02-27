@@ -38,7 +38,7 @@ DatabaseManager::DatabaseManager(MoviesDebug *moviesDebug)
 }
 
 /**
- * @brief Opens the database
+ * @brief Opens (or create the file of) the database
  *
  * @return bool db.open()
  */
@@ -282,7 +282,6 @@ int DatabaseManager::createTag(QString name)
  * @brief Adds a movies directory
  *
  * @param QString moviesPath: containing the path to the movies directory
- *
  * @return true if the paths list have been updated correctly
  */
 bool DatabaseManager::addMoviesPath(QString moviesPath)
@@ -307,7 +306,6 @@ bool DatabaseManager::addMoviesPath(QString moviesPath)
  *
  * @param QString moviesPath: containing the path to the movies directory
  * @param bool imported: true if the movies have been imported, false else
- *
  * @return true if the request succeed
  */
 bool DatabaseManager::setMoviesPathImported(QString moviesPath, bool imported)

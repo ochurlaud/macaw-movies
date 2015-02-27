@@ -20,15 +20,29 @@
 #include "FetchMetadata.h"
 #include <QLocale>
 
-FetchMetadata::FetchMetadata(Movie movie, QObject *parent) :
-    QObject(parent),
-    m_movie(movie)
+FetchMetadata::FetchMetadata(QObject *parent) :
+    QObject(parent)
 {
     m_app = qobject_cast<Application *>(qApp);
     m_app->debug("[FetchMetadata] Constructor");
 
+    m_processState = false;
     m_fetchMetadataQuery = new FetchMetadataQuery(this);
 
+    m_app->debug("[FetchMetadata] Construction done");
+}
+
+FetchMetadata::~FetchMetadata()
+{
+    delete m_fetchMetadataQuery;
+    m_app->debug("[FetchMetadata] Object destructed");
+
+}
+
+bool FetchMetadata::startProcess(Movie &movie)
+{
+    m_app->debug("[FetchMetadata] Start the process of metadata fetching");
+    m_movie = movie;
     connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
             this, SLOT(processPrimaryResponse(QList<Movie>&)));
     connect(m_fetchMetadataQuery, SIGNAL(networkError(QString)),
@@ -42,14 +56,9 @@ FetchMetadata::FetchMetadata(Movie movie, QObject *parent) :
             &l_loop, SLOT(quit()));
 
     l_loop.exec();
-    m_app->debug("[FetchMetadata] Construction done");
-}
+    m_app->debug("[FetchMetadata] Process done");
 
-FetchMetadata::~FetchMetadata()
-{
-    delete m_fetchMetadataQuery;
-    m_app->debug("[FetchMetadata] Object destructed");
-
+    return m_processState;
 }
 
 QString FetchMetadata::cleanString(QString title)
@@ -106,11 +115,13 @@ void FetchMetadata::processMovieResponse(Movie &receivedMovie)
     m_movie.setPeopleList(receivedMovie.peopleList());
 
     m_app->getDatabaseManager()->updateMovie(m_movie);
+    m_processState = true;
     emit(jobDone());
 }
 
 void FetchMetadata::on_searchCanceled()
 {
+    m_processState = false;
     emit(jobDone());
 }
 

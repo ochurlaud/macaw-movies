@@ -46,6 +46,17 @@ namespace Macaw
 
 class MovieDebug;
 
+/**
+ * @brief The Application class.
+ * It's the class which unify all the elements of the program.
+ *
+ * It's the first object which is created.
+ *
+ * All other objects (out of DatabaseManager) should refer to it by
+ * calling
+ *      `m_app = qobject_cast<Application *>(qApp);`
+ * in their constructor.
+ */
 class Application : public QApplication
 {
 Q_OBJECT
@@ -53,15 +64,24 @@ Q_OBJECT
 public:
     Application(int &argc, char **argv, MoviesDebug*);
     ~Application();
-    bool addFilesPath(QString path);
-    QString getFilesPath();
     DatabaseManager *getDatabaseManager() { return m_dbManager; }
     void debug(QString text) { m_debug->print(text); }
     QString tmdbkey() { return m_tmdbkey; }
 
 private:
-    QString m_filesPath;
+
+    /**
+     * @brief API key for The Movie Database (TMDb)
+     *
+     * should be called with `m_app->tmdbkey()`
+     */
     QString m_tmdbkey;
+
+    /**
+     * @brief Handle every access to the database
+     *
+     * should be called with `m_app->getDatabaseManager()`
+     */
     DatabaseManager *m_dbManager;
     MoviesDebug *m_debug;
 };

@@ -73,9 +73,27 @@ signals:
 private:
     Ui::MainWindow *m_ui;
     Application *m_app;
+
+    /**
+     * @brief QList of movies that can be listed in the main window
+     * (before verification if they match the search field)
+     * This simplifies fillMetadataPannel() (no need to query the database)
+     */
     QList<Movie> m_moviesList;
-    int m_typePeople;
+
+    /**
+     * @brief type of elements lastly shown in the leftPannel (Tags/People)
+     */
     int m_typeElement;
+
+    /**
+     * @brief type of People (if People) lastly shown in the leftPannel
+     */
+    int m_typePeople;
+
+    /**
+     * @brief id of the selected element in leftPannel
+     */
     int m_leftPannelSelectedId;
     void readSettings();
     void fillMainPannel();

@@ -35,7 +35,8 @@ class FetchMetadata : public QObject
 Q_OBJECT
 
 public:
-    explicit FetchMetadata(Movie movie, QObject *parent = 0);
+    explicit FetchMetadata(QObject *parent = 0);
+    bool startProcess(Movie &movie);
     ~FetchMetadata();
 
 signals:
@@ -55,6 +56,7 @@ private:
     FetchMetadataQuery *m_fetchMetadataQuery;
     FetchMetadataDialog *m_fetchMetadataDialog;
     Movie m_movie;
+    bool m_processState;
     QString cleanString(QString title);
 };
 

@@ -87,7 +87,12 @@ private slots:
     // Atributs
 private:
     Ui::MovieDialog *m_ui;
+
+    /**
+     * @brief Movie object which attributes are used to set the fields
+     */
     Movie m_movie;
+
     Application *m_app;
 };
 

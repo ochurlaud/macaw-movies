@@ -61,7 +61,7 @@ MainWindow::~MainWindow()
 
 /**
  * @brief Call and shows the settings window.
- * Calls the SettingsWindow class and waits until it closes to handle the results
+ * Calls the SettingsWindow class and waits until it closes to handle the results.
  */
 void MainWindow::on_actionEdit_Settings_triggered()
 {
@@ -72,6 +72,12 @@ void MainWindow::on_actionEdit_Settings_triggered()
     m_app->debug("[MainWindow] Exits showSettingsWindow()");
 }
 
+/**
+ * @brief Fill the left Pannel.
+ * Here is lot of black magic.... It has to be simplified.
+ * @param typeElement
+ * @param typePeople
+ */
 void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
 {
     m_ui->leftPannel->clear();
@@ -179,6 +185,13 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
     this->setLeftPannelLabel();
 }
 
+/**
+ * @brief Fill the Main Pannel with the movies of m_movies.
+ *
+ * 1. Clear the pannel
+ * 2. Set the number of columns, rows, set the headers
+ * 3. Fill each  cell of the pannel
+ */
 void MainWindow::fillMainPannel()
 {
     m_app->debug("[MainWindow] Enters fillMainPannel()");
@@ -218,31 +231,71 @@ void MainWindow::fillMainPannel()
     m_app->debug("[MainWindow] Exits fillMainPannel()");
 }
 
+/**
+ * @brief Slot triggered when an option from peopleBox is selected.
+ * Refill all the pannels.
+ *
+ * @param type of People
+ */
 void MainWindow::on_peopleBox_activated(int type)
 {
     m_app->debug("[MainWindow] Enters on_peopleBox_activated()");
 
     m_ui->tagsButton->setChecked(false);
+
+    // People::typePeople begins by None
+    // so we need to increment by 1
     int l_peopleType = type + 1;
     fillLeftPannel(Macaw::isPeople, l_peopleType);
     fillMainPannel();
+
+    // We change of Macaw::typeElement,
+    // so we reinitialise the selection in the leftPannel
     m_leftPannelSelectedId = 0;
 }
 
+/**
+ * @brief Slot triggered when the toWatchButton is clicked.
+ * Only the movies from the playlist 1 ("To Watch") are displayed.
+ */
 void MainWindow::on_toWatchButton_clicked()
 {
+    m_app->debug("[MainWindow] toWatchButton clicked");
+
     filterPannels();
 }
 
+/**
+ * @brief Slot triggered when the tagsButton is clicked.
+ * Has an effect only if the button was not already cheked.
+ */
 void MainWindow::on_tagsButton_clicked()
 {
     m_app->debug("[MainWindow] tagsButton clicked");
-    m_ui->tagsButton->setChecked(true);
 
-    fillLeftPannel(Macaw::isTag);
-    m_leftPannelSelectedId = 0;
+    if(!m_ui->tagsButton->isChecked()) {
+
+        m_ui->tagsButton->setChecked(true);
+        fillLeftPannel(Macaw::isTag);
+
+        // We change of Macaw::typeElement,
+        // so we reinitialise the selection in the leftPannel
+        m_leftPannelSelectedId = 0;
+    }
 }
 
+/**
+ * @brief Slot triggered when the context menu is requested.
+ *
+ * 1. Create the menu.
+ * 2. Check which pannel has focus.
+ *      -# if leftPannel, check that an editable element is selected
+ *          then add actions on the menu and display it.
+ *      -# if mainPannel, check that an editable element is selected
+ *          then add actions on the menu and display it.
+ *
+ * @param point: coordinates of the cursor when requested
+ */
 void MainWindow::on_customContextMenuRequested(const QPoint &point)
 {
     m_app->debug("[MainWindow] customContextMenuRequested()");
@@ -272,6 +325,10 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
     }
 }
 
+/**
+ * @brief Slot triggered when the edition of the metadata of an element from the mainPannel is asked.
+ * It creates and shows a MovieDialog based on the id of this element.
+ */
 void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
 {
     m_app->debug("[MainWindow] actionEdit_Metadata_triggered()");
@@ -282,6 +339,13 @@ void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
     l_movieDialog->show();
 }
 
+/**
+ * @brief Slot triggered when the edition of the metadata of an element from the leftPannel is asked.
+ *
+ * 1. Check if editable
+ * 2. Check the type of element selected
+ * 3. Create and show a PeopleDialog (or a TagDialog or a ...) based on the id of this element
+ */
 void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
 {
     int l_id = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
@@ -302,6 +366,14 @@ void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
     }
 }
 
+/**
+ * @brief Slot triggered when the addition of a movie to a playlist is requeted.
+ *
+ * 1. Get the action id (= id of the playlist)
+ * 2. Get the id of the movie concerned
+ * 3. Add the movie in the playlist
+ * 4. Request the update of the pannels
+ */
 void MainWindow::addPlaylistMenu_triggered(QAction* action)
 {
     int l_actionId = action->data().toInt();
@@ -313,6 +385,12 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
     emit(toUpdate());
 }
 
+/**
+ * @brief Slot triggered when DatabaseManager finds an orphan tag.
+ * A QMessageBox asks the user if the tag should be delete or not.
+ *
+ * @param orphanTag concerned by the choice
+ */
 void MainWindow::askForOrphanTagDeletion(Tag orphanTag)
 {
     QMessageBox msgBox;
@@ -327,9 +405,15 @@ void MainWindow::askForOrphanTagDeletion(Tag orphanTag)
     }
 }
 
+/**
+ * @brief Slot triggered when an element of the MainWindow is double clicked.
+ * Start the movie in the default player
+ *
+ * @param item which was double clicked
+ */
 void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
 {
-    m_app->debug("[MainWindow] itemDoubleClicked on mainPannel()");
+    m_app->debug("[MainWindow] itemDoubleClicked on mainPannel");
 
     int l_movieId = item->data(Macaw::ObjectId).toInt();
     Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
@@ -339,13 +423,25 @@ void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
     QDesktopServices::openUrl(QUrl("file://" + l_movie.filePath(), QUrl::TolerantMode));
 }
 
+/**
+ * @brief Slot triggered when an element of the leftPannel is clicked
+ * Call `prepareMovieToDisplay()` with the id of the clicked element
+ *
+ * @param item which was clicked
+ */
 void MainWindow::on_leftPannel_clicked(const QModelIndex &item)
 {
-    m_app->debug("[MainWindow] itemClicked on leftPannel()");
+    m_app->debug("[MainWindow] itemClicked on leftPannel");
     m_leftPannelSelectedId = item.data(Macaw::ObjectId).toInt();
     this->prepareMoviesToDisplay(m_leftPannelSelectedId);
 }
 
+/**
+ * @brief Slot triggered when a movie of the mainPannel is clicked
+ * Call `fillMetadataPannel` to fill the pannel with the selected Movie data
+ *
+ * @param item which was clicked
+ */
 void MainWindow::on_mainPannel_clicked(const QModelIndex &index)
 {
     m_app->debug("[MainWindow] mainPannel clicked");
@@ -355,6 +451,12 @@ void MainWindow::on_mainPannel_clicked(const QModelIndex &index)
 
 }
 
+/**
+ * @brief Prepare the movies to display in min window, based on an id and m_typeElement.
+ * Then filter the pannels
+ *
+ * @param id of the leftPannel element
+ */
 void MainWindow::prepareMoviesToDisplay(int id)
 {
     m_app->debug("[MainWindow] prepareMoviesToDisplay()");
@@ -381,6 +483,9 @@ void MainWindow::prepareMoviesToDisplay(int id)
     filterPannels();
 }
 
+/**
+ * @brief Slot triggered when the window should update its pannels
+ */
 void MainWindow::selfUpdate()
 {
     m_app->debug("[MainWindow] selfUpdate()");
@@ -397,6 +502,9 @@ void MainWindow::selfUpdate()
     }
 }
 
+/**
+ * @brief Set the leftPannelLabel based on m_typeElement and m_typePeople
+ */
 void MainWindow::setLeftPannelLabel()
 {
     switch (m_typeElement)
@@ -423,6 +531,10 @@ void MainWindow::setLeftPannelLabel()
     }
 }
 
+/**
+ * @brief Slot triggered when enter pressed in the search field
+ * Call `filterPannels()`
+ */
 void MainWindow::on_searchEdit_returnPressed()
 {
     m_app->debug("[MainWindow] editing finished on searchEdit");
@@ -430,6 +542,10 @@ void MainWindow::on_searchEdit_returnPressed()
     filterPannels();
 }
 
+/**
+ * @brief Filter the pannels to follow the requirements of the search field, playlists...
+ * Black magic. To be simplified
+ */
 void MainWindow::filterPannels()
 {
     m_app->debug("[MainWindow] Enters filterPannels()");
@@ -507,6 +623,18 @@ void MainWindow::filterPannels()
     }
 }
 
+/**
+ * @brief Slot triggered to add the movies of the saved path.
+ *
+ * 1. Read all the paths
+ * 2. For each file:
+ *      -# Check that the suffix is correct
+ *      -# Check that the file has not been already imported
+ *      -# Import the movie in the database
+ *      -# Request FetchMetadata to get the metadata on internet
+ *      -# Update the movie
+ * 3. Request the update of all pannels
+ */
 void MainWindow::addNewMovies()
 {
     m_app->debug("[MainWindow] Enter addNewMovies");
@@ -537,11 +665,11 @@ void MainWindow::addNewMovies()
                     l_movie.setSuffix(l_fileSuffix);
                     m_app->getDatabaseManager()->insertNewMovie(l_movie);
 
-                    FetchMetadata l_fetchMetadata(l_movie);
-
                     // Currently a wainting loop is created in FetchMetadata,
                     // multithreading would be better
-                  //  l_fetchMetadata(l_movie.title());
+                    // Should be done in async
+                    FetchMetadata l_fetchMetadata;
+                    bool l_result = l_fetchMetadata.startProcess(l_movie);
                 } else {
                     m_app->debug("[MainWindow.updateApp()] Movie already known. Skipped");
                 }
@@ -554,6 +682,11 @@ void MainWindow::addNewMovies()
     m_app->debug("[MainWindow] Exit addNewMovies");
 }
 
+/**
+ * @brief Fill the Metadata pannel with the data of a given movie
+ *
+ * @param movie which metadata should be shown
+ */
 void MainWindow::fillMetadataPannel(Movie movie)
 {
     m_app->debug("[MainWindow] Enter fillMetadataPannel");
@@ -607,6 +740,12 @@ void MainWindow::fillMetadataPannel(Movie movie)
     m_app->debug("[MainWindow] Exit fillMetadataPannel");
 }
 
+/**
+ * @brief Slot triggered when the application is closed.
+ * Overload the QMainWindow class: save the window state to QSettings
+ *
+ * @param event
+ */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     QSettings l_settings("Macaw-Movies", "Macaw-Movies");
@@ -617,6 +756,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
     QMainWindow::closeEvent(event);
 }
 
+/**
+ * @brief Read the QSettings of the application to give restore the last state of the window
+ */
 void MainWindow::readSettings()
 {
     QSettings l_settings("Macaw-Movies", "Macaw-Movies");
@@ -626,6 +768,10 @@ void MainWindow::readSettings()
     m_ui->mainSplitter->restoreState(l_settings.value("mainSplitter/state").toByteArray());
 }
 
+/**
+ * @brief Slot triggered when the user clicks on the About menu.
+ * Show the about menu.
+ */
 void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox::about(this, "About " APP_NAME,
