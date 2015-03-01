@@ -26,13 +26,11 @@ MoviesDebug::MoviesDebug()
 
 void MoviesDebug::print(QString text)
 {
-#ifdef QT_DEBUG
     if (isDebug())
     {
         qDebug() << qPrintable(text);
     }
     // else do nothing
-#endif
 }
 
 namespace Macaw
