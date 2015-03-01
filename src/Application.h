@@ -24,7 +24,6 @@
 #include "include_var.h"
 #include "MainWindow.h"
 #include "DatabaseManager.h"
-#include "MoviesDebug.h"
 #include "Entities/Movie.h"
 
 namespace Macaw
@@ -44,7 +43,7 @@ namespace Macaw
 
 }
 
-class MovieDebug;
+class MovieDEBUG;
 
 /**
  * @brief The Application class.
@@ -62,10 +61,9 @@ class Application : public QApplication
 Q_OBJECT
 
 public:
-    Application(int &argc, char **argv, MoviesDebug*);
+    Application(int &argc, char **argv);
     ~Application();
     DatabaseManager *getDatabaseManager() { return m_dbManager; }
-    void debug(QString text) { m_debug->print(text); }
     QString tmdbkey() { return m_tmdbkey; }
 
 private:
@@ -83,7 +81,6 @@ private:
      * should be called with `m_app->getDatabaseManager()`
      */
     DatabaseManager *m_dbManager;
-    MoviesDebug *m_debug;
 };
 
 #endif // APPLICATION_H

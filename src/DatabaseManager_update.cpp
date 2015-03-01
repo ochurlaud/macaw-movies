@@ -27,7 +27,7 @@
  */
 bool DatabaseManager::updateMovie(Movie &movie)
 {
-    debug("[DatabaseManager] Enters updateMovie()");
+    Macaw::DEBUG("[DatabaseManager] Enters updateMovie()");
     QSqlQuery l_query(m_db);
     l_query.prepare("UPDATE movies "
                     "SET title = :title, "
@@ -52,8 +52,8 @@ bool DatabaseManager::updateMovie(Movie &movie)
 
     if (!l_query.exec())
     {
-        debug("In updateMovie():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In updateMovie():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -76,8 +76,8 @@ bool DatabaseManager::updateMovie(Movie &movie)
     l_query.bindValue(":id_movie", movie.id());
     if (!l_query.exec())
     {
-        debug("In updateMovie():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In updateMovie():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -105,8 +105,8 @@ bool DatabaseManager::updateMovie(Movie &movie)
         l_query.bindValue(":type", type);
         if (!l_query.exec())
         {
-            debug("In updateMovie():");
-            debug(l_query.lastError().text());
+            Macaw::DEBUG("In updateMovie():");
+            Macaw::DEBUG(l_query.lastError().text());
 
             return false;
         }
@@ -120,7 +120,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
         }
     }
 
-    debug("[DatabaseManager] Movie updated");
+    Macaw::DEBUG("[DatabaseManager] Movie updated");
 
     return true;
 }
@@ -133,7 +133,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
  */
 bool DatabaseManager::updatePeople(People &people)
 {
-    debug("[DatabaseManager] Enters updatePeople()");
+    Macaw::DEBUG("[DatabaseManager] Enters updatePeople()");
 
     QSqlQuery l_query(m_db);
     l_query.prepare("UPDATE people "
@@ -152,8 +152,8 @@ bool DatabaseManager::updatePeople(People &people)
 
     if (!l_query.exec())
     {
-        debug("In updatePeople():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In updatePeople():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -176,13 +176,13 @@ bool DatabaseManager::updatePeopleInMovie(People &people,
     // If the id is 0, then the director doesn't exist
     if (people.id() == 0)
     {
-        debug("People not known");
+        Macaw::DEBUG("People not known");
         addPeopleToMovie(people, movie, type);
     }
     // This means that the people exists, so we upgrade
     else
     {
-        debug("People known");
+        Macaw::DEBUG("People known");
         updatePeople(people);
 
         // Checks if the people and the movie are connected, if not connects them
@@ -196,15 +196,15 @@ bool DatabaseManager::updatePeopleInMovie(People &people,
 
         if (!l_query.exec())
         {
-            debug("In updatePeopleInMovie():");
-            debug(l_query.lastError().text());
+            Macaw::DEBUG("In updatePeopleInMovie():");
+            Macaw::DEBUG(l_query.lastError().text());
 
             return false;
         }
 
         if (!l_query.next())
         {
-            debug("People not connected to the movie");
+            Macaw::DEBUG("People not connected to the movie");
             l_query.prepare("INSERT INTO movies_people(id_movie, id_people, type) "
                             "VALUES(:id_movie, :id_people, :type)");
             l_query.bindValue(":id_movie", movie.id());
@@ -212,8 +212,8 @@ bool DatabaseManager::updatePeopleInMovie(People &people,
             l_query.bindValue(":type", type);
             if (!l_query.exec())
             {
-                debug("In updatePeopleInMovie():");
-                debug(l_query.lastError().text());
+                Macaw::DEBUG("In updatePeopleInMovie():");
+                Macaw::DEBUG(l_query.lastError().text());
 
                 return false;
             }
@@ -240,8 +240,8 @@ bool DatabaseManager::updateTag(Tag &tag)
 
     if (!l_query.exec())
     {
-        debug("In updateTag():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In updateTag():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -261,13 +261,13 @@ bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
     // If the id is 0, then the tag doesn't exist
     if (tag.id() == 0)
     {
-        debug("Tag not known");
+        Macaw::DEBUG("Tag not known");
         addTagToMovie(tag, movie);
     }
     // This means that the tag exists, so we upgrade
     else
     {
-        debug("Tag known");
+        Macaw::DEBUG("Tag known");
         updateTag(tag);
 
         // Checks if the people and the movie are connected, if not connects them
@@ -279,23 +279,23 @@ bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
         l_query.bindValue(":id_tag", tag.id());
         if (!l_query.exec())
         {
-            debug("In updateTagInMovie():");
-            debug(l_query.lastError().text());
+            Macaw::DEBUG("In updateTagInMovie():");
+            Macaw::DEBUG(l_query.lastError().text());
 
             return false;
         }
 
         if (!l_query.next())
         {
-            debug("Tag not connected to the movie");
+            Macaw::DEBUG("Tag not connected to the movie");
             l_query.prepare("INSERT INTO movies_tags(id_movie, id_tag) "
                             "VALUES(:id_movie, :id_tag)");
             l_query.bindValue(":id_movie", movie.id());
             l_query.bindValue(":id_tag", tag.id());
             if (!l_query.exec())
             {
-                debug("In updateTagInMovie():");
-                debug(l_query.lastError().text());
+                Macaw::DEBUG("In updateTagInMovie():");
+                Macaw::DEBUG(l_query.lastError().text());
 
                 return false;
             }
@@ -313,7 +313,7 @@ bool DatabaseManager::updateTagInMovie(Tag &tag, Movie &movie)
  */
 bool DatabaseManager::updatePlaylist(Playlist &playlist)
 {
-    debug("[DatabaseManager] Enters updatePlaylist()");
+    Macaw::DEBUG("[DatabaseManager] Enters updatePlaylist()");
     QSqlQuery l_query(m_db);
     l_query.prepare("UPDATE playlists "
                     "SET name = :name, "
@@ -325,8 +325,8 @@ bool DatabaseManager::updatePlaylist(Playlist &playlist)
 
     if (!l_query.exec())
     {
-        debug("In updatePlaylist():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In updatePlaylist():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -344,8 +344,8 @@ bool DatabaseManager::updatePlaylist(Playlist &playlist)
     l_query.bindValue(":id_playlist", playlist.id());
     if (!l_query.exec())
     {
-        debug("In updatePlaylist():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In updatePlaylist():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -358,7 +358,7 @@ bool DatabaseManager::updatePlaylist(Playlist &playlist)
         }
     }
 
-    debug("[DatabaseManager] Playlist updated");
+    Macaw::DEBUG("[DatabaseManager] Playlist updated");
 
     return true;
 }
@@ -383,23 +383,23 @@ bool DatabaseManager::updateMovieInPlaylist(Movie &movie, Playlist &playlist)
     l_query.bindValue(":id_playlist", playlist.id());
     if (!l_query.exec())
     {
-        debug("In updateMovieInPlaylist():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In updateMovieInPlaylist():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
 
     if (!l_query.next())
     {
-        debug("Movie not connected to the playlist");
+        Macaw::DEBUG("Movie not connected to the playlist");
         l_query.prepare("INSERT INTO movies_playlists(id_movie, id_playlist) "
                         "VALUES(:id_movie, :id_playlist)");
         l_query.bindValue(":id_movie", movie.id());
         l_query.bindValue(":id_playlist", playlist.id());
         if (!l_query.exec())
         {
-            debug("In updateMovieInPlaylist():");
-            debug(l_query.lastError().text());
+            Macaw::DEBUG("In updateMovieInPlaylist():");
+            Macaw::DEBUG(l_query.lastError().text());
 
             return false;
         }

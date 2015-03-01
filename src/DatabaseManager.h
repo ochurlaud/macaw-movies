@@ -25,9 +25,9 @@
 #include <QtSql>
 
 #include "include_var.h"
+#include "MoviesDebug.h"
 #include "Entities/Movie.h"
 #include "Entities/Playlist.h"
-#include "MoviesDebug.h"
 
 /**
  * @brief Manages all the access to the database
@@ -39,13 +39,12 @@ class DatabaseManager : public QObject
 #define DATE_FORMAT "yyyy.MM.dd"
 
 public:
-    DatabaseManager(MoviesDebug *moviesDebug);
+    DatabaseManager();
     // Database management
     bool openDB();
     bool createTables();
     bool closeDB();
     bool deleteDB();
-    void setDebug(MoviesDebug*);
     QSqlError lastError();
 
     // Getters for paths, config
@@ -147,9 +146,7 @@ private:
     bool deletePeople(const People &people);
 
 private:
-    void debug(QString text) { m_debug->print(text);}
     QSqlDatabase m_db;
-    MoviesDebug *m_debug;
     QString m_movieFields;
     QString m_peopleFields;
     QString m_tagFields;

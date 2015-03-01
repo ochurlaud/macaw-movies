@@ -23,19 +23,18 @@
  * @brief Constructor
  *
  */
-Application::Application(int &argc, char **argv, MoviesDebug *moviesDebug) :
+Application::Application(int &argc, char **argv) :
     QApplication(argc, argv)
 {
     this->setApplicationName(APP_NAME);
     this->setApplicationVersion(APP_VERSION);
     this->setWindowIcon(QIcon(":/img/logov0_1.png"));
     m_tmdbkey = "6e4cbac7861ad5b847ef8f60489dc04e";
-    m_debug = moviesDebug;
 
-    debug("[Application] started");
+    Macaw::DEBUG("[Application] started");
 
-    m_dbManager = new DatabaseManager(moviesDebug);
-    debug("[Application] Database initialized");
+    m_dbManager = new DatabaseManager();
+    Macaw::DEBUG("[Application] Database initialized");
 }
 
 /**
@@ -43,5 +42,5 @@ Application::Application(int &argc, char **argv, MoviesDebug *moviesDebug) :
  */
 Application::~Application()
 {
-    debug("[Application] Destructed");
+    Macaw::DEBUG("[Application] Destructed");
 }

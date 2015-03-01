@@ -23,7 +23,7 @@ FetchMetadataQuery::FetchMetadataQuery(QObject *parent) :
     QObject(parent)
 {
     m_app = qobject_cast<Application *>(qApp);
-    m_app->debug("[FetchMetadataQuery] Constructor");
+    Macaw::DEBUG("[FetchMetadataQuery] Constructor");
 
     m_networkManager = new QNetworkAccessManager;
     connect(this, SIGNAL(peopleResponse()),
@@ -46,7 +46,7 @@ void FetchMetadataQuery::sendPrimaryRequest(QString title)
 
     m_networkManager->get(l_request);
 
-    m_app->debug("[FetchMetadataQuery] Primary request sent");
+    Macaw::DEBUG("[FetchMetadataQuery] Primary request sent");
 }
 
 void FetchMetadataQuery::sendMovieRequest(int tmdbID)
@@ -59,7 +59,7 @@ void FetchMetadataQuery::sendMovieRequest(int tmdbID)
 
     m_networkManager->get(l_request);
 
-    m_app->debug("[FetchMetadataQuery] Movie Request sent");
+    Macaw::DEBUG("[FetchMetadataQuery] Movie Request sent");
 }
 
 void FetchMetadataQuery::sendPeopleRequest(int tmdbID)
@@ -72,12 +72,12 @@ void FetchMetadataQuery::sendPeopleRequest(int tmdbID)
 
     m_networkManager->get(l_request);
 
-    m_app->debug("[FetchMetadataQuery] People request sent");
+    Macaw::DEBUG("[FetchMetadataQuery] People request sent");
 }
 
 void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply* reply)
 {
-    m_app->debug("[FetchMetadataQuery] Primary Request response received");
+    Macaw::DEBUG("[FetchMetadataQuery] Primary Request response received");
     disconnect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
                this, SLOT(on_primaryRequestResponse(QNetworkReply*)));
 
@@ -93,7 +93,7 @@ void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply* reply)
 
         QJsonArray l_jsonResults = l_jsonObject.value("results").toArray();
 
-        m_app->debug("[FetchMetadataQuery] "+QString::number(l_numberMovies) + " Movie(s) found");
+        Macaw::DEBUG("[FetchMetadataQuery] "+QString::number(l_numberMovies) + " Movie(s) found");
 
         for (int i = 0 ; i < l_jsonResults.size() ; i++)
         {
@@ -104,7 +104,7 @@ void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply* reply)
             l_movieProposition.setReleaseDate(QDate::fromString(l_currentObject.value("release_date").toString(),"yyyy-MM-dd"));
             l_moviesPropositionList.append(l_movieProposition);
         }
-        m_app->debug("[FetchMetadataQuery] Signal to be emitted to FetchMetadata for primary request");
+        Macaw::DEBUG("[FetchMetadataQuery] Signal to be emitted to FetchMetadata for primary request");
         emit(primaryResponse(l_moviesPropositionList));
     } else {
         // error !!
@@ -113,7 +113,7 @@ void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply* reply)
 
 void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
 {
-    m_app->debug("[FetchMetadataQuery] Movie Request response received");
+    Macaw::DEBUG("[FetchMetadataQuery] Movie Request response received");
     disconnect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
                this, SLOT(on_movieRequestResponse(QNetworkReply*)));
 
@@ -165,7 +165,7 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
                 }
             }
         } else {
-            m_app->debug("[FetchMetadataQuery] Error");
+            Macaw::DEBUG("[FetchMetadataQuery] Error");
         }
         // else: error!
     }
@@ -174,7 +174,7 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
 
 void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
 {
-    m_app->debug("[FetchMetadataQuery] People Request response received");
+    Macaw::DEBUG("[FetchMetadataQuery] People Request response received");
 
     disconnect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
                 this, SLOT(on_peopleRequestResponse(QNetworkReply*)));
@@ -217,7 +217,7 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
 
 void FetchMetadataQuery::slotError(QNetworkReply::NetworkError error)
 {
-    m_app->debug("[FetchMetadataQuery] Error " + QString::number(error));
+    Macaw::DEBUG("[FetchMetadataQuery] Error " + QString::number(error));
     emit(networkError(QString::number(error)));
 }
 

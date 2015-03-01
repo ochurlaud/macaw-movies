@@ -35,7 +35,7 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     m_ui(new Ui::MovieDialog)
 {
     m_app = qobject_cast<Application *>(qApp);
-    m_app->debug("[MovieDialog] Constructor called");
+    Macaw::DEBUG("[MovieDialog] Constructor called");
     m_movie = m_app->getDatabaseManager()->getOneMovieById(id);
 
     m_ui->setupUi(this);
@@ -70,7 +70,7 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     m_ui->actorsWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(m_ui->actorsWidget, SIGNAL(customContextMenuRequested(QPoint)),
                      this, SLOT(customMenuRequested(QPoint)));
-    m_app->debug("[MovieDialog] Construction done");
+    Macaw::DEBUG("[MovieDialog] Construction done");
 }
 
 /**
@@ -241,7 +241,7 @@ void MovieDialog::setMovieSelectedTagList(const QList<Tag> &tagList)
 
 void MovieDialog::addPeople(const People &people)
 {
-    m_app->debug("[MovieDialog] Enters addPeople()");
+    Macaw::DEBUG("[MovieDialog] Enters addPeople()");
     QListWidget *l_peopleWidget;
 
     switch (people.type())
@@ -262,7 +262,7 @@ void MovieDialog::addPeople(const People &people)
     l_peopleWidget->addItem(l_item);
 
     m_movie.addPeople(people);
-    m_app->debug("[MovieDialog] Exists addPeople()");
+    Macaw::DEBUG("[MovieDialog] Exists addPeople()");
 }
 
 void MovieDialog::delPeople(const People &people)
@@ -272,14 +272,14 @@ void MovieDialog::delPeople(const People &people)
 
 void MovieDialog::updatePeople(const People &people)
 {
-    m_app->debug("[MovieDialog] updatePeople()");
+    Macaw::DEBUG("[MovieDialog] updatePeople()");
     m_movie.updatePeople(people);
     setPeopleList(m_movie.peopleList());
 }
 
 void MovieDialog::on_validationButtons_accepted()
 {
-    m_app->debug("[MovieDialog] validationButtons accepted");
+    Macaw::DEBUG("[MovieDialog] validationButtons accepted");
     m_movie.setTitle(getTitle());
     m_movie.setOriginalTitle(getOriginalTitle());
     m_movie.setReleaseDate(getReleaseDate());
@@ -299,30 +299,30 @@ void MovieDialog::on_validationButtons_accepted()
     m_movie.setTagList(l_tagList);
 
     m_app->getDatabaseManager()->updateMovie(m_movie);
-    m_app->debug("[MovieDialog] validationButtons method done");
+    Macaw::DEBUG("[MovieDialog] validationButtons method done");
 }
 
 void MovieDialog::on_addDirectorButton_clicked()
 {
-    m_app->debug("[MovieDialog] addDirectorButton clicked()");
+    Macaw::DEBUG("[MovieDialog] addDirectorButton clicked()");
     addPeopleButton_clicked(People::Director);
 }
 
 void MovieDialog::on_addProducerButton_clicked()
 {
-    m_app->debug("[MovieDialog] addProducerButton clicked()");
+    Macaw::DEBUG("[MovieDialog] addProducerButton clicked()");
     addPeopleButton_clicked(People::Producer);
 }
 
 void MovieDialog::on_addActorButton_clicked()
 {
-    m_app->debug("[MovieDialog] addActorButton clicked()");
+    Macaw::DEBUG("[MovieDialog] addActorButton clicked()");
     addPeopleButton_clicked(People::Actor);
 }
 
 void MovieDialog::addPeopleButton_clicked(int type)
 {
-    m_app->debug("[MovieDialog] Enters addPeopleButton_clicked(), type = "+QString::number(type));
+    Macaw::DEBUG("[MovieDialog] Enters addPeopleButton_clicked(), type = "+QString::number(type));
 
     QLineEdit *l_peopleEdit = NULL;
     QListWidget *l_peopleWidget = NULL;
@@ -353,9 +353,9 @@ void MovieDialog::addPeopleButton_clicked(int type)
                 People l_people = l_peopleList.at(0);
                 l_people.setType(type);
                 addPeople(l_people);
-                m_app->debug("[MovieDialog] " + l_text + " added");
+                Macaw::DEBUG("[MovieDialog] " + l_text + " added");
             } else {
-                m_app->debug("[MovieDialog] " + l_text + " already in the list");
+                Macaw::DEBUG("[MovieDialog] " + l_text + " already in the list");
             }
         } else {
             // We suppose here that a name is composed by N >= 0 firstnames
@@ -380,25 +380,25 @@ void MovieDialog::addPeopleButton_clicked(int type)
 
 void MovieDialog::on_delDirectorButton_clicked()
 {
-    m_app->debug("[MovieDialog] delDirectorButton clicked()");
+    Macaw::DEBUG("[MovieDialog] delDirectorButton clicked()");
     delPeopleButton_clicked(People::Director);}
 
 void MovieDialog::on_delProducerButton_clicked()
 {
-    m_app->debug("[MovieDialog] delProducerButton clicked()");
+    Macaw::DEBUG("[MovieDialog] delProducerButton clicked()");
     delPeopleButton_clicked(People::Producer);
 
 }
 
 void MovieDialog::on_delActorButton_clicked()
 {
-    m_app->debug("[MovieDialog] delActorButton clicked()");
+    Macaw::DEBUG("[MovieDialog] delActorButton clicked()");
     delPeopleButton_clicked(People::Actor);
 }
 
 void MovieDialog::delPeopleButton_clicked(int type)
 {
-    m_app->debug("[MovieDialog] Enters delPeopleButton_clicked()");
+    Macaw::DEBUG("[MovieDialog] Enters delPeopleButton_clicked()");
 
     QListWidget *l_peopleWidget = NULL;
     switch (type)
@@ -425,30 +425,30 @@ void MovieDialog::delPeopleButton_clicked(int type)
             delete(l_itemToDelete);
         }
     }
-    m_app->debug("[MovieDialog] Exits delPeopleButton_clicked()");
+    Macaw::DEBUG("[MovieDialog] Exits delPeopleButton_clicked()");
 }
 
 void MovieDialog::on_directorEdit_textEdited()
 {
-    m_app->debug("[MovieDialog] directorEdit textEdited()");
+    Macaw::DEBUG("[MovieDialog] directorEdit textEdited()");
     on_peopleEdit_textEdited(People::Director);
 }
 
 void MovieDialog::on_producerEdit_textEdited()
 {
-    m_app->debug("[MovieDialog] producerEdit textEdited()");
+    Macaw::DEBUG("[MovieDialog] producerEdit textEdited()");
     on_peopleEdit_textEdited(People::Producer);
 }
 
 void MovieDialog::on_actorEdit_textEdited()
 {
-    m_app->debug("[MovieDialog] actorEdit textEdited()");
+    Macaw::DEBUG("[MovieDialog] actorEdit textEdited()");
     on_peopleEdit_textEdited(People::Actor);
 }
 
 void MovieDialog::on_peopleEdit_textEdited(int type)
 {
-    m_app->debug("[MovieDialog] Enters on_peopleEdit_textEdited()");
+    Macaw::DEBUG("[MovieDialog] Enters on_peopleEdit_textEdited()");
 
     QLineEdit *l_peopleEdit = NULL;
     switch (type)
@@ -482,7 +482,7 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
             l_peopleEdit->setCompleter(l_completer);
         }
     }
-    m_app->debug("[MovieDialog] Exits on_peopleEdit_textEdited()");
+    Macaw::DEBUG("[MovieDialog] Exits on_peopleEdit_textEdited()");
 }
 
 /**
@@ -507,7 +507,7 @@ void MovieDialog::on_addNewTagButton_clicked()
 
 void MovieDialog::peopleDialog_peopleCreated(People people)
 {
-    m_app->debug("[MovieDialog] peopleDialog_peopleCreated()");
+    Macaw::DEBUG("[MovieDialog] peopleDialog_peopleCreated()");
     if (people.id() != 0)
     {
         updatePeople(people);
@@ -525,7 +525,7 @@ void MovieDialog::peopleDialog_peopleCreated(People people)
  */
 void MovieDialog::customMenuRequested(QPoint pos)
 {
-    m_app->debug("[MovieDialog] Enters customMenuRequested()");
+    Macaw::DEBUG("[MovieDialog] Enters customMenuRequested()");
     QListWidget *l_widget = getFocusedListWidget();
 
     // If nothing selected, don't do anything
@@ -537,7 +537,7 @@ void MovieDialog::customMenuRequested(QPoint pos)
         l_menu->addAction(l_setMetadataAction);
         l_menu->popup(l_widget->viewport()->mapToGlobal(pos));
     }
-    m_app->debug("[MovieDialog] Exits customMenuRequested()");
+    Macaw::DEBUG("[MovieDialog] Exits customMenuRequested()");
 }
 
 /**
@@ -545,7 +545,7 @@ void MovieDialog::customMenuRequested(QPoint pos)
  */
 void MovieDialog::showPeopleDialog()
 {
-    m_app->debug("[MovieDialog] Enters showPeopleDialog()");
+    Macaw::DEBUG("[MovieDialog] Enters showPeopleDialog()");
     QListWidget *l_widget = getFocusedListWidget();
     QListWidgetItem *l_selectedItem = l_widget->selectedItems().at(0);
     int l_itemRow = l_widget->row(l_selectedItem);
@@ -561,7 +561,7 @@ void MovieDialog::showPeopleDialog()
     l_peopleDialog->show();
     QObject::connect(l_peopleDialog, SIGNAL(peopleCreated(People)),
                      this, SLOT(peopleDialog_peopleCreated(People)));
-    m_app->debug("[MovieDialog] Exits showPeopleDialog()");
+    Macaw::DEBUG("[MovieDialog] Exits showPeopleDialog()");
 }
 
 /**

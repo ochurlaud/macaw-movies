@@ -46,13 +46,13 @@ bool DatabaseManager::insertNewMovie(Movie &movie)
 
     if (!l_query.exec())
     {
-        debug("In insertNewMovie():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In insertNewMovie():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
 
-    debug("[DatabaseManager] Movie added");
+    Macaw::DEBUG("[DatabaseManager] Movie added");
 
     movie.setId(l_query.lastInsertId().toInt());
 
@@ -90,8 +90,8 @@ bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, const int t
 
     if (!l_query.exec())
     {
-        debug("In addPeopleToMovie():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In addPeopleToMovie():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -123,8 +123,8 @@ bool DatabaseManager::addTagToMovie(Tag &tag, Movie &movie)
 
     if (!l_query.exec())
     {
-        debug("In addTagToMovie():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In addTagToMovie():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -153,8 +153,8 @@ bool DatabaseManager::insertNewPeople(People &people)
 
     if (!l_query.exec())
     {
-        debug("In insertNewPeople():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In insertNewPeople():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -179,8 +179,8 @@ bool DatabaseManager::insertNewTag(Tag &tag)
 
     if (!l_query.exec())
     {
-        debug("In insertNewTag():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In insertNewTag():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -206,8 +206,8 @@ bool DatabaseManager::insertNewPlaylist(Playlist &playlist)
 
     if (!l_query.exec())
     {
-        debug("In insertNewPlaylist():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In insertNewPlaylist():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }

@@ -25,7 +25,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     m_ui(new Ui::SettingsWindow)
 {
     m_app = qobject_cast<Application *>(qApp);
-    m_app->debug("[SettingsWindow] Constructor called");
+    Macaw::DEBUG("[SettingsWindow] Constructor called");
 
     m_ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -42,12 +42,12 @@ SettingsWindow::~SettingsWindow()
 
 void SettingsWindow::on_browseButton_clicked()
 {
-    m_app->debug("[SettingsWindow] Enters browseFilesPathDialog()");
+    Macaw::DEBUG("[SettingsWindow] Enters browseFilesPathDialog()");
     QString l_folder = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                           "/home/",
                                                           QFileDialog::ShowDirsOnly);
     m_ui->folderPathEdit->setText(l_folder);
-    m_app->debug("[SettingsWindow] Exits browseFilesPathDialog()");
+    Macaw::DEBUG("[SettingsWindow] Exits browseFilesPathDialog()");
 }
 
 
@@ -73,7 +73,7 @@ void SettingsWindow::on_buttonBox_accepted()
     }
     emit closeAndSave();
     close();
-    m_app->debug("[SettingsWindow] Exits on_buttonBox_accepted()");
+    Macaw::DEBUG("[SettingsWindow] Exits on_buttonBox_accepted()");
 }
 
 void SettingsWindow::on_folderPathEdit_textChanged(const QString string)

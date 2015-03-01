@@ -19,8 +19,10 @@
 
 #include "MoviesDebug.h"
 
-MoviesDebug::MoviesDebug(bool debug): m_debug(debug)
-{}
+MoviesDebug::MoviesDebug()
+{
+    m_debug = false;
+}
 
 void MoviesDebug::print(QString text)
 {
@@ -31,4 +33,9 @@ void MoviesDebug::print(QString text)
     }
     // else do nothing
 #endif
+}
+
+namespace Macaw
+{
+    MoviesDebug moviesDebug_extern;
 }

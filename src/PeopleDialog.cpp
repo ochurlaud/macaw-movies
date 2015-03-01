@@ -25,7 +25,7 @@ PeopleDialog::PeopleDialog(int id, QWidget *parent) :
     m_ui(new Ui::PeopleDialog)
 {
     m_app = qobject_cast<Application *>(qApp);
-    m_app->debug("[PeopleDialog] Constructor called");
+    Macaw::DEBUG("[PeopleDialog] Constructor called");
 
     m_ui->setupUi(this);
     this->setWindowTitle("Edit People Metadata");
@@ -41,7 +41,7 @@ PeopleDialog::PeopleDialog(int id, QWidget *parent) :
         setBirthday(m_people.birthday());
         setBiography(m_people.biography());
     }
-    m_app->debug("[PeopleDialog] Construction done");
+    Macaw::DEBUG("[PeopleDialog] Construction done");
 }
 
 PeopleDialog::PeopleDialog(People people, QWidget *parent):
@@ -50,7 +50,7 @@ PeopleDialog::PeopleDialog(People people, QWidget *parent):
 {
     m_people = people;
     m_app = qobject_cast<Application *>(qApp);
-    m_app->debug("[PeopleDialog] Constructor called (People arg)");
+    Macaw::DEBUG("[PeopleDialog] Constructor called (People arg)");
 
     m_ui->setupUi(this);
     this->setWindowTitle("Edit People Metadata");
@@ -62,13 +62,13 @@ PeopleDialog::PeopleDialog(People people, QWidget *parent):
     setBirthday(m_people.birthday());
     setBiography(m_people.biography());
 
-    m_app->debug("[PeopleDialog] Construction done (People arg)");
+    Macaw::DEBUG("[PeopleDialog] Construction done (People arg)");
 }
 
 PeopleDialog::~PeopleDialog()
 {
     delete m_ui;
-    m_app->debug("[PeopleDialog] Destructed");
+    Macaw::DEBUG("[PeopleDialog] Destructed");
 }
 
 void PeopleDialog::setFirstname(const QString firstname)
@@ -144,7 +144,7 @@ QString PeopleDialog::getBiography() const
 
 void PeopleDialog::on_validationButtons_accepted()
 {
-    m_app->debug("[PeopleDialog] validationButtons accepted");
+    Macaw::DEBUG("[PeopleDialog] validationButtons accepted");
     m_people.setFirstname(getFirstname());
     m_people.setLastname(getLastname());
     m_people.setRealname(getRealname());
@@ -155,17 +155,17 @@ void PeopleDialog::on_validationButtons_accepted()
     // If type = 0, it means we directly edit a people
     if (m_people.type() != 0)
     {
-        m_app->debug("[PeopleDialog] validationButtons method: type="
+        Macaw::DEBUG("[PeopleDialog] validationButtons method: type="
                      +QString::number(m_people.type()));
         emit(peopleCreated(m_people));
     }
     else
     {
-        m_app->debug("[PeopleDialog] validationButtons method: type=0");
+        Macaw::DEBUG("[PeopleDialog] validationButtons method: type=0");
         m_app->getDatabaseManager()->updatePeople(m_people);
     }
 
-    m_app->debug("[PeopleDialog] validationButtons method done");
+    Macaw::DEBUG("[PeopleDialog] validationButtons method done");
 }
 
 void PeopleDialog::on_resetBirthdayBtn_clicked()

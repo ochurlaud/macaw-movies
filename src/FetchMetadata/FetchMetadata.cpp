@@ -24,24 +24,24 @@ FetchMetadata::FetchMetadata(QObject *parent) :
     QObject(parent)
 {
     m_app = qobject_cast<Application *>(qApp);
-    m_app->debug("[FetchMetadata] Constructor");
+    Macaw::DEBUG("[FetchMetadata] Constructor");
 
     m_processState = false;
     m_fetchMetadataQuery = new FetchMetadataQuery(this);
 
-    m_app->debug("[FetchMetadata] Construction done");
+    Macaw::DEBUG("[FetchMetadata] Construction done");
 }
 
 FetchMetadata::~FetchMetadata()
 {
     delete m_fetchMetadataQuery;
-    m_app->debug("[FetchMetadata] Object destructed");
+    Macaw::DEBUG("[FetchMetadata] Object destructed");
 
 }
 
 bool FetchMetadata::startProcess(Movie &movie)
 {
-    m_app->debug("[FetchMetadata] Start the process of metadata fetching");
+    Macaw::DEBUG("[FetchMetadata] Start the process of metadata fetching");
     m_movie = movie;
     connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
             this, SLOT(processPrimaryResponse(QList<Movie>&)));
@@ -56,7 +56,7 @@ bool FetchMetadata::startProcess(Movie &movie)
             &l_loop, SLOT(quit()));
 
     l_loop.exec();
-    m_app->debug("[FetchMetadata] Process done");
+    Macaw::DEBUG("[FetchMetadata] Process done");
 
     return m_processState;
 }
@@ -77,14 +77,14 @@ void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
     disconnect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
             this, SLOT(processPrimaryResponse(QList<Movie>&)));
 
-    m_app->debug("[FetchMetadata] Signal from primary request received");
+    Macaw::DEBUG("[FetchMetadata] Signal from primary request received");
 
     if (movieList.count() == 1) {
         Movie l_movie = movieList.at(0);
 
         connect(m_fetchMetadataQuery, SIGNAL(movieResponse(Movie&)),
                 this, SLOT(processMovieResponse(Movie&)));
-        m_app->debug("[FetchMetadata] Movie request to be sent");
+        Macaw::DEBUG("[FetchMetadata] Movie request to be sent");
         m_fetchMetadataQuery->sendMovieRequest(l_movie.id());
     } else {
         m_fetchMetadataDialog = new FetchMetadataDialog(m_movie, movieList);
@@ -98,7 +98,7 @@ void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
 
 void FetchMetadata::processMovieResponse(Movie &receivedMovie)
 {
-    m_app->debug("[FetchMetadata] Signal from movie request received");
+    Macaw::DEBUG("[FetchMetadata] Signal from movie request received");
 
     disconnect(m_fetchMetadataQuery, SIGNAL(movieResponse(Movie&)),
             this, SLOT(processMovieResponse(Movie&)));

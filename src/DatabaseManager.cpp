@@ -19,22 +19,19 @@
 
 #include "DatabaseManager.h"
 
-#include <QtDebug>
-
 /**
  * @brief Constructor.
  * Opens the Database. If empty, create the schema.
  */
-DatabaseManager::DatabaseManager(MoviesDebug *moviesDebug)
+DatabaseManager::DatabaseManager()
 {
-    m_debug = moviesDebug;
     openDB();
 
     createTables();
     m_movieFields = "m.id, m.title, m.original_title, m.release_date, m.country, m.duration, m.synopsis, m.file_path, m.colored, m.format, m.suffix, m.rank";
     m_peopleFields = "p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography";
     m_tagFields = "t.id, t.name";
-    debug("[DatabaseManager] object created");
+    Macaw::DEBUG("[DatabaseManager] object created");
 }
 
 /**
@@ -44,7 +41,7 @@ DatabaseManager::DatabaseManager(MoviesDebug *moviesDebug)
  */
 bool DatabaseManager::openDB()
 {
-    debug("[DatabaseManager] openDB");
+    Macaw::DEBUG("[DatabaseManager] openDB");
     if (QSqlDatabase::contains("Movies-database"))
     {
         m_db = QSqlDatabase::database("Movies-database");        
@@ -103,7 +100,7 @@ bool DatabaseManager::openDB()
  */
 bool DatabaseManager::closeDB()
 {
-    debug("[DatabaseManager] Close database");
+    Macaw::DEBUG("[DatabaseManager] Close database");
     m_db.close();
 
     return true;
@@ -116,7 +113,7 @@ bool DatabaseManager::closeDB()
  */
 bool DatabaseManager::deleteDB()
 {
-    debug("[DatabaseManager] deleteDB");
+    Macaw::DEBUG("[DatabaseManager] deleteDB");
     closeDB();
 
     return QFile::remove(m_db.databaseName());
@@ -129,7 +126,7 @@ bool DatabaseManager::deleteDB()
  */
 bool DatabaseManager::createTables()
 {
-    debug("[DatabaseManager] createTables");
+    Macaw::DEBUG("[DatabaseManager] createTables");
     bool l_ret = false;
 
     if (m_db.isOpen())
@@ -138,7 +135,7 @@ bool DatabaseManager::createTables()
 
         if(m_db.tables().contains("config"))
         {
-            debug("[DatabaseManager.createTable] config table exists");
+            Macaw::DEBUG("[DatabaseManager.createTable] config table exists");
             l_query.exec("SELECT db_version FROM config");
             l_query.next();
             if(l_query.value(0) != DB_VERSION) //TODO : make en intelligent upgrade of the database
@@ -154,7 +151,7 @@ bool DatabaseManager::createTables()
         }
         else    //if config table do not exists then the db is empty...
         {
-            debug("[DatabaseManager.createTable] configTable does not exist");
+            Macaw::DEBUG("[DatabaseManager.createTable] configTable does not exist");
 
             // Movies
             l_ret = l_query.exec("CREATE TABLE IF NOT EXISTS movies("
@@ -244,11 +241,6 @@ bool DatabaseManager::createTables()
     return l_ret;
 }
 
-void DatabaseManager::setDebug(MoviesDebug* moviesDebug)
-{
-    m_debug = moviesDebug;
-}
-
 /**
  * @brief add a new tag with specifed name to the database.
  * Returns the id of created tag, -1 if an error occured.
@@ -263,8 +255,8 @@ int DatabaseManager::createTag(QString name)
 
     if (!l_query.exec())
     {
-        debug("In createTag():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In createTag():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return -1;
     }
@@ -292,8 +284,8 @@ bool DatabaseManager::addMoviesPath(QString moviesPath)
 
     if(!l_query.exec())
     {
-        debug("In addMoviesPath():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In addMoviesPath():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -317,8 +309,8 @@ bool DatabaseManager::setMoviesPathImported(QString moviesPath, bool imported)
 
     if(!l_query.exec())
     {
-        debug("In setMoviesPathImported():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In setMoviesPathImported():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -339,8 +331,8 @@ QStringList DatabaseManager::getMoviesPaths(bool imported)
 
     if(!l_query.exec())
     {
-        debug("In getMoviesPaths():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getMoviesPaths():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     QStringList l_moviesPathsList;
@@ -361,8 +353,8 @@ bool DatabaseManager::deleteMoviesPath(QString moviesPath)
 
     if(!l_query.exec())
     {
-        debug("In removeMoviesPath():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In removeMoviesPath():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
@@ -371,8 +363,8 @@ bool DatabaseManager::deleteMoviesPath(QString moviesPath)
     l_query.bindValue(":movies_path", moviesPath);
     if(!l_query.exec())
     {
-        debug("In removeMoviesPath():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In removeMoviesPath():");
+        Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }

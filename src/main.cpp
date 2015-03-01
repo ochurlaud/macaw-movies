@@ -30,8 +30,10 @@
 
 int main(int argv, char **args)
 {
-    MoviesDebug *movieDebug = new MoviesDebug(true);
-    Application l_app(argv, args, movieDebug);
+#ifdef QT_DEBUG
+    Macaw::moviesDebug_extern.setDebug(true);
+#endif
+    Application l_app(argv, args);
 
     QCommandLineParser l_parser;
     l_parser.setApplicationDescription("DESCRIPTION");
@@ -44,6 +46,9 @@ int main(int argv, char **args)
     // --license option
     const QCommandLineOption l_license(QStringList() << QStringLiteral("license"), QApplication::tr("Show license informations"));
     l_parser.addOption(l_license);
+    // --DEBUG option
+    const QCommandLineOption l_DEBUG(QStringList() << QStringLiteral("DEBUG"), QApplication::tr("Define the DEBUG mode"));
+    l_parser.addOption(l_DEBUG);
 
     /**
      * do the command line parsing
@@ -63,6 +68,10 @@ int main(int argv, char **args)
         printf("%s\n",qPrintable("    Olivier Churlaud <olivier@churlaud.com>"));
         printf("%s\n",qPrintable("    Sébastien Touzé"));
         ::exit(EXIT_SUCCESS);
+    }
+    if (l_parser.isSet(QStringLiteral("DEBUG")))
+    {
+        Macaw::moviesDebug_extern.setDebug(true);
     }
 
     MainWindow  l_mainWindow;

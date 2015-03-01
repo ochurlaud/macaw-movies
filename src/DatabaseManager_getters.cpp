@@ -36,8 +36,8 @@ Movie DatabaseManager::getOneMovieById(const int id)
 
     if (!l_query.exec())
     {
-        debug("In getOneMovieById(int):");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getOneMovieById(int):");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     if(l_query.next())
@@ -63,8 +63,8 @@ QList<Movie> DatabaseManager::getAllMovies(const QString fieldOrder)
 
     if (!l_query.exec())
     {
-        debug("In getAllMovies():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getAllMovies():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -101,8 +101,8 @@ QList<Movie> DatabaseManager::getMoviesByPeople(const int id,
 
     if (!l_query.exec())
     {
-        debug("In getMoviesByPeople():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getMoviesByPeople():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -152,8 +152,8 @@ QList<Movie> DatabaseManager::getMoviesByTag(const int id,
 
     if (!l_query.exec())
     {
-        debug("In getMoviesByTag(Tag):");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getMoviesByTag(Tag):");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -200,8 +200,8 @@ QList<Movie> DatabaseManager::getMoviesByPlaylist(const int id,
 
     if (!l_query.exec())
     {
-        debug("In getMoviesByPlaylist(Playlist):");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getMoviesByPlaylist(Playlist):");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -242,8 +242,8 @@ QList<Movie> DatabaseManager::getMoviesWithoutPeople(const int type,
 
     if (!l_query.exec())
     {
-        debug("In getMoviesWithoutPeople():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getMoviesWithoutPeople():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -268,8 +268,8 @@ QList<Movie> DatabaseManager::getMoviesWithoutTag(const QString fieldOrder)
 
     if (!l_query.exec())
     {
-        debug("In getMoviesWithoutTag():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getMoviesWithoutTag():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -324,8 +324,8 @@ QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
 
     if (!l_query.exec())
     {
-        debug("In getMoviesByAny():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getMoviesByAny():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -355,8 +355,8 @@ People DatabaseManager::getOnePeopleById(const int id)
 
     if (!l_query.exec())
     {
-        debug("In getOnePeopleBy(int, type):");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getOnePeopleBy(int, type):");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     if(l_query.next())
@@ -387,8 +387,8 @@ People DatabaseManager::getOnePeopleById(const int id, const int type)
 
     if (!l_query.exec())
     {
-        debug("In getOnePeopleBy(int, type):");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getOnePeopleBy(int, type):");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     if(l_query.next())
@@ -420,8 +420,8 @@ QList<People> DatabaseManager::getPeopleByType(const int type,
 
     if (!l_query.exec())
     {
-        debug("In peopleByType():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In peopleByType():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -430,7 +430,7 @@ QList<People> DatabaseManager::getPeopleByType(const int type,
         l_peopleList.push_back(l_people);
     }
 
-    debug("[DatabaseManager] peopleByType returns "
+    Macaw::DEBUG("[DatabaseManager] peopleByType returns "
           + QString::number(l_peopleList.count()) + " people");
 
     return l_peopleList;
@@ -457,8 +457,8 @@ QList<People> DatabaseManager::getPeopleByFullname(const QString fullname,
 
     if (!l_query.exec())
     {
-        debug("In peopleByFullname(QString):");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In peopleByFullname(QString):");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -467,7 +467,7 @@ QList<People> DatabaseManager::getPeopleByFullname(const QString fullname,
         l_peopleList.push_back(l_people);
     }
 
-    debug("[DatabaseManager] peopleByFullname returns "
+    Macaw::DEBUG("[DatabaseManager] peopleByFullname returns "
           + QString::number(l_peopleList.count()) + " people");
 
     return l_peopleList;
@@ -475,7 +475,7 @@ QList<People> DatabaseManager::getPeopleByFullname(const QString fullname,
 
 QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fieldOrder)
 {
-    debug("[DatabaseManager] Enters getOnePeopleByAny");
+    Macaw::DEBUG("[DatabaseManager] Enters getOnePeopleByAny");
     QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
     QStringList l_splittedText = text.split(" ");
@@ -520,8 +520,8 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
 
     if (!l_query.exec())
     {
-        debug("In peopleByAny():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In peopleByAny():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -530,7 +530,7 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
         l_peopleList.push_back(l_people);
     }
 
-    debug("[DatabaseManager] peopleByAny returns "
+    Macaw::DEBUG("[DatabaseManager] peopleByAny returns "
           + QString::number(l_peopleList.count()) + " people");
 
     return l_peopleList;
@@ -544,7 +544,7 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
  */
 Tag DatabaseManager::getOneTagById(const int id)
 {
-    debug("[DatabaseManager] Enters getOneTagById");
+    Macaw::DEBUG("[DatabaseManager] Enters getOneTagById");
     Tag l_tag;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT id, name "
@@ -554,8 +554,8 @@ Tag DatabaseManager::getOneTagById(const int id)
 
     if (!l_query.exec())
     {
-        debug("In getOneTagBy(int):");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getOneTagBy(int):");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     if(l_query.next())
@@ -584,8 +584,8 @@ Tag DatabaseManager::getTagByName(QString tagName)
 
     if (!l_query.exec())
     {
-        debug("In tagByName(QString):");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In tagByName(QString):");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     if(l_query.next())
@@ -605,7 +605,7 @@ Tag DatabaseManager::getTagByName(QString tagName)
  */
 QList<Tag> DatabaseManager::getAllTags(const QString fieldOrder)
 {
-    debug("[DatabaseManager] Enters getAllTags");
+    Macaw::DEBUG("[DatabaseManager] Enters getAllTags");
     QList<Tag> l_tagList;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT id, name "
@@ -614,8 +614,8 @@ QList<Tag> DatabaseManager::getAllTags(const QString fieldOrder)
 
     if (!l_query.exec())
     {
-        debug("In getAllTags():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getAllTags():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -626,7 +626,7 @@ QList<Tag> DatabaseManager::getAllTags(const QString fieldOrder)
         l_tagList.push_back(l_tag);
     }
 
-    debug("[DatabaseManager] getAllTags returns "
+    Macaw::DEBUG("[DatabaseManager] getAllTags returns "
           + QString::number(l_tagList.count()) + " tags");
 
     return l_tagList;
@@ -634,7 +634,7 @@ QList<Tag> DatabaseManager::getAllTags(const QString fieldOrder)
 
 QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString fieldOrder)
 {
-    debug("[DatabaseManager] Enters tagsByAny");
+    Macaw::DEBUG("[DatabaseManager] Enters tagsByAny");
     QList<Tag> l_tagList;
     QSqlQuery l_query(m_db);
     QStringList l_splittedText = text.split(" ");
@@ -677,8 +677,8 @@ QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString field
 
     if (!l_query.exec())
     {
-        debug("In tagsByAny():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In tagsByAny():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -687,7 +687,7 @@ QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString field
         l_tagList.push_back(l_tag);
     }
 
-    debug("[DatabaseManager] tagsByAny returns "
+    Macaw::DEBUG("[DatabaseManager] tagsByAny returns "
           + QString::number(l_tagList.count()) + " tags");
 
     return l_tagList;
@@ -710,8 +710,8 @@ Playlist DatabaseManager::getOnePlaylistById(const int id)
 
     if(!l_query.exec())
     {
-        debug("In getOnePlaylistById():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getOnePlaylistById():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     if(l_query.next())
@@ -738,8 +738,8 @@ QList<Playlist> DatabaseManager::getAllPlaylists(QString fieldOrder)
 
     if(!l_query.exec())
     {
-        debug("In getAllPlaylist():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In getAllPlaylist():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     while(l_query.next())
@@ -763,8 +763,8 @@ bool DatabaseManager::isMovieInPlaylist(int movieId, int playlistId)
 
     if (!l_query.exec())
     {
-        debug("In isMovieInPlaylist():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In isMovieInPlaylist():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     return l_query.next();
@@ -794,8 +794,8 @@ bool DatabaseManager::existMovie(const QString filePath)
 
     if (!l_query.exec())
     {
-        debug("In existMovie():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In existMovie():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     return l_query.next();
@@ -817,8 +817,8 @@ bool DatabaseManager::existPeople(const QString fullname)
 
     if (!l_query.exec())
     {
-        debug("In existPeople():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In existPeople():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     return l_query.next();
@@ -838,8 +838,8 @@ bool DatabaseManager::existTag(const QString name)
 
     if (!l_query.exec())
     {
-        debug("In existTag():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In existTag():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
 
     return l_query.next();
@@ -859,8 +859,8 @@ void DatabaseManager::setPeopleToMovie(Movie &movie)
 
     if (!l_query.exec())
     {
-        debug("In setPeopleToMovie(Movie):");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In setPeopleToMovie(Movie):");
+        Macaw::DEBUG(l_query.lastError().text());
     }
     while (l_query.next())
     {
@@ -883,8 +883,8 @@ void DatabaseManager::setTagsToMovie(Movie &movie)
 
     if (!l_query.exec())
     {
-        debug("In setTagToMovie(Movie):");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In setTagToMovie(Movie):");
+        Macaw::DEBUG(l_query.lastError().text());
     }
     while (l_query.next())
     {
@@ -909,8 +909,8 @@ void DatabaseManager::setMoviesToPlaylist(Playlist &playlist)
 
     if (!l_query.exec())
     {
-        debug("In setMoviesToPlaylist():");
-        debug(l_query.lastError().text());
+        Macaw::DEBUG("In setMoviesToPlaylist():");
+        Macaw::DEBUG(l_query.lastError().text());
     }
     while (l_query.next())
     {

@@ -31,7 +31,7 @@
 class MoviesDebug : public QObject
 {
 public:
-    MoviesDebug(bool debug = true);
+    MoviesDebug();
     void print(QString);
     void setDebug(bool value) { m_debug = value; }
     bool isDebug() { return m_debug; }
@@ -39,5 +39,10 @@ public:
 private:
     bool m_debug;
 };
+
+namespace Macaw {
+    extern MoviesDebug moviesDebug_extern;
+    inline void DEBUG(QString text) { moviesDebug_extern.print(text);}
+}
 
 #endif // MOVIESDEBUG_H
