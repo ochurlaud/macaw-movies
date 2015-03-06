@@ -406,7 +406,7 @@ People DatabaseManager::getOnePeopleById(const int id, const int type)
  * @param QString fieldOrder
  * @return QList<People>
  */
-QList<People> DatabaseManager::getPeopleByType(const int type,
+QList<People> DatabaseManager::getPeopleUsedByType(const int type,
                                             const QString fieldOrder)
 {
     QList<People> l_peopleList;
@@ -420,7 +420,7 @@ QList<People> DatabaseManager::getPeopleByType(const int type,
 
     if (!l_query.exec())
     {
-        Macaw::DEBUG("In peopleByType():");
+        Macaw::DEBUG("In getPeopleUsedByType():");
         Macaw::DEBUG(l_query.lastError().text());
     }
 
@@ -627,6 +627,46 @@ QList<Tag> DatabaseManager::getAllTags(const QString fieldOrder)
     }
 
     Macaw::DEBUG("[DatabaseManager] getAllTags returns "
+          + QString::number(l_tagList.count()) + " tags");
+
+    return l_tagList;
+}
+
+/**
+ * @brief Gets the tags which are used
+ *
+ * @return QList<Tag>
+ */
+QList<Tag> DatabaseManager::getTagsUsed(const QString fieldOrder)
+{
+    Macaw::DEBUG("[DatabaseManager] Enters getTagsUsed");
+    QList<Tag> l_tagList;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT " +m_tagFields+ " "
+                    "FROM tags AS t "
+                    "WHERE ( "
+                        "SELECT COUNT (*) "
+                        "FROM movies_tags "
+                        "WHERE id_tag = t.id "
+                    " ) > 0 "
+                    "ORDER BY " + fieldOrder);
+
+    if (!l_query.exec())
+    {
+        Macaw::DEBUG(m_tagFields);
+        Macaw::DEBUG("In getTagsUsed():");
+        Macaw::DEBUG(l_query.lastError().text());
+    }
+
+    while(l_query.next())
+    {
+        Tag l_tag;
+        l_tag.setId(l_query.value(0).toInt());
+        l_tag.setName(l_query.value(1).toString());
+        l_tagList.push_back(l_tag);
+    }
+
+    Macaw::DEBUG("[DatabaseManager] getTagsUsed returns "
           + QString::number(l_tagList.count()) + " tags");
 
     return l_tagList;
@@ -876,9 +916,9 @@ void DatabaseManager::setPeopleToMovie(Movie &movie)
 void DatabaseManager::setTagsToMovie(Movie &movie)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT tag.id, tag.name "
-                    "FROM tags AS tag, movies_tags AS tm "
-                    "WHERE tm.id_movie = :id_movie AND tm.id_tag = tag.id");
+    l_query.prepare("SELECT " +m_tagFields+ " "
+                    "FROM tags AS t, movies_tags AS tm "
+                    "WHERE tm.id_movie = :id_movie AND tm.id_tag = t.id");
     l_query.bindValue(":id_movie", movie.id());
 
     if (!l_query.exec())

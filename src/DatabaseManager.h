@@ -78,7 +78,7 @@ public:
     // People
     People getOnePeopleById(const int id);
     People getOnePeopleById(const int id , const int type);
-    QList<People> getPeopleByType(const int type, const QString fieldOrder = "lastname");
+    QList<People> getPeopleUsedByType(const int type, const QString fieldOrder = "lastname");
     QList<People> getPeopleByFullname(const QString fullname, const QString fieldOrder = "lastname");
     QList<People> getPeopleByAny(const QString text, const int type, const QString fieldOrder = "lastname");
 
@@ -86,6 +86,7 @@ public:
     Tag getOneTagById(const int id);
     Tag getOneTagByName(QString tagName);
     QList<Tag> getAllTags(const QString fieldOrder = "name");
+    QList<Tag> getTagsUsed(const QString fieldOrder = "name");
     QList<Tag> getTagsByAny(const QString text, const QString fieldOrder = "name");
 
     // Playlists

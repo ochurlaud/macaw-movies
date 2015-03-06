@@ -106,7 +106,7 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             l_item->setSelected(true);
         }
 
-        QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByType(typePeople);
+        QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleUsedByType(typePeople);
         foreach (People l_people, l_peopleList)
         {
             QString l_name(l_people.lastname());
@@ -139,7 +139,7 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
             l_item->setSelected(true);
         }
 
-        QList<Tag> l_tagsList = m_app->getDatabaseManager()->getAllTags();
+        QList<Tag> l_tagsList = m_app->getDatabaseManager()->getTagsUsed();
         foreach (Tag l_tag, l_tagsList)
         {
             QString l_name(l_tag.name());
