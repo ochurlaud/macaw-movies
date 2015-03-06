@@ -293,7 +293,7 @@ void MovieDialog::on_validationButtons_accepted()
     foreach(const QModelIndex &index, l_indexList)
     {
         l_tagName = index.data().toString();
-        l_tagList.append(m_app->getDatabaseManager()->getTagByName(l_tagName));
+        l_tagList.append(m_app->getDatabaseManager()->getOneTagByName(l_tagName));
     }
 
     m_movie.setTagList(l_tagList);
@@ -487,7 +487,7 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
 
 /**
  * @brief when NewTagButton is clicked
- * Adds the tag in newTagLineEdit field to the tag list and clear the lineEdit
+ * Adds the tag in newTagLineEdit field to the tag list and clear the lineEdit, selects the tag
  * @param QPoint position of the cursor
  */
 void MovieDialog::on_addNewTagButton_clicked()
@@ -500,6 +500,7 @@ void MovieDialog::on_addNewTagButton_clicked()
     {
         QListWidgetItem * item = new QListWidgetItem(newTag, m_ui->tagListWidget);
         item->setData(Macaw::ObjectId, newTagId);
+        item->setSelected(true);
     }
 
     m_ui->newTagLineEdit->clear();

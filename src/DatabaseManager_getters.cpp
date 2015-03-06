@@ -573,7 +573,7 @@ Tag DatabaseManager::getOneTagById(const int id)
  * @param QString tagName
  * @return Tag
  */
-Tag DatabaseManager::getTagByName(QString tagName)
+Tag DatabaseManager::getOneTagByName(QString tagName)
 {
     Tag l_tag;
     QSqlQuery l_query(m_db);
