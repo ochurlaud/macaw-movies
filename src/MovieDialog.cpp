@@ -286,14 +286,14 @@ void MovieDialog::on_validationButtons_accepted()
     m_movie.setCountry(getCountry());
     m_movie.setSynopsis(getSynopsis());
 
-    QModelIndexList l_indexList = m_ui->tagListWidget->selectionModel()->selectedIndexes();
-
+    //QModelIndexList l_indexList = m_ui->tagListWidget->selectionModel()->selectedIndexes();
+    QList<QListWidgetItem*> l_selectedItemList = m_ui->tagListWidget->selectedItems();
     QList<Tag> l_tagList;
-    QString l_tagName;
-    foreach(const QModelIndex &index, l_indexList)
+    int l_id;
+    foreach(const QListWidgetItem *l_item, l_selectedItemList)
     {
-        l_tagName = index.data().toString();
-        l_tagList.append(m_app->getDatabaseManager()->getOneTagByName(l_tagName));
+        l_id = l_item->data(Macaw::ObjectId).toInt();
+        l_tagList.append(m_app->getDatabaseManager()->getOneTagById(l_id));
     }
 
     m_movie.setTagList(l_tagList);
