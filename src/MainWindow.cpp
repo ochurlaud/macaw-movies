@@ -40,7 +40,10 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
     connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
-    connect(m_app->getDatabaseManager(),SIGNAL(orphanTagDetected(Tag)), this, SLOT(askForOrphanTagDeletion(Tag)));
+    connect(m_app->getDatabaseManager(),SIGNAL(orphanTagDetected(Tag&)),
+            this, SLOT(askForOrphanTagDeletion(Tag&)));
+    connect(m_app->getDatabaseManager(),SIGNAL(orphanPeopleDetected(People&)),
+            this, SLOT(askForOrphanPeopleDeletion(People&)));
     connect(this, SIGNAL(toUpdate()),
             this, SLOT(selfUpdate()));
     m_moviesList = m_app->getDatabaseManager()->getAllMovies();
@@ -391,17 +394,43 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
  *
  * @param orphanTag concerned by the choice
  */
-void MainWindow::askForOrphanTagDeletion(Tag orphanTag)
+void MainWindow::askForOrphanTagDeletion(Tag &orphanTag)
 {
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Question);
-    msgBox.setText("The "+ orphanTag.name() +" tag is not used in any movie now. ");
+    msgBox.setText("The tag <b>"+ orphanTag.name() +"</b> is not used in any movie now. ");
     msgBox.setInformativeText("Do you want to delete this tag?");
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
 
     if(msgBox.exec() == QMessageBox::Yes) {
         m_app->getDatabaseManager()->deleteTag(orphanTag);
+    }
+}
+
+/**
+ * @brief Slot triggered when DatabaseManager finds an orphan person.
+ * A QMessageBox asks the user if the person should be delete or not.
+ *
+ * @param orphanPeople concerned by the choice
+ */
+void MainWindow::askForOrphanPeopleDeletion(People &orphanPeople)
+{
+    QString l_name;
+    if (orphanPeople.firstname() != "") {
+        l_name = orphanPeople.firstname() + " ";
+    }
+    l_name = l_name + orphanPeople.lastname();
+
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setText("The person <b>" +l_name+ "</b> is not linked to any movie now.");
+    msgBox.setInformativeText("Do you want to delete it?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+
+    if(msgBox.exec() == QMessageBox::Yes) {
+        m_app->getDatabaseManager()->deletePeople(orphanPeople);
     }
 }
 

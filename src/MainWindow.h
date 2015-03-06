@@ -63,7 +63,8 @@ private slots:
     void addNewMovies();
     void on_searchEdit_returnPressed();
     void addPlaylistMenu_triggered(QAction* action);
-    void askForOrphanTagDeletion(Tag orphanTag);
+    void askForOrphanTagDeletion(Tag &orphanTag);
+    void askForOrphanPeopleDeletion(People &orphanPeople);
     void on_actionAbout_triggered();
     void closeEvent(QCloseEvent *event);
 

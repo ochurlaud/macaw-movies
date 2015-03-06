@@ -58,7 +58,8 @@ public:
     bool deleteMoviesPath(QString moviesPath);
 
 signals:
-    void orphanTagDetected(Tag tag);
+    void orphanTagDetected(Tag &tag);
+    void orphanPeopleDetected(People &people);
 
 //// Getters - in DatabaseManager_getters.cpp
 public:
@@ -142,8 +143,6 @@ public:
     bool removeMovieFromPlaylist(Movie &movie, Playlist &playlist);
     bool deletePlaylist(Playlist &playlist);
     bool deleteTag(const Tag &tag);
-
-private:
     bool deletePeople(const People &people);
 
 private:

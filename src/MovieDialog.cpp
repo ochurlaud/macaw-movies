@@ -497,8 +497,7 @@ void MovieDialog::on_addNewTagButton_clicked()
     if (newTag != "" && newTag != " ") {
         int newTagId = m_app->getDatabaseManager()->createTag(newTag);
 
-        if(newTagId > 0)
-        {
+        if(newTagId > 0)  {
             QListWidgetItem * item = new QListWidgetItem(newTag, m_ui->tagListWidget);
             item->setData(Macaw::ObjectId, newTagId);
             item->setSelected(true);
@@ -511,8 +510,7 @@ void MovieDialog::on_addNewTagButton_clicked()
 void MovieDialog::peopleDialog_peopleCreated(People people)
 {
     Macaw::DEBUG("[MovieDialog] peopleDialog_peopleCreated()");
-    if (people.id() != 0)
-    {
+    if (people.id() != 0) {
         updatePeople(people);
     }
     else
