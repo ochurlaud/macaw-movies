@@ -273,7 +273,7 @@ void MainWindow::on_tagsButton_clicked()
 {
     Macaw::DEBUG("[MainWindow] tagsButton clicked");
 
-    if(!m_ui->tagsButton->isChecked()) {
+    if(m_typeElement != Macaw::isTag) {
 
         m_ui->tagsButton->setChecked(true);
         fillLeftPannel(Macaw::isTag);
@@ -490,16 +490,23 @@ void MainWindow::selfUpdate()
 {
     Macaw::DEBUG("[MainWindow] selfUpdate()");
     m_moviesList.clear();
+
     fillLeftPannel(m_typeElement, m_typePeople);
 
     for (int i = 0 ; i < m_ui->leftPannel->count() ; i++) {
         QListWidgetItem *l_item = m_ui->leftPannel->item(i);
         if (l_item->data(Macaw::ObjectId).toInt() == m_leftPannelSelectedId) {
             l_item->setSelected(true);
-            this->prepareMoviesToDisplay(l_item->data(Macaw::ObjectId).toInt());
+            this->prepareMoviesToDisplay(m_leftPannelSelectedId);
             break;
         }
     }
+    if (m_ui->leftPannel->selectedItems().count() == 0) {
+        m_leftPannelSelectedId = 0;
+        fillLeftPannel(m_typeElement, m_typePeople);
+        this->prepareMoviesToDisplay(m_leftPannelSelectedId);
+    }
+
 }
 
 /**
@@ -737,6 +744,7 @@ void MainWindow::fillMetadataPannel(Movie movie)
 
     m_ui->metadataTop->setText(l_title+l_originalTitle + l_directors +l_producers + l_actors);
     m_ui->metadataPlot->setText(movie.synopsis());
+    m_ui->metadataCover->hide();
     Macaw::DEBUG("[MainWindow] Exit fillMetadataPannel");
 }
 
