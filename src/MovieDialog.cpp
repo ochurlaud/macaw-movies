@@ -494,16 +494,18 @@ void MovieDialog::on_addNewTagButton_clicked()
 {
     QString newTag =  m_ui->newTagLineEdit->text();
 
-    int newTagId = m_app->getDatabaseManager()->createTag(newTag);
+    if (newTag != "" && newTag != " ") {
+        int newTagId = m_app->getDatabaseManager()->createTag(newTag);
 
-    if(newTagId > 0)
-    {
-        QListWidgetItem * item = new QListWidgetItem(newTag, m_ui->tagListWidget);
-        item->setData(Macaw::ObjectId, newTagId);
-        item->setSelected(true);
+        if(newTagId > 0)
+        {
+            QListWidgetItem * item = new QListWidgetItem(newTag, m_ui->tagListWidget);
+            item->setData(Macaw::ObjectId, newTagId);
+            item->setSelected(true);
+        }
+
+        m_ui->newTagLineEdit->clear();
     }
-
-    m_ui->newTagLineEdit->clear();
 }
 
 void MovieDialog::peopleDialog_peopleCreated(People people)
