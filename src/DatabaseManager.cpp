@@ -90,7 +90,17 @@ bool DatabaseManager::openDB()
 
     m_db.setDatabaseName(l_dbPath);
 
-    return m_db.open();
+    bool l_ret=false;
+
+    l_ret = m_db.open();
+
+    if(l_ret)
+    {
+        QSqlQuery l_query(m_db);
+        l_ret = l_query.exec("PRAGMA foreign_keys = ON");
+    }
+
+    return l_ret;
 }
 
 /**
@@ -154,7 +164,9 @@ bool DatabaseManager::createTables()
             Macaw::DEBUG("[DatabaseManager.createTable] configTable does not exist");
 
             // Movies
-            l_ret = l_query.exec("CREATE TABLE IF NOT EXISTS movies("
+            l_ret = l_query.exec("PRAGMA foreign_keys = ON");
+
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                       "title VARCHAR(255) NOT NULL, "
                       "original_title VARCHAR(255), "
@@ -185,7 +197,9 @@ bool DatabaseManager::createTables()
                       "id_movie INTEGER NOT NULL, "
                       "id_people INTEGER NOT NULL, "
                       "type INTEGER NOT NULL, "
-                      "UNIQUE (id_people, id_movie, type) ON CONFLICT IGNORE "
+                      "UNIQUE (id_people, id_movie, type) ON CONFLICT IGNORE, "
+                      "FOREIGN KEY(id_movie) REFERENCES movies ON DELETE CASCADE, "
+                      "FOREIGN KEY(id_people) REFERENCES people ON DELETE CASCADE"
                       ")");
 
             // Tags that can be attributed to the movies
@@ -199,7 +213,9 @@ bool DatabaseManager::createTables()
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                       "id_movie INTEGER NOT NULL, "
                       "id_tag INTEGER NOT NULL, "
-                      "UNIQUE (id_tag, id_movie) ON CONFLICT IGNORE "
+                      "UNIQUE (id_tag, id_movie) ON CONFLICT IGNORE, "
+                      "FOREIGN KEY(id_movie) REFERENCES movies ON DELETE CASCADE, "
+                      "FOREIGN KEY(id_tag) REFERENCES tags ON DELETE CASCADE"
                       ")");
 
             // Playlists
@@ -219,7 +235,9 @@ bool DatabaseManager::createTables()
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                       "id_movie INTEGER NOT NULL, "
                       "id_playlist INTEGER NOT NULL, "
-                      "UNIQUE (id_playlist, id_movie) ON CONFLICT IGNORE "
+                      "UNIQUE (id_playlist, id_movie) ON CONFLICT IGNORE, "
+                      "FOREIGN KEY(id_movie) REFERENCES movies ON DELETE CASCADE, "
+                      "FOREIGN KEY(id_playlist) REFERENCES playlists ON DELETE CASCADE"
                       ")");
 
             // List of paths where the movies are stored
