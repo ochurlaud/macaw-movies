@@ -92,6 +92,8 @@ void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
                 this, SLOT(on_selectedMovie(Movie&)));
         connect(m_fetchMetadataDialog, SIGNAL(searchMovies(QString)),
                 this, SLOT(on_searchMovies(QString)));
+        connect(m_fetchMetadataDialog, SIGNAL(searchCanceled()),
+                this, SLOT(on_searchCanceled()));
         m_fetchMetadataDialog->show();
     }
 }
@@ -122,6 +124,7 @@ void FetchMetadata::processMovieResponse(Movie &receivedMovie)
 void FetchMetadata::on_searchCanceled()
 {
     m_processState = false;
+    Macaw::DEBUG("[FetchMetadata] Dialog canceled");
     emit(jobDone());
 }
 

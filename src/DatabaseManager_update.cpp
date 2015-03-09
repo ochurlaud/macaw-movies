@@ -37,8 +37,8 @@ bool DatabaseManager::updateMovie(Movie &movie)
                         "synopsis = :synopsis, "
                         "colored = :colored, "
                         "format = :format, "
-                        "rank = :rank "
-                        "poster_path = :poster_path "
+                        "rank = :rank, "
+                        "poster_path = :poster_path, "
                         "imported = :imported "
                     "WHERE id = :id");
     l_query.bindValue(":title", movie.title());
