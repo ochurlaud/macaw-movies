@@ -30,8 +30,8 @@
 bool DatabaseManager::insertNewMovie(Movie &movie)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("INSERT INTO movies(title, original_title, release_date, country, duration, synopsis, file_path, colored, format, suffix, rank) "
-                    "VALUES (:title, :original_title, :release_date, :country, :duration, :synopsis, :file_path, :colored, :format, :suffix, :rank)");
+    l_query.prepare("INSERT INTO movies(title, original_title, release_date, country, duration, synopsis, file_path, poster_path, colored, format, suffix, rank, imported) "
+                    "VALUES (:title, :original_title, :release_date, :country, :duration, :synopsis, :file_path, :poster_path, :colored, :format, :suffix, :rank, :imported)");
     l_query.bindValue(":title", movie.title());
     l_query.bindValue(":original_title", movie.originalTitle()   );
     l_query.bindValue(":release_date", movie.releaseDate().toString(DATE_FORMAT));
@@ -39,10 +39,12 @@ bool DatabaseManager::insertNewMovie(Movie &movie)
     l_query.bindValue(":duration", movie.duration().msecsSinceStartOfDay());
     l_query.bindValue(":synopsis", movie.synopsis());
     l_query.bindValue(":file_path", movie.filePath());
+    l_query.bindValue(":poster_path", movie.posterPath());
     l_query.bindValue(":colored", movie.isColored());
     l_query.bindValue(":format", movie.format());
     l_query.bindValue(":suffix", movie.suffix());
     l_query.bindValue(":rank", movie.rank());
+    l_query.bindValue(":imported", movie.isImported());
 
     if (!l_query.exec())
     {

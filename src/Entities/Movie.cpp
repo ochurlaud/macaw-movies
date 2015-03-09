@@ -31,6 +31,7 @@ Movie::Movie()
     m_format = "";
     m_suffix = "";
     m_rank = 0;
+    m_imported = false;
 }
 
 int Movie::id() const
@@ -162,6 +163,16 @@ void Movie::setFilePath(const QString filePath)
     m_filePath = filePath;
 }
 
+QString Movie::posterPath() const
+{
+    return m_posterPath;
+}
+
+void Movie::setPosterPath(const QString posterPath)
+{
+    m_posterPath = posterPath;
+}
+
 bool Movie::isColored() const
 {
     return m_colored;
@@ -200,6 +211,16 @@ int Movie::rank() const
 void Movie::setRank(const int rank)
 {
     m_rank = rank;
+}
+
+bool Movie::isImported() const
+{
+    return m_imported;
+}
+
+void Movie::setImported(const bool imported)
+{
+    m_imported = imported;
 }
 
 QList<Tag> Movie::tagList()  const

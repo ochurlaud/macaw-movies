@@ -337,6 +337,31 @@ QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
     return l_movieList;
 }
 
+QList<Movie> DatabaseManager::getMoviesNotImported(const QString fieldOrder)
+{
+    QList<Movie> l_movieList;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT " + m_movieFields + " "
+                    "FROM movies AS m "
+                    "WHERE m.imported = :imported "
+                    "ORDER BY " + fieldOrder);
+    l_query.bindValue(":imported", false);
+
+    if (!l_query.exec())
+    {
+        Macaw::DEBUG("In getMoviesNotImported():");
+        Macaw::DEBUG(l_query.lastError().text());
+    }
+
+    while(l_query.next())
+    {
+        Movie l_movie = hydrateMovie(l_query);
+        l_movieList.push_back(l_movie);
+    }
+
+    return l_movieList;
+}
+
 /**
  * @brief Gets the one person that has the id `id`
  *
@@ -976,10 +1001,12 @@ Movie DatabaseManager::hydrateMovie(QSqlQuery &query)
     l_movie.setDuration(QTime::fromMSecsSinceStartOfDay(query.value(5).toInt()));
     l_movie.setSynopsis(query.value(6).toString());
     l_movie.setFilePath(query.value(7).toString());
-    l_movie.setColored(query.value(8).toBool());
-    l_movie.setFormat(query.value(9).toString());
-    l_movie.setSuffix(query.value(10).toString());
-    l_movie.setRank(query.value(11).toInt());
+    l_movie.setPosterPath(query.value(8).toString());
+    l_movie.setColored(query.value(9).toBool());
+    l_movie.setFormat(query.value(10).toString());
+    l_movie.setSuffix(query.value(11).toString());
+    l_movie.setRank(query.value(12).toInt());
+    l_movie.setImported(query.value(13).toBool());
     setTagsToMovie(l_movie);
     setPeopleToMovie(l_movie);
 

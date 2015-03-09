@@ -28,7 +28,7 @@ DatabaseManager::DatabaseManager()
     openDB();
 
     createTables();
-    m_movieFields = "m.id, m.title, m.original_title, m.release_date, m.country, m.duration, m.synopsis, m.file_path, m.colored, m.format, m.suffix, m.rank";
+    m_movieFields = "m.id, m.title, m.original_title, m.release_date, m.country, m.duration, m.synopsis, m.file_path, m.poster_path, m.colored, m.format, m.suffix, m.rank, m.imported";
     m_peopleFields = "p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography";
     m_tagFields = "t.id, t.name";
     Macaw::DEBUG("[DatabaseManager] object created");
@@ -52,7 +52,7 @@ bool DatabaseManager::openDB()
     }
 
 #ifdef Q_OS_LINUX
-    // File in ~/.local/config
+    // File in ~/.local/share
     QString l_configPath(QDir::home().path().append(QDir::separator())
                                             .append(".local")
                                             .append(QDir::separator())
@@ -175,10 +175,12 @@ bool DatabaseManager::createTables()
                       "duration INTEGER, "
                       "synopsis TEXT, "
                       "file_path VARCHAR(255) UNIQUE NOT NULL, "
+                      "poster_path VARCHAR(255), "
                       "colored BOOLEAN, "
                       "format VARCHAR(10), "
                       "suffix VARCHAR(10), "
-                      "rank INTEGER"
+                      "rank INTEGER, "
+                      "imported BOOLEAN"
                       ")");
 
             // Peoples (directors, actor, music...)

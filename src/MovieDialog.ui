@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>856</width>
-    <height>388</height>
+    <height>451</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -324,7 +324,11 @@ Multi-selection with &lt;Ctrl&gt;</string>
         </widget>
        </item>
        <item>
-        <widget class="QListWidget" name="tagListWidget"/>
+        <widget class="QListWidget" name="tagListWidget">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

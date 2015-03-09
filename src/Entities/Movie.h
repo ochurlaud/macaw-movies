@@ -48,9 +48,11 @@ public:
     QTime duration() const;
     void setDuration(const QTime duration);
     QString synopsis() const;
-    void setSynopsis(QString synopsis);
+    void setSynopsis(const QString synopsis);
     QString filePath() const;
-    void setFilePath(QString filePath);
+    void setFilePath(const QString filePath);
+    QString posterPath() const;
+    void setPosterPath(const QString posterPath);
     bool isColored() const;
     void setColored(const bool colored);
     QString format() const;
@@ -59,6 +61,8 @@ public:
     void setSuffix(const QString suffix);
     int rank() const;
     void setRank(const int rank);
+    bool isImported() const;
+    void setImported(const bool imported);
     QList<Tag> tagList() const;
     void setTagList(const QList<Tag> &tagList);
     void addTag(const Tag &tag);
@@ -76,10 +80,12 @@ private:
     QTime m_duration;
     QString m_synopsis;
     QString m_filePath;
+    QString m_posterPath;
     bool m_colored;
     QString m_format;
     QString m_suffix;
     int m_rank;
+    bool m_imported;
     QList<Tag> m_tagList;
 };
 

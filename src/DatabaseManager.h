@@ -75,6 +75,7 @@ public:
     QList<Movie> getMoviesWithoutPeople(const int type, const QString fieldOrder = "title");
     QList<Movie> getMoviesWithoutTag(const QString fieldOrder = "title");
     QList<Movie> getMoviesByAny(const QString text, const QString fieldOrder = "title");
+    QList<Movie> getMoviesNotImported(const QString fieldOrder = "title");
 
     // People
     People getOnePeopleById(const int id);

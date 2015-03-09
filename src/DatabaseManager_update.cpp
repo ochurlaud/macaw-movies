@@ -38,6 +38,8 @@ bool DatabaseManager::updateMovie(Movie &movie)
                         "colored = :colored, "
                         "format = :format, "
                         "rank = :rank "
+                        "poster_path = :poster_path "
+                        "imported = :imported "
                     "WHERE id = :id");
     l_query.bindValue(":title", movie.title());
     l_query.bindValue(":original_title", movie.originalTitle());
@@ -47,6 +49,8 @@ bool DatabaseManager::updateMovie(Movie &movie)
     l_query.bindValue(":colored", movie.isColored());
     l_query.bindValue(":format", movie.format());
     l_query.bindValue(":rank", movie.rank());
+    l_query.bindValue(":poster_path", movie.posterPath());
+    l_query.bindValue(":imported", movie.isImported());
     l_query.bindValue(":id", movie.id());
 
 
