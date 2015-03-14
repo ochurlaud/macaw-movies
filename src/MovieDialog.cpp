@@ -42,7 +42,7 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     this->setWindowTitle("Edit Metadata of: " + m_movie.title());
     this->setAttribute(Qt::WA_DeleteOnClose);
 
-    m_ui->tagListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    m_ui->tagListWidget->setSelectionMode(QAbstractItemView::NoSelection);
 
     QList<Tag> l_tagList;
     l_tagList = m_app->getDatabaseManager()->getAllTags();
@@ -50,6 +50,8 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     foreach (Tag tag, l_tagList)
     {
         QListWidgetItem * item = new QListWidgetItem(tag.name(), m_ui->tagListWidget);
+        item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+        item->setCheckState(Qt::Unchecked);
         item->setData(Macaw::ObjectId, tag.id());
     }
 
@@ -216,7 +218,7 @@ QList<People> MovieDialog::getPeopleList(int type)
 }
 
 /**
- * @brief Set the tag list of selected movie in the MovieDialog as selected
+ * @brief Set the tag list of selected movie in the MovieDialog as checked
  * @param tag list for the movie
  */
 void MovieDialog::setMovieSelectedTagList(const QList<Tag> &tagList)
@@ -231,7 +233,7 @@ void MovieDialog::setMovieSelectedTagList(const QList<Tag> &tagList)
         {
             if(m_ui->tagListWidget->item(i)->data(Macaw::ObjectId).toInt() == l_tagId)
             {
-                m_ui->tagListWidget->item(i)->setSelected(true);
+                m_ui->tagListWidget->item(i)->setCheckState(Qt::Checked);
                 break;
             }
         }
@@ -277,6 +279,14 @@ void MovieDialog::updatePeople(const People &people)
     setPeopleList(m_movie.peopleList());
 }
 
+/**
+ * @brief SIGNAL called when user click on the "OK" button.
+ * Saves metadata in the db.
+ *
+ * No changed are applied before the "OK" is clicked as the user cas cancel modifications.
+ *
+ *
+ */
 void MovieDialog::on_validationButtons_accepted()
 {
     Macaw::DEBUG("[MovieDialog] validationButtons accepted");
@@ -286,8 +296,16 @@ void MovieDialog::on_validationButtons_accepted()
     m_movie.setCountry(getCountry());
     m_movie.setSynopsis(getSynopsis());
 
-    //QModelIndexList l_indexList = m_ui->tagListWidget->selectionModel()->selectedIndexes();
-    QList<QListWidgetItem*> l_selectedItemList = m_ui->tagListWidget->selectedItems();
+    QList<QListWidgetItem*> l_selectedItemList;
+
+    for(int i=0; i < m_ui->tagListWidget->count();i++)
+    {
+        if(m_ui->tagListWidget->item(i)->checkState() == Qt::Checked)
+        {
+            l_selectedItemList.append(m_ui->tagListWidget->item(i));
+        }
+    }
+
     QList<Tag> l_tagList;
     int l_id;
     foreach(const QListWidgetItem *l_item, l_selectedItemList)
@@ -500,7 +518,7 @@ void MovieDialog::on_addNewTagButton_clicked()
         if(newTagId > 0)  {
             QListWidgetItem * item = new QListWidgetItem(newTag, m_ui->tagListWidget);
             item->setData(Macaw::ObjectId, newTagId);
-            item->setSelected(true);
+            item->setCheckState(Qt::Checked);
         }
 
         m_ui->newTagLineEdit->clear();
