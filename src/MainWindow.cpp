@@ -343,6 +343,7 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
 
 
         l_menu->addAction(m_ui->actionEdit_mainPannelMetadata);
+        l_menu->addAction(m_ui->actionPermanentlyDeleteFile);
         l_menu->exec(m_ui->mainPannel->mapToGlobal(point));
     }
 }
@@ -386,6 +387,42 @@ void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
             qDebug() << "Playlist !";
         }
     }
+}
+
+
+/**
+ * @brief triggered when the user select the "Permanently Delete File" action on a movie.
+ * This delete the file from the disk (NOT moving to trashbin) after user's confirmation.
+ */
+void MainWindow::on_actionPermanentlyDeleteFile_triggered()
+{
+    QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Critical, "Delete this file? ",
+                                                         "Permanently delete this file? This action cannot be undone. ",
+                                                         QMessageBox::Yes|QMessageBox::No, this);
+    int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
+    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
+    QFile * movieFileToDelete = new QFile(l_movie.filePath());
+    l_confirmationDialog->setDefaultButton(QMessageBox::No);
+
+    if(l_confirmationDialog->exec() == QMessageBox::Yes)
+    {
+        if(!movieFileToDelete->remove())
+        {
+            QMessageBox * msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
+                                                "Error deleting the file. ",
+                                                QMessageBox::Ok, this);
+        }
+        if(!m_app->getDatabaseManager()->deleteMovie(l_movie))
+        {
+            QMessageBox * msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
+                                                "Error deleting the movie from the database. ",
+                                                QMessageBox::Ok, this);
+        }
+
+        emit toUpdate();
+    }
+
+
 }
 
 /**

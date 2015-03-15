@@ -386,7 +386,7 @@
      <x>0</x>
      <y>0</y>
      <width>684</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSettings">
@@ -437,6 +437,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionPermanentlyDeleteFile">
+   <property name="text">
+    <string>Permanently Delete File</string>
    </property>
   </action>
  </widget>
