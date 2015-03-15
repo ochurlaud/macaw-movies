@@ -59,6 +59,7 @@ private slots:
     void on_mainPannel_clicked(const QModelIndex &index);
     void on_actionEdit_leftPannelMetadata_triggered();
     void on_actionEdit_mainPannelMetadata_triggered();
+    void actionRemoveInToWatch_triggered();
     void selfUpdate();
     void addNewMovies();
     void on_searchEdit_returnPressed();

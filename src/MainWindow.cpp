@@ -308,21 +308,40 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
     // (not to be "All" or "Unknown")
     if(m_ui->leftPannel->hasFocus()
             && m_ui->leftPannel->selectedItems().count() != 0
-            && m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId) != 0) {
+            && m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId) != 0)
+    {
         l_menu->addAction(m_ui->actionEdit_leftPannelMetadata);
         l_menu->exec(m_ui->leftPannel->mapToGlobal(point));
-    } else if (m_ui->mainPannel->hasFocus()
-               && m_ui->mainPannel->selectedItems().count() != 0) {
-        QMenu *l_addPlaylistMenu = new QMenu("Add to playlist");
-        QAction *l_actionAddInToWatch = new QAction("To Watch",
-                                                    l_addPlaylistMenu);
-        l_actionAddInToWatch->setData(1);
+    }
+    else if (m_ui->mainPannel->hasFocus()
+               && m_ui->mainPannel->selectedItems().count() != 0)
+    {
 
-        l_addPlaylistMenu->addAction(l_actionAddInToWatch);
 
-        QObject::connect(l_addPlaylistMenu, SIGNAL(triggered(QAction*)),
-                         this, SLOT(addPlaylistMenu_triggered(QAction*)));
-        l_menu->addAction(l_actionAddInToWatch);;
+        if(m_ui->toWatchButton->isChecked())
+        {
+            Macaw::DEBUG("[MainWindow] In ToWatch detected");
+            QAction * l_actionRemoveInToWatch = new QAction("Remove from to watch list", l_menu);
+
+            QObject::connect(l_actionRemoveInToWatch, SIGNAL(triggered()), this, SLOT(actionRemoveInToWatch_triggered()));
+            l_menu->addAction(l_actionRemoveInToWatch);
+        }
+        else
+        {
+            QMenu *l_addPlaylistMenu = new QMenu("Add to playlist");
+            QAction *l_actionAddInToWatch = new QAction("To Watch",
+                                                        l_addPlaylistMenu);
+            l_actionAddInToWatch->setData(1);
+
+            l_addPlaylistMenu->addAction(l_actionAddInToWatch);
+
+            QObject::connect(l_addPlaylistMenu, SIGNAL(triggered(QAction*)),
+                             this, SLOT(addPlaylistMenu_triggered(QAction*)));
+
+            l_menu->addAction(l_actionAddInToWatch);
+        }
+
+
         l_menu->addAction(m_ui->actionEdit_mainPannelMetadata);
         l_menu->exec(m_ui->mainPannel->mapToGlobal(point));
     }
@@ -387,6 +406,17 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
     m_app->getDatabaseManager()->updatePlaylist(l_playlist);
     emit(toUpdate());
 }
+
+void MainWindow::actionRemoveInToWatch_triggered()
+{
+    int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
+    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
+    Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(1);
+    l_playlist.removeMovie(l_movie);
+    m_app->getDatabaseManager()->updatePlaylist(l_playlist);
+    emit toUpdate();
+}
+
 
 /**
  * @brief Slot triggered when DatabaseManager finds an orphan tag.
