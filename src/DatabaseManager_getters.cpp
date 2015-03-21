@@ -303,8 +303,7 @@ QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
                   "OR ( "
                             "SELECT COUNT(*) "
                             "FROM people AS p "
-                            "WHERE ( p.lastname LIKE '%'||:text"+ QString::number(i) +"||'%' "
-                                "OR p.firstname LIKE '%'||:text"+ QString::number(i) +"||'%' ) "
+                            "WHERE p.name LIKE '%'||:text"+ QString::number(i) +"||'%' "
                                 "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id) > 0 "
                      ") > 0 "
                   "OR ( "
@@ -380,7 +379,7 @@ People DatabaseManager::getOnePeopleById(const int id)
 
     if (!l_query.exec())
     {
-        Macaw::DEBUG("In getOnePeopleBy(int, type):");
+        Macaw::DEBUG("In getOnePeopleById(int):");
         Macaw::DEBUG(l_query.lastError().text());
     }
 
@@ -412,7 +411,37 @@ People DatabaseManager::getOnePeopleById(const int id, const int type)
 
     if (!l_query.exec())
     {
-        Macaw::DEBUG("In getOnePeopleBy(int, type):");
+        Macaw::DEBUG("In getOnePeopleById(int, type):");
+        Macaw::DEBUG(l_query.lastError().text());
+    }
+
+    if(l_query.next())
+    {
+        l_people = hydratePeople(l_query);
+    }
+
+    return l_people;
+}
+
+/**
+ * @brief Gets the one person that has the name `name`
+ *
+ * @param QString name of the person
+ * @return People
+ */
+People DatabaseManager::getOnePeopleByName(const QString name)
+{
+    People l_people;
+    QSqlQuery l_query(m_db);
+
+    l_query.prepare("SELECT " + m_peopleFields + " "
+                    "FROM people AS p "
+                    "WHERE p.name = :name ");
+    l_query.bindValue(":name", name);
+
+    if (!l_query.exec())
+    {
+        Macaw::DEBUG("In getOnePeopleByName():");
         Macaw::DEBUG(l_query.lastError().text());
     }
 
@@ -462,27 +491,26 @@ QList<People> DatabaseManager::getPeopleUsedByType(const int type,
 }
 
 /**
- * @brief Gets the people whose 'lastname firstname' or 'firstname lastname' is `fullname`
+ * @brief Gets the people whose name contains 'name'
  *
- * @param QString fullname, the string searched
+ * @param QString name, the string searched
  * @return QList<People>
  */
-QList<People> DatabaseManager::getPeopleByFullname(const QString fullname,
-                                                   const QString fieldOrder)
+QList<People> DatabaseManager::getPeopleByName(const QString name,
+                                               const QString fieldOrder)
 {
     QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
 
     l_query.prepare("SELECT " + m_peopleFields + " "
                     "FROM people AS p "
-                    "WHERE p.lastname || ' ' || p.firstname LIKE '%'||:fullname||'%' "
-                       "OR p.firstname || ' ' || p.lastname LIKE '%'||:fullname||'%' "
+                    "WHERE p.name LIKE '%'||:name||'%' "
                     "ORDER BY " + fieldOrder);
-    l_query.bindValue(":fullname", fullname);
+    l_query.bindValue(":name", name);
 
     if (!l_query.exec())
     {
-        Macaw::DEBUG("In peopleByFullname(QString):");
+        Macaw::DEBUG("In peopleByName(QString):");
         Macaw::DEBUG(l_query.lastError().text());
     }
 
@@ -492,7 +520,7 @@ QList<People> DatabaseManager::getPeopleByFullname(const QString fullname,
         l_peopleList.push_back(l_people);
     }
 
-    Macaw::DEBUG("[DatabaseManager] peopleByFullname returns "
+    Macaw::DEBUG("[DatabaseManager] peopleByName returns "
           + QString::number(l_peopleList.count()) + " people");
 
     return l_peopleList;
@@ -500,7 +528,7 @@ QList<People> DatabaseManager::getPeopleByFullname(const QString fullname,
 
 QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fieldOrder)
 {
-    Macaw::DEBUG("[DatabaseManager] Enters getOnePeopleByAny");
+    Macaw::DEBUG("[DatabaseManager] Enters getPeopleByAny");
     QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
     QStringList l_splittedText = text.split(" ");
@@ -514,10 +542,7 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
         }
     l_queryText = l_queryText
             + "("
-                    "("
-                           "p.lastname LIKE '%'||:text"+ QString::number(i) +"||'%' "
-                        "OR p.firstname LIKE '%'||:text"+ QString::number(i) +"||'%'"
-                    ") "
+                    "p.name LIKE '%'||:text"+ QString::number(i) +"||'%' "
                  "OR ( "
                       "SELECT COUNT(*) "
                       "FROM movies AS m "
@@ -725,8 +750,7 @@ QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString field
                  "OR ( "
                       "SELECT COUNT(*) "
                       "FROM movies AS m, people AS p "
-                      "WHERE (  p.lastname LIKE '%'||:text"+ QString::number(i) +"||'%' "
-                            "OR p.firstname LIKE '%'||:text"+ QString::number(i) +"||'%' )"
+                      "WHERE p.name LIKE '%'||:text"+ QString::number(i) +"||'%' "
                         "AND ( SELECT COUNT(*) FROM movies_people WHERE id_people = p.id AND id_movie = m.id ) > 0 "
                         "AND ( SELECT COUNT(*) FROM movies_tags WHERE id_tag = t.id AND id_movie = m.id ) > 0 "
                     ") > 0 "
@@ -872,13 +896,12 @@ bool DatabaseManager::existMovie(const QString filePath)
  * @param QString fullname of the person
  * @return bool
  */
-bool DatabaseManager::existPeople(const QString fullname)
+bool DatabaseManager::existPeople(const QString name)
 {
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT id FROM people AS p "
-                    "WHERE p.lastname || ' ' || p.firstname  = :fullname "
-                    "OR p.firstname || ' ' || p.lastname = :fullname");
-    l_query.bindValue(":fullname", fullname);
+                    "WHERE p.name = :name");
+    l_query.bindValue(":name", name);
 
     if (!l_query.exec())
     {
@@ -1023,14 +1046,12 @@ People DatabaseManager::hydratePeople(QSqlQuery &query)
 {
     People l_people;
     l_people.setId(query.value(0).toInt());
-    l_people.setFirstname(query.value(1).toString());
-    l_people.setLastname(query.value(2).toString());
-    l_people.setRealname(query.value(3).toString());
-    l_people.setBirthday(QDate::fromString(query.value(4).toString(), DATE_FORMAT));
-    l_people.setBiography(query.value(5).toString());
-    if (query.value(6).isValid())
+    l_people.setName(query.value(1).toString());
+    l_people.setBirthday(QDate::fromString(query.value(2).toString(), DATE_FORMAT));
+    l_people.setBiography(query.value(3).toString());
+    if (query.value(4).isValid())
     {
-        l_people.setType(query.value(6).toInt());
+        l_people.setType(query.value(4).toInt());
     }
 
     return l_people;

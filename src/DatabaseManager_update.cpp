@@ -141,15 +141,11 @@ bool DatabaseManager::updatePeople(People &people)
 
     QSqlQuery l_query(m_db);
     l_query.prepare("UPDATE people "
-                    "SET firstname = :firstname, "
-                        "lastname = :lastname, "
-                        "realname = :realname, "
+                    "SET name = :name, "
                         "birthday = :birthday, "
                         "biography = :biography "
                     "WHERE id = :id");
-    l_query.bindValue(":firstname", people.firstname());
-    l_query.bindValue(":lastname", people.lastname());
-    l_query.bindValue(":realname",  people.realname());
+    l_query.bindValue(":name", people.name());
     l_query.bindValue(":birthday",  people.birthday().toString(DATE_FORMAT));
     l_query.bindValue(":biography", people.biography());
     l_query.bindValue(":id", people.id());

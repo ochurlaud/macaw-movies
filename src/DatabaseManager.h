@@ -80,9 +80,10 @@ public:
     // People
     People getOnePeopleById(const int id);
     People getOnePeopleById(const int id , const int type);
-    QList<People> getPeopleUsedByType(const int type, const QString fieldOrder = "lastname");
-    QList<People> getPeopleByFullname(const QString fullname, const QString fieldOrder = "lastname");
-    QList<People> getPeopleByAny(const QString text, const int type, const QString fieldOrder = "lastname");
+    People getOnePeopleByName(const QString name);
+    QList<People> getPeopleUsedByType(const int type, const QString fieldOrder = "name");
+    QList<People> getPeopleByName(const QString name, const QString fieldOrder = "name");
+    QList<People> getPeopleByAny(const QString text, const int type, const QString fieldOrder = "name");
 
     // Tags
     Tag getOneTagById(const int id);
@@ -102,7 +103,7 @@ public:
     // Does element exist ?
     bool existMovie(const QString);
     bool existTag(const QString);
-    bool existPeople(const QString);
+    bool existPeople(const QString name);
 
 private:
     // Other functions for getters

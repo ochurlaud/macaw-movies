@@ -29,7 +29,7 @@ DatabaseManager::DatabaseManager()
 
     createTables();
     m_movieFields = "m.id, m.title, m.original_title, m.release_date, m.country, m.duration, m.synopsis, m.file_path, m.poster_path, m.colored, m.format, m.suffix, m.rank, m.imported";
-    m_peopleFields = "p.id, p.firstname, p.lastname, p.realname, p.birthday, p.biography";
+    m_peopleFields = "p.id, p.name, p.birthday, p.biography";
     m_tagFields = "t.id, t.name";
     Macaw::DEBUG("[DatabaseManager] object created");
 }
@@ -186,9 +186,7 @@ bool DatabaseManager::createTables()
             // Peoples (directors, actor, music...)
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS people("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "lastname VARCHAR(100) NOT NULL, "
-                      "firstname VARCHAR(100), "
-                      "realname VARCHAR(255), "
+                      "name VARCHAR(200) NOT NULL, "
                       "birthday VARCHAR(10), "
                       "biography TEXT"
                       ")");

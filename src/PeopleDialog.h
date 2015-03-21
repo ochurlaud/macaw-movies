@@ -40,12 +40,8 @@ public:
     explicit PeopleDialog(int = 0, QWidget *parent = 0);
     explicit PeopleDialog(People people, QWidget *parent = 0);
     ~PeopleDialog();
-    void setFirstname(const QString firstname);
-    QString getFirstname() const;
-    void setLastname(const QString lastname);
-    QString getLastname() const;
-    void setRealname(const QString realname);
-    QString getRealname() const;
+    void setName(const QString name);
+    QString getName() const;
     void setBirthday(const QDate birthday);
     QDate getBirthday() const;
     void setBiography(const QString biography);

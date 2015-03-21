@@ -190,7 +190,7 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
         QJsonObject l_jsonObject = l_stream.object();
         if (!l_jsonObject.isEmpty()) {
             int tmdbID = l_jsonObject.value("id").toInt();
-            l_people.setLastname(l_jsonObject.value("name").toString());
+            l_people.setName(l_jsonObject.value("name").toString());
             l_people.setBiography(l_jsonObject.value("biography").toString());
 
             QLocale locale(QLocale::English, QLocale::UnitedStates);

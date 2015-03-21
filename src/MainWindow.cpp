@@ -116,11 +116,7 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
         QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleUsedByType(typePeople);
         foreach (People l_people, l_peopleList)
         {
-            QString l_name(l_people.lastname());
-            if (l_people.firstname() != "")
-            {
-                l_name = l_name + ", " + l_people.firstname();
-            }
+            QString l_name(l_people.name());
             l_name = l_name  + " (" + QString::number(l_people.birthday().year()) + ")";
 
             QListWidgetItem *l_item = new QListWidgetItem(l_name);
@@ -512,11 +508,7 @@ void MainWindow::askForOrphanTagDeletion(Tag &orphanTag)
  */
 void MainWindow::askForOrphanPeopleDeletion(People &orphanPeople)
 {
-    QString l_name;
-    if (orphanPeople.firstname() != "") {
-        l_name = orphanPeople.firstname() + " ";
-    }
-    l_name = l_name + orphanPeople.lastname();
+    QString l_name = orphanPeople.name();
 
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Question);
@@ -833,22 +825,13 @@ void MainWindow::fillMetadataPannel(Movie movie)
         switch (l_people.type())
         {
         case People::Director:
-            if (l_people.firstname() != "") {
-                l_directors += l_people.firstname() + " ";
-            }
-            l_directors += l_people.lastname() + ", ";
+            l_directors += l_people.name() + ", ";
             break;
         case People::Producer:
-            if (l_people.firstname() != "") {
-                l_producers += l_people.firstname() + " ";
-            }
-            l_producers += l_people.lastname() + ", ";
+            l_producers += l_people.name() + ", ";
             break;
         case People::Actor:
-            if(l_people.firstname() != "") {
-                l_actors += l_people.firstname() + " ";
-            }
-            l_actors += l_people.lastname() + ", ";
+            l_actors += l_people.name() + ", ";
             break;
         }
     }

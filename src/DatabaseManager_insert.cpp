@@ -145,11 +145,9 @@ bool DatabaseManager::addTagToMovie(Tag &tag, Movie &movie)
 bool DatabaseManager::insertNewPeople(People &people)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("INSERT INTO people (lastname, firstname, realname, birthday, biography) "
-                    "VALUES (:lastname, :firstname, :realname, :birthday, :biography)");
-    l_query.bindValue(":lastname", people.lastname());
-    l_query.bindValue(":firstname", people.firstname());
-    l_query.bindValue(":realname", people.realname());
+    l_query.prepare("INSERT INTO people (name, birthday, biography) "
+                    "VALUES (:name, :birthday, :biography)");
+    l_query.bindValue(":name", people.name());
     l_query.bindValue(":birthday", people.birthday().toString(DATE_FORMAT));
     l_query.bindValue(":biography", people.biography());
 

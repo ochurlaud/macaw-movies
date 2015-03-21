@@ -22,9 +22,7 @@
 People::People()
 {
     m_id = 0;
-    m_lastname = "";
-    m_firstname = "";
-    m_realname ="";
+    m_name = "";
     m_biography = "";
 }
 
@@ -38,34 +36,14 @@ void People::setId(const int id)
     m_id = id;
 }
 
-QString People::lastname() const
+QString People::name() const
 {
-    return m_lastname;
+    return m_name;
 }
 
-void People::setLastname(const QString lastname)
+void People::setName(const QString name)
 {
-    m_lastname = lastname;
-}
-
-QString People::firstname() const
-{
-    return m_firstname;
-}
-
-void People::setFirstname(const QString firstname)
-{
-    m_firstname = firstname;
-}
-
-QString People::realname() const
-{
-    return m_realname;
-}
-
-void People::setRealname(const QString realname)
-{
-    m_realname = realname;
+    m_name = name;
 }
 
 QDate People::birthday() const
@@ -101,9 +79,7 @@ void People::setType(const int type)
 bool People::operator== (const People &other)
 {
     if ( this->id() == other.id() &&
-         this->firstname() == other.firstname() &&
-         this->lastname() == other.lastname() &&
-         this->realname() == other.realname() &&
+         this->name() == other.name() &&
          this->birthday() == other.birthday() &&
          this->biography() == other.biography() &&
          this->type() == other.type() )

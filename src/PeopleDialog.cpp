@@ -35,9 +35,7 @@ PeopleDialog::PeopleDialog(int id, QWidget *parent) :
     if (id != 0)
     {
         m_people = m_app->getDatabaseManager()->getOnePeopleById(id);
-        setFirstname(m_people.firstname());
-        setLastname(m_people.lastname());
-        setRealname(m_people.realname());
+        setName(m_people.name());
         setBirthday(m_people.birthday());
         setBiography(m_people.biography());
     }
@@ -56,9 +54,7 @@ PeopleDialog::PeopleDialog(People people, QWidget *parent):
     this->setWindowTitle("Edit People Metadata");
     this->setAttribute(Qt::WA_DeleteOnClose);
 
-    setFirstname(m_people.firstname());
-    setLastname(m_people.lastname());
-    setRealname(m_people.realname());
+    setName(m_people.name());
     setBirthday(m_people.birthday());
     setBiography(m_people.biography());
 
@@ -71,34 +67,14 @@ PeopleDialog::~PeopleDialog()
     Macaw::DEBUG("[PeopleDialog] Destructed");
 }
 
-void PeopleDialog::setFirstname(const QString firstname)
+void PeopleDialog::setName(const QString name)
 {
-    m_ui->firstnameEdit->setText(firstname);
+    m_ui->nameEdit->setText(name);
 }
 
-QString PeopleDialog::getFirstname() const
+QString PeopleDialog::getName() const
 {
-    return m_ui->firstnameEdit->text();
-}
-
-void PeopleDialog::setLastname(const QString lastname)
-{
-    m_ui->lastnameEdit->setText(lastname);
-}
-
-QString PeopleDialog::getLastname() const
-{
-    return m_ui->lastnameEdit->text();
-}
-
-void PeopleDialog::setRealname(const QString realname)
-{
-    m_ui->realnameEdit->setText(realname);
-}
-
-QString PeopleDialog::getRealname() const
-{
-    return m_ui->realnameEdit->text();
+    return m_ui->nameEdit->text();
 }
 
 void PeopleDialog::setBirthday(const QDate birthday)
@@ -145,9 +121,7 @@ QString PeopleDialog::getBiography() const
 void PeopleDialog::on_validationButtons_accepted()
 {
     Macaw::DEBUG("[PeopleDialog] validationButtons accepted");
-    m_people.setFirstname(getFirstname());
-    m_people.setLastname(getLastname());
-    m_people.setRealname(getRealname());
+    m_people.setName(getName());
     m_people.setBirthday(getBirthday());
     m_people.setBiography(getBiography());
 

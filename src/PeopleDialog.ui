@@ -22,38 +22,14 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLabel" name="firstnameLabel">
+        <widget class="QLabel" name="nameLabel">
          <property name="text">
-          <string>Firstname</string>
+          <string>Name</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="firstnameEdit"/>
-       </item>
-       <item>
-        <widget class="QLabel" name="lastnameLabel">
-         <property name="text">
-          <string>Lastname</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lastnameEdit"/>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QLabel" name="realnameLabel">
-         <property name="text">
-          <string>Real Name</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="realnameEdit"/>
+        <widget class="QLineEdit" name="nameEdit"/>
        </item>
        <item>
         <spacer name="horizontalSpacer">

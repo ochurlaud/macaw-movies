@@ -28,12 +28,8 @@ public:
     People();
     int id() const;
     void setId(int);
-    QString lastname() const;
-    void setLastname(const QString lastname);
-    QString firstname() const;
-    void setFirstname(const QString firstname);
-    QString realname() const;
-    void setRealname(const QString realname);
+    QString name() const;
+    void setName(const QString name);
     QDate birthday() const;
     void setBirthday(const QDate birthday);
     QString biography() const;
@@ -48,9 +44,7 @@ public:
 
 private:
     int m_id;
-    QString m_lastname;
-    QString m_firstname;
-    QString m_realname;
+    QString m_name;
     QDate m_birthday;
     QString m_biography;
     int m_type;

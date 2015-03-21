@@ -181,7 +181,7 @@ void MovieDialog::setPeopleList(const QList<People> &peopleList)
             break;
         }
 
-        QListWidgetItem *l_item = new QListWidgetItem(l_people.firstname() + " " + l_people.lastname());
+        QListWidgetItem *l_item = new QListWidgetItem(l_people.name());
         l_item->setData(Macaw::ObjectId, l_people.id());
         l_item->setData(Macaw::PeopleType, l_people.type());
         l_peopleWidget->addItem(l_item);
@@ -258,7 +258,7 @@ void MovieDialog::addPeople(const People &people)
         l_peopleWidget = m_ui->actorsWidget;
         break;
     }
-    QListWidgetItem *l_item = new QListWidgetItem(people.firstname() + " " + people.lastname());
+    QListWidgetItem *l_item = new QListWidgetItem(people.name());
     l_item->setData(Macaw::ObjectId, people.id());
     l_item->setData(Macaw::PeopleType, people.type());
     l_peopleWidget->addItem(l_item);
@@ -367,7 +367,7 @@ void MovieDialog::addPeopleButton_clicked(int type)
         // To be simply added, the person must exist and not be already in the list
         if (m_app->getDatabaseManager()->existPeople(l_text)) {
             if(l_peopleWidget->findItems(l_text, Qt::MatchExactly).size() == 0) {
-                QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByFullname(l_text);
+                QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByName(l_text);
                 People l_people = l_peopleList.at(0);
                 l_people.setType(type);
                 addPeople(l_people);
@@ -376,16 +376,8 @@ void MovieDialog::addPeopleButton_clicked(int type)
                 Macaw::DEBUG("[MovieDialog] " + l_text + " already in the list");
             }
         } else {
-            // We suppose here that a name is composed by N >= 0 firstnames
-            // and 1 lastname, separated by spaces
-            QStringList l_textExplosed = l_text.split(" ");
-            QString l_lastname = l_textExplosed.last();
-            l_textExplosed.removeLast();
-            QString l_firstname = l_textExplosed.join(" ");
-
             People l_people;
-            l_people.setFirstname(l_firstname);
-            l_people.setLastname(l_lastname);
+            l_people.setName(l_text);
             l_people.setType(type);
             PeopleDialog *l_peopleDialog = new PeopleDialog(l_people);
             l_peopleDialog->show();
@@ -485,14 +477,14 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
     QString l_text =  l_peopleEdit->text();
     if (l_text.size() > 3)
     {
-        QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByFullname(l_text);
+        QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByName(l_text);
         if(l_peopleList.size() > 0)
         {
             People l_people;
             QStringList l_propositions;
             foreach (l_people, l_peopleList)
             {
-                l_propositions << l_people.firstname() + " " + l_people.lastname();
+                l_propositions << l_people.name();
             }
             QCompleter *l_completer = new QCompleter(l_propositions);
             l_completer->setCaseSensitivity(Qt::CaseInsensitive);
