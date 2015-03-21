@@ -145,20 +145,31 @@ bool DatabaseManager::addTagToMovie(Tag &tag, Movie &movie)
 bool DatabaseManager::insertNewPeople(People &people)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("INSERT INTO people (name, birthday, biography) "
-                    "VALUES (:name, :birthday, :biography)");
-    l_query.bindValue(":name", people.name());
-    l_query.bindValue(":birthday", people.birthday().toString(DATE_FORMAT));
-    l_query.bindValue(":biography", people.biography());
+    // If a people with the same name exist, we update it
+    // else we insert
+    if(existPeople(people.name())) {
+        Macaw::DEBUG("[DatabaseManager.insertNewPeople] Name already known");
+        People l_peopleToUpdate = getOnePeopleByName(people.name());
+        people.setId(l_peopleToUpdate.id());
+        if(!updatePeople(people)) {
 
-    if (!l_query.exec())
-    {
-        Macaw::DEBUG("In insertNewPeople():");
-        Macaw::DEBUG(l_query.lastError().text());
+            return false;
+        }
+    } else {
+        l_query.prepare("INSERT INTO people (name, birthday, biography) "
+                        "VALUES (:name, :birthday, :biography)");
+        l_query.bindValue(":name", people.name());
+        l_query.bindValue(":birthday", people.birthday().toString(DATE_FORMAT));
+        l_query.bindValue(":biography", people.biography());
 
-        return false;
+        if (!l_query.exec()) {
+            Macaw::DEBUG("In insertNewPeople():");
+            Macaw::DEBUG(l_query.lastError().text());
+
+            return false;
+        }
+        people.setId(l_query.lastInsertId().toInt());
     }
-    people.setId(l_query.lastInsertId().toInt());
 
     return true;
 }

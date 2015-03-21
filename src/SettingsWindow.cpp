@@ -56,9 +56,12 @@ void SettingsWindow::on_buttonBox_accepted()
     QString l_newPath = m_ui->folderPathEdit->text();
     addToKnownPathsList(l_newPath);
 
-    QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths();
+    QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths(true);
+    l_moviesPathsList << m_app->getDatabaseManager()->getMoviesPaths(false);
+    qDebug() << l_moviesPathsList.count();
     foreach (QString l_moviesPath, l_moviesPathsList) {
-        if (!m_ui->knownPathsList->findItems(l_moviesPath, Qt::MatchExactly).count()) {
+        if (m_ui->knownPathsList->findItems(l_moviesPath, Qt::MatchExactly).count() == 0) {
+            Macaw::DEBUG("[MainWindow] Remove path "+l_moviesPath);
             // We remove the path and all the movies behind
             m_app->getDatabaseManager()->deleteMoviesPath(l_moviesPath);
         }
