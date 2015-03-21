@@ -46,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(askForOrphanPeopleDeletion(People&)));
     connect(this, SIGNAL(toUpdate()),
             this, SLOT(selfUpdate()));
+    m_ui->mainPannel->addAction(m_ui->actionDelete);
+    m_ui->mainPannel->addAction(m_ui->actionEdit_mainPannelMetadata);
+    m_ui->leftPannel->addAction(m_ui->actionEdit_leftPannelMetadata);
+
     m_moviesList = m_app->getDatabaseManager()->getAllMovies();
     m_leftPannelSelectedId = 0;
     fillMainPannel();
@@ -316,18 +320,10 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
     else if (m_ui->mainPannel->hasFocus()
                && m_ui->mainPannel->selectedItems().count() != 0)
     {
-
-
-        if(m_ui->toWatchButton->isChecked())
-        {
+        if(m_ui->toWatchButton->isChecked()) {
             Macaw::DEBUG("[MainWindow] In ToWatch detected");
-            QAction * l_actionRemoveInToWatch = new QAction("Remove from to watch list", l_menu);
-
-            QObject::connect(l_actionRemoveInToWatch, SIGNAL(triggered()), this, SLOT(actionRemoveInToWatch_triggered()));
-            l_menu->addAction(l_actionRemoveInToWatch);
-        }
-        else
-        {
+            m_ui->actionDelete->setText("Remove from ToWatch list");
+        } else {
             QMenu *l_addPlaylistMenu = new QMenu("Add to playlist");
             QAction *l_actionAddInToWatch = new QAction("To Watch",
                                                         l_addPlaylistMenu);
@@ -339,11 +335,11 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
                              this, SLOT(addPlaylistMenu_triggered(QAction*)));
 
             l_menu->addAction(l_actionAddInToWatch);
+            m_ui->actionDelete->setText("Permanently delete file");
         }
 
-
         l_menu->addAction(m_ui->actionEdit_mainPannelMetadata);
-        l_menu->addAction(m_ui->actionPermanentlyDeleteFile);
+        l_menu->addAction(m_ui->actionDelete);
         l_menu->exec(m_ui->mainPannel->mapToGlobal(point));
     }
 }
@@ -354,12 +350,16 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
  */
 void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
 {
-    Macaw::DEBUG("[MainWindow] actionEdit_Metadata_triggered()");
-    int l_id = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
+    Macaw::DEBUG("[MainWindow] actionEdit_mainPannelMetadata_triggered()");
+    // The left pannel must have focus, one item selected which id is not 0
+    // (not to be "All" or "Unknown")
+    if(m_ui->mainPannel->selectedItems().count() > 0) {
+        int l_id = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
 
-    MovieDialog *l_movieDialog = new MovieDialog(l_id);
-    connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
-    l_movieDialog->show();
+        MovieDialog *l_movieDialog = new MovieDialog(l_id);
+        connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
+        l_movieDialog->show();
+    }
 }
 
 /**
@@ -371,37 +371,78 @@ void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
  */
 void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
 {
-    int l_id = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
-
-    // It's editable only if id is not 0
-    if(l_id != 0)
-    {
-        int l_typeElement = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectType).toInt();
-        if (l_typeElement == Macaw::isPeople) {
-            PeopleDialog *l_movieDialog = new PeopleDialog(l_id);
-            connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
-            l_movieDialog->show();
-        } else if (l_typeElement == Macaw::isTag) {
-            qDebug() << "Tag !";
-        } else if (l_typeElement == Macaw::isPlaylist) {
-            qDebug() << "Playlist !";
+    Macaw::DEBUG("[MainWindow] actionEdit_leftPannelMetadata_triggered()");
+    // The left pannel must have focus, one item selected which id is not 0
+    // (not to be "All" or "Unknown")
+    if(m_ui->leftPannel->selectedItems().count() > 0) {
+        int l_id = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
+        // It's editable only if id is not 0 or -1
+        if(l_id > 0) {
+            Macaw::DEBUG("Element is editable");
+            int l_typeElement = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectType).toInt();
+            if (l_typeElement == Macaw::isPeople) {
+                PeopleDialog *l_movieDialog = new PeopleDialog(l_id);
+                connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
+                l_movieDialog->show();
+            } else if (l_typeElement == Macaw::isTag) {
+                qDebug() << "Tag !";
+            } else if (l_typeElement == Macaw::isPlaylist) {
+                qDebug() << "Playlist !";
+            }
         }
     }
 }
 
 
 /**
- * @brief triggered when the user select the "Permanently Delete File" action on a movie.
- * This delete the file from the disk (NOT moving to trashbin) after user's confirmation.
+ * @brief triggered when the user delete a movie.
+ * Depending on the case it will delete the file or remove the movie from the playlist
  */
-void MainWindow::on_actionPermanentlyDeleteFile_triggered()
+void MainWindow::on_actionDelete_triggered()
+{
+    int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
+    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
+
+    if(m_ui->toWatchButton->isChecked()) {
+        Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(1);
+        removeMovieFromPlaylist(l_movie, l_playlist);
+    } else {
+        permanentlyDeleteFile(l_movie);
+    }
+}
+
+/**
+ * @brief Remove a movie from a playlist
+ * @param movie to remove from the playlist
+ * @param playlist to update
+ */
+void MainWindow::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
+{
+    QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Critical, "Remove from ToWatch list ?",
+                                                         "Do you want to remove this movie from the ToWatch list ?",
+                                                         QMessageBox::Yes|QMessageBox::No, this);
+    l_confirmationDialog->setDefaultButton(QMessageBox::No);
+
+    if(l_confirmationDialog->exec() == QMessageBox::Yes) {
+        if(m_app->getDatabaseManager()->removeMovieFromPlaylist(movie, playlist))
+        {
+            Macaw::DEBUG("[MainWindow] Movie removed from playlist "+ playlist.name());
+            emit toUpdate();
+        }
+    }
+}
+
+/**
+ * @brief Permanently Delete the file which path is movie::path
+ * This delete the file from the disk (NOT moving to trashbin) after user's confirmation.
+ * @param movie to delete
+ */
+void MainWindow::permanentlyDeleteFile(Movie &movie)
 {
     QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Critical, "Delete this file? ",
                                                          "Permanently delete this file? This action cannot be undone. ",
                                                          QMessageBox::Yes|QMessageBox::No, this);
-    int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
-    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
-    QFile * movieFileToDelete = new QFile(l_movie.filePath());
+    QFile * movieFileToDelete = new QFile(movie.filePath());
     l_confirmationDialog->setDefaultButton(QMessageBox::No);
 
     if(l_confirmationDialog->exec() == QMessageBox::Yes)
@@ -412,7 +453,7 @@ void MainWindow::on_actionPermanentlyDeleteFile_triggered()
                                                 "Error deleting the file. ",
                                                 QMessageBox::Ok, this);
         }
-        if(!m_app->getDatabaseManager()->deleteMovie(l_movie))
+        if(!m_app->getDatabaseManager()->deleteMovie(movie))
         {
             QMessageBox * msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
                                                 "Error deleting the movie from the database. ",
@@ -421,8 +462,6 @@ void MainWindow::on_actionPermanentlyDeleteFile_triggered()
 
         emit toUpdate();
     }
-
-
 }
 
 /**
@@ -442,16 +481,6 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
     l_playlist.addMovie(l_movie);
     m_app->getDatabaseManager()->updatePlaylist(l_playlist);
     emit(toUpdate());
-}
-
-void MainWindow::actionRemoveInToWatch_triggered()
-{
-    int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
-    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
-    Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(1);
-    l_playlist.removeMovie(l_movie);
-    m_app->getDatabaseManager()->updatePlaylist(l_playlist);
-    emit toUpdate();
 }
 
 

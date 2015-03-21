@@ -24,6 +24,7 @@
 #include <QtWidgets>
 #include "Application.h"
 #include "Entities/Movie.h"
+#include "Entities/Playlist.h"
 #include "Entities/Tag.h"
 #include "SettingsWindow.h"
 #include "MovieDialog.h"
@@ -59,8 +60,7 @@ private slots:
     void on_mainPannel_clicked(const QModelIndex &index);
     void on_actionEdit_leftPannelMetadata_triggered();
     void on_actionEdit_mainPannelMetadata_triggered();
-    void actionRemoveInToWatch_triggered();
-    void on_actionPermanentlyDeleteFile_triggered();
+    void on_actionDelete_triggered();
     void selfUpdate();
     void addNewMovies();
     void on_searchEdit_returnPressed();
@@ -105,6 +105,10 @@ private:
     void prepareMoviesToDisplay(int id);
     void filterPannels();
     void fillMetadataPannel(Movie movie);
+    void removeMovieFromPlaylist(Movie &movie, Playlist &playlist);
+    void permanentlyDeleteFile(Movie &movie);
+
+
 
 };
 

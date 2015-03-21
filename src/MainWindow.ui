@@ -386,7 +386,7 @@
      <x>0</x>
      <y>0</y>
      <width>684</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSettings">
@@ -425,6 +425,9 @@
    <property name="toolTip">
     <string>Edit Metadata</string>
    </property>
+   <property name="shortcut">
+    <string>M</string>
+   </property>
   </action>
   <action name="actionAddToPLaylist">
    <property name="text">
@@ -439,9 +442,12 @@
     <string>&amp;About</string>
    </property>
   </action>
-  <action name="actionPermanentlyDeleteFile">
+  <action name="actionDelete">
    <property name="text">
-    <string>Permanently Delete File</string>
+    <string>Delete</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
    </property>
   </action>
  </widget>

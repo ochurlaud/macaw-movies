@@ -168,8 +168,8 @@ bool DatabaseManager::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
 {
     QSqlQuery l_query(m_db);
     l_query.prepare("DELETE FROM movies_playlists "
-                   "WHERE id_playlist = :id_playlist "
-                     "AND id_movie = :id_movie");
+                    "WHERE id_playlist = :id_playlist "
+                        "AND id_movie = :id_movie");
     l_query.bindValue(":id_playlist", playlist.id());
     l_query.bindValue(":id_movie", movie.id());
     if(!l_query.exec())
