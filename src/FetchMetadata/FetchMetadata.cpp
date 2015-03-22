@@ -63,12 +63,12 @@ bool FetchMetadata::startProcess(Movie &movie)
 
 QString FetchMetadata::cleanString(QString title)
 {
-    QRegExp l_sep("(\\_|\\-|\\ |\\,|\\)|\\(|\\]|\\[|\\.|\\!|\\?)");
-    QStringList l_splittedTitle = title.split(l_sep);
+    QRegExp l_sep("(\\_|\\-|\\ |\\,|\\)|\\(|\\]|\\[|\\.|\\!|\\?|\\#)");
+    QStringList l_splittedTitle = title.split(l_sep, QString::SkipEmptyParts);
 
-    QRegExp l_alphaOnly("(^[À-Ÿà-ÿA-Za-z]*$)");
+    QRegExp l_alphaOnly("(^['À-Ÿà-ÿA-Za-z]*$)");
     l_splittedTitle = l_splittedTitle.filter(l_alphaOnly);
-
+    QString po;
     return l_splittedTitle.join(" ");
 }
 
@@ -79,15 +79,34 @@ void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
 
     Macaw::DEBUG("[FetchMetadata] Signal from primary request received");
 
-    if (movieList.count() == 1) {
-        Movie l_movie = movieList.at(0);
+    QList<Movie> l_accurateList;
+
+    if(movieList.count() == 1) {
+        l_accurateList = movieList;
+    }
+    else if(movieList.count() > 1) {
+        foreach(Movie l_movie, movieList) {
+            qDebug() << cleanString(l_movie.title()) << " | " << cleanString(m_movie.title());
+            qDebug() << cleanString(l_movie.title()).compare(cleanString(m_movie.title()), Qt::CaseInsensitive);
+            if(cleanString(l_movie.title()).compare(cleanString(m_movie.title()), Qt::CaseInsensitive) == 0) {
+                Macaw::DEBUG("[FetchMetadata] One title found");
+                l_accurateList.push_back(l_movie);
+            }
+        }
+    }
+    qDebug() << l_accurateList.count();
+    if(l_accurateList.count() == 1) {
+        Movie l_movie = l_accurateList.at(0);
 
         connect(m_fetchMetadataQuery, SIGNAL(movieResponse(Movie&)),
                 this, SLOT(processMovieResponse(Movie&)));
         Macaw::DEBUG("[FetchMetadata] Movie request to be sent");
         m_fetchMetadataQuery->sendMovieRequest(l_movie.id());
     } else {
-        m_fetchMetadataDialog = new FetchMetadataDialog(m_movie, movieList);
+        if(l_accurateList.count() == 0) {
+            l_accurateList = movieList;
+        }
+        m_fetchMetadataDialog = new FetchMetadataDialog(m_movie, l_accurateList);
         connect(m_fetchMetadataDialog, SIGNAL(selectedMovie(Movie&)),
                 this, SLOT(on_selectedMovie(Movie&)));
         connect(m_fetchMetadataDialog, SIGNAL(searchMovies(QString)),

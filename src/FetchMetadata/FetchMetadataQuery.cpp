@@ -175,9 +175,12 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
         }
         // else: error!
     }
-    if(m_movie.peopleList().count() > 0) {
-    Macaw::DEBUG("[FetchMetadataQuery] Send peopleResponse Signal");
-    emit(peopleResponse());
+    if(m_movie.peopleList().count() == 0) {
+        Macaw::DEBUG("[FetchMetadataQuery] No people send movieResponse Signal");
+        emit(movieResponse(m_movie));
+    } else {
+        Macaw::DEBUG("[FetchMetadataQuery] Send peopleResponse Signal");
+        emit(peopleResponse());
     }
 }
 
