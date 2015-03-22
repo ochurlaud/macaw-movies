@@ -135,36 +135,39 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
 
             m_movie.setSynopsis(l_jsonObject.value("overview").toString());
 
+            People l_people;
+            QString l_personName;
+            int l_personId;
             QJsonArray l_jsonCastArray = l_jsonObject.value("credits").toObject().value("cast").toArray();
             for (int i = 0 ; i < l_jsonCastArray.size() ; i++) {
-                People l_people;
-                int l_personId;
                 l_personId = l_jsonCastArray.at(i).toObject().value("id").toInt();
+                l_personName = l_jsonCastArray.at(i).toObject().value("name").toString();
                 l_people.setId(l_personId);
                 l_people.setType(People::Actor);
                 m_movie.addPeople(l_people);
                 m_peopleRequestList.append(l_personId);
+                Macaw::DEBUG("[FetchMetadataQuery] new Actor: "+ l_personName);
             }
 
             QJsonArray l_jsonCrewArray = l_jsonObject.value("credits").toObject().value("crew").toArray();
             for (int i = 0 ; i < l_jsonCrewArray.size() ; i++) {
                 QString l_job = l_jsonCrewArray.at(i).toObject().value("job").toString();
                 if (l_job == "Director") {
-                    People l_people;
-                    int l_personId;
-                    l_personId = l_jsonCastArray.at(i).toObject().value("id").toInt();
+                    l_personId = l_jsonCrewArray.at(i).toObject().value("id").toInt();
+                    l_personName = l_jsonCrewArray.at(i).toObject().value("name").toString();
                     l_people.setId(l_personId);
                     l_people.setType(People::Director);
                     m_movie.addPeople(l_people);
                     m_peopleRequestList.append(l_personId);
+                    Macaw::DEBUG("[FetchMetadataQuery] new Director: "+ l_personName);
                 } else if (l_job ==  "Producer") {
-                    People l_people;
-                    int l_personId;
-                    l_personId = l_jsonCastArray.at(i).toObject().value("id").toInt();
+                    l_personId = l_jsonCrewArray.at(i).toObject().value("id").toInt();
+                    l_personName = l_jsonCrewArray.at(i).toObject().value("name").toString();
                     l_people.setId(l_personId);
                     l_people.setType(People::Producer);
                     m_movie.addPeople(l_people);
                     m_peopleRequestList.append(l_personId);
+                    Macaw::DEBUG("[FetchMetadataQuery] new Producer: "+ l_personName);
                 }
             }
         } else {
