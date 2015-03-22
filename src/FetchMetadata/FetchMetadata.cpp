@@ -86,15 +86,12 @@ void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
     }
     else if(movieList.count() > 1) {
         foreach(Movie l_movie, movieList) {
-            qDebug() << cleanString(l_movie.title()) << " | " << cleanString(m_movie.title());
-            qDebug() << cleanString(l_movie.title()).compare(cleanString(m_movie.title()), Qt::CaseInsensitive);
             if(cleanString(l_movie.title()).compare(cleanString(m_movie.title()), Qt::CaseInsensitive) == 0) {
                 Macaw::DEBUG("[FetchMetadata] One title found");
                 l_accurateList.push_back(l_movie);
             }
         }
     }
-    qDebug() << l_accurateList.count();
     if(l_accurateList.count() == 1) {
         Movie l_movie = l_accurateList.at(0);
 
