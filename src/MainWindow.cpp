@@ -99,12 +99,10 @@ void MainWindow::fillLeftPannel()
 //Create functin for the following (code is repeated)
     if (m_typeElement == Macaw::isPeople) {
         foreach(Movie l_movie, m_authorizedMoviesList) {
-            qDebug() << m_app->getDatabaseManager()->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch);
             if( (m_ui->toWatchButton->isChecked()
                  && m_app->getDatabaseManager()->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
                  ) || !m_ui->toWatchButton->isChecked()
                ) {
-                qDebug() << l_movie.title();
                 if(l_movie.peopleList().empty()
                    && !m_leftElementsIdList.contains(-1)
                   ) {
