@@ -79,15 +79,19 @@ private:
 
     /**
      * @brief QList of movies that can be listed in the main window
-     * (before verification if they match the search field)
-     * This simplifies fillMetadataPannel() (no need to query the database)
+     * (because they match the searching field)
      */
-    QList<Movie> m_moviesList;
+    QList<Movie> m_authorizedMoviesList;
 
     /**
      * @brief QList of movies that are actually listed in the main window
      */
     QList<Movie> m_displayedMoviesList;
+
+    /**
+     * @brief QList of ids of the leftPannel
+     */
+    QList<int> m_leftElementsIdList;
 
     /**
      * @brief type of elements lastly shown in the leftPannel (Tags/People)
@@ -105,10 +109,10 @@ private:
     int m_leftPannelSelectedId;
     void readSettings();
     void fillMainPannel();
-    void fillLeftPannel(int typeElement, int typePeople);
+    void fillLeftPannel();
     void setLeftPannelLabel();
-    void prepareMoviesToDisplay(int id);
-    void filterPannels();
+    QList<Movie> moviesToDisplay(int id);
+    void updatePannels();
     void fillMetadataPannel(Movie movie);
     void removeMovieFromPlaylist(Movie &movie, Playlist &playlist);
     void permanentlyDeleteFile(Movie &movie);
