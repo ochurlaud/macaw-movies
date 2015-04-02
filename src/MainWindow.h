@@ -85,6 +85,11 @@ private:
     QList<Movie> m_moviesList;
 
     /**
+     * @brief QList of movies that are actually listed in the main window
+     */
+    QList<Movie> m_displayedMoviesList;
+
+    /**
      * @brief type of elements lastly shown in the leftPannel (Tags/People)
      */
     int m_typeElement;

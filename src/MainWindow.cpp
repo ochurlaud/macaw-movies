@@ -90,6 +90,7 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
     m_ui->leftPannel->clear();
     m_typeElement = typeElement;
     m_typePeople = typePeople;
+    QString l_searchText = m_ui->searchEdit->text();
 
     if (typeElement != Macaw::isPlaylist)
     {
@@ -133,6 +134,9 @@ void MainWindow::fillLeftPannel(int typeElement, int typePeople = 0)
     }
     else if(typeElement == Macaw::isTag)
     {
+        QList<Tag> l_authorizedTagList = m_app->getDatabaseManager()->getTagsByAny(l_searchText);
+        //l_authorizedTagList.
+
         QListWidgetItem *l_item = new QListWidgetItem("No Tag");
         l_item->setData(Macaw::ObjectId, -1);
         l_item->setData(Macaw::ObjectType, Macaw::isTag);
@@ -199,7 +203,12 @@ void MainWindow::fillMainPannel()
 {
     Macaw::DEBUG("[MainWindow] Enters fillMainPannel()");
 
-    m_ui->mainPannel->clear();
+    m_ui->mainPannel->clearContents();
+    m_ui->mainPannel->setRowCount(0);
+    m_displayedMoviesList.clear();
+
+    // Create function setHeaders
+    // And call it only the first time or when settings changed
     int l_columnCount = 4;
     m_ui->mainPannel->setColumnCount(l_columnCount);
     QHeaderView* l_headerView = m_ui->mainPannel->horizontalHeader();
@@ -208,28 +217,45 @@ void MainWindow::fillMainPannel()
     QStringList l_headers;
     l_headers << "Title" << "Original Title" << "Release Date" << "Path of the file";
     m_ui->mainPannel->setHorizontalHeaderLabels(l_headers);
-    m_ui->mainPannel->setRowCount(m_moviesList.size());
-    int l_row = 0;
+    // End function setHeaders
 
-    foreach (Movie l_movie, m_moviesList)
-    {
-        int l_column = 0;
-        QStringList l_movieData;
-        l_movieData << l_movie.title()
-                    << l_movie.originalTitle()
-                    << l_movie.releaseDate().toString("dd MMM yyyy")
-                    << l_movie.filePath();
-        QVector<QTableWidgetItem*> l_itemList(4);
-        foreach(QTableWidgetItem *l_item, l_itemList)
-        {
-            l_item = new QTableWidgetItem(l_movieData.at(l_column));
-            l_item->setData(Macaw::ObjectId, l_movie.id());
-            l_item->setData(Macaw::ObjectType, Macaw::isMovie);
-            m_ui->mainPannel->setItem(l_row, l_column, l_item);
-            l_column++;
+    QString l_text = m_ui->searchEdit->text();
+    QList<Movie> l_authorizedMoviesList = m_app->getDatabaseManager()->getMoviesByAny(l_text);
+
+    int l_row = 0;
+    foreach (Movie l_movie, l_authorizedMoviesList) {
+        if(m_moviesList.contains(l_movie)) {
+            qDebug() << l_movie.title();
+            if( (m_ui->toWatchButton->isChecked()
+                 && m_app->getDatabaseManager()->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
+                 ) || !m_ui->toWatchButton->isChecked()
+               ) {
+               //Create function `ADD MOVIE TO PANNEL`
+                int l_column = 0;
+                QStringList l_movieData;
+                qDebug() << m_ui->mainPannel->rowCount();
+                m_ui->mainPannel->insertRow(m_ui->mainPannel->rowCount());
+
+                m_displayedMoviesList.append(l_movie);
+                qDebug() << l_movie.title();
+                l_movieData << l_movie.title()
+                            << l_movie.originalTitle()
+                            << l_movie.releaseDate().toString("dd MMM yyyy")
+                            << l_movie.filePath();
+                QVector<QTableWidgetItem*> l_itemList(4);
+                foreach(QTableWidgetItem *l_item, l_itemList)
+                {
+                    l_item = new QTableWidgetItem(l_movieData.at(l_column));
+                    l_item->setData(Macaw::ObjectId, l_movie.id());
+                    l_item->setData(Macaw::ObjectType, Macaw::isMovie);
+                    m_ui->mainPannel->setItem(l_row, l_column, l_item);
+                    l_column++;
+                }
+                l_row++;
+            }
         }
-        l_row++;
     }
+//    m_ui->mainPannel->setRowCount(m_displayedMoviesList.size());
 
     Macaw::DEBUG("[MainWindow] Exits fillMainPannel()");
 }
@@ -565,7 +591,6 @@ void MainWindow::on_mainPannel_clicked(const QModelIndex &index)
     int l_idMovie = index.data(Macaw::ObjectId).toInt();
     Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_idMovie);
     this->fillMetadataPannel(l_movie);
-
 }
 
 /**
@@ -674,32 +699,10 @@ void MainWindow::filterPannels()
 {
     Macaw::DEBUG("[MainWindow] Enters filterPannels()");
 
-    fillMainPannel();
     fillLeftPannel(m_typeElement, m_typePeople);
+    fillMainPannel();
 
     QString l_text = m_ui->searchEdit->text();
-
-    // mainPannel
-    QList<Movie> l_authorizedMoviesList = m_app->getDatabaseManager()->getMoviesByAny(l_text);
-    for (int i = 0 ; i < m_ui->mainPannel->rowCount(); i++) {
-        bool l_isPresent(false);
-        QTableWidgetItem *l_item = m_ui->mainPannel->item(i, 0);
-        int l_itemMovieId = l_item->data(Macaw::ObjectId).toInt();
-
-        foreach(Movie l_movie, l_authorizedMoviesList) {
-             if (l_movie.id() == l_itemMovieId) {
-                 l_isPresent = true;
-             }
-        }
-        if (l_isPresent
-                 && m_ui->toWatchButton->isChecked()) {
-             l_isPresent = m_app->getDatabaseManager()->isMovieInPlaylist(l_itemMovieId, Playlist::ToWatch);
-        }
-        if (l_isPresent == false) {
-            m_ui->mainPannel->removeRow(i);
-            i--; // We remove a line, so we have to decrement i...
-        }
-    }
 
     // leftPannel
     if (m_typeElement == Macaw::isTag) {
