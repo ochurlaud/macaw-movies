@@ -225,7 +225,6 @@ void MainWindow::fillMainPannel()
     int l_row = 0;
     foreach (Movie l_movie, l_authorizedMoviesList) {
         if(m_moviesList.contains(l_movie)) {
-            qDebug() << l_movie.title();
             if( (m_ui->toWatchButton->isChecked()
                  && m_app->getDatabaseManager()->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
                  ) || !m_ui->toWatchButton->isChecked()
@@ -233,11 +232,9 @@ void MainWindow::fillMainPannel()
                //Create function `ADD MOVIE TO PANNEL`
                 int l_column = 0;
                 QStringList l_movieData;
-                qDebug() << m_ui->mainPannel->rowCount();
                 m_ui->mainPannel->insertRow(m_ui->mainPannel->rowCount());
 
                 m_displayedMoviesList.append(l_movie);
-                qDebug() << l_movie.title();
                 l_movieData << l_movie.title()
                             << l_movie.originalTitle()
                             << l_movie.releaseDate().toString("dd MMM yyyy")
