@@ -25,6 +25,7 @@
 #include <QtSql>
 
 #include "include_var.h"
+
 #include "MoviesDebug.h"
 
 #include "Entities/Movie.h"
