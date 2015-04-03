@@ -20,11 +20,9 @@
 #ifndef SETTINGWINDOW_H
 #define SETTINGWINDOW_H
 
-#include "Application.h"
-
 #include <QDialog>
 
-class Application;
+#include "Application.h"
 
 namespace Ui {
 class SettingsWindow;
@@ -52,7 +50,6 @@ private slots:
 
 private:
     Ui::SettingsWindow *m_ui;
-    Application *m_app;
     void addToKnownPathsList(QString path);
 
 };

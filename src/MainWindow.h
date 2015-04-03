@@ -22,17 +22,16 @@
 
 #include <QtGui>
 #include <QtWidgets>
+
 #include "Application.h"
+#include "MovieDialog.h"
+#include "PeopleDialog.h"
+#include "SettingsWindow.h"
+
 #include "Entities/Movie.h"
 #include "Entities/Playlist.h"
 #include "Entities/Tag.h"
-#include "SettingsWindow.h"
-#include "MovieDialog.h"
-#include "PeopleDialog.h"
 #include "FetchMetadata/FetchMetadata.h"
-
-
-class Application;
 
 namespace Ui {
 class MainWindow;
@@ -75,7 +74,6 @@ signals:
 
 private:
     Ui::MainWindow *m_ui;
-    Application *m_app;
 
     /**
      * @brief QList of movies that can be listed in the main window
@@ -116,9 +114,6 @@ private:
     void fillMetadataPannel(Movie movie);
     void removeMovieFromPlaylist(Movie &movie, Playlist &playlist);
     void permanentlyDeleteFile(Movie &movie);
-
-
-
 };
 
 #endif // MainWindow_H

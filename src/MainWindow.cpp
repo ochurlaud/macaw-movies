@@ -28,21 +28,18 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     m_ui(new Ui::MainWindow)
 {
-    m_app = qobject_cast<Application *>(qApp);
     Macaw::DEBUG("[MainWindow] Constructor called");
 
     m_ui->setupUi(this);
     m_ui->leftPannelWidget->setContentsMargins(0,1,1,0);
-    this->setWindowTitle(m_app->applicationDisplayName());
-    this->setWindowIcon(m_app->windowIcon());
     this->readSettings();
     connect(m_ui->mainPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
     connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
-    connect(m_app->getDatabaseManager(),SIGNAL(orphanTagDetected(Tag&)),
+    connect(databaseManager,SIGNAL(orphanTagDetected(Tag&)),
             this, SLOT(askForOrphanTagDeletion(Tag&)));
-    connect(m_app->getDatabaseManager(),SIGNAL(orphanPeopleDetected(People&)),
+    connect(databaseManager,SIGNAL(orphanPeopleDetected(People&)),
             this, SLOT(askForOrphanPeopleDeletion(People&)));
     connect(this, SIGNAL(toUpdate()),
             this, SLOT(selfUpdate()));
@@ -96,11 +93,12 @@ void MainWindow::fillLeftPannel()
             l_item->setSelected(true);
         }
     }
-//Create functin for the following (code is repeated)
+//Create function for the following (code is repeated)
+   // ??? Templates ???
     if (m_typeElement == Macaw::isPeople) {
         foreach(Movie l_movie, m_authorizedMoviesList) {
             if( (m_ui->toWatchButton->isChecked()
-                 && m_app->getDatabaseManager()->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
+                 && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
                  ) || !m_ui->toWatchButton->isChecked()
                ) {
                 if(l_movie.peopleList().empty()
@@ -118,7 +116,7 @@ void MainWindow::fillLeftPannel()
     } else if(m_typeElement == Macaw::isTag) {
         foreach(Movie l_movie, m_authorizedMoviesList) {
             if( (m_ui->toWatchButton->isChecked()
-                 && m_app->getDatabaseManager()->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
+                 && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
                  ) || !m_ui->toWatchButton->isChecked()
                ) {
                 if(l_movie.tagList().empty()
@@ -146,7 +144,7 @@ void MainWindow::fillLeftPannel()
                     l_item->setSelected(true);
                 }
             } else {
-                People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_objectId);
+                People l_people = databaseManager->getOnePeopleById(l_objectId);
                 QString l_name(l_people.name());
 
                 QListWidgetItem *l_item = new QListWidgetItem(l_name);
@@ -173,7 +171,7 @@ void MainWindow::fillLeftPannel()
                     l_item->setSelected(true);
                 }
             } else {
-                Tag l_tag = m_app->getDatabaseManager()->getOneTagById(l_objectId);
+                Tag l_tag = databaseManager->getOneTagById(l_objectId);
                 QString l_name(l_tag.name());
 
                 QListWidgetItem *l_item = new QListWidgetItem(l_name);
@@ -223,14 +221,14 @@ void MainWindow::fillMainPannel()
     // End function setHeaders
 
     QString l_text = m_ui->searchEdit->text();
-    m_authorizedMoviesList = m_app->getDatabaseManager()->getMoviesByAny(l_text);
+    m_authorizedMoviesList = databaseManager->getMoviesByAny(l_text);
 
     QList<Movie> l_moviesList = moviesToDisplay(m_leftPannelSelectedId);
     int l_row = 0;
     foreach (Movie l_movie, m_authorizedMoviesList) {
         if(l_moviesList.contains(l_movie)) {
             if( (m_ui->toWatchButton->isChecked()
-                 && m_app->getDatabaseManager()->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
+                 && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
                  ) || !m_ui->toWatchButton->isChecked()
                ) {
                //Create function `ADD MOVIE TO PANNEL`
@@ -426,10 +424,10 @@ void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
 void MainWindow::on_actionDelete_triggered()
 {
     int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
-    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
+    Movie l_movie = databaseManager->getOneMovieById(l_movieId);
 
     if(m_ui->toWatchButton->isChecked()) {
-        Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(1);
+        Playlist l_playlist = databaseManager->getOnePlaylistById(1);
         removeMovieFromPlaylist(l_movie, l_playlist);
     } else {
         permanentlyDeleteFile(l_movie);
@@ -449,7 +447,7 @@ void MainWindow::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
     l_confirmationDialog->setDefaultButton(QMessageBox::No);
 
     if(l_confirmationDialog->exec() == QMessageBox::Yes) {
-        if(m_app->getDatabaseManager()->removeMovieFromPlaylist(movie, playlist))
+        if(databaseManager->removeMovieFromPlaylist(movie, playlist))
         {
             Macaw::DEBUG("[MainWindow] Movie removed from playlist "+ playlist.name());
             emit toUpdate();
@@ -478,7 +476,7 @@ void MainWindow::permanentlyDeleteFile(Movie &movie)
                                                 "Error deleting the file. ",
                                                 QMessageBox::Ok, this);
         }
-        if(!m_app->getDatabaseManager()->deleteMovie(movie))
+        if(!databaseManager->deleteMovie(movie))
         {
             QMessageBox * msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
                                                 "Error deleting the movie from the database. ",
@@ -501,10 +499,10 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
 {
     int l_actionId = action->data().toInt();
     int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
-    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
-    Playlist l_playlist = m_app->getDatabaseManager()->getOnePlaylistById(l_actionId);
+    Movie l_movie = databaseManager->getOneMovieById(l_movieId);
+    Playlist l_playlist = databaseManager->getOnePlaylistById(l_actionId);
     l_playlist.addMovie(l_movie);
-    m_app->getDatabaseManager()->updatePlaylist(l_playlist);
+    databaseManager->updatePlaylist(l_playlist);
     emit(toUpdate());
 }
 
@@ -525,7 +523,7 @@ void MainWindow::askForOrphanTagDeletion(Tag &orphanTag)
     msgBox.setDefaultButton(QMessageBox::No);
 
     if(msgBox.exec() == QMessageBox::Yes) {
-        m_app->getDatabaseManager()->deleteTag(orphanTag);
+        databaseManager->deleteTag(orphanTag);
     }
 }
 
@@ -547,7 +545,7 @@ void MainWindow::askForOrphanPeopleDeletion(People &orphanPeople)
     msgBox.setDefaultButton(QMessageBox::No);
 
     if(msgBox.exec() == QMessageBox::Yes) {
-        m_app->getDatabaseManager()->deletePeople(orphanPeople);
+        databaseManager->deletePeople(orphanPeople);
     }
 }
 
@@ -562,7 +560,7 @@ void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
     Macaw::DEBUG("[MainWindow] itemDoubleClicked on mainPannel");
 
     int l_movieId = item->data(Macaw::ObjectId).toInt();
-    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_movieId);
+    Movie l_movie = databaseManager->getOneMovieById(l_movieId);
 
     Macaw::DEBUG("[MainWindow.startMovie()] Opened movie: " + l_movie.filePath());
 
@@ -592,7 +590,7 @@ void MainWindow::on_mainPannel_clicked(const QModelIndex &index)
 {
     Macaw::DEBUG("[MainWindow] mainPannel clicked");
     int l_idMovie = index.data(Macaw::ObjectId).toInt();
-    Movie l_movie = m_app->getDatabaseManager()->getOneMovieById(l_idMovie);
+    Movie l_movie = databaseManager->getOneMovieById(l_idMovie);
     this->fillMetadataPannel(l_movie);
 }
 
@@ -609,23 +607,27 @@ QList<Movie> MainWindow::moviesToDisplay(int id)
     m_leftPannelSelectedId = id;
     if(m_leftPannelSelectedId == 0) {
 
-        return m_app->getDatabaseManager()->getAllMovies();
+        return databaseManager->getAllMovies();
     } else if(m_typeElement == Macaw::isPeople) {
         if (m_leftPannelSelectedId == -1) {
 
-            return m_app->getDatabaseManager()->getMoviesWithoutPeople(m_typePeople);
+            return databaseManager->getMoviesWithoutPeople(m_typePeople);
         } else {
 
-            return m_app->getDatabaseManager()->getMoviesByPeople(m_leftPannelSelectedId, m_typePeople);
+            return databaseManager->getMoviesByPeople(m_leftPannelSelectedId, m_typePeople);
         }
     } else if (m_typeElement == Macaw::isTag) {
         if (m_leftPannelSelectedId == -1) {
 
-            return m_app->getDatabaseManager()->getMoviesWithoutTag();
+            return databaseManager->getMoviesWithoutTag();
         } else {
 
-            return m_app->getDatabaseManager()->getMoviesByTag(m_leftPannelSelectedId);
+            return databaseManager->getMoviesByTag(m_leftPannelSelectedId);
         }
+    } else {
+        QList<Movie> l_emptyList;
+
+        return  l_emptyList;
     }
 }
 
@@ -723,7 +725,7 @@ void MainWindow::addNewMovies()
     Macaw::DEBUG("[MainWindow] Enter addNewMovies");
 
     bool l_imported = false;
-    QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths(l_imported);
+    QStringList l_moviesPathsList = databaseManager->getMoviesPaths(l_imported);
     foreach (QString l_moviesPath, l_moviesPathsList) {
         QDirIterator l_file(l_moviesPath, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
         while (l_file.hasNext()) {
@@ -739,14 +741,14 @@ void MainWindow::addNewMovies()
                                    << "mov";
             if (l_authorizedSuffixList.contains(l_fileSuffix, Qt::CaseInsensitive)) {
                 Macaw::DEBUG("[MainWindow.updateApp()] Suffix accepted");
-                bool l_movieExists = m_app->getDatabaseManager()->existMovie(l_filePath);
+                bool l_movieExists = databaseManager->existMovie(l_filePath);
                 if (!l_movieExists) {
                     Macaw::DEBUG("[MainWindow.updateApp()] Movie not already known");
                     Movie l_movie;
                     l_movie.setTitle(l_file.fileInfo().completeBaseName());
                     l_movie.setFilePath(l_file.fileInfo().absoluteFilePath());
                     l_movie.setSuffix(l_fileSuffix);
-                    m_app->getDatabaseManager()->insertNewMovie(l_movie);
+                    databaseManager->insertNewMovie(l_movie);
 
                     // Currently a wainting loop is created in FetchMetadata,
                     // multithreading would be better
@@ -758,7 +760,7 @@ void MainWindow::addNewMovies()
                 }
             }
         }
-        m_app->getDatabaseManager()->setMoviesPathImported(l_moviesPath,true);
+        databaseManager->setMoviesPathImported(l_moviesPath,true);
     }
 
     emit(toUpdate());

@@ -33,7 +33,7 @@ Application::Application(int &argc, char **argv) :
 
     Macaw::DEBUG("[Application] started");
 
-    m_dbManager = new DatabaseManager();
+    //m_dbManager = new DatabaseManager();
     Macaw::DEBUG("[Application] Database initialized");
 }
 

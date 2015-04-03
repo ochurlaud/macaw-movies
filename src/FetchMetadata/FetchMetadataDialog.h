@@ -58,7 +58,6 @@ private slots:
 
 private:
     Ui::FetchMetadataDialog *m_ui;
-    Application *m_app;
     Movie m_movie;
 };
 

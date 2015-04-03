@@ -24,7 +24,6 @@ FetchMetadataDialog::FetchMetadataDialog(Movie movie, QList<Movie> moviesProposi
     QDialog(parent),
     m_ui(new Ui::FetchMetadataDialog)
 {
-    m_app = qobject_cast<Application *>(qApp);
     Macaw::DEBUG("[FetchMetadataDialog] Constructor called");
     m_ui->setupUi(this);
 

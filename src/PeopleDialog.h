@@ -21,9 +21,10 @@
 #define PEOPLEDIALOG_H
 
 #include <QDialog>
+
 #include "Application.h"
 
-class Application;
+#include "Entities/People.h"
 
 namespace Ui {
 class PeopleDialog;
@@ -59,7 +60,6 @@ private slots:
 private:
     Ui::PeopleDialog *m_ui;
     People m_people;
-    Application *m_app;
 };
 
 #endif // PEOPLEDIALOG_H
