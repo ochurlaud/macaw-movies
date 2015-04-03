@@ -61,6 +61,10 @@ public:
     ~Application();
     QString tmdbkey() { return m_tmdbkey; }
 
+private slots:
+    void askForOrphanTagDeletion(Tag &orphanTag);
+    void askForOrphanPeopleDeletion(People &orphanPeople);
+
 private:
 
     /**

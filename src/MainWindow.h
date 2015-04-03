@@ -55,8 +55,8 @@ private slots:
     void on_tagsButton_clicked();
     void on_customContextMenuRequested(const QPoint &);
     void on_mainPannel_itemDoubleClicked(QTableWidgetItem *item);
-    void on_leftPannel_clicked(const QModelIndex &index);
-    void on_mainPannel_clicked(const QModelIndex &index);
+    void on_leftPannel_itemSelectionChanged();
+    void on_mainPannel_itemSelectionChanged();
     void on_actionEdit_leftPannelMetadata_triggered();
     void on_actionEdit_mainPannelMetadata_triggered();
     void on_actionDelete_triggered();
@@ -64,8 +64,6 @@ private slots:
     void addNewMovies();
     void on_searchEdit_returnPressed();
     void addPlaylistMenu_triggered(QAction* action);
-    void askForOrphanTagDeletion(Tag &orphanTag);
-    void askForOrphanPeopleDeletion(People &orphanPeople);
     void on_actionAbout_triggered();
     void closeEvent(QCloseEvent *event);
 

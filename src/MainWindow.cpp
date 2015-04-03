@@ -39,10 +39,6 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
     connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
-    connect(databaseManager,SIGNAL(orphanTagDetected(Tag&)),
-            this, SLOT(askForOrphanTagDeletion(Tag&)));
-    connect(databaseManager,SIGNAL(orphanPeopleDetected(People&)),
-            this, SLOT(askForOrphanPeopleDeletion(People&)));
     connect(this, SIGNAL(toUpdate()),
             this, SLOT(selfUpdate()));
     m_ui->mainPannel->addAction(m_ui->actionDelete);
@@ -508,49 +504,6 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
     emit(toUpdate());
 }
 
-
-/**
- * @brief Slot triggered when DatabaseManager finds an orphan tag.
- * A QMessageBox asks the user if the tag should be delete or not.
- *
- * @param orphanTag concerned by the choice
- */
-void MainWindow::askForOrphanTagDeletion(Tag &orphanTag)
-{
-    QMessageBox msgBox;
-    msgBox.setIcon(QMessageBox::Question);
-    msgBox.setText("The tag <b>"+ orphanTag.name() +"</b> is not used in any movie now. ");
-    msgBox.setInformativeText("Do you want to delete this tag?");
-    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    msgBox.setDefaultButton(QMessageBox::No);
-
-    if(msgBox.exec() == QMessageBox::Yes) {
-        databaseManager->deleteTag(orphanTag);
-    }
-}
-
-/**
- * @brief Slot triggered when DatabaseManager finds an orphan person.
- * A QMessageBox asks the user if the person should be delete or not.
- *
- * @param orphanPeople concerned by the choice
- */
-void MainWindow::askForOrphanPeopleDeletion(People &orphanPeople)
-{
-    QString l_name = orphanPeople.name();
-
-    QMessageBox msgBox;
-    msgBox.setIcon(QMessageBox::Question);
-    msgBox.setText("The person <b>" +l_name+ "</b> is not linked to any movie now.");
-    msgBox.setInformativeText("Do you want to delete it?");
-    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    msgBox.setDefaultButton(QMessageBox::No);
-
-    if(msgBox.exec() == QMessageBox::Yes) {
-        databaseManager->deletePeople(orphanPeople);
-    }
-}
-
 /**
  * @brief Slot triggered when an element of the MainWindow is double clicked.
  * Start the movie in the default player
@@ -570,29 +523,35 @@ void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
 }
 
 /**
- * @brief Slot triggered when an element of the leftPannel is clicked
- * Call `prepareMovieToDisplay()` with the id of the clicked element
- *
- * @param item which was clicked
+ * @brief Slot triggered when an element of the leftPannel is selected
+ * Fill the Main Pannel according to the selected element
  */
-void MainWindow::on_leftPannel_clicked(const QModelIndex &item)
+void MainWindow::on_leftPannel_itemSelectionChanged()
 {
-    Macaw::DEBUG("[MainWindow] itemClicked on leftPannel");
-    m_leftPannelSelectedId = item.data(Macaw::ObjectId).toInt();
-    this->fillMainPannel();
+    Macaw::DEBUG("[MainWindow] item seleceted on leftPannel");
+    if (m_ui->leftPannel->selectedItems().count() > 0) {
+        QListWidgetItem *l_item = m_ui->leftPannel->selectedItems().first();
+
+        m_leftPannelSelectedId = l_item->data(Macaw::ObjectId).toInt();
+        this->fillMainPannel();
+    }
 }
 
 /**
- * @brief Slot triggered when a movie of the mainPannel is clicked
+ * @brief Slot triggered when a movie of the mainPannel is selected
  * Call `fillMetadataPannel` to fill the pannel with the selected Movie data
- *
- * @param item which was clicked
  */
-void MainWindow::on_mainPannel_clicked(const QModelIndex &index)
+void MainWindow::on_mainPannel_itemSelectionChanged()
 {
-    Macaw::DEBUG("[MainWindow] mainPannel clicked");
-    int l_idMovie = index.data(Macaw::ObjectId).toInt();
-    Movie l_movie = databaseManager->getOneMovieById(l_idMovie);
+    Macaw::DEBUG("[MainWindow] mainPannel selected");
+    Movie l_movie;
+    if (m_ui->mainPannel->selectedItems().count() > 0) {
+        QTableWidgetItem *l_item = m_ui->mainPannel->selectedItems().first();
+
+        int l_idMovie = l_item->data(Macaw::ObjectId).toInt();
+        l_movie = databaseManager->getOneMovieById(l_idMovie);
+    }
+
     this->fillMetadataPannel(l_movie);
 }
 
