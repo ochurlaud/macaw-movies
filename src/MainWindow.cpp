@@ -20,6 +20,8 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
+Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
+
 /**
  * @brief Constructor
  * @param parent

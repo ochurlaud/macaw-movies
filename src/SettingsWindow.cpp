@@ -20,6 +20,8 @@
 #include "SettingsWindow.h"
 #include "ui_SettingsWindow.h"
 
+Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
+
 SettingsWindow::SettingsWindow(QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::SettingsWindow)

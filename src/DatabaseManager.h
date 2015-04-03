@@ -154,5 +154,4 @@ private:
     QString m_tagFields;
 
 };
-Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
 #endif // DATABASEMANAGER_H
