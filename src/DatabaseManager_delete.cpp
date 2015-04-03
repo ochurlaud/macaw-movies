@@ -97,7 +97,7 @@ bool DatabaseManager::removePeopleFromMovie(People &people,
         return false;
     }
 
-    // Checks if this people is still used, if not deletes it.
+    // Checks if this people is still used, if not asks for deleting it.
     l_query.prepare("SELECT id FROM movies_people WHERE id_people = :id_people");
     l_query.bindValue(":id_people", people.id());
     if(!l_query.exec())
@@ -108,6 +108,7 @@ bool DatabaseManager::removePeopleFromMovie(People &people,
         return false;
     }
     if (!l_query.next()) {
+        Macaw::DEBUG("[DatabaseManager] orphan people detected");
         emit orphanPeopleDetected(people);
     }
 
