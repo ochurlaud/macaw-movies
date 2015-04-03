@@ -26,6 +26,7 @@
 
 #include "include_var.h"
 #include "MoviesDebug.h"
+
 #include "Entities/Movie.h"
 #include "Entities/Playlist.h"
 
@@ -34,9 +35,8 @@
  */
 class DatabaseManager : public QObject
 {
+    #define DATE_FORMAT "yyyy.MM.dd"
     Q_OBJECT
-
-#define DATE_FORMAT "yyyy.MM.dd"
 
 public:
     DatabaseManager();
@@ -154,5 +154,5 @@ private:
     QString m_tagFields;
 
 };
-
+Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
 #endif // DATABASEMANAGER_H

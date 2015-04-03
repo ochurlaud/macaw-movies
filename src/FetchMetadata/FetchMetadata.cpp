@@ -23,7 +23,6 @@
 FetchMetadata::FetchMetadata(QObject *parent) :
     QObject(parent)
 {
-    m_app = qobject_cast<Application *>(qApp);
     Macaw::DEBUG("[FetchMetadata] Constructor");
 
     m_processState = false;
@@ -132,7 +131,7 @@ void FetchMetadata::processMovieResponse(Movie &receivedMovie)
     m_movie.setColored(receivedMovie.isColored());
     m_movie.setPeopleList(receivedMovie.peopleList());
 
-    m_app->getDatabaseManager()->updateMovie(m_movie);
+    databaseManager->updateMovie(m_movie);
     m_processState = true;
     emit(jobDone());
 }

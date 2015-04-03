@@ -21,11 +21,11 @@
 #define MOVIEDIALOG_H
 
 #include <QDialog>
+
 #include "Application.h"
 #include "PeopleDialog.h"
-#include "Entities/Movie.h"
 
-class Application;
+#include "Entities/Movie.h"
 
 namespace Ui {
 class MovieDialog;
@@ -92,8 +92,6 @@ private:
      * @brief Movie object which attributes are used to set the fields
      */
     Movie m_movie;
-
-    Application *m_app;
 };
 
 #endif // MOVIEDIALOG_H

@@ -24,14 +24,13 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::SettingsWindow)
 {
-    m_app = qobject_cast<Application *>(qApp);
     Macaw::DEBUG("[SettingsWindow] Constructor called");
 
     m_ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths(0);
-    l_moviesPathsList << m_app->getDatabaseManager()->getMoviesPaths(1);
+    QStringList l_moviesPathsList = databaseManager->getMoviesPaths(0);
+    l_moviesPathsList << databaseManager->getMoviesPaths(1);
     m_ui->knownPathsList->addItems(l_moviesPathsList);
 }
 
@@ -56,22 +55,22 @@ void SettingsWindow::on_buttonBox_accepted()
     QString l_newPath = m_ui->folderPathEdit->text();
     addToKnownPathsList(l_newPath);
 
-    QStringList l_moviesPathsList = m_app->getDatabaseManager()->getMoviesPaths(true);
-    l_moviesPathsList << m_app->getDatabaseManager()->getMoviesPaths(false);
+    QStringList l_moviesPathsList = databaseManager->getMoviesPaths(true);
+    l_moviesPathsList << databaseManager->getMoviesPaths(false);
     qDebug() << l_moviesPathsList.count();
     foreach (QString l_moviesPath, l_moviesPathsList) {
         if (m_ui->knownPathsList->findItems(l_moviesPath, Qt::MatchExactly).count() == 0) {
             Macaw::DEBUG("[MainWindow] Remove path "+l_moviesPath);
             // We remove the path and all the movies behind
-            m_app->getDatabaseManager()->deleteMoviesPath(l_moviesPath);
+            databaseManager->deleteMoviesPath(l_moviesPath);
         }
     }
 
     for (int i=0 ; i < m_ui->knownPathsList->count() ; i++) {
         QString l_path = m_ui->knownPathsList->item(i)->text();
-        m_app->getDatabaseManager()->addMoviesPath(l_path);
+        databaseManager->addMoviesPath(l_path);
         if (m_ui->recheckBox->isChecked()) {
-            m_app->getDatabaseManager()->setMoviesPathImported(l_path, false);
+            databaseManager->setMoviesPathImported(l_path, false);
         }
     }
     emit closeAndSave();

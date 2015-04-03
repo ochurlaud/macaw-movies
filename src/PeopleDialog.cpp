@@ -24,7 +24,6 @@ PeopleDialog::PeopleDialog(int id, QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::PeopleDialog)
 {
-    m_app = qobject_cast<Application *>(qApp);
     Macaw::DEBUG("[PeopleDialog] Constructor called");
 
     m_ui->setupUi(this);
@@ -34,7 +33,7 @@ PeopleDialog::PeopleDialog(int id, QWidget *parent) :
     // If id is 0 it means we create a new People
     if (id != 0)
     {
-        m_people = m_app->getDatabaseManager()->getOnePeopleById(id);
+        m_people = databaseManager->getOnePeopleById(id);
         setName(m_people.name());
         setBirthday(m_people.birthday());
         setBiography(m_people.biography());
@@ -47,7 +46,6 @@ PeopleDialog::PeopleDialog(People people, QWidget *parent):
     m_ui(new Ui::PeopleDialog)
 {
     m_people = people;
-    m_app = qobject_cast<Application *>(qApp);
     Macaw::DEBUG("[PeopleDialog] Constructor called (People arg)");
 
     m_ui->setupUi(this);
@@ -136,7 +134,7 @@ void PeopleDialog::on_validationButtons_accepted()
     else
     {
         Macaw::DEBUG("[PeopleDialog] validationButtons method: type=0");
-        m_app->getDatabaseManager()->updatePeople(m_people);
+        databaseManager->updatePeople(m_people);
     }
 
     Macaw::DEBUG("[PeopleDialog] validationButtons method done");

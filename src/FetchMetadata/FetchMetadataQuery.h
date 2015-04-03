@@ -26,6 +26,8 @@
 #include "Application.h"
 #include "Entities/Movie.h"
 
+class Application;
+
 class FetchMetadataQuery : public QObject
 {
     Q_OBJECT

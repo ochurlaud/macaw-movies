@@ -52,7 +52,6 @@ private slots:
     void networkError(QString error);
 
 private:
-    Application *m_app;
     FetchMetadataQuery *m_fetchMetadataQuery;
     FetchMetadataDialog *m_fetchMetadataDialog;
     Movie m_movie;

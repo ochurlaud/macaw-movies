@@ -63,7 +63,7 @@ Q_OBJECT
 public:
     Application(int &argc, char **argv);
     ~Application();
-    DatabaseManager *getDatabaseManager() { return m_dbManager; }
+    //DatabaseManager *getDatabaseManager() { return m_dbManager; }
     QString tmdbkey() { return m_tmdbkey; }
 
 private:
@@ -78,9 +78,9 @@ private:
     /**
      * @brief Handle every access to the database
      *
-     * should be called with `m_app->getDatabaseManager()`
+     * should be called with `databaseManager`
      */
-    DatabaseManager *m_dbManager;
+    //DatabaseManager *m_dbManager;
 };
 
 #endif // APPLICATION_H

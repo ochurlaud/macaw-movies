@@ -21,10 +21,6 @@
 #include "ui_MovieDialog.h"
 #include "Entities/Movie.h"
 
-/* @TODO:
- *   - Handle tags
- */
-
 /**
  * @brief Constructor
  * @param id of the movie to edit
@@ -34,9 +30,8 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::MovieDialog)
 {
-    m_app = qobject_cast<Application *>(qApp);
     Macaw::DEBUG("[MovieDialog] Constructor called");
-    m_movie = m_app->getDatabaseManager()->getOneMovieById(id);
+    m_movie = databaseManager->getOneMovieById(id);
 
     m_ui->setupUi(this);
     this->setWindowTitle("Edit Metadata of: " + m_movie.title());
@@ -45,7 +40,7 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     m_ui->tagListWidget->setSelectionMode(QAbstractItemView::NoSelection);
 
     QList<Tag> l_tagList;
-    l_tagList = m_app->getDatabaseManager()->getAllTags();
+    l_tagList = databaseManager->getAllTags();
 
     foreach (Tag tag, l_tagList)
     {
@@ -210,7 +205,7 @@ QList<People> MovieDialog::getPeopleList(int type)
         for (int i = 0 ; i < l_peopleWidget->count() ; i++)
         {
             int l_id = l_peopleWidget->item(i)->data(Macaw::ObjectId).toInt();
-            People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_id, type);
+            People l_people = databaseManager->getOnePeopleById(l_id, type);
             l_peopleList.push_back(l_people);
         }
     }
@@ -311,12 +306,12 @@ void MovieDialog::on_validationButtons_accepted()
     foreach(const QListWidgetItem *l_item, l_selectedItemList)
     {
         l_id = l_item->data(Macaw::ObjectId).toInt();
-        l_tagList.append(m_app->getDatabaseManager()->getOneTagById(l_id));
+        l_tagList.append(databaseManager->getOneTagById(l_id));
     }
 
     m_movie.setTagList(l_tagList);
 
-    m_app->getDatabaseManager()->updateMovie(m_movie);
+    databaseManager->updateMovie(m_movie);
     Macaw::DEBUG("[MovieDialog] validationButtons method done");
 }
 
@@ -365,9 +360,9 @@ void MovieDialog::addPeopleButton_clicked(int type)
         QString l_text = l_peopleEdit->text();
 
         // To be simply added, the person must exist and not be already in the list
-        if (m_app->getDatabaseManager()->existPeople(l_text)) {
+        if (databaseManager->existPeople(l_text)) {
             if(l_peopleWidget->findItems(l_text, Qt::MatchExactly).size() == 0) {
-                QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByName(l_text);
+                QList<People> l_peopleList = databaseManager->getPeopleByName(l_text);
                 People l_people = l_peopleList.at(0);
                 l_people.setType(type);
                 addPeople(l_people);
@@ -429,7 +424,7 @@ void MovieDialog::delPeopleButton_clicked(int type)
         foreach (QListWidgetItem *l_itemToDelete, l_itemsListToDelete)
         {
             int l_peopleId = l_itemToDelete->data(Macaw::ObjectId).toInt();
-            People l_people = m_app->getDatabaseManager()->getOnePeopleById(l_peopleId, type);
+            People l_people = databaseManager->getOnePeopleById(l_peopleId, type);
             l_people.setType(type);
             delPeople(l_people);
             delete(l_itemToDelete);
@@ -477,7 +472,7 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
     QString l_text =  l_peopleEdit->text();
     if (l_text.size() > 3)
     {
-        QList<People> l_peopleList = m_app->getDatabaseManager()->getPeopleByName(l_text);
+        QList<People> l_peopleList = databaseManager->getPeopleByName(l_text);
         if(l_peopleList.size() > 0)
         {
             People l_people;
@@ -505,7 +500,7 @@ void MovieDialog::on_addNewTagButton_clicked()
     QString newTag =  m_ui->newTagLineEdit->text();
 
     if (newTag != "" && newTag != " ") {
-        int newTagId = m_app->getDatabaseManager()->createTag(newTag);
+        int newTagId = databaseManager->createTag(newTag);
 
         if(newTagId > 0)  {
             QListWidgetItem * item = new QListWidgetItem(newTag, m_ui->tagListWidget);
