@@ -20,6 +20,8 @@
 #include "PeopleDialog.h"
 #include "ui_PeopleDialog.h"
 
+Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
+
 PeopleDialog::PeopleDialog(int id, QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::PeopleDialog)

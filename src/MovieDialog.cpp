@@ -19,7 +19,8 @@
 
 #include "MovieDialog.h"
 #include "ui_MovieDialog.h"
-#include "Entities/Movie.h"
+
+Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
 
 /**
  * @brief Constructor

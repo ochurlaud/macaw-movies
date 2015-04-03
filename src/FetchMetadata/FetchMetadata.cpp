@@ -20,6 +20,8 @@
 #include "FetchMetadata.h"
 #include <QLocale>
 
+Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
+
 FetchMetadata::FetchMetadata(QObject *parent) :
     QObject(parent)
 {
