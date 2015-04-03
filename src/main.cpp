@@ -74,9 +74,6 @@ int main(int argv, char **args)
         Macaw::moviesDebug_extern.setDebug(true);
     }
 
-    MainWindow  l_mainWindow;
-    l_mainWindow.show();
-
 /*/ FOR TESTING PURPOSES
     Movie movie = l_app.getDatabaseManager()->getOneMovieById(8);
     movie.setTitle("La menace.xds98IU");

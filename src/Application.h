@@ -21,9 +21,12 @@
 #define APPLICATION_H
 
 #include <QApplication>
+
 #include "include_var.h"
-#include "MainWindow.h"
+
 #include "DatabaseManager.h"
+#include "MainWindow.h"
+
 #include "Entities/Movie.h"
 
 namespace Macaw
@@ -43,18 +46,11 @@ namespace Macaw
 
 }
 
-class MovieDEBUG;
+class MovieDebug;
+class MainWindow;
 
 /**
- * @brief The Application class.
- * It's the class which unify all the elements of the program.
- *
- * It's the first object which is created.
- *
- * All other objects (out of DatabaseManager) should refer to it by
- * calling
- *      `m_app = qobject_cast<Application *>(qApp);`
- * in their constructor.
+ * @brief The Application class. Core of the application
  */
 class Application : public QApplication
 {
@@ -63,7 +59,6 @@ Q_OBJECT
 public:
     Application(int &argc, char **argv);
     ~Application();
-    //DatabaseManager *getDatabaseManager() { return m_dbManager; }
     QString tmdbkey() { return m_tmdbkey; }
 
 private:
@@ -76,11 +71,9 @@ private:
     QString m_tmdbkey;
 
     /**
-     * @brief Handle every access to the database
-     *
-     * should be called with `databaseManager`
+     * @brief MainWindow: where everything happens
      */
-    //DatabaseManager *m_dbManager;
+    MainWindow *m_mainWindow;
 };
 
 #endif // APPLICATION_H
