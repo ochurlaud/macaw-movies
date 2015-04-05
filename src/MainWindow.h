@@ -111,7 +111,10 @@ private:
     void updatePannels();
     void fillMetadataPannel(Movie movie);
     void removeMovieFromPlaylist(Movie &movie, Playlist &playlist);
-    void permanentlyDeleteFile(Movie &movie);
+    bool moveFileToTrash(Movie &movie);
+    bool linux_moveFileToTrash(QString movieFilePath, QString l_trashbinDirectory);
+    bool linux_permanentlyDeleteFile(QFile *movieFileToDelete);
+
 };
 
 #endif // MainWindow_H

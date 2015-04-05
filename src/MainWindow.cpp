@@ -428,7 +428,7 @@ void MainWindow::on_actionDelete_triggered()
         Playlist l_playlist = databaseManager->getOnePlaylistById(1);
         removeMovieFromPlaylist(l_movie, l_playlist);
     } else {
-        permanentlyDeleteFile(l_movie);
+        moveFileToTrash(l_movie);
     }
 }
 
@@ -454,20 +454,63 @@ void MainWindow::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
 }
 
 /**
- * @brief Permanently Delete the file which path is movie::path
- * This delete the file from the disk (NOT moving to trashbin) after user's confirmation.
+ * @brief move the specified movie's file to trash bin
+ * This function tries to move a file to trash,  as trash bin is not implemeted the same way amond OSes this could fail.
+ * If the function cannot find the trash bin, it asks the user for the file permanant deletion.
  * @param movie to delete
  */
-void MainWindow::permanentlyDeleteFile(Movie &movie)
+bool MainWindow::moveFileToTrash(Movie &movie)
 {
-    QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Critical, "Delete this file? ",
-                                                         "Permanently delete this file? This action cannot be undone. ",
+    QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Warning, "Move to trash? ",
+                                                         "Move this file to trash? All data in Macaw-Movies specific to this movie will be deleted, this cannot be undone. ",
                                                          QMessageBox::Yes|QMessageBox::No, this);
     QFile * movieFileToDelete = new QFile(movie.filePath());
     l_confirmationDialog->setDefaultButton(QMessageBox::No);
 
     if(l_confirmationDialog->exec() == QMessageBox::Yes)
     {
+
+        #ifdef Q_OS_LINUX
+
+        //try to locate the trash folder
+        //Note : I suppose here that the file is in the computer HD => to improve
+
+        QString l_trashbinDirectory(QDir::home().path().append(QDir::separator())
+                                                .append(".local/share/Trash"));
+
+        if(!QDir(l_trashbinDirectory).exists()) {
+            l_trashbinDirectory = QDir::home().path().append(QDir::separator()).append(".trash");
+            if(!QDir(l_trashbinDirectory).exists()) {
+                l_trashbinDirectory = QString(getenv("XDG_DATA_HOME")).append("/Trash");
+                if(!QDir(l_trashbinDirectory).exists()) {
+                    QMessageBox * l_errorMovingToTrash = new QMessageBox(QMessageBox::Critical, "Trash not found",
+                                                                         "No trash file have been found on your system, maybe your desktop environement do not support trash bin? \n You can insted PERMANANTLY delete this file. Do you want to delete this file from tyour disk ? This action cannot be undone. ",
+                                                                         QMessageBox::Yes|QMessageBox::No, this);
+                    if(l_errorMovingToTrash->exec() == QMessageBox::Yes) {
+                        linux_permanentlyDeleteFile(movieFileToDelete);
+                    }
+                } else {
+                    linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
+                }
+            } else {
+                linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
+            }
+        } else {
+            linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
+        }
+
+
+        #endif
+
+        #ifdef Q_OS_WIN
+
+        #endif
+
+        #ifdef Q_OS_OSX
+
+        #endif
+
+
         if(!movieFileToDelete->remove())
         {
             QMessageBox * msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
@@ -483,7 +526,46 @@ void MainWindow::permanentlyDeleteFile(Movie &movie)
 
         emit toUpdate();
     }
+    return true;
 }
+
+/**
+ * @brief Moves a movie file to trash bin for linux.
+ *
+ * @param moviePath the path to the movie's file
+ * @param trashbinDirectory the path to trash bin on the Linux distro
+ *
+ * @return bool true if the file have been successfully moved to trash
+ *
+ */
+bool MainWindow::linux_moveFileToTrash(QString movieFilePath, QString trashbinDirectory) {
+    QDir l_dir;
+    QFile l_movieFile(movieFilePath);
+    QString l_trashFiles(trashbinDirectory.append("/files"));
+    QString l_trashInfo(trashbinDirectory.append("/info"));
+    QFile l_trashInfoFile(l_trashInfo + "/" + l_movieFile.fileName() + ".trashinfo");
+
+    if(l_trashInfoFile.open(QIODevice::WriteOnly)) {
+        bool moveFile = l_dir.rename(movieFilePath, l_trashFiles);
+        l_trashInfoFile.write("[Trash Info]");
+        QString l_path = "Path=" + movieFilePath;
+        QString l_deletionDate = "DeletionDate=" + QDateTime::currentDateTime().toString(Qt::ISODate);
+        l_trashInfoFile.write((char *)(l_path.toStdString().c_str()));
+        l_trashInfoFile.write((char *)(l_deletionDate.toStdString().c_str()));
+    }
+}
+
+bool MainWindow::linux_permanentlyDeleteFile(QFile * movieFileToDelete) {
+
+        if(!movieFileToDelete->remove())
+        {
+            QMessageBox * l_msgBoxErrorDeleting = new QMessageBox(QMessageBox::Critical, "Error deleting",
+                                                "Error deleting the file. ",
+                                                QMessageBox::Ok, this);
+            return false;
+        }
+}
+
 
 /**
  * @brief Slot triggered when the addition of a movie to a playlist is requeted.
