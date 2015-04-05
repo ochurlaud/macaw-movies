@@ -356,7 +356,7 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
                              this, SLOT(addPlaylistMenu_triggered(QAction*)));
 
             l_menu->addAction(l_actionAddInToWatch);
-            m_ui->actionDelete->setText("Permanently delete file");
+            m_ui->actionDelete->setText("Move to trash");
         }
 
         l_menu->addAction(m_ui->actionEdit_mainPannelMetadata);
@@ -469,12 +469,13 @@ bool MainWindow::moveFileToTrash(Movie &movie)
 
     if(l_confirmationDialog->exec() == QMessageBox::Yes)
     {
+        bool l_successfullyDeleted = false;
 
         #ifdef Q_OS_LINUX
 
         //try to locate the trash folder
         //Note : I suppose here that the file is in the computer HD => to improve
-
+        Macaw::DEBUG("[MainWindow] Trying to locate Linux trash folder");
         QString l_trashbinDirectory(QDir::home().path().append(QDir::separator())
                                                 .append(".local/share/Trash"));
 
@@ -487,16 +488,16 @@ bool MainWindow::moveFileToTrash(Movie &movie)
                                                                          "No trash file have been found on your system, maybe your desktop environement do not support trash bin? \n You can insted PERMANANTLY delete this file. Do you want to delete this file from tyour disk ? This action cannot be undone. ",
                                                                          QMessageBox::Yes|QMessageBox::No, this);
                     if(l_errorMovingToTrash->exec() == QMessageBox::Yes) {
-                        linux_permanentlyDeleteFile(movieFileToDelete);
+                        l_successfullyDeleted = linux_permanentlyDeleteFile(movieFileToDelete);
                     }
                 } else {
-                    linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
+                    l_successfullyDeleted = linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
                 }
             } else {
-                linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
+                l_successfullyDeleted = linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
             }
         } else {
-            linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
+            l_successfullyDeleted = linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
         }
 
 
@@ -510,18 +511,14 @@ bool MainWindow::moveFileToTrash(Movie &movie)
 
         #endif
 
-
-        if(!movieFileToDelete->remove())
-        {
-            QMessageBox * msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
-                                                "Error deleting the file. ",
-                                                QMessageBox::Ok, this);
-        }
-        if(!databaseManager->deleteMovie(movie))
-        {
-            QMessageBox * msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
-                                                "Error deleting the movie from the database. ",
-                                                QMessageBox::Ok, this);
+        if(l_successfullyDeleted) {
+            if(!databaseManager->deleteMovie(movie))
+            {
+                QMessageBox * msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
+                                                    "Error deleting the movie from the database. ",
+                                                    QMessageBox::Ok, this);
+                msgBox->exec();
+            }
         }
 
         emit toUpdate();
@@ -530,7 +527,10 @@ bool MainWindow::moveFileToTrash(Movie &movie)
 }
 
 /**
- * @brief Moves a movie file to trash bin for linux.
+ * @brief Moves a movie file to trash bin for Linux.
+ *
+ * Moving a file to trash on GNU/Linux is made moving the file in a <trash folder>/files directory
+ * and creating and info file in <trash folder>/info
  *
  * @param moviePath the path to the movie's file
  * @param trashbinDirectory the path to trash bin on the Linux distro
@@ -541,29 +541,80 @@ bool MainWindow::moveFileToTrash(Movie &movie)
 bool MainWindow::linux_moveFileToTrash(QString movieFilePath, QString trashbinDirectory) {
     QDir l_dir;
     QFile l_movieFile(movieFilePath);
-    QString l_trashFiles(trashbinDirectory.append("/files"));
-    QString l_trashInfo(trashbinDirectory.append("/info"));
-    QFile l_trashInfoFile(l_trashInfo + "/" + l_movieFile.fileName() + ".trashinfo");
+    QFileInfo l_movieFileInfo(movieFilePath);
+    QString l_trashFilesPath(trashbinDirectory + "/files/");    //folder to put the deleted file
+    QString l_trashInfoPath(trashbinDirectory + "/info/");      //folder to put the info about deleted file
+
+    QString l_trashName = l_movieFileInfo.fileName();
+    QFileInfo l_targetMovieFileInfo(l_trashInfoPath + l_trashName + ".trashinfo");
+    QFileInfo l_targetMovieFileFiles(l_trashFilesPath + l_trashName);
+    int l_count = 0;
+    while(l_targetMovieFileInfo.exists() || l_targetMovieFileFiles.exists()) {
+        l_count++;
+
+        //Change the filename of "movie.suffix" to "movie(i).suffix"
+        l_trashName = (l_movieFileInfo.completeBaseName().isEmpty() ? "" : l_movieFileInfo.completeBaseName())
+                + "(" + QString::number(l_count) + ")" +
+                (l_movieFileInfo.suffix().isEmpty() ? "" : "." + l_movieFileInfo.suffix());
+
+        l_targetMovieFileInfo = QFileInfo(l_trashInfoPath + l_trashName + ".trashinfo");
+        l_targetMovieFileFiles = QFileInfo(l_trashFilesPath + l_trashName);
+    }
+
+    QFile l_trashInfoFile(l_targetMovieFileInfo.absoluteFilePath());  //file containing the info about deleted file
+
+    Macaw::DEBUG("[MainWindow] Trash folder found here: "+trashbinDirectory);
+    Macaw::DEBUG("[MainWindow] Writting info to: " + l_targetMovieFileInfo.absoluteFilePath());
 
     if(l_trashInfoFile.open(QIODevice::WriteOnly)) {
-        bool moveFile = l_dir.rename(movieFilePath, l_trashFiles);
-        l_trashInfoFile.write("[Trash Info]");
-        QString l_path = "Path=" + movieFilePath;
-        QString l_deletionDate = "DeletionDate=" + QDateTime::currentDateTime().toString(Qt::ISODate);
-        l_trashInfoFile.write((char *)(l_path.toStdString().c_str()));
-        l_trashInfoFile.write((char *)(l_deletionDate.toStdString().c_str()));
+        Macaw::DEBUG("[MainWindow] Moving file FROM: "+movieFilePath+" TO: " + l_targetMovieFileFiles.absoluteFilePath());
+        bool moveFile = l_dir.rename(movieFilePath, l_targetMovieFileFiles.absoluteFilePath());
+
+        if(moveFile) {
+            l_trashInfoFile.write("[Trash Info]\n");
+            QString l_path = "Path=" + movieFilePath + "\n";
+            QString l_deletionDate = "DeletionDate=" + QDateTime::currentDateTime().toString(Qt::ISODate) + "\n";
+
+            l_trashInfoFile.write((char *)(l_path.toStdString().c_str()));
+            l_trashInfoFile.write((char *)(l_deletionDate.toStdString().c_str()));
+            l_trashInfoFile.close();
+
+            return true;
+        }
+        else {
+            Macaw::DEBUG("[MainWindow] Failled to move file to trash");
+            l_trashInfoFile.close();
+            l_trashInfoFile.remove();
+        }
     }
+    else {
+        Macaw::DEBUG("[MainWindow] Failled to create and open the file's' trash info");
+    }
+
+    QMessageBox * l_msgBoxErrorMovingToTrash = new QMessageBox(QMessageBox::Warning, "Error moving file to trash",
+                                        "Something went wrong when moving the file to the trash. Do you want to permanently delete it instead? ",
+                                        QMessageBox::Yes|QMessageBox::No, this);
+
+    if(l_msgBoxErrorMovingToTrash->exec() == QMessageBox::Yes)
+    {
+        bool l_permanentlyDelete = linux_permanentlyDeleteFile(&l_movieFile);
+        return l_permanentlyDelete;
+    }
+
+    return false;
 }
 
 bool MainWindow::linux_permanentlyDeleteFile(QFile * movieFileToDelete) {
-
+        Macaw::DEBUG("[MainWindow] Permanently deleting file");
         if(!movieFileToDelete->remove())
         {
             QMessageBox * l_msgBoxErrorDeleting = new QMessageBox(QMessageBox::Critical, "Error deleting",
                                                 "Error deleting the file. ",
                                                 QMessageBox::Ok, this);
+            l_msgBoxErrorDeleting->exec();
             return false;
         }
+        return true;
 }
 
 
