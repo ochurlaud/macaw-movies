@@ -349,15 +349,14 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
             Macaw::DEBUG("[MainWindow] In ToWatch detected");
             m_ui->actionDelete->setText("Remove from ToWatch list");
         } else {
-            QMenu *l_addPlaylistMenu = new QMenu("Add to playlist");
             QAction *l_actionAddInToWatch = new QAction("To Watch",
-                                                        l_addPlaylistMenu);
+                                                        l_menu);
             l_actionAddInToWatch->setData(1);
 
-            l_addPlaylistMenu->addAction(l_actionAddInToWatch);
-
-            QObject::connect(l_addPlaylistMenu, SIGNAL(triggered(QAction*)),
-                             this, SLOT(addPlaylistMenu_triggered(QAction*)));
+            /*QObject::connect(l_actionAddInToWatch, SIGNAL(triggered()),
+                             this, SLOT(addPlaylistMenu_triggered(Action*)));*/
+            QObject::connect(l_menu, SIGNAL(triggered(QAction*)),
+                                         this, SLOT(addPlaylistMenu_triggered(QAction*)));
 
             l_menu->addAction(l_actionAddInToWatch);
             m_ui->actionDelete->setText("Move to trash");
@@ -443,7 +442,7 @@ void MainWindow::on_actionDelete_triggered()
  */
 void MainWindow::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
 {
-    QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Critical, "Remove from ToWatch list ?",
+    QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Question, "Remove from ToWatch list ?",
                                                          "Do you want to remove this movie from the ToWatch list ?",
                                                          QMessageBox::Yes|QMessageBox::No, this);
     l_confirmationDialog->setDefaultButton(QMessageBox::No);

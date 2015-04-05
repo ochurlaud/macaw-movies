@@ -66,11 +66,6 @@ private slots:
     void addPlaylistMenu_triggered(QAction* action);
     void on_actionAbout_triggered();
     void closeEvent(QCloseEvent *event);
-    bool moveFileToTrash(Movie &movie);
-    bool linux_moveFileToTrash(QString movieFilePath, QString trashbinDirectory);
-    bool windows_moveFileToTrash(QString movieFilePath);
-    bool macosx_moveFileToTrash(QString movieFilePath);
-    bool permanentlyDeleteFile(QFile * movieFileToDelete);
 
 signals:
     void toUpdate();
@@ -116,10 +111,11 @@ private:
     void updatePannels();
     void fillMetadataPannel(Movie movie);
     void removeMovieFromPlaylist(Movie &movie, Playlist &playlist);
+    bool permanentlyDeleteFile(QFile * movieFileToDelete);
     bool moveFileToTrash(Movie &movie);
-    bool linux_moveFileToTrash(QString movieFilePath, QString l_trashbinDirectory);
-    bool linux_permanentlyDeleteFile(QFile *movieFileToDelete);
-
+    bool linux_moveFileToTrash(QString movieFilePath, QString trashbinDirectory);
+    bool windows_moveFileToTrash(QString movieFilePath);
+    bool macosx_moveFileToTrash(QString movieFilePath);
 };
 
 #endif // MainWindow_H
