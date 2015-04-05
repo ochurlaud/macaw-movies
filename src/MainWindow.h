@@ -66,6 +66,11 @@ private slots:
     void addPlaylistMenu_triggered(QAction* action);
     void on_actionAbout_triggered();
     void closeEvent(QCloseEvent *event);
+    bool moveFileToTrash(Movie &movie);
+    bool linux_moveFileToTrash(QString movieFilePath, QString trashbinDirectory);
+    bool windows_moveFileToTrash(QString movieFilePath);
+    bool macosx_moveFileToTrash(QString movieFilePath);
+    bool permanentlyDeleteFile(QFile * movieFileToDelete);
 
 signals:
     void toUpdate();
