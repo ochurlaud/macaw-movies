@@ -26,6 +26,7 @@ FetchMetadataQuery::FetchMetadataQuery(QObject *parent) :
     Macaw::DEBUG("[FetchMetadataQuery] Constructor");
 
     m_networkManager = new QNetworkAccessManager;
+    m_networkManager2 = new QNetworkAccessManager;
     connect(this, SIGNAL(peopleResponse()),
             this, SLOT(on_peopleResponse()));
 }
@@ -73,6 +74,18 @@ void FetchMetadataQuery::sendPeopleRequest(int tmdbID)
     m_networkManager->get(l_request);
 
     Macaw::DEBUG("[FetchMetadataQuery] People request sent");
+}
+
+void FetchMetadataQuery::sendPosterRequest(QString poster_path) {
+    connect(m_networkManager2, SIGNAL(finished(QNetworkReply*)),
+                this, SLOT(on_posterRequestResponse(QNetworkReply*)));
+
+        QNetworkRequest l_request;
+        l_request.setUrl(QUrl("http://image.tmdb.org/t/p/w396" + poster_path, QUrl::StrictMode));
+
+        m_networkManager2->get(l_request);
+
+        Macaw::DEBUG("[FetchMetadataQuery] Poster request sent");
 }
 
 void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply* reply)
@@ -128,12 +141,15 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
             m_movie.setTitle(l_jsonObject.value("title").toString());
             m_movie.setOriginalTitle(l_jsonObject.value("original_title").toString());
             m_movie.setCountry(l_jsonObject.value("production_countries").toArray().at(1).toObject().value("name").toString());
+            m_movie.setPosterPath(l_jsonObject.value("poster_path").toString());
 
             QLocale locale(QLocale::English, QLocale::UnitedStates);
             QDate l_releaseDate = locale.toDate(l_jsonObject.value("release_date").toString(),"yyyy-MM-dd");
             m_movie.setReleaseDate(l_releaseDate);
 
             m_movie.setSynopsis(l_jsonObject.value("overview").toString());
+
+            sendPosterRequest(l_jsonObject.value("poster_path").toString());
 
             People l_people;
             QString l_personName;
@@ -182,6 +198,8 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
         Macaw::DEBUG("[FetchMetadataQuery] Send peopleResponse Signal");
         emit(peopleResponse());
     }
+
+
 }
 
 void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
@@ -225,6 +243,62 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
         // We send a signal to tell the movie is hydrated
         emit(movieResponse(m_movie));
     }
+}
+
+void FetchMetadataQuery::on_posterRequestResponse(QNetworkReply *reply) {
+    Macaw::DEBUG("[FetchMetadataQuery] Poster Request response received");
+
+    disconnect(m_networkManager2, SIGNAL(finished(QNetworkReply*)),
+                this, SLOT(on_posterRequestResponse(QNetworkReply*)));
+
+    QString l_configPath="";
+
+#ifdef Q_OS_LINUX
+    // Put posters in in ~/.local/share/macaw-movies/posters and create the folder if not exists
+    l_configPath = QString(QDir::home().path().append(QDir::separator())
+                                            .append(".local/share/"+QString(APP_NAME_SMALL))
+                                            .append(QDir::separator()));
+#endif
+
+#ifdef Q_OS_WIN
+    // File in $USER\AppData\Local
+    l_configPath(QDir::home().path().append(QDir::separator())
+                                            .append("AppData")
+                                            .append(QDir::separator())
+                                            .append("Local")
+                                            .append(QDir::separator())
+                                            .append(QString(APP_NAME_SMALL))
+                                            .append(QDir::separator()));
+#endif
+
+#ifdef Q_OS_OSX
+    // File in ~/Library/Application Support
+    l_configPath(QDir::home().path().append(QDir::separator())
+                                            .append("Library")
+                                            .append(QDir::separator())
+                                            .append("Application Support")
+                                            .append(QDir::separator())
+                                            .append(QString(APP_NAME_SMALL))
+                                            .append(QDir::separator()));
+#endif
+
+    QFileInfo checkFolder(l_configPath + QString("posters"));
+    if (!checkFolder.exists())
+    {
+        QDir(l_configPath).mkdir("posters");
+    }
+
+    QFile l_posterFile(l_configPath + "posters/" + reply->url().fileName());
+    if (!l_posterFile.open(QIODevice::WriteOnly)) {
+        Macaw::DEBUG("[FetchMetadataQuery] Error opening/creating: " + l_configPath + "posters/" + reply->url().fileName());
+    }
+
+    QByteArray l_receivedData = reply->readAll();
+    Macaw::DEBUG("[FetchMetadataQuery] read: "+QString::number(l_receivedData.size()));
+    reply->deleteLater();
+
+    l_posterFile.write(l_receivedData);
+    l_posterFile.close();
 }
 
 void FetchMetadataQuery::slotError(QNetworkReply::NetworkError error)

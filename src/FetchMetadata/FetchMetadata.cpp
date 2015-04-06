@@ -132,6 +132,7 @@ void FetchMetadata::processMovieResponse(Movie &receivedMovie)
     m_movie.setPeopleList(receivedMovie.peopleList());
     m_movie.setColored(receivedMovie.isColored());
     m_movie.setPeopleList(receivedMovie.peopleList());
+    m_movie.setPosterPath(receivedMovie.posterPath().right(receivedMovie.posterPath().size()-1));
 
     databaseManager->updateMovie(m_movie);
     m_processState = true;

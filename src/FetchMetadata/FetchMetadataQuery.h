@@ -38,6 +38,7 @@ public:
     void sendPrimaryRequest(QString title);
     void sendMovieRequest(int tmdbID);
     void sendPeopleRequest(int tmdbID);
+    void sendPosterRequest(QString poster_path);
 
 signals:
     void primaryResponse(QList<Movie>&);
@@ -49,11 +50,13 @@ private slots:
     void on_primaryRequestResponse(QNetworkReply *reply);
     void on_movieRequestResponse(QNetworkReply *reply);
     void on_peopleRequestResponse(QNetworkReply *reply);
+    void on_posterRequestResponse(QNetworkReply *reply);
     void on_peopleResponse();
     void slotError(QNetworkReply::NetworkError error);
 
 private:
     QNetworkAccessManager *m_networkManager;
+    QNetworkAccessManager *m_networkManager2;
     Application *m_app;
     Movie m_movie;
     QList<int> m_peopleRequestList;
