@@ -18,17 +18,19 @@
  */
 
 #include "FetchMetadata.h"
-#include <QLocale>
-
-Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
 
 FetchMetadata::FetchMetadata(QObject *parent) :
     QObject(parent)
+  , m_processState(false)
 {
     Macaw::DEBUG("[FetchMetadata] Constructor");
+    DatabaseManager *databaseManager = DatabaseManager::instance();
 
-    m_processState = false;
     m_fetchMetadataQuery = new FetchMetadataQuery(this);
+    m_movieQueue = databaseManager->getMoviesNotImported();
+
+    connect(this, SIGNAL(jobDone()),
+            this, SLOT(startProcess()));
 
     Macaw::DEBUG("[FetchMetadata] Construction done");
 }
@@ -37,13 +39,12 @@ FetchMetadata::~FetchMetadata()
 {
     delete m_fetchMetadataQuery;
     Macaw::DEBUG("[FetchMetadata] Object destructed");
-
 }
 
-bool FetchMetadata::startProcess(Movie &movie)
+void FetchMetadata::startProcess()
 {
     Macaw::DEBUG("[FetchMetadata] Start the process of metadata fetching");
-    m_movie = movie;
+    m_movie = m_movieQueue.takeFirst();
     connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
             this, SLOT(processPrimaryResponse(QList<Movie>&)));
     connect(m_fetchMetadataQuery, SIGNAL(networkError(QString)),
@@ -52,14 +53,7 @@ bool FetchMetadata::startProcess(Movie &movie)
     QString l_cleanedTitle = cleanString(m_movie.title());
     m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
 
-    QEventLoop l_loop;
-    connect(this, SIGNAL(jobDone()),
-            &l_loop, SLOT(quit()));
-
-    l_loop.exec();
     Macaw::DEBUG("[FetchMetadata] Process done");
-
-    return m_processState;
 }
 
 QString FetchMetadata::cleanString(QString title)
@@ -93,34 +87,29 @@ void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
             }
         }
     }
+
     if(l_accurateList.count() == 1) {
         Movie l_movie = l_accurateList.at(0);
 
-        connect(m_fetchMetadataQuery, SIGNAL(movieResponse(Movie&)),
-                this, SLOT(processMovieResponse(Movie&)));
+        connect(m_fetchMetadataQuery, SIGNAL(movieResponse(Movie)),
+                this, SLOT(processMovieResponse(Movie)));
         Macaw::DEBUG("[FetchMetadata] Movie request to be sent");
         m_fetchMetadataQuery->sendMovieRequest(l_movie.id());
     } else {
         if(l_accurateList.count() == 0) {
             l_accurateList = movieList;
         }
-        m_fetchMetadataDialog = new FetchMetadataDialog(m_movie, l_accurateList);
-        connect(m_fetchMetadataDialog, SIGNAL(selectedMovie(Movie&)),
-                this, SLOT(on_selectedMovie(Movie&)));
-        connect(m_fetchMetadataDialog, SIGNAL(searchMovies(QString)),
-                this, SLOT(on_searchMovies(QString)));
-        connect(m_fetchMetadataDialog, SIGNAL(searchCanceled()),
-                this, SLOT(on_searchCanceled()));
-        m_fetchMetadataDialog->show();
+        emit sendFetchMetadataDialog(m_movie, l_accurateList);
     }
 }
 
-void FetchMetadata::processMovieResponse(Movie &receivedMovie)
+void FetchMetadata::processMovieResponse(Movie receivedMovie)
 {
     Macaw::DEBUG("[FetchMetadata] Signal from movie request received");
+    DatabaseManager *databaseManager = DatabaseManager::instance();
 
-    disconnect(m_fetchMetadataQuery, SIGNAL(movieResponse(Movie&)),
-            this, SLOT(processMovieResponse(Movie&)));
+    disconnect(m_fetchMetadataQuery, SIGNAL(movieResponse(Movie)),
+            this, SLOT(processMovieResponse(Movie)));
 
     // Do not set the id since receivedMovie's id is from TMDB
     m_movie.setTitle(receivedMovie.title());
@@ -146,7 +135,7 @@ void FetchMetadata::on_searchCanceled()
     emit(jobDone());
 }
 
-void FetchMetadata::on_selectedMovie(Movie &movie)
+void FetchMetadata::on_selectedMovie(Movie movie)
 {
     QList<Movie> l_movieList;
     l_movieList.append(movie);
@@ -164,7 +153,7 @@ void FetchMetadata::on_searchMovies(QString title)
 
 void FetchMetadata::processPrimaryResponseDialog(QList<Movie> &movieList)
 {
-    m_fetchMetadataDialog->setMovieList(movieList);
+    emit updateFetchMetadataDialog(movieList);
 }
 
 void FetchMetadata::networkError(QString error)

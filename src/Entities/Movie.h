@@ -24,8 +24,7 @@
 #include "People.h"
 #include "Tag.h"
 
-
-class Movie
+class  Movie
 {
 public:
     Movie();
@@ -88,5 +87,7 @@ private:
     bool m_imported;
     QList<Tag> m_tagList;
 };
+
+Q_DECLARE_METATYPE(Movie)
 
 #endif // MOVIE_H

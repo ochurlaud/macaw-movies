@@ -42,7 +42,7 @@ public:
     void setMovieList(QList<Movie> &movieList);
 
 signals:
-    void selectedMovie(Movie &movie);
+    void selectedMovie(Movie movie);
     void searchMovies(QString newTitle);
     void searchCanceled();
 
@@ -51,9 +51,7 @@ private slots:
     void on_listWidget_doubleClicked(const QModelIndex &index);
     void on_searchButton_clicked();
     void on_resetButton_clicked();
-
     void on_lineEdit_returnPressed();
-
     void on_buttonBox_rejected();
 
 private:

@@ -69,6 +69,7 @@ private slots:
 
 signals:
     void toUpdate();
+    void startFetchingMetadata();
 
 private:
     Ui::MainWindow *m_ui;
@@ -116,6 +117,7 @@ private:
     bool linux_moveFileToTrash(QString movieFilePath, QString trashbinDirectory);
     bool windows_moveFileToTrash(QString movieFilePath);
     bool macosx_moveFileToTrash(QString movieFilePath);
+
 };
 
 #endif // MainWindow_H

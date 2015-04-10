@@ -28,6 +28,8 @@
 #include "MainWindow.h"
 
 #include "Entities/Movie.h"
+#include "FetchMetadata/FetchMetadata.h"
+#include "FetchMetadata/FetchMetadataDialog.h"
 
 namespace Macaw
 {
@@ -48,6 +50,8 @@ namespace Macaw
 
 class MovieDebug;
 class MainWindow;
+class FetchMetadata;
+class FetchMetadataDialog;
 
 /**
  * @brief The Application class. Core of the application
@@ -61,9 +65,15 @@ public:
     ~Application();
     QString tmdbkey() { return m_tmdbkey; }
 
+signals:
+    void fetchMetadata();
+
 private slots:
     void askForOrphanTagDeletion(Tag &orphanTag);
     void askForOrphanPeopleDeletion(People &orphanPeople);
+    void on_startFetchingMetadata();
+    void on_sendFetchMetadataDialog(Movie& movie, QList<Movie> accurateList);
+    void on_updateFetchMetadataDialog(QList<Movie> updatedList);
 
 private:
 
@@ -75,9 +85,21 @@ private:
     QString m_tmdbkey;
 
     /**
-     * @brief MainWindow: where everything happens
+     * @brief MainWindow: the widget where everything happens
      */
     MainWindow *m_mainWindow;
+
+    /**
+     * @brief Metadata-fetching manager
+     */
+    FetchMetadata *m_fetchMetadata;
+
+    /**
+     * @brief Dialog for metadata-fetching manager
+     */
+    FetchMetadataDialog *m_fetchMetadataDialog;
+    QThread m_metadataThread;
+
 };
 
 #endif // APPLICATION_H

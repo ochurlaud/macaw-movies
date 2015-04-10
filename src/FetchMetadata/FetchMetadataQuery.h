@@ -42,7 +42,7 @@ public:
 
 signals:
     void primaryResponse(QList<Movie>&);
-    void movieResponse(Movie&);
+    void movieResponse(Movie);
     void networkError(QString);
     void peopleResponse();
 

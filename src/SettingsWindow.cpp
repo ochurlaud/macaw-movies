@@ -20,13 +20,12 @@
 #include "SettingsWindow.h"
 #include "ui_SettingsWindow.h"
 
-Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
-
 SettingsWindow::SettingsWindow(QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::SettingsWindow)
 {
     Macaw::DEBUG("[SettingsWindow] Constructor called");
+    DatabaseManager *databaseManager = DatabaseManager::instance();
 
     m_ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -54,6 +53,8 @@ void SettingsWindow::on_browseButton_clicked()
 
 void SettingsWindow::on_buttonBox_accepted()
 {
+    DatabaseManager *databaseManager = DatabaseManager::instance();
+
     QString l_newPath = m_ui->folderPathEdit->text();
     addToKnownPathsList(l_newPath);
 

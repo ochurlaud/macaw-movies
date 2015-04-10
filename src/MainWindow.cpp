@@ -24,8 +24,6 @@
     #include "windows.h"
 #endif
 
-Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
-
 /**
  * @brief Constructor
  * @param parent
@@ -52,7 +50,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_leftPannelSelectedId = 0;
     m_typeElement =  Macaw::isPeople;
     m_typePeople = People::Director;
+
     this->updatePannels();
+
     Macaw::DEBUG("[MainWindow] Construction done");
 }
 
@@ -86,6 +86,8 @@ void MainWindow::fillLeftPannel()
     Macaw::DEBUG("[MainWindow] Enters fillLeftPannel()");
     m_ui->leftPannel->clear();
     m_leftElementsIdList.clear();
+    DatabaseManager *databaseManager = DatabaseManager::instance();
+
     if(m_typeElement != Macaw::isPlaylist) {
         QListWidgetItem *l_item = new QListWidgetItem("All");
         l_item->setData(Macaw::ObjectId, 0);
@@ -200,7 +202,7 @@ void MainWindow::fillLeftPannel()
  *
  * 1. Clear the pannel
  * 2. Set the number of columns, rows, set the headers
- * 3. Fill each  cell of the pannel
+ * 3. Fill each cell of the pannel
  */
 void MainWindow::fillMainPannel()
 {
@@ -209,6 +211,7 @@ void MainWindow::fillMainPannel()
     m_ui->mainPannel->clearContents();
     m_ui->mainPannel->setRowCount(0);
     m_displayedMoviesList.clear();
+    DatabaseManager *databaseManager = DatabaseManager::instance();
 
     // Create function setHeaders
     // And call it only the first time or when settings changed
@@ -425,6 +428,8 @@ void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
 void MainWindow::on_actionDelete_triggered()
 {
     int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
+    DatabaseManager *databaseManager = DatabaseManager::instance();
+
     Movie l_movie = databaseManager->getOneMovieById(l_movieId);
 
     if(m_ui->toWatchButton->isChecked()) {
@@ -442,6 +447,7 @@ void MainWindow::on_actionDelete_triggered()
  */
 void MainWindow::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
 {
+    DatabaseManager *databaseManager = DatabaseManager::instance();
     QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Question, "Remove from ToWatch list ?",
                                                          "Do you want to remove this movie from the ToWatch list ?",
                                                          QMessageBox::Yes|QMessageBox::No, this);
@@ -464,9 +470,11 @@ void MainWindow::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
  */
 bool MainWindow::moveFileToTrash(Movie &movie)
 {
+    DatabaseManager *databaseManager = DatabaseManager::instance();
     QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Warning, "Move to trash? ",
                                                          "Move this file to trash? All data in Macaw-Movies specific to this movie will be deleted, this cannot be undone. ",
                                                          QMessageBox::Yes|QMessageBox::No, this);
+
     QFile * movieFileToDelete = new QFile(movie.filePath());
     l_confirmationDialog->setDefaultButton(QMessageBox::No);
 
@@ -474,7 +482,7 @@ bool MainWindow::moveFileToTrash(Movie &movie)
     {
         bool l_successfullyDeleted = false;
 
-        #ifdef Q_OS_LINUX
+#ifdef Q_OS_LINUX
 
         //try to locate the trash folder
         //Note : I suppose here that the file is in the computer HD => to improve
@@ -502,21 +510,18 @@ bool MainWindow::moveFileToTrash(Movie &movie)
         } else {
             l_successfullyDeleted = linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
         }
+#endif
 
+#ifdef Q_OS_WIN
+        windows_moveFileToTrash(movie.filePath())
+#endif
 
-        #endif
+#ifdef Q_OS_OSX
 
-        #ifdef Q_OS_WIN
-            windows_moveFileToTrash(movie.filePath())
-        #endif
-
-        #ifdef Q_OS_OSX
-
-        #endif
+#endif
 
         if(l_successfullyDeleted) {
-            if(!databaseManager->deleteMovie(movie))
-            {
+            if(!databaseManager->deleteMovie(movie)) {
                 QMessageBox * msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
                                                     "Error deleting the movie from the database. ",
                                                     QMessageBox::Ok, this);
@@ -761,6 +766,7 @@ bool MainWindow::permanentlyDeleteFile(QFile * movieFileToDelete) {
  */
 void MainWindow::addPlaylistMenu_triggered(QAction* action)
 {
+    DatabaseManager *databaseManager = DatabaseManager::instance();
     int l_actionId = action->data().toInt();
     int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
     Movie l_movie = databaseManager->getOneMovieById(l_movieId);
@@ -778,6 +784,7 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
  */
 void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
 {
+    DatabaseManager *databaseManager = DatabaseManager::instance();
     Macaw::DEBUG("[MainWindow] itemDoubleClicked on mainPannel");
 
     int l_movieId = item->data(Macaw::ObjectId).toInt();
@@ -810,6 +817,8 @@ void MainWindow::on_leftPannel_itemSelectionChanged()
 void MainWindow::on_mainPannel_itemSelectionChanged()
 {
     Macaw::DEBUG("[MainWindow] mainPannel selected");
+    DatabaseManager *databaseManager = DatabaseManager::instance();
+
     Movie l_movie;
     if (m_ui->mainPannel->selectedItems().count() > 0) {
         QTableWidgetItem *l_item = m_ui->mainPannel->selectedItems().first();
@@ -831,6 +840,8 @@ QList<Movie> MainWindow::moviesToDisplay(int id)
 {
     Macaw::DEBUG("[MainWindow] prepareMoviesToDisplay()");
 
+    DatabaseManager *databaseManager = DatabaseManager::instance();
+
     m_leftPannelSelectedId = id;
     if(m_leftPannelSelectedId == 0) {
 
@@ -851,11 +862,10 @@ QList<Movie> MainWindow::moviesToDisplay(int id)
 
             return databaseManager->getMoviesByTag(m_leftPannelSelectedId);
         }
-    } else {
-        QList<Movie> l_emptyList;
-
-        return  l_emptyList;
     }
+    QList<Movie> l_emptyList;
+
+    return  l_emptyList;
 }
 
 /**
@@ -951,6 +961,7 @@ void MainWindow::addNewMovies()
 {
     Macaw::DEBUG("[MainWindow] Enter addNewMovies");
 
+    DatabaseManager *databaseManager = DatabaseManager::instance();
     bool l_imported = false;
     QStringList l_moviesPathsList = databaseManager->getMoviesPaths(l_imported);
     foreach (QString l_moviesPath, l_moviesPathsList) {
@@ -980,8 +991,8 @@ void MainWindow::addNewMovies()
                     // Currently a wainting loop is created in FetchMetadata,
                     // multithreading would be better
                     // Should be done in async
-                    FetchMetadata l_fetchMetadata;
-                    bool l_result = l_fetchMetadata.startProcess(l_movie);
+                 //   FetchMetadata l_fetchMetadata;
+                  //  bool l_result = l_fetchMetadata.startProcess(l_movie);
                 } else {
                     Macaw::DEBUG("[MainWindow.updateApp()] Movie already known. Skipped");
                 }
@@ -989,8 +1000,8 @@ void MainWindow::addNewMovies()
         }
         databaseManager->setMoviesPathImported(l_moviesPath,true);
     }
-
-    emit(toUpdate());
+    emit startFetchingMetadata();
+    emit toUpdate();
     Macaw::DEBUG("[MainWindow] Exit addNewMovies");
 }
 
