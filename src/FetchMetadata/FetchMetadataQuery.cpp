@@ -107,6 +107,7 @@ void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply* reply)
         Macaw::DEBUG("[FetchMetadataQuery] Signal to be emitted to FetchMetadata for primary request");
         emit(primaryResponse(l_moviesPropositionList));
     } else {
+        Macaw::DEBUG("[FetchMetadataQuery] Error in on_primaryRequestResponse, stream empty !");
         // error !!
     }
 }

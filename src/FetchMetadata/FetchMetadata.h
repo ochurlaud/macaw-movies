@@ -24,11 +24,9 @@
 #include <QLocale>
 
 #include "Application.h"
-#include "FetchMetadata/FetchMetadataDialog.h"
 #include "FetchMetadata/FetchMetadataQuery.h"
 
 class FetchMetadataQuery;
-class FetchMetadataDialog;
 
 class FetchMetadata : public QObject
 {
@@ -36,16 +34,19 @@ Q_OBJECT
 
 public:
     explicit FetchMetadata(QObject *parent = 0);
-    bool startProcess(Movie &movie);
     ~FetchMetadata();
 
 signals:
     void jobDone();
+    void sendFetchMetadataDialog(Movie&, QList<Movie>);
+    void updateFetchMetadataDialog(QList<Movie>);
+
 
 private slots:
+    void startProcess();
     void processPrimaryResponse(QList<Movie> &movieList);
-    void processMovieResponse(Movie &receivedMovie);
-    void on_selectedMovie(Movie &movie);
+    void processMovieResponse(Movie receivedMovie);
+    void on_selectedMovie(Movie movie);
     void on_searchMovies(QString title);
     void processPrimaryResponseDialog(QList<Movie> &movieList);
     void on_searchCanceled();
@@ -53,8 +54,8 @@ private slots:
 
 private:
     FetchMetadataQuery *m_fetchMetadataQuery;
-    FetchMetadataDialog *m_fetchMetadataDialog;
     Movie m_movie;
+    QList<Movie> m_movieQueue;
     bool m_processState;
     QString cleanString(QString title);
 };

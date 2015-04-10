@@ -69,6 +69,7 @@ private slots:
 
 signals:
     void toUpdate();
+    void startFetchingMetadata();
 
 private:
     Ui::MainWindow *m_ui;

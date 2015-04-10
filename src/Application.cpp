@@ -19,8 +19,6 @@
 
 #include "Application.h"
 
-Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
-
 /**
  * @brief Constructor
  */
@@ -28,20 +26,26 @@ Application::Application(int &argc, char **argv) :
     QApplication(argc, argv)
 {
     Macaw::DEBUG("[Application] started");
+    DatabaseManager *databaseManager = DatabaseManager::instance();
 
     this->setApplicationName(APP_NAME);
     this->setApplicationVersion(APP_VERSION);
     this->setWindowIcon(QIcon(":/img/logov0_1.png"));
     m_tmdbkey = "6e4cbac7861ad5b847ef8f60489dc04e";
-
-    connect(databaseManager,SIGNAL(orphanTagDetected(Tag&)),
-            this, SLOT(askForOrphanTagDeletion(Tag&)));
-    connect(databaseManager,SIGNAL(orphanPeopleDetected(People&)),
-            this, SLOT(askForOrphanPeopleDeletion(People&)));
-
     m_mainWindow = new MainWindow;
+    m_fetchMetadata = NULL;
+    m_fetchMetadataDialog = NULL;
+
+    connect(databaseManager, SIGNAL(orphanTagDetected(Tag&)),
+            this, SLOT(askForOrphanTagDeletion(Tag&)));
+    connect(databaseManager, SIGNAL(orphanPeopleDetected(People&)),
+            this, SLOT(askForOrphanPeopleDeletion(People&)));
+    connect(m_mainWindow, SIGNAL(startFetchingMetadata()),
+            this, SLOT(on_startFetchingMetadata()));
+
     m_mainWindow->show();
-    Macaw::DEBUG("[Application] Database initialized");
+
+    Macaw::DEBUG("[Application] Application initialized");
 }
 
 /**
@@ -68,6 +72,7 @@ void Application::askForOrphanTagDeletion(Tag &orphanTag)
     msgBox.setDefaultButton(QMessageBox::No);
 
     if(msgBox.exec() == QMessageBox::Yes) {
+        DatabaseManager *databaseManager = DatabaseManager::instance();
         databaseManager->deleteTag(orphanTag);
     }
 }
@@ -90,6 +95,53 @@ void Application::askForOrphanPeopleDeletion(People &orphanPeople)
     msgBox.setDefaultButton(QMessageBox::No);
 
     if(msgBox.exec() == QMessageBox::Yes) {
+        DatabaseManager *databaseManager = DatabaseManager::instance();
         databaseManager->deletePeople(orphanPeople);
     }
+}
+
+void Application::on_startFetchingMetadata()
+{
+    Macaw::DEBUG("[Application] startFetchingMetadata called");
+    if(m_fetchMetadata == NULL) {
+        m_fetchMetadata = new FetchMetadata;
+    }
+
+    //m_fetchMetadata->moveToThread(&m_metadataThread);
+    //connect(&m_metadataThread, SIGNAL(finished()),
+    //        m_fetchMetadata, SLOT(deleteLater()));
+    connect(this, SIGNAL(fetchMetadata()),
+            m_fetchMetadata, SLOT(startProcess()));
+    connect(m_fetchMetadata, SIGNAL(sendFetchMetadataDialog(Movie&, QList<Movie>)),
+            this, SLOT(on_sendFetchMetadataDialog(Movie&,QList<Movie>)));
+    //     connect(l_fetchMetadata, SIGNAL(&FetchMetadata::resultReady),
+     //           this, SLOT(&Controller::handleResults));
+    //m_metadataThread.start();
+    emit fetchMetadata();
+}
+
+void Application::on_sendFetchMetadataDialog(Movie& movie,QList<Movie> accurateList)
+{
+    Macaw::DEBUG("[Application] on_sendFetchMetadataDialog triggered");
+
+    if(m_fetchMetadataDialog != NULL)
+    {
+        delete m_fetchMetadataDialog;
+    }
+    m_fetchMetadataDialog = new FetchMetadataDialog(movie, accurateList);
+    connect(m_fetchMetadataDialog, SIGNAL(selectedMovie(Movie)),
+            m_fetchMetadata, SLOT(on_selectedMovie(Movie)));
+    connect(m_fetchMetadataDialog, SIGNAL(searchMovies(QString)),
+            m_fetchMetadata, SLOT(on_searchMovies(QString)));
+    connect(m_fetchMetadataDialog, SIGNAL(searchCanceled()),
+            m_fetchMetadata, SLOT(on_searchCanceled()));
+    connect(m_fetchMetadata, SIGNAL(updateFetchMetadataDialog(QList<Movie>)),
+            this, SLOT(on_updateFetchMetadataDialog(QList<Movie>)));
+    m_fetchMetadataDialog->show();
+}
+
+void Application::on_updateFetchMetadataDialog(QList<Movie> updatedList)
+{
+    m_fetchMetadataDialog->setMovieList(updatedList);
+
 }

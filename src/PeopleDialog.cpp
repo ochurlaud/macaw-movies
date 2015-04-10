@@ -20,14 +20,13 @@
 #include "PeopleDialog.h"
 #include "ui_PeopleDialog.h"
 
-Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
-
 PeopleDialog::PeopleDialog(int id, QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::PeopleDialog)
 {
     Macaw::DEBUG("[PeopleDialog] Constructor called");
 
+    DatabaseManager *databaseManager = DatabaseManager::instance();
     m_ui->setupUi(this);
     this->setWindowTitle("Edit People Metadata");
     this->setAttribute(Qt::WA_DeleteOnClose);
@@ -136,6 +135,7 @@ void PeopleDialog::on_validationButtons_accepted()
     else
     {
         Macaw::DEBUG("[PeopleDialog] validationButtons method: type=0");
+        DatabaseManager *databaseManager = DatabaseManager::instance();
         databaseManager->updatePeople(m_people);
     }
 

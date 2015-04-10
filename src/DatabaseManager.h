@@ -41,6 +41,7 @@ class DatabaseManager : public QObject
 
 public:
     DatabaseManager();
+    static DatabaseManager* instance();
     // Database management
     bool openDB();
     bool createTables();
@@ -55,7 +56,6 @@ public:
     bool addMoviesPath(QString moviesPath);
     int createTag(QString name);
     bool setMoviesPathImported(QString moviesPath, bool imported);
-
     bool deleteMoviesPath(QString moviesPath);
 
 signals:
@@ -155,4 +155,5 @@ private:
     QString m_tagFields;
 
 };
+
 #endif // DATABASEMANAGER_H
