@@ -331,17 +331,17 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
     Macaw::DEBUG("[MainWindow] customContextMenuRequested()");
     QMenu *l_menu = new QMenu(this);
 
-    // The left pannel must have focus, one item selected which id is not 0
+    // The left pannel must have focus, one item selected which id is not 0 or -1
     // (not to be "All" or "Unknown")
     if(m_ui->leftPannel->hasFocus()
-            && m_ui->leftPannel->selectedItems().count() != 0
-            && m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId) != 0)
+            && !m_ui->leftPannel->selectedItems().empty()
+            && m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId) > 0)
     {
         l_menu->addAction(m_ui->actionEdit_leftPannelMetadata);
         l_menu->exec(m_ui->leftPannel->mapToGlobal(point));
     }
     else if (m_ui->mainPannel->hasFocus()
-               && m_ui->mainPannel->selectedItems().count() != 0)
+               && !m_ui->mainPannel->selectedItems().empty())
     {
         if(m_ui->toWatchButton->isChecked()) {
             Macaw::DEBUG("[MainWindow] In ToWatch detected");
@@ -351,8 +351,6 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
                                                         l_menu);
             l_actionAddInToWatch->setData(1);
 
-            /*QObject::connect(l_actionAddInToWatch, SIGNAL(triggered()),
-                             this, SLOT(addPlaylistMenu_triggered(Action*)));*/
             QObject::connect(l_menu, SIGNAL(triggered(QAction*)),
                                          this, SLOT(addPlaylistMenu_triggered(QAction*)));
 
@@ -758,9 +756,10 @@ bool MainWindow::permanentlyDeleteFile(QFile * movieFileToDelete) {
  */
 void MainWindow::addPlaylistMenu_triggered(QAction* action)
 {
+    Macaw::DEBUG("[MainWindow] addPlaylistMenu_triggered");
     DatabaseManager *databaseManager = DatabaseManager::instance();
     int l_actionId = action->data().toInt();
-    if (!m_ui->mainPannel->selectedItems().empty()) {
+    if (!m_ui->mainPannel->selectedItems().empty() && l_actionId != 0) {
         int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
         Movie l_movie = databaseManager->getOneMovieById(l_movieId);
         Playlist l_playlist = databaseManager->getOnePlaylistById(l_actionId);
