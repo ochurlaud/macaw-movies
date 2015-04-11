@@ -44,7 +44,7 @@ void FetchMetadataQuery::sendPrimaryRequest(QString title)
     QNetworkRequest l_request;
 
     l_request.setUrl(QUrl("http://api.themoviedb.org/3/search/movie?api_key="+ m_app->tmdbkey() +"&query="+ title, QUrl::TolerantMode));
-
+    qDebug() << "http://api.themoviedb.org/3/search/movie?api_key="+ m_app->tmdbkey() +"&query="+ title;
     m_networkManager->get(l_request);
 
     Macaw::DEBUG("[FetchMetadataQuery] Primary request sent");
@@ -221,12 +221,13 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
         QJsonObject l_jsonObject = l_stream.object();
         if (!l_jsonObject.isEmpty()) {
             int tmdbID = l_jsonObject.value("id").toInt();
+
             l_people.setName(l_jsonObject.value("name").toString());
             l_people.setBiography(l_jsonObject.value("biography").toString());
-
             QLocale locale(QLocale::English, QLocale::UnitedStates);
             QDate l_birthday = locale.toDate(l_jsonObject.value("birthday").toString(),"yyyy-MM-dd");
             l_people.setBirthday(l_birthday);
+
             QList<People> l_peopleList = m_movie.peopleList();
             for (int i = 0 ; i < m_movie.peopleList().count(); i++) {
                 if (m_movie.peopleList().at(i).id() == tmdbID)
@@ -257,8 +258,12 @@ void FetchMetadataQuery::on_posterRequestResponse(QNetworkReply *reply) {
 #ifdef Q_OS_LINUX
     // Put posters in in ~/.local/share/macaw-movies/posters and create the folder if not exists
     l_configPath = QString(QDir::home().path().append(QDir::separator())
-                                            .append(".local/share/"+QString(APP_NAME_SMALL))
-                                            .append(QDir::separator()));
+                                              .append(".local")
+                                              .append(QDir::separator())
+                                              .append("share")
+                                              .append(QDir::separator())
+                                              .append(QString(APP_NAME_SMALL))
+                                              .append(QDir::separator()));
 #endif
 
 #ifdef Q_OS_WIN
@@ -282,6 +287,8 @@ void FetchMetadataQuery::on_posterRequestResponse(QNetworkReply *reply) {
                                             .append(QString(APP_NAME_SMALL))
                                             .append(QDir::separator()));
 #endif
+
+    l_configPath = QDir::toNativeSeparators(l_configPath);
 
     QFileInfo checkFolder(l_configPath + QString("posters"));
     if (!checkFolder.exists())
