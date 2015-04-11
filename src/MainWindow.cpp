@@ -373,9 +373,7 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
 void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
 {
     Macaw::DEBUG("[MainWindow] actionEdit_mainPannelMetadata_triggered()");
-    // The left pannel must have focus, one item selected which id is not 0
-    // (not to be "All" or "Unknown")
-    if(m_ui->mainPannel->selectedItems().count() > 0) {
+    if(!m_ui->mainPannel->selectedItems().empty()) {
         int l_id = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
 
         MovieDialog *l_movieDialog = new MovieDialog(l_id);
@@ -394,9 +392,9 @@ void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
 void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
 {
     Macaw::DEBUG("[MainWindow] actionEdit_leftPannelMetadata_triggered()");
-    // The left pannel must have focus, one item selected which id is not 0
+    // The left pannel must have one item selected which id is not -1 or 0
     // (not to be "All" or "Unknown")
-    if(m_ui->leftPannel->selectedItems().count() > 0) {
+    if(!m_ui->leftPannel->selectedItems().empty()) {
         int l_id = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
         // It's editable only if id is not 0 or -1
         if(l_id > 0) {
@@ -900,7 +898,18 @@ void MainWindow::on_searchEdit_returnPressed()
 {
     Macaw::DEBUG("[MainWindow] editing finished on searchEdit");
 
-    updatePannels();
+    this->updatePannels();
+}
+
+/**
+ * @brief Slot triggered when Dialogs are closed in order to update the pannels
+ * Call `updatePannels()`
+ */
+void MainWindow::selfUpdate()
+{
+    Macaw::DEBUG("[MainWindow] selfUpdate() triggered");
+
+    this->updatePannels();
 }
 
 /**
