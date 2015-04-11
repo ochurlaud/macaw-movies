@@ -1013,22 +1013,27 @@ void MainWindow::fillMetadataPannel(Movie movie)
     }
     // Need to remove ", " = 2 chars
     if (l_directors.right(2) == ", ") {
-        l_directors = l_directors.remove(l_directors.size(),-2);
+        l_directors = l_directors.remove(l_directors.size()-2, 2);
+
     }
     l_directors += "<br /><br />";
     if (l_producers.right(2) == ", ") {
-        l_producers = l_producers.remove(l_producers.size(),-2);
+        l_producers = l_producers.remove(l_producers.size()-2,2);
     }
     l_producers += "<br /><br />";
     if (l_actors.right(2) == ", ") {
-        l_actors = l_actors.remove(l_actors.size(),-2);
+        l_actors = l_actors.remove(l_actors.size()-2,2);
     }
     l_actors += "<br /><br />";
     l_actors += "</html>";
 
     m_ui->metadataTop->setText(l_title+l_originalTitle + l_directors +l_producers + l_actors);
     m_ui->metadataPlot->setText(movie.synopsis());
-    m_ui->metadataCover->hide();
+    QString l_posterPath = qApp->property("postersPath").toString()
+            + movie.posterPath();
+    QPixmap l_poster(l_posterPath);
+    m_ui->metadataCover->setPixmap(l_poster);
+
     Macaw::DEBUG("[MainWindow] Exit fillMetadataPannel");
 }
 
