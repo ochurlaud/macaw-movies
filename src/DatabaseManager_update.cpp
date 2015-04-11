@@ -372,8 +372,6 @@ bool DatabaseManager::updatePlaylist(Playlist &playlist)
  */
 bool DatabaseManager::updateMovieInPlaylist(Movie &movie, Playlist &playlist)
 {
-    updateMovie(movie);
-
     // Checks if the people and the movie are connected, if not connects them
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT id "

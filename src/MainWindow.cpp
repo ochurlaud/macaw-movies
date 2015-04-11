@@ -41,8 +41,6 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
     connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
-    connect(this, SIGNAL(toUpdate()),
-            this, SLOT(selfUpdate()));
     m_ui->mainPannel->addAction(m_ui->actionDelete);
     m_ui->mainPannel->addAction(m_ui->actionEdit_mainPannelMetadata);
     m_ui->leftPannel->addAction(m_ui->actionEdit_leftPannelMetadata);
@@ -190,7 +188,7 @@ void MainWindow::fillLeftPannel()
             }
         }
     }
-    if(m_ui->leftPannel->selectedItems().count() == 0) {
+    if(m_ui->leftPannel->selectedItems().empty()) {
         m_ui->leftPannel->item(0)->setSelected(true);
     }
     this->setLeftPannelLabel();
@@ -224,9 +222,6 @@ void MainWindow::fillMainPannel()
     l_headers << "Title" << "Original Title" << "Release Date" << "Path of the file";
     m_ui->mainPannel->setHorizontalHeaderLabels(l_headers);
     // End function setHeaders
-
-    QString l_text = m_ui->searchEdit->text();
-    m_authorizedMoviesList = databaseManager->getMoviesByAny(l_text);
 
     QList<Movie> l_moviesList = moviesToDisplay(m_leftPannelSelectedId);
     int l_row = 0;
@@ -457,7 +452,7 @@ void MainWindow::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
         if(databaseManager->removeMovieFromPlaylist(movie, playlist))
         {
             Macaw::DEBUG("[MainWindow] Movie removed from playlist "+ playlist.name());
-            emit toUpdate();
+            this->updatePannels();
         }
     }
 }
@@ -530,7 +525,7 @@ bool MainWindow::moveFileToTrash(Movie &movie)
             }
         }
 
-        emit toUpdate();
+        this->updatePannels();
     }
     return true;
 }
@@ -762,18 +757,18 @@ bool MainWindow::permanentlyDeleteFile(QFile * movieFileToDelete) {
  * 1. Get the action id (= id of the playlist)
  * 2. Get the id of the movie concerned
  * 3. Add the movie in the playlist
- * 4. Request the update of the pannels
  */
 void MainWindow::addPlaylistMenu_triggered(QAction* action)
 {
     DatabaseManager *databaseManager = DatabaseManager::instance();
     int l_actionId = action->data().toInt();
-    int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
-    Movie l_movie = databaseManager->getOneMovieById(l_movieId);
-    Playlist l_playlist = databaseManager->getOnePlaylistById(l_actionId);
-    l_playlist.addMovie(l_movie);
-    databaseManager->updatePlaylist(l_playlist);
-    emit(toUpdate());
+    if (!m_ui->mainPannel->selectedItems().empty()) {
+        int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
+        Movie l_movie = databaseManager->getOneMovieById(l_movieId);
+        Playlist l_playlist = databaseManager->getOnePlaylistById(l_actionId);
+        l_playlist.addMovie(l_movie);
+        databaseManager->updatePlaylist(l_playlist);
+    }
 }
 
 /**
@@ -801,7 +796,7 @@ void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
  */
 void MainWindow::on_leftPannel_itemSelectionChanged()
 {
-    Macaw::DEBUG("[MainWindow] item seleceted on leftPannel");
+    Macaw::DEBUG("[MainWindow] item selected on leftPannel");
     if (m_ui->leftPannel->selectedItems().count() > 0) {
         QListWidgetItem *l_item = m_ui->leftPannel->selectedItems().first();
 
@@ -820,7 +815,7 @@ void MainWindow::on_mainPannel_itemSelectionChanged()
     DatabaseManager *databaseManager = DatabaseManager::instance();
 
     Movie l_movie;
-    if (m_ui->mainPannel->selectedItems().count() > 0) {
+    if (!m_ui->mainPannel->selectedItems().empty()) {
         QTableWidgetItem *l_item = m_ui->mainPannel->selectedItems().first();
 
         int l_idMovie = l_item->data(Macaw::ObjectId).toInt();
@@ -866,31 +861,6 @@ QList<Movie> MainWindow::moviesToDisplay(int id)
     QList<Movie> l_emptyList;
 
     return  l_emptyList;
-}
-
-/**
- * @brief Slot triggered when the window should update its pannels
- */
-void MainWindow::selfUpdate()
-{
-    Macaw::DEBUG("[MainWindow] selfUpdate()");
-
-    this->updatePannels();
-    //seems useless... try without this
-    for (int i = 0 ; i < m_ui->leftPannel->count() ; i++) {
-        QListWidgetItem *l_item = m_ui->leftPannel->item(i);
-        if (l_item->data(Macaw::ObjectId).toInt() == m_leftPannelSelectedId) {
-            l_item->setSelected(true);
-            this->fillMainPannel();
-            break;
-        }
-    }
-    //end useless
-    if (m_ui->leftPannel->selectedItems().count() == 0) {
-        m_leftPannelSelectedId = 0;
-        this->updatePannels();
-    }
-
 }
 
 /**
@@ -940,8 +910,12 @@ void MainWindow::on_searchEdit_returnPressed()
 void MainWindow::updatePannels()
 {
     Macaw::DEBUG("[MainWindow] Enters updatePannels()");
-    fillMainPannel();
+
+    DatabaseManager *databaseManager = DatabaseManager::instance();
+    QString l_text = m_ui->searchEdit->text();
+    m_authorizedMoviesList = databaseManager->getMoviesByAny(l_text);
     fillLeftPannel();
+    fillMainPannel();
     Macaw::DEBUG("[MainWindow] Exits updatePannels()");
 }
 
@@ -988,11 +962,6 @@ void MainWindow::addNewMovies()
                     l_movie.setSuffix(l_fileSuffix);
                     databaseManager->insertNewMovie(l_movie);
 
-                    // Currently a wainting loop is created in FetchMetadata,
-                    // multithreading would be better
-                    // Should be done in async
-                 //   FetchMetadata l_fetchMetadata;
-                  //  bool l_result = l_fetchMetadata.startProcess(l_movie);
                 } else {
                     Macaw::DEBUG("[MainWindow.updateApp()] Movie already known. Skipped");
                 }
@@ -1001,7 +970,7 @@ void MainWindow::addNewMovies()
         databaseManager->setMoviesPathImported(l_moviesPath,true);
     }
     emit startFetchingMetadata();
-    emit toUpdate();
+    this->updatePannels();
     Macaw::DEBUG("[MainWindow] Exit addNewMovies");
 }
 

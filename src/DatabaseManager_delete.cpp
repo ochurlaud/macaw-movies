@@ -192,7 +192,7 @@ bool DatabaseManager::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
  */
 bool DatabaseManager::deletePlaylist(Playlist &playlist)
 {
-    if (playlist.id() == 0)
+    if (playlist.id() == 1)
     {
         Macaw::DEBUG("ToWatch cannot be deleted");
         return false;

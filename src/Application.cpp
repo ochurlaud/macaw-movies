@@ -203,6 +203,4 @@ void Application::definePaths()
                                                      );
     this->setProperty("filesPath", l_filesPath);
     this->setProperty("postersPath", l_postersPath);
-    qDebug() << this->property("filesPath");
-    qDebug() << this->property("postersPath");
 }

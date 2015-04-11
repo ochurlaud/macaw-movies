@@ -60,7 +60,6 @@ private slots:
     void on_actionEdit_leftPannelMetadata_triggered();
     void on_actionEdit_mainPannelMetadata_triggered();
     void on_actionDelete_triggered();
-    void selfUpdate();
     void addNewMovies();
     void on_searchEdit_returnPressed();
     void addPlaylistMenu_triggered(QAction* action);
@@ -68,7 +67,6 @@ private slots:
     void closeEvent(QCloseEvent *event);
 
 signals:
-    void toUpdate();
     void startFetchingMetadata();
 
 private:
