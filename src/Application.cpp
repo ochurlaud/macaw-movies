@@ -105,6 +105,9 @@ void Application::askForOrphanPeopleDeletion(People &orphanPeople)
     }
 }
 
+/**
+ * @brief Slot triggered when the user wants to fetch metadata on the internet
+ */
 void Application::on_startFetchingMetadata()
 {
     Macaw::DEBUG("[Application] startFetchingMetadata called");
@@ -112,19 +115,21 @@ void Application::on_startFetchingMetadata()
         m_fetchMetadata = new FetchMetadata;
     }
 
-    //m_fetchMetadata->moveToThread(&m_metadataThread);
-    //connect(&m_metadataThread, SIGNAL(finished()),
-    //        m_fetchMetadata, SLOT(deleteLater()));
     connect(this, SIGNAL(fetchMetadata()),
             m_fetchMetadata, SLOT(startProcess()));
     connect(m_fetchMetadata, SIGNAL(sendFetchMetadataDialog(Movie&, QList<Movie>)),
             this, SLOT(on_sendFetchMetadataDialog(Movie&,QList<Movie>)));
-    //     connect(l_fetchMetadata, SIGNAL(&FetchMetadata::resultReady),
-     //           this, SLOT(&Controller::handleResults));
-    //m_metadataThread.start();
+    connect(m_fetchMetadata, SIGNAL(jobDone()),
+            this, SLOT(on_fethMetadataJobDone()));
     emit fetchMetadata();
 }
 
+/**
+ * @brief Slot triggered when m_fetchMetadata needs the user to choose between a list of movies.
+ * Show a Dialog
+ * @param movie known by Macaw
+ * @param accurateList of Movies proposed to the User
+ */
 void Application::on_sendFetchMetadataDialog(Movie& movie,QList<Movie> accurateList)
 {
     Macaw::DEBUG("[Application] on_sendFetchMetadataDialog triggered");
@@ -145,12 +150,29 @@ void Application::on_sendFetchMetadataDialog(Movie& movie,QList<Movie> accurateL
     m_fetchMetadataDialog->show();
 }
 
+/**
+ * @brief Slot triggered when m_fetchMetadata has new Movies to show to the user.
+ * @param updatedList of the movies
+ */
 void Application::on_updateFetchMetadataDialog(QList<Movie> updatedList)
 {
     m_fetchMetadataDialog->setMovieList(updatedList);
-
 }
 
+/**
+ * @brief Slot triggered when m_fetchMetadata has finished its job
+ * Delete the pointers concerned.
+ */
+void Application::on_fethMetadataJobDone()
+{
+    delete m_fetchMetadata;
+    delete m_fetchMetadataDialog;
+}
+
+/**
+ * @brief Define the paths used in the app
+ * Can be retrieved by `qApp->property("name")`
+ */
 void Application::definePaths()
 {
     QString l_filesPath = "";

@@ -38,6 +38,7 @@ public:
 
 signals:
     void jobDone();
+    void movieUpdated();
     void sendFetchMetadataDialog(Movie&, QList<Movie>);
     void updateFetchMetadataDialog(QList<Movie>);
 

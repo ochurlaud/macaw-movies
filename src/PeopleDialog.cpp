@@ -117,6 +117,10 @@ QString PeopleDialog::getBiography() const
     return m_ui->biographyEdit->toPlainText();
 }
 
+/**
+ * @brief Slot triggered when `Ok` is clicked
+ * Updates the person or tell the MovieDialog that it's done
+ */
 void PeopleDialog::on_validationButtons_accepted()
 {
     Macaw::DEBUG("[PeopleDialog] validationButtons accepted");
@@ -142,8 +146,11 @@ void PeopleDialog::on_validationButtons_accepted()
     Macaw::DEBUG("[PeopleDialog] validationButtons method done");
 }
 
+/**
+ * @brief Slot triggered when the ResetBirthday Button is clicked
+ * Set the date to a date < date_min to print the specialValueText
+ */
 void PeopleDialog::on_resetBirthdayBtn_clicked()
 {
-    // We set the date to a QDate < date_min so that it prints the specialValueText
     m_ui->birthdayEdit->setDate(QDate::fromString("01/01/0001", "dd/MM/yyyy"));
 }

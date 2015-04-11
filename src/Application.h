@@ -74,6 +74,7 @@ private slots:
     void on_startFetchingMetadata();
     void on_sendFetchMetadataDialog(Movie& movie, QList<Movie> accurateList);
     void on_updateFetchMetadataDialog(QList<Movie> updatedList);
+    void on_fethMetadataJobDone();
 
 private:
 
@@ -101,7 +102,7 @@ private:
     QThread m_metadataThread;
 
     /**
-     * @brief Define the paths used everywhere on the app
+     * @brief Define the paths used in the app
      */
     void definePaths();
 

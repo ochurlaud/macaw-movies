@@ -627,8 +627,11 @@ QList<People> MovieDialog::getFocusedListPeople()
     return l_people;
 }
 
+/**
+ * @brief Slot triggered when the ResetReleaseDate Button is clicked
+ * Set the date to a date < date_min to print the specialValueText
+ */
 void MovieDialog::on_resetReleaseDateBtn_clicked()
 {
-    // We set the date to a QDate < date_min so that it prints the specialValueText
     m_ui->releaseDateEdit->setDate(QDate::fromString("01/01/0001", "dd/MM/yyyy"));
 }

@@ -29,7 +29,7 @@ FetchMetadata::FetchMetadata(QObject *parent) :
     m_fetchMetadataQuery = new FetchMetadataQuery(this);
     m_movieQueue = databaseManager->getMoviesNotImported();
 
-    connect(this, SIGNAL(jobDone()),
+    connect(this, SIGNAL(movieUpdated()),
             this, SLOT(startProcess()));
 
     Macaw::DEBUG("[FetchMetadata] Construction done");
@@ -44,14 +44,18 @@ FetchMetadata::~FetchMetadata()
 void FetchMetadata::startProcess()
 {
     Macaw::DEBUG("[FetchMetadata] Start the process of metadata fetching");
-    m_movie = m_movieQueue.takeFirst();
-    connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
-            this, SLOT(processPrimaryResponse(QList<Movie>&)));
-    connect(m_fetchMetadataQuery, SIGNAL(networkError(QString)),
-            this, SLOT(networkError(QString)));
+    if (!m_movieQueue.isEmpty()) {
+        m_movie = m_movieQueue.takeFirst();
+        connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
+                this, SLOT(processPrimaryResponse(QList<Movie>&)));
+        connect(m_fetchMetadataQuery, SIGNAL(networkError(QString)),
+                this, SLOT(networkError(QString)));
 
-    QString l_cleanedTitle = cleanString(m_movie.title());
-    m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
+        QString l_cleanedTitle = cleanString(m_movie.title());
+        m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
+    } else {
+        emit jobDone();
+    }
 }
 
 QString FetchMetadata::cleanString(QString title)
@@ -121,15 +125,14 @@ void FetchMetadata::processMovieResponse(Movie receivedMovie)
     m_movie.setPosterPath(receivedMovie.posterPath().right(receivedMovie.posterPath().size()-1));
 
     databaseManager->updateMovie(m_movie);
-    m_processState = true;
-    emit(jobDone());
+    emit movieUpdated();
 }
 
 void FetchMetadata::on_searchCanceled()
 {
     m_processState = false;
     Macaw::DEBUG("[FetchMetadata] Dialog canceled");
-    emit(jobDone());
+    emit jobDone();
 }
 
 void FetchMetadata::on_selectedMovie(Movie movie)

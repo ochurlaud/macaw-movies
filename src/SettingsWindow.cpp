@@ -20,6 +20,10 @@
 #include "SettingsWindow.h"
 #include "ui_SettingsWindow.h"
 
+/**
+ * @brief Constructor
+ * @param parent
+ */
 SettingsWindow::SettingsWindow(QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::SettingsWindow)
@@ -35,6 +39,9 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     m_ui->knownPathsList->addItems(l_moviesPathsList);
 }
 
+/**
+ * @brief Destructor
+ */
 SettingsWindow::~SettingsWindow()
 {
     delete m_ui;
