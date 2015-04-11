@@ -100,6 +100,12 @@ private:
     FetchMetadataDialog *m_fetchMetadataDialog;
     QThread m_metadataThread;
 
+    /**
+     * @brief Define the paths used everywhere on the app
+     */
+    void definePaths();
+
+
 };
 
 #endif // APPLICATION_H

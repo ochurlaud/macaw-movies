@@ -27,6 +27,7 @@ Application::Application(int &argc, char **argv) :
 {
     Macaw::DEBUG("[Application] started");
 
+    this->definePaths();
     DatabaseManager *databaseManager = DatabaseManager::instance();
 
     this->setApplicationName(APP_NAME);
@@ -44,6 +45,7 @@ Application::Application(int &argc, char **argv) :
     connect(m_mainWindow, SIGNAL(startFetchingMetadata()),
             this, SLOT(on_startFetchingMetadata()));
 
+    qApp->property("filesPath");
     m_mainWindow->show();
 
     Macaw::DEBUG("[Application] Application initialized");
@@ -147,4 +149,60 @@ void Application::on_updateFetchMetadataDialog(QList<Movie> updatedList)
 {
     m_fetchMetadataDialog->setMovieList(updatedList);
 
+}
+
+void Application::definePaths()
+{
+    QString l_filesPath = "";
+
+#ifdef Q_OS_LINUX
+    // Files in ~/.local/share/macaw-movies and create the folder if not exists
+    l_filesPath = QString(QDir::home().path().append(QDir::separator())
+                                             .append(".local")
+                                             .append(QDir::separator())
+                                             .append("share"));
+#endif
+
+#ifdef Q_OS_WIN
+    // File in $USER\AppData\Local
+    l_filesPath = QString(QDir::home().path().append(QDir::separator())
+                                            .append("AppData")
+                                            .append(QDir::separator())
+                                            .append("Local"));
+#endif
+
+#ifdef Q_OS_OSX
+    // Files in ~/Library/Application Support
+    l_filesPath = QString(QDir::home().path().append(QDir::separator())
+                                            .append("Library")
+                                            .append(QDir::separator())
+                                            .append("Application Support"));
+#endif
+
+    l_filesPath.append(QDir::separator());
+    l_filesPath = QDir::toNativeSeparators(l_filesPath);
+
+    QFileInfo checkFolder(l_filesPath + APP_NAME_SMALL);
+    if (!checkFolder.exists())
+    {
+        QDir(l_filesPath).mkdir(APP_NAME_SMALL);
+    }
+
+    l_filesPath.append(APP_NAME_SMALL).append(QDir::separator());
+
+    l_filesPath = QDir::toNativeSeparators(l_filesPath);
+    checkFolder = QString(l_filesPath + "posters");
+    if (!checkFolder.exists())
+    {
+        QDir(l_filesPath).mkdir("posters");
+    }
+
+    QString l_postersPath = QDir::toNativeSeparators(l_filesPath
+                                                     + "posters"
+                                                     +  QDir::separator()
+                                                     );
+    this->setProperty("filesPath", l_filesPath);
+    this->setProperty("postersPath", l_postersPath);
+    qDebug() << this->property("filesPath");
+    qDebug() << this->property("postersPath");
 }

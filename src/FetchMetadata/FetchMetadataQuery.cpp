@@ -249,52 +249,11 @@ void FetchMetadataQuery::on_posterRequestResponse(QNetworkReply *reply) {
     disconnect(m_networkManager2, SIGNAL(finished(QNetworkReply*)),
                 this, SLOT(on_posterRequestResponse(QNetworkReply*)));
 
-    QString l_configPath="";
 
-#ifdef Q_OS_LINUX
-    // Put posters in in ~/.local/share/macaw-movies/posters and create the folder if not exists
-    l_configPath = QString(QDir::home().path().append(QDir::separator())
-                                              .append(".local")
-                                              .append(QDir::separator())
-                                              .append("share")
-                                              .append(QDir::separator())
-                                              .append(QString(APP_NAME_SMALL))
-                                              .append(QDir::separator()));
-#endif
-
-#ifdef Q_OS_WIN
-    // File in $USER\AppData\Local
-    l_configPath(QDir::home().path().append(QDir::separator())
-                                            .append("AppData")
-                                            .append(QDir::separator())
-                                            .append("Local")
-                                            .append(QDir::separator())
-                                            .append(QString(APP_NAME_SMALL))
-                                            .append(QDir::separator()));
-#endif
-
-#ifdef Q_OS_OSX
-    // File in ~/Library/Application Support
-    l_configPath(QDir::home().path().append(QDir::separator())
-                                            .append("Library")
-                                            .append(QDir::separator())
-                                            .append("Application Support")
-                                            .append(QDir::separator())
-                                            .append(QString(APP_NAME_SMALL))
-                                            .append(QDir::separator()));
-#endif
-
-    l_configPath = QDir::toNativeSeparators(l_configPath);
-
-    QFileInfo checkFolder(l_configPath + QString("posters"));
-    if (!checkFolder.exists())
-    {
-        QDir(l_configPath).mkdir("posters");
-    }
-
-    QFile l_posterFile(l_configPath + "posters/" + reply->url().fileName());
+    QString l_postersPath = qApp->property("postersPath").toString();
+    QFile l_posterFile(l_postersPath + reply->url().fileName());
     if (!l_posterFile.open(QIODevice::WriteOnly)) {
-        Macaw::DEBUG("[FetchMetadataQuery] Error opening/creating: " + l_configPath + "posters/" + reply->url().fileName());
+        Macaw::DEBUG("[FetchMetadataQuery] Error opening/creating: " + l_postersPath + reply->url().fileName());
     }
 
     QByteArray l_receivedData = reply->readAll();

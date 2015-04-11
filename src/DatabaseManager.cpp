@@ -58,56 +58,23 @@ bool DatabaseManager::openDB()
         m_db = QSqlDatabase::addDatabase("QSQLITE", "Movies-database");
     }
 
-#ifdef Q_OS_LINUX
-    // File in ~/.local/share
-    QString l_configPath(QDir::home().path().append(QDir::separator())
-                                            .append(".local")
-                                            .append(QDir::separator())
-                                            .append("share")
-                                            .append(QDir::separator()));
-#endif
-
-#ifdef Q_OS_WIN
-    // File in $USER\AppData\Local
-    QString l_configPath(QDir::home().path().append(QDir::separator())
-                                            .append("AppData")
-                                            .append(QDir::separator())
-                                            .append("Local")
-                                            .append(QDir::separator()));
-#endif
-
-#ifdef Q_OS_OSX
-    // File in ~/Library/Application Support
-    QString l_configPath(QDir::home().path().append(QDir::separator())
-                                            .append("Library")
-                                            .append(QDir::separator())
-                                            .append("Application Support")
-                                            .append(QDir::separator()));
-#endif
-
-    l_configPath = QDir::toNativeSeparators(l_configPath);
-    QFileInfo checkFolder(l_configPath + APP_NAME_SMALL);
-    if (!checkFolder.exists())
-    {
-        QDir(l_configPath).mkdir(APP_NAME_SMALL);
-    }
-
-    QString l_dbPath = l_configPath + APP_NAME_SMALL + QDir::separator() + "database.sqlite";
-    l_dbPath = QDir::toNativeSeparators(l_dbPath);
-
+    QString l_dbPath = qApp->property("filesPath").toString() + "database.sqlite";
     m_db.setDatabaseName(l_dbPath);
 
-    bool l_ret=false;
-
-    l_ret = m_db.open();
-
-    if(l_ret)
-    {
-        QSqlQuery l_query(m_db);
-        l_ret = l_query.exec("PRAGMA foreign_keys = ON");
+    if (!m_db.open()) {
+        return false;
     }
 
-    return l_ret;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("PRAGMA foreign_keys = ON");
+
+    if (!l_query.exec()) {
+        Macaw::DEBUG("In openDB:");
+        Macaw::DEBUG(l_query.lastError().text());
+        return false;
+    }
+
+    return true;
 }
 
 /**
