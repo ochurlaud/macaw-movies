@@ -187,7 +187,7 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
             Macaw::DEBUG("[FetchMetadataQuery] Error on MovieRequestResponse: l_jsonObject empty");
         }
     }
-    if(m_movie.peopleList().count() == 0) {
+    if(m_movie.peopleList().isEmpty()) {
         Macaw::DEBUG("[FetchMetadataQuery] No people: send movieResponse Signal");
         emit(movieResponse(m_movie));
     } else {
@@ -237,7 +237,7 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
         }
     }    
     // If all request are done, the object is fully constructed => send to FetchMetadata
-    if (m_peopleRequestProcessing.empty() && m_peopleRequestQueue.empty()) {
+    if (m_peopleRequestProcessing.isEmpty() && m_peopleRequestQueue.isEmpty()) {
         // We send a signal to tell the movie is hydrated
         emit(movieResponse(m_movie));
     }
@@ -273,7 +273,7 @@ void FetchMetadataQuery::slotError(QNetworkReply::NetworkError error)
 void FetchMetadataQuery::on_peopleResponse()
 {
     // If all people are fetched, send next request
-    if (!m_peopleRequestQueue.empty()) {
+    if (!m_peopleRequestQueue.isEmpty()) {
         int l_peopleToProcess = m_peopleRequestQueue.takeFirst();
         m_peopleRequestProcessing.append(l_peopleToProcess);
         this->sendPeopleRequest(l_peopleToProcess);

@@ -544,7 +544,7 @@ void MovieDialog::customMenuRequested(QPoint pos)
     QListWidget *l_widget = getFocusedListWidget();
 
     // If nothing selected, don't do anything
-    if (l_widget->selectedItems().count() != 0)
+    if (!l_widget->selectedItems().isEmpty())
     {
         QMenu *l_menu = new QMenu(this);
         QAction *l_setMetadataAction = new QAction("Update person", this);

@@ -68,7 +68,7 @@ void SettingsWindow::on_buttonBox_accepted()
     QStringList l_moviesPathsList = databaseManager->getMoviesPaths(true);
     l_moviesPathsList << databaseManager->getMoviesPaths(false);
     foreach (QString l_moviesPath, l_moviesPathsList) {
-        if (m_ui->knownPathsList->findItems(l_moviesPath, Qt::MatchExactly).count() == 0) {
+        if (m_ui->knownPathsList->findItems(l_moviesPath, Qt::MatchExactly).isEmpty()) {
             Macaw::DEBUG("[MainWindow] Remove path "+l_moviesPath);
             // We remove the path and all the movies behind
             databaseManager->deleteMoviesPath(l_moviesPath);

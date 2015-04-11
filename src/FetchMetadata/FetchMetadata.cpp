@@ -97,7 +97,7 @@ void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
         Macaw::DEBUG("[FetchMetadata] Movie request to be sent");
         m_fetchMetadataQuery->sendMovieRequest(l_movie.id());
     } else {
-        if(l_accurateList.count() == 0) {
+        if(l_accurateList.isEmpty()) {
             l_accurateList = movieList;
         }
         emit sendFetchMetadataDialog(m_movie, l_accurateList);

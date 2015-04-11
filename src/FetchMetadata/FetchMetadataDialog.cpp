@@ -42,7 +42,7 @@ FetchMetadataDialog::~FetchMetadataDialog()
 
 void FetchMetadataDialog::on_buttonBox_accepted()
 {
-    if (m_ui->listWidget->selectedItems().count() == 0)
+    if (m_ui->listWidget->selectedItems().isEmpty())
     {
         QMessageBox::warning(this, "Warning", "You must select a movie!");
     }
@@ -76,7 +76,7 @@ void FetchMetadataDialog::on_lineEdit_returnPressed()
 void FetchMetadataDialog::setMovieList(QList<Movie> &movieList)
 {
     m_ui->listWidget->clear();
-    if (movieList.count() != 0) {
+    if (!movieList.isEmpty()) {
         foreach (Movie l_movie, movieList) {
             QListWidgetItem *l_item = new QListWidgetItem;
             QString l_textItem = l_movie.title()

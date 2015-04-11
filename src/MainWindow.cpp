@@ -103,7 +103,7 @@ void MainWindow::fillLeftPannel()
                  && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
                  ) || !m_ui->toWatchButton->isChecked()
                ) {
-                if(l_movie.peopleList().empty()
+                if(l_movie.peopleList().isEmpty()
                    && !m_leftElementsIdList.contains(-1)
                   ) {
                     m_leftElementsIdList.append(-1);
@@ -121,7 +121,7 @@ void MainWindow::fillLeftPannel()
                  && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
                  ) || !m_ui->toWatchButton->isChecked()
                ) {
-                if(l_movie.tagList().empty()
+                if(l_movie.tagList().isEmpty()
                    && !m_leftElementsIdList.contains(-1)
                   ) {
                     m_leftElementsIdList.append(-1);
@@ -188,7 +188,7 @@ void MainWindow::fillLeftPannel()
             }
         }
     }
-    if(m_ui->leftPannel->selectedItems().empty()) {
+    if(m_ui->leftPannel->selectedItems().isEmpty()) {
         m_ui->leftPannel->item(0)->setSelected(true);
     }
     this->setLeftPannelLabel();
@@ -334,14 +334,14 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
     // The left pannel must have focus, one item selected which id is not 0 or -1
     // (not to be "All" or "Unknown")
     if(m_ui->leftPannel->hasFocus()
-            && !m_ui->leftPannel->selectedItems().empty()
+            && !m_ui->leftPannel->selectedItems().isEmpty()
             && m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId) > 0)
     {
         l_menu->addAction(m_ui->actionEdit_leftPannelMetadata);
         l_menu->exec(m_ui->leftPannel->mapToGlobal(point));
     }
     else if (m_ui->mainPannel->hasFocus()
-               && !m_ui->mainPannel->selectedItems().empty())
+               && !m_ui->mainPannel->selectedItems().isEmpty())
     {
         if(m_ui->toWatchButton->isChecked()) {
             Macaw::DEBUG("[MainWindow] In ToWatch detected");
@@ -371,7 +371,7 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
 void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
 {
     Macaw::DEBUG("[MainWindow] actionEdit_mainPannelMetadata_triggered()");
-    if(!m_ui->mainPannel->selectedItems().empty()) {
+    if(!m_ui->mainPannel->selectedItems().isEmpty()) {
         int l_id = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
 
         MovieDialog *l_movieDialog = new MovieDialog(l_id);
@@ -392,7 +392,7 @@ void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
     Macaw::DEBUG("[MainWindow] actionEdit_leftPannelMetadata_triggered()");
     // The left pannel must have one item selected which id is not -1 or 0
     // (not to be "All" or "Unknown")
-    if(!m_ui->leftPannel->selectedItems().empty()) {
+    if(!m_ui->leftPannel->selectedItems().isEmpty()) {
         int l_id = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
         // It's editable only if id is not 0 or -1
         if(l_id > 0) {
@@ -759,7 +759,7 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
     Macaw::DEBUG("[MainWindow] addPlaylistMenu_triggered");
     DatabaseManager *databaseManager = DatabaseManager::instance();
     int l_actionId = action->data().toInt();
-    if (!m_ui->mainPannel->selectedItems().empty() && l_actionId != 0) {
+    if (!m_ui->mainPannel->selectedItems().isEmpty() && l_actionId != 0) {
         int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
         Movie l_movie = databaseManager->getOneMovieById(l_movieId);
         Playlist l_playlist = databaseManager->getOnePlaylistById(l_actionId);
@@ -812,7 +812,7 @@ void MainWindow::on_mainPannel_itemSelectionChanged()
     DatabaseManager *databaseManager = DatabaseManager::instance();
 
     Movie l_movie;
-    if (!m_ui->mainPannel->selectedItems().empty()) {
+    if (!m_ui->mainPannel->selectedItems().isEmpty()) {
         QTableWidgetItem *l_item = m_ui->mainPannel->selectedItems().first();
 
         int l_idMovie = l_item->data(Macaw::ObjectId).toInt();
