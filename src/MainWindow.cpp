@@ -945,7 +945,9 @@ void MainWindow::addNewMovies()
 
     DatabaseManager *databaseManager = DatabaseManager::instance();
     bool l_imported = false;
+    int l_addedCount(0);
     QStringList l_moviesPathsList = databaseManager->getMoviesPaths(l_imported);
+
     foreach (QString l_moviesPath, l_moviesPathsList) {
         QDirIterator l_file(l_moviesPath, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
         while (l_file.hasNext()) {
@@ -969,7 +971,10 @@ void MainWindow::addNewMovies()
                     l_movie.setFilePath(l_file.fileInfo().absoluteFilePath());
                     l_movie.setSuffix(l_fileSuffix);
                     databaseManager->insertNewMovie(l_movie);
-
+                    l_addedCount++;
+                    if(l_addedCount == 5) {
+                        emit startFetchingMetadata();
+                    }
                 } else {
                     Macaw::DEBUG("[MainWindow.updateApp()] Movie already known. Skipped");
                 }
