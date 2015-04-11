@@ -42,9 +42,7 @@ void FetchMetadataQuery::sendPrimaryRequest(QString title)
             this, SLOT(on_primaryRequestResponse(QNetworkReply*)));
 
     QNetworkRequest l_request;
-
     l_request.setUrl(QUrl("http://api.themoviedb.org/3/search/movie?api_key="+ m_app->tmdbkey() +"&query="+ title, QUrl::TolerantMode));
-    qDebug() << "http://api.themoviedb.org/3/search/movie?api_key="+ m_app->tmdbkey() +"&query="+ title;
     m_networkManager->get(l_request);
 
     Macaw::DEBUG("[FetchMetadataQuery] Primary request sent");
@@ -57,7 +55,6 @@ void FetchMetadataQuery::sendMovieRequest(int tmdbID)
 
     QNetworkRequest l_request;
     l_request.setUrl(QUrl("http://api.themoviedb.org/3/movie/"+QString::number(tmdbID)+"?api_key=" + m_app->tmdbkey() + "&append_to_response=credits&language=en", QUrl::TolerantMode));
-
     m_networkManager->get(l_request);
 
     Macaw::DEBUG("[FetchMetadataQuery] Movie Request sent");
@@ -70,22 +67,20 @@ void FetchMetadataQuery::sendPeopleRequest(int tmdbID)
 
     QNetworkRequest l_request;
     l_request.setUrl(QUrl("http://api.themoviedb.org/3/person/"+QString::number(tmdbID)+"?api_key="+ m_app->tmdbkey(), QUrl::StrictMode));
-
     m_networkManager->get(l_request);
 
-    Macaw::DEBUG("[FetchMetadataQuery] People request sent");
+    Macaw::DEBUG("[FetchMetadataQuery] People request sent, id="+QString::number(tmdbID));
 }
 
 void FetchMetadataQuery::sendPosterRequest(QString poster_path) {
     connect(m_networkManager2, SIGNAL(finished(QNetworkReply*)),
-                this, SLOT(on_posterRequestResponse(QNetworkReply*)));
+            this, SLOT(on_posterRequestResponse(QNetworkReply*)));
 
-        QNetworkRequest l_request;
-        l_request.setUrl(QUrl("http://image.tmdb.org/t/p/w396" + poster_path, QUrl::StrictMode));
+    QNetworkRequest l_request;
+    l_request.setUrl(QUrl("http://image.tmdb.org/t/p/w396" + poster_path, QUrl::StrictMode));
+    m_networkManager2->get(l_request);
 
-        m_networkManager2->get(l_request);
-
-        Macaw::DEBUG("[FetchMetadataQuery] Poster request sent");
+    Macaw::DEBUG("[FetchMetadataQuery] Poster request sent");
 }
 
 void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply* reply)
@@ -98,6 +93,7 @@ void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply* reply)
 
     QByteArray l_receivedData = reply->readAll();
     reply->deleteLater();
+
     QJsonDocument l_stream = QJsonDocument::fromJson(l_receivedData);
 
     if (!l_stream.isEmpty()) {
@@ -118,7 +114,7 @@ void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply* reply)
             l_moviesPropositionList.append(l_movieProposition);
         }
         Macaw::DEBUG("[FetchMetadataQuery] Signal to be emitted to FetchMetadata for primary request");
-        emit(primaryResponse(l_moviesPropositionList));
+        emit primaryResponse(l_moviesPropositionList);
     } else {
         Macaw::DEBUG("[FetchMetadataQuery] Error in on_primaryRequestResponse, stream empty !");
         // error !!
@@ -162,7 +158,7 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
                 l_people.setId(l_personId);
                 l_people.setType(People::Actor);
                 m_movie.addPeople(l_people);
-                m_peopleRequestList.append(l_personId);
+                m_peopleRequestQueue.append(l_personId);
                 Macaw::DEBUG("[FetchMetadataQuery] new Actor: "+ l_personName);
             }
 
@@ -175,7 +171,7 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
                     l_people.setId(l_personId);
                     l_people.setType(People::Director);
                     m_movie.addPeople(l_people);
-                    m_peopleRequestList.append(l_personId);
+                    m_peopleRequestQueue.append(l_personId);
                     Macaw::DEBUG("[FetchMetadataQuery] new Director: "+ l_personName);
                 } else if (l_job ==  "Producer") {
                     l_personId = l_jsonCrewArray.at(i).toObject().value("id").toInt();
@@ -183,24 +179,21 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
                     l_people.setId(l_personId);
                     l_people.setType(People::Producer);
                     m_movie.addPeople(l_people);
-                    m_peopleRequestList.append(l_personId);
+                    m_peopleRequestQueue.append(l_personId);
                     Macaw::DEBUG("[FetchMetadataQuery] new Producer: "+ l_personName);
                 }
             }
         } else {
-            Macaw::DEBUG("[FetchMetadataQuery] Error");
+            Macaw::DEBUG("[FetchMetadataQuery] Error on MovieRequestResponse: l_jsonObject empty");
         }
-        // else: error!
     }
     if(m_movie.peopleList().count() == 0) {
-        Macaw::DEBUG("[FetchMetadataQuery] No people send movieResponse Signal");
+        Macaw::DEBUG("[FetchMetadataQuery] No people: send movieResponse Signal");
         emit(movieResponse(m_movie));
     } else {
         Macaw::DEBUG("[FetchMetadataQuery] Send peopleResponse Signal");
         emit(peopleResponse());
     }
-
-
 }
 
 void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
@@ -214,14 +207,15 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
 
     QByteArray l_receivedData = reply->readAll();
     reply->deleteLater();
+
     emit(peopleResponse());
 
     QJsonDocument l_stream = QJsonDocument::fromJson(l_receivedData);
     if (!l_stream.isEmpty()) {
         QJsonObject l_jsonObject = l_stream.object();
         if (!l_jsonObject.isEmpty()) {
-            int tmdbID = l_jsonObject.value("id").toInt();
-
+            int l_tmdbID = l_jsonObject.value("id").toInt();
+            Macaw::DEBUG("[FetchMetadataQuery] Processing response for id=" +QString::number(l_tmdbID));
             l_people.setName(l_jsonObject.value("name").toString());
             l_people.setBiography(l_jsonObject.value("biography").toString());
             QLocale locale(QLocale::English, QLocale::UnitedStates);
@@ -230,7 +224,7 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
 
             QList<People> l_peopleList = m_movie.peopleList();
             for (int i = 0 ; i < m_movie.peopleList().count(); i++) {
-                if (m_movie.peopleList().at(i).id() == tmdbID)
+                if (m_movie.peopleList().at(i).id() == l_tmdbID)
                 {
                     l_people.setType(l_peopleList.at(i).type());
                     l_peopleList.replace(i, l_people);
@@ -238,10 +232,12 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
                 }
             }
             m_movie.setPeopleList(l_peopleList);
+            // Processing done, id removed from the list
+            m_peopleRequestProcessing.removeOne(l_tmdbID);
         }
-    }
-    // If all request are done, the object is construct, send to FetchMetadata
-    if (m_peopleRequestList.count() == 0) {
+    }    
+    // If all request are done, the object is fully constructed => send to FetchMetadata
+    if (m_peopleRequestProcessing.empty() && m_peopleRequestQueue.empty()) {
         // We send a signal to tell the movie is hydrated
         emit(movieResponse(m_movie));
     }
@@ -318,7 +314,9 @@ void FetchMetadataQuery::slotError(QNetworkReply::NetworkError error)
 void FetchMetadataQuery::on_peopleResponse()
 {
     // If all people are fetched, send next request
-    if (m_peopleRequestList.count() > 0) {
-        sendPeopleRequest(m_peopleRequestList.takeLast());
+    if (!m_peopleRequestQueue.empty()) {
+        int l_peopleToProcess = m_peopleRequestQueue.takeFirst();
+        m_peopleRequestProcessing.append(l_peopleToProcess);
+        this->sendPeopleRequest(l_peopleToProcess);
     }
 }

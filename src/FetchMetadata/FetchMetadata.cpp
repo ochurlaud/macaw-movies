@@ -52,8 +52,6 @@ void FetchMetadata::startProcess()
 
     QString l_cleanedTitle = cleanString(m_movie.title());
     m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
-
-    Macaw::DEBUG("[FetchMetadata] Process done");
 }
 
 QString FetchMetadata::cleanString(QString title)
@@ -69,17 +67,16 @@ QString FetchMetadata::cleanString(QString title)
 
 void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
 {
+    Macaw::DEBUG("[FetchMetadata] Signal from primary request received");
+
     disconnect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
             this, SLOT(processPrimaryResponse(QList<Movie>&)));
-
-    Macaw::DEBUG("[FetchMetadata] Signal from primary request received");
 
     QList<Movie> l_accurateList;
 
     if(movieList.count() == 1) {
         l_accurateList = movieList;
-    }
-    else if(movieList.count() > 1) {
+    } else if(movieList.count() > 1) {
         foreach(Movie l_movie, movieList) {
             if(cleanString(l_movie.title()).compare(cleanString(m_movie.title()), Qt::CaseInsensitive) == 0) {
                 Macaw::DEBUG("[FetchMetadata] One title found");

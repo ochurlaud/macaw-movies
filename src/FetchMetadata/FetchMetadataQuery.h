@@ -59,7 +59,8 @@ private:
     QNetworkAccessManager *m_networkManager2;
     Application *m_app;
     Movie m_movie;
-    QList<int> m_peopleRequestList;
+    QList<int> m_peopleRequestQueue;
+    QList<int> m_peopleRequestProcessing;
 
 };
 
