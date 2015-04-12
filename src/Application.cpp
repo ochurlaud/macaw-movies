@@ -161,12 +161,11 @@ void Application::on_updateFetchMetadataDialog(QList<Movie> updatedList)
 
 /**
  * @brief Slot triggered when m_fetchMetadata has finished its job
- * Delete the pointers concerned.
+ * Delete the pointer concerned.
  */
 void Application::on_fethMetadataJobDone()
 {
     delete m_fetchMetadata;
-    delete m_fetchMetadataDialog;
 }
 
 /**

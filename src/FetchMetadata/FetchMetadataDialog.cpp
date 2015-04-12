@@ -28,6 +28,8 @@ FetchMetadataDialog::FetchMetadataDialog(Movie movie, QList<Movie> moviesProposi
     m_ui->setupUi(this);
 
     m_movie = movie;
+    this->setAttribute(Qt::WA_DeleteOnClose);
+    this->setWindowTitle("Search movie...");
     m_ui->lineEdit->setText(m_movie.title());
     m_ui->moviePathLabel->setText(m_movie.filePath());
 
@@ -96,6 +98,7 @@ void FetchMetadataDialog::on_resetButton_clicked()
 
 void FetchMetadataDialog::on_buttonBox_rejected()
 {
-    emit(searchCanceled());
+    emit searchCanceled();
+    this->deleteLater();
     this->accept();
 }
