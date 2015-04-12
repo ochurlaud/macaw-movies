@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     m_ui(new Ui::MainWindow)
 {
-    Macaw::DEBUG("[MainWindow] Constructor called");
+    Macaw::DEBUG_IN("[MainWindow] Constructor called");
 
     m_ui->setupUi(this);
     m_ui->leftPannelWidget->setContentsMargins(0,1,1,0);
@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->updatePannels();
 
-    Macaw::DEBUG("[MainWindow] Construction done");
+    Macaw::DEBUG_OUT("[MainWindow] Construction done");
 }
 
 /**
@@ -71,11 +71,11 @@ MainWindow::~MainWindow()
  */
 void MainWindow::on_actionEdit_Settings_triggered()
 {
-    Macaw::DEBUG("[MainWindow] Enters showSettingsWindow()");
+    Macaw::DEBUG_IN("[MainWindow] Enters showSettingsWindow()");
     SettingsWindow *l_settingsWindow = new SettingsWindow;
     l_settingsWindow->show();
     QObject::connect(l_settingsWindow,SIGNAL(closeAndSave()), this, SLOT(addNewMovies()));
-    Macaw::DEBUG("[MainWindow] Exits showSettingsWindow()");
+    Macaw::DEBUG_OUT("[MainWindow] Exits showSettingsWindow()");
 }
 
 /**
@@ -83,7 +83,7 @@ void MainWindow::on_actionEdit_Settings_triggered()
  */
 void MainWindow::fillLeftPannel()
 {
-    Macaw::DEBUG("[MainWindow] Enters fillLeftPannel()");
+    Macaw::DEBUG_IN("[MainWindow] Enters fillLeftPannel()");
     m_ui->leftPannel->clear();
     m_leftElementsIdList.clear();
     DatabaseManager *databaseManager = DatabaseManager::instance();
@@ -194,7 +194,7 @@ void MainWindow::fillLeftPannel()
         m_ui->leftPannel->item(0)->setSelected(true);
     }
     this->setLeftPannelLabel();
-    Macaw::DEBUG("[MainWindow] Exits fillLeftPannel()");
+    Macaw::DEBUG_OUT("[MainWindow] Exits fillLeftPannel()");
 }
 
 /**
@@ -206,7 +206,7 @@ void MainWindow::fillLeftPannel()
  */
 void MainWindow::fillMainPannel()
 {
-    Macaw::DEBUG("[MainWindow] Enters fillMainPannel()");
+    Macaw::DEBUG_IN("[MainWindow] Enters fillMainPannel()");
 
     m_ui->mainPannel->clearContents();
     m_ui->mainPannel->setRowCount(0);
@@ -256,7 +256,7 @@ void MainWindow::fillMainPannel()
         }
     }
 
-    Macaw::DEBUG("[MainWindow] Exits fillMainPannel()");
+    Macaw::DEBUG_OUT("[MainWindow] Exits fillMainPannel()");
 }
 
 /**
@@ -267,7 +267,7 @@ void MainWindow::fillMainPannel()
  */
 void MainWindow::on_peopleBox_activated(int type)
 {
-    Macaw::DEBUG("[MainWindow] Enters on_peopleBox_activated()");
+    Macaw::DEBUG_IN("[MainWindow] Enters on_peopleBox_activated()");
 
     m_ui->tagsButton->setChecked(false);
 
@@ -282,6 +282,8 @@ void MainWindow::on_peopleBox_activated(int type)
     m_leftPannelSelectedId = 0;
 
     this->updatePannels();
+
+    Macaw::DEBUG_OUT("[MainWindow] Exits on_peopleBox_activated()");
 }
 
 /**
@@ -392,6 +394,7 @@ void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
 void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
 {
     Macaw::DEBUG("[MainWindow] actionEdit_leftPannelMetadata_triggered()");
+
     // The left pannel must have one item selected which id is not -1 or 0
     // (not to be "All" or "Unknown")
     if(!m_ui->leftPannel->selectedItems().isEmpty()) {
@@ -919,14 +922,14 @@ void MainWindow::selfUpdate()
  */
 void MainWindow::updatePannels()
 {
-    Macaw::DEBUG("[MainWindow] Enters updatePannels()");
+    Macaw::DEBUG_IN("[MainWindow] Enters updatePannels()");
 
     DatabaseManager *databaseManager = DatabaseManager::instance();
     QString l_text = m_ui->searchEdit->text();
     m_authorizedMoviesList = databaseManager->getMoviesByAny(l_text);
     fillLeftPannel();
     fillMainPannel();
-    Macaw::DEBUG("[MainWindow] Exits updatePannels()");
+    Macaw::DEBUG_OUT("[MainWindow] Exits updatePannels()");
 }
 
 /**
@@ -986,7 +989,7 @@ void MainWindow::addNewMovies()
     }
     emit startFetchingMetadata(databaseManager->getMoviesNotImported());
     this->updatePannels();
-    Macaw::DEBUG("[MainWindow] Exit addNewMovies");
+    Macaw::DEBUG_OUT("[MainWindow] Exit addNewMovies");
 }
 
 /**
@@ -996,7 +999,7 @@ void MainWindow::addNewMovies()
  */
 void MainWindow::fillMetadataPannel(Movie movie)
 {
-    Macaw::DEBUG("[MainWindow] Enter fillMetadataPannel");
+    Macaw::DEBUG_IN("[MainWindow] Enter fillMetadataPannel");
 
     QString l_title = "<html>"+movie.title()+"<br />";
     QString l_originalTitle = "<i>"+movie.originalTitle()+"</i></br /><br />";
@@ -1041,7 +1044,7 @@ void MainWindow::fillMetadataPannel(Movie movie)
     QPixmap l_poster(l_posterPath);
     m_ui->metadataCover->setPixmap(l_poster);
 
-    Macaw::DEBUG("[MainWindow] Exit fillMetadataPannel");
+    Macaw::DEBUG_OUT("[MainWindow] Exit fillMetadataPannel");
 }
 
 /**

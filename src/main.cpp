@@ -25,13 +25,12 @@
 
 #include "Application.h"
 #include "MainWindow.h"
-#include "MoviesDebug.h"
-//#include "FetchMetadata/FetchMetadata.h"
+#include "MacawDebug.h"
 
 int main(int argv, char **args)
 {
 #ifdef QT_DEBUG
-    Macaw::moviesDebug_extern.setDebug(true);
+    Macaw::macawDebug_extern.setDebug(true);
 #endif
     Application l_app(argv, args);
 
@@ -71,7 +70,7 @@ int main(int argv, char **args)
     }
     if (l_parser.isSet(QStringLiteral("debug")))
     {
-        Macaw::moviesDebug_extern.setDebug(true);
+        Macaw::macawDebug_extern.setDebug(true);
     }
 
     return l_app.exec();

@@ -25,7 +25,7 @@
 Application::Application(int &argc, char **argv) :
     QApplication(argc, argv)
 {
-    Macaw::DEBUG("[Application] started");
+    Macaw::DEBUG_IN("[Application] started");
 
     this->definePaths();
     DatabaseManager *databaseManager = DatabaseManager::instance();
@@ -47,7 +47,7 @@ Application::Application(int &argc, char **argv) :
     qApp->property("filesPath");
     m_mainWindow->show();
 
-    Macaw::DEBUG("[Application] Application initialized");
+    Macaw::DEBUG_OUT("[Application] Application initialized");
 }
 
 /**

@@ -37,7 +37,6 @@ TEMPLATE = app
 SOURCES += main.cpp \
     DatabaseManager.cpp \
     Application.cpp \
-    MoviesDebug.cpp \
     Entities/Movie.cpp \
     Entities/People.cpp \
     Entities/Tag.cpp \
@@ -52,12 +51,12 @@ SOURCES += main.cpp \
     SettingsWindow.cpp \
     FetchMetadata/FetchMetadata.cpp \
     FetchMetadata/FetchMetadataDialog.cpp \
-    FetchMetadata/FetchMetadataQuery.cpp
+    FetchMetadata/FetchMetadataQuery.cpp \
+    MacawDebug.cpp
 
 HEADERS  += \
     DatabaseManager.h \
     Application.h \
-    MoviesDebug.h \
     Entities/Movie.h \
     Entities/People.h \
     Entities/Tag.h \
@@ -69,7 +68,8 @@ HEADERS  += \
     SettingsWindow.h \
     FetchMetadata/FetchMetadataDialog.h \
     FetchMetadata/FetchMetadata.h \
-    FetchMetadata/FetchMetadataQuery.h
+    FetchMetadata/FetchMetadataQuery.h \
+    MacawDebug.h
 
 FORMS    += \
     MainWindow.ui \

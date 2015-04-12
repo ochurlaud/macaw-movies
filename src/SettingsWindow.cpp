@@ -28,7 +28,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::SettingsWindow)
 {
-    Macaw::DEBUG("[SettingsWindow] Constructor called");
+    Macaw::DEBUG_IN("[SettingsWindow] Constructor called");
     DatabaseManager *databaseManager = DatabaseManager::instance();
 
     m_ui->setupUi(this);
@@ -37,6 +37,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     QStringList l_moviesPathsList = databaseManager->getMoviesPaths(0);
     l_moviesPathsList << databaseManager->getMoviesPaths(1);
     m_ui->knownPathsList->addItems(l_moviesPathsList);
+    Macaw::DEBUG_OUT("[SettingsWindow] Construction done");
 }
 
 /**
@@ -49,17 +50,19 @@ SettingsWindow::~SettingsWindow()
 
 void SettingsWindow::on_browseButton_clicked()
 {
-    Macaw::DEBUG("[SettingsWindow] Enters browseFilesPathDialog()");
+    Macaw::DEBUG_IN("[SettingsWindow] Enters browseFilesPathDialog()");
     QString l_folder = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                           "/home/",
                                                           QFileDialog::ShowDirsOnly);
     m_ui->folderPathEdit->setText(l_folder);
-    Macaw::DEBUG("[SettingsWindow] Exits browseFilesPathDialog()");
+    Macaw::DEBUG_OUT("[SettingsWindow] Exits browseFilesPathDialog()");
 }
 
 
 void SettingsWindow::on_buttonBox_accepted()
 {
+    Macaw::DEBUG_IN("[SettingsWindow] Enters on_buttonBox_accepted()");
+
     DatabaseManager *databaseManager = DatabaseManager::instance();
 
     QString l_newPath = m_ui->folderPathEdit->text();
@@ -84,7 +87,7 @@ void SettingsWindow::on_buttonBox_accepted()
     }
     emit closeAndSave();
     close();
-    Macaw::DEBUG("[SettingsWindow] Exits on_buttonBox_accepted()");
+    Macaw::DEBUG_OUT("[SettingsWindow] Exits on_buttonBox_accepted()");
 }
 
 void SettingsWindow::on_folderPathEdit_textChanged(const QString string)
