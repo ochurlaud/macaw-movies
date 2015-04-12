@@ -98,7 +98,6 @@ private:
      */
     void definePaths();
 
-
 };
 
 #endif // APPLICATION_H

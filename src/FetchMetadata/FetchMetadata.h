@@ -41,7 +41,7 @@ public:
 
 signals:
     void jobDone();
-    void movieUpdated();
+    void startAgain();
 
 private slots:
     void startProcess();
@@ -51,6 +51,7 @@ private slots:
     void on_searchMovies(const QString title);
     void processPrimaryResponseDialog(const QList<Movie> &movieList);
     void on_searchCanceled();
+    void on_dontAskUser();
     void networkError(QString error);
 
 private:
@@ -63,7 +64,7 @@ private:
 
     Movie m_movie;
     QList<Movie> m_movieQueue;
-    bool m_processState;
+    bool m_askUser;
     QString cleanString(const QString title);
     void openFetchMetadataDialog(const Movie &movie, const QList<Movie> &accurateList);
     void updateFetchMetadataDialog(const QList<Movie> &updatedList);

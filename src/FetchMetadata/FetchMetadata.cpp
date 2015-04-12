@@ -21,17 +21,16 @@
 
 FetchMetadata::FetchMetadata(QList<Movie> movieList, QObject *parent) :
     QObject(parent)
-  , m_processState(false)
+  , m_askUser(true)
   , m_movieQueue(movieList)
 
 {
     Macaw::DEBUG("[FetchMetadata] Constructor");
-    DatabaseManager *databaseManager = DatabaseManager::instance();
 
     m_fetchMetadataQuery = new FetchMetadataQuery(this);
     m_fetchMetadataDialog = NULL;
 
-    connect(this, SIGNAL(movieUpdated()),
+    connect(this, SIGNAL(startAgain()),
             this, SLOT(startProcess()));
 
     Macaw::DEBUG("[FetchMetadata] Construction done");
@@ -98,11 +97,13 @@ void FetchMetadata::processPrimaryResponse(const QList<Movie> &movieList)
                 this, SLOT(processMovieResponse(Movie)));
         Macaw::DEBUG("[FetchMetadata] Movie request to be sent");
         m_fetchMetadataQuery->sendMovieRequest(l_movie.id());
-    } else {
+    } else if (m_askUser) {
         if(l_accurateList.isEmpty()) {
             l_accurateList = movieList;
         }
         this->openFetchMetadataDialog(m_movie, l_accurateList);
+    } else {
+        emit startAgain();
     }
 }
 
@@ -126,15 +127,16 @@ void FetchMetadata::processMovieResponse(const Movie &receivedMovie)
     m_movie.setPeopleList(receivedMovie.peopleList());
     m_movie.setPosterPath(receivedMovie.posterPath().right(receivedMovie.posterPath().size()-1));
 
+    m_movie.setImported(true);
+
     databaseManager->updateMovie(m_movie);
-    emit movieUpdated();
+    emit startAgain();
 }
 
 void FetchMetadata::on_searchCanceled()
 {
-    m_processState = false;
     Macaw::DEBUG("[FetchMetadata] Dialog canceled");
-    emit jobDone();
+    emit startAgain();
 }
 
 void FetchMetadata::on_selectedMovie(const Movie &movie)
@@ -174,6 +176,8 @@ void FetchMetadata::openFetchMetadataDialog(const Movie &movie, const QList<Movi
             this, SLOT(on_searchMovies(QString)));
     connect(m_fetchMetadataDialog, SIGNAL(searchCanceled()),
             this, SLOT(on_searchCanceled()));
+    connect(m_fetchMetadataDialog, SIGNAL(dontAskUser()),
+            this, SLOT(on_dontAskUser()));
     m_fetchMetadataDialog->show();
     Macaw::DEBUG("[FetchMetadata] Exits openFetchMetadataDialog");
 }
@@ -194,4 +198,9 @@ void FetchMetadata::networkError(QString error)
     msgBox.setText("Network error: " + error);
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
+}
+
+void FetchMetadata::on_dontAskUser()
+{
+    m_askUser = false;
 }

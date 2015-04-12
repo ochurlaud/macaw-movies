@@ -45,6 +45,7 @@ signals:
     void selectedMovie(const Movie &movie);
     void searchMovies(const QString newTitle);
     void searchCanceled();
+    void dontAskUser();
 
 private slots:
     void on_buttonBox_accepted();
@@ -53,6 +54,7 @@ private slots:
     void on_resetButton_clicked();
     void on_lineEdit_returnPressed();
     void on_buttonBox_rejected();
+    void on_dontAskButton_clicked();
 
 private:
     Ui::FetchMetadataDialog *m_ui;

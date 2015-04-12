@@ -102,3 +102,9 @@ void FetchMetadataDialog::on_buttonBox_rejected()
     this->deleteLater();
     this->accept();
 }
+
+void FetchMetadataDialog::on_dontAskButton_clicked()
+{
+    emit dontAskUser();
+    m_ui->buttonBox->rejected();
+}
