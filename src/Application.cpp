@@ -36,7 +36,6 @@ Application::Application(int &argc, char **argv) :
     m_tmdbkey = "6e4cbac7861ad5b847ef8f60489dc04e";
     m_mainWindow = new MainWindow;
     m_fetchMetadata = NULL;
-    m_fetchMetadataDialog = NULL;
 
     connect(databaseManager, SIGNAL(orphanTagDetected(Tag&)),
             this, SLOT(askForOrphanTagDeletion(Tag&)));
@@ -117,46 +116,9 @@ void Application::on_startFetchingMetadata()
 
     connect(this, SIGNAL(fetchMetadata()),
             m_fetchMetadata, SLOT(startProcess()));
-    connect(m_fetchMetadata, SIGNAL(sendFetchMetadataDialog(Movie&, QList<Movie>)),
-            this, SLOT(on_sendFetchMetadataDialog(Movie&,QList<Movie>)));
     connect(m_fetchMetadata, SIGNAL(jobDone()),
             this, SLOT(on_fethMetadataJobDone()));
     emit fetchMetadata();
-}
-
-/**
- * @brief Slot triggered when m_fetchMetadata needs the user to choose between a list of movies.
- * Show a Dialog
- * @param movie known by Macaw
- * @param accurateList of Movies proposed to the User
- */
-void Application::on_sendFetchMetadataDialog(Movie& movie,QList<Movie> accurateList)
-{
-    Macaw::DEBUG("[Application] on_sendFetchMetadataDialog triggered");
-
-    if(m_fetchMetadataDialog != NULL)
-    {
-        delete m_fetchMetadataDialog;
-    }
-    m_fetchMetadataDialog = new FetchMetadataDialog(movie, accurateList);
-    connect(m_fetchMetadataDialog, SIGNAL(selectedMovie(Movie)),
-            m_fetchMetadata, SLOT(on_selectedMovie(Movie)));
-    connect(m_fetchMetadataDialog, SIGNAL(searchMovies(QString)),
-            m_fetchMetadata, SLOT(on_searchMovies(QString)));
-    connect(m_fetchMetadataDialog, SIGNAL(searchCanceled()),
-            m_fetchMetadata, SLOT(on_searchCanceled()));
-    connect(m_fetchMetadata, SIGNAL(updateFetchMetadataDialog(QList<Movie>)),
-            this, SLOT(on_updateFetchMetadataDialog(QList<Movie>)));
-    m_fetchMetadataDialog->show();
-}
-
-/**
- * @brief Slot triggered when m_fetchMetadata has new Movies to show to the user.
- * @param updatedList of the movies
- */
-void Application::on_updateFetchMetadataDialog(QList<Movie> updatedList)
-{
-    m_fetchMetadataDialog->setMovieList(updatedList);
 }
 
 /**

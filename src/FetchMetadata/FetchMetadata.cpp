@@ -27,6 +27,8 @@ FetchMetadata::FetchMetadata(QObject *parent) :
     DatabaseManager *databaseManager = DatabaseManager::instance();
 
     m_fetchMetadataQuery = new FetchMetadataQuery(this);
+    m_fetchMetadataDialog = NULL;
+
     m_movieQueue = databaseManager->getMoviesNotImported();
 
     connect(this, SIGNAL(movieUpdated()),
@@ -46,8 +48,8 @@ void FetchMetadata::startProcess()
     Macaw::DEBUG("[FetchMetadata] Start the process of metadata fetching");
     if (!m_movieQueue.isEmpty()) {
         m_movie = m_movieQueue.takeFirst();
-        connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
-                this, SLOT(processPrimaryResponse(QList<Movie>&)));
+        connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(const QList<Movie>&)),
+                this, SLOT(processPrimaryResponse(const QList<Movie>&)));
         connect(m_fetchMetadataQuery, SIGNAL(networkError(QString)),
                 this, SLOT(networkError(QString)));
 
@@ -69,12 +71,12 @@ QString FetchMetadata::cleanString(QString title)
     return l_splittedTitle.join(" ");
 }
 
-void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
+void FetchMetadata::processPrimaryResponse(const QList<Movie> &movieList)
 {
     Macaw::DEBUG("[FetchMetadata] Signal from primary request received");
 
-    disconnect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
-            this, SLOT(processPrimaryResponse(QList<Movie>&)));
+    disconnect(m_fetchMetadataQuery, SIGNAL(primaryResponse(const QList<Movie>&)),
+            this, SLOT(processPrimaryResponse(const QList<Movie>&)));
 
     QList<Movie> l_accurateList;
 
@@ -100,17 +102,17 @@ void FetchMetadata::processPrimaryResponse(QList<Movie> &movieList)
         if(l_accurateList.isEmpty()) {
             l_accurateList = movieList;
         }
-        emit sendFetchMetadataDialog(m_movie, l_accurateList);
+        this->openFetchMetadataDialog(m_movie, l_accurateList);
     }
 }
 
-void FetchMetadata::processMovieResponse(Movie receivedMovie)
+void FetchMetadata::processMovieResponse(const Movie &receivedMovie)
 {
     Macaw::DEBUG("[FetchMetadata] Signal from movie request received");
     DatabaseManager *databaseManager = DatabaseManager::instance();
 
-    disconnect(m_fetchMetadataQuery, SIGNAL(movieResponse(Movie)),
-            this, SLOT(processMovieResponse(Movie)));
+    disconnect(m_fetchMetadataQuery, SIGNAL(movieResponse(const Movie&)),
+            this, SLOT(processMovieResponse(const Movie&)));
 
     // Do not set the id since receivedMovie's id is from TMDB
     m_movie.setTitle(receivedMovie.title());
@@ -135,7 +137,7 @@ void FetchMetadata::on_searchCanceled()
     emit jobDone();
 }
 
-void FetchMetadata::on_selectedMovie(Movie movie)
+void FetchMetadata::on_selectedMovie(const Movie &movie)
 {
     QList<Movie> l_movieList;
     l_movieList.append(movie);
@@ -151,9 +153,38 @@ void FetchMetadata::on_searchMovies(QString title)
     m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
 }
 
-void FetchMetadata::processPrimaryResponseDialog(QList<Movie> &movieList)
+void FetchMetadata::processPrimaryResponseDialog(const QList<Movie> &movieList)
 {
-    emit updateFetchMetadataDialog(movieList);
+    this->updateFetchMetadataDialog(movieList);
+}
+
+/**
+ * @brief Construct and shows a FetchMetadataDialog to let the user to choose between a list of movies.
+ * @param movie known by Macaw
+ * @param accurateList of Movies proposed to the User
+ */
+void FetchMetadata::openFetchMetadataDialog(const Movie &movie, const QList<Movie> &accurateList)
+{
+    Macaw::DEBUG("[FetchMetadata] Enters openFetchMetadataDialog");
+
+    m_fetchMetadataDialog = new FetchMetadataDialog(movie, accurateList);
+    connect(m_fetchMetadataDialog, SIGNAL(selectedMovie(const Movie&)),
+            this, SLOT(on_selectedMovie(const Movie&)));
+    connect(m_fetchMetadataDialog, SIGNAL(searchMovies(QString)),
+            this, SLOT(on_searchMovies(QString)));
+    connect(m_fetchMetadataDialog, SIGNAL(searchCanceled()),
+            this, SLOT(on_searchCanceled()));
+    m_fetchMetadataDialog->show();
+    Macaw::DEBUG("[FetchMetadata] Exits openFetchMetadataDialog");
+}
+
+/**
+ * @brief Update the list of movies shown by FetchMetadataDialog
+ * @param updatedList of the movies
+ */
+void FetchMetadata::updateFetchMetadataDialog(const QList<Movie> &updatedList)
+{
+    m_fetchMetadataDialog->setMovieList(updatedList);
 }
 
 void FetchMetadata::networkError(QString error)

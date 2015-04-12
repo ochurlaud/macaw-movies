@@ -41,8 +41,8 @@ public:
     void sendPosterRequest(QString poster_path);
 
 signals:
-    void primaryResponse(QList<Movie>&);
-    void movieResponse(Movie);
+    void primaryResponse(const QList<Movie>&);
+    void movieResponse(const Movie&);
     void networkError(QString);
     void peopleResponse();
 

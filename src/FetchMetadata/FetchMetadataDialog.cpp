@@ -75,7 +75,7 @@ void FetchMetadataDialog::on_lineEdit_returnPressed()
     emit(searchMovies(m_ui->lineEdit->text()));
 }
 
-void FetchMetadataDialog::setMovieList(QList<Movie> &movieList)
+void FetchMetadataDialog::setMovieList(const QList<Movie> &movieList)
 {
     m_ui->listWidget->clear();
     if (!movieList.isEmpty()) {

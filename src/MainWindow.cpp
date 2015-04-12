@@ -37,6 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->setupUi(this);
     m_ui->leftPannelWidget->setContentsMargins(0,1,1,0);
     this->readSettings();
+
+    this->setWindowTitle(APP_NAME);
     connect(m_ui->mainPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
     connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
