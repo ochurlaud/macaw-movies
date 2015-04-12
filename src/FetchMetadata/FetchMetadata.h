@@ -36,7 +36,7 @@ class FetchMetadata : public QObject
 Q_OBJECT
 
 public:
-    explicit FetchMetadata(QObject *parent = 0);
+    explicit FetchMetadata(QList<Movie> movieList, QObject *parent = 0);
     ~FetchMetadata();
 
 signals:

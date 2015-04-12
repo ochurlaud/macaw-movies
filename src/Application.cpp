@@ -41,8 +41,8 @@ Application::Application(int &argc, char **argv) :
             this, SLOT(askForOrphanTagDeletion(Tag&)));
     connect(databaseManager, SIGNAL(orphanPeopleDetected(People&)),
             this, SLOT(askForOrphanPeopleDeletion(People&)));
-    connect(m_mainWindow, SIGNAL(startFetchingMetadata()),
-            this, SLOT(on_startFetchingMetadata()));
+    connect(m_mainWindow, SIGNAL(startFetchingMetadata(const QList<Movie>&)),
+            this, SLOT(on_startFetchingMetadata(const QList<Movie>&)));
 
     qApp->property("filesPath");
     m_mainWindow->show();
@@ -107,11 +107,11 @@ void Application::askForOrphanPeopleDeletion(People &orphanPeople)
 /**
  * @brief Slot triggered when the user wants to fetch metadata on the internet
  */
-void Application::on_startFetchingMetadata()
+void Application::on_startFetchingMetadata(const QList<Movie> &movieList)
 {
     Macaw::DEBUG("[Application] startFetchingMetadata called");
     if(m_fetchMetadata == NULL) {
-        m_fetchMetadata = new FetchMetadata;
+        m_fetchMetadata = new FetchMetadata(movieList);
     }
 
     connect(this, SIGNAL(fetchMetadata()),

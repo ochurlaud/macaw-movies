@@ -71,7 +71,7 @@ signals:
 private slots:
     void askForOrphanTagDeletion(Tag &orphanTag);
     void askForOrphanPeopleDeletion(People &orphanPeople);
-    void on_startFetchingMetadata();
+    void on_startFetchingMetadata(const QList<Movie> &movieList);
     void on_fethMetadataJobDone();
 
 private:

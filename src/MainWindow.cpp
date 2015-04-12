@@ -975,7 +975,7 @@ void MainWindow::addNewMovies()
                     databaseManager->insertNewMovie(l_movie);
                     l_addedCount++;
                     if(l_addedCount == 5) {
-                        emit startFetchingMetadata();
+                        this->updatePannels();
                     }
                 } else {
                     Macaw::DEBUG("[MainWindow.updateApp()] Movie already known. Skipped");
@@ -984,7 +984,7 @@ void MainWindow::addNewMovies()
         }
         databaseManager->setMoviesPathImported(l_moviesPath,true);
     }
-    emit startFetchingMetadata();
+    emit startFetchingMetadata(databaseManager->getMoviesNotImported());
     this->updatePannels();
     Macaw::DEBUG("[MainWindow] Exit addNewMovies");
 }

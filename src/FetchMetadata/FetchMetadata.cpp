@@ -19,17 +19,17 @@
 
 #include "FetchMetadata.h"
 
-FetchMetadata::FetchMetadata(QObject *parent) :
+FetchMetadata::FetchMetadata(QList<Movie> movieList, QObject *parent) :
     QObject(parent)
   , m_processState(false)
+  , m_movieQueue(movieList)
+
 {
     Macaw::DEBUG("[FetchMetadata] Constructor");
     DatabaseManager *databaseManager = DatabaseManager::instance();
 
     m_fetchMetadataQuery = new FetchMetadataQuery(this);
     m_fetchMetadataDialog = NULL;
-
-    m_movieQueue = databaseManager->getMoviesNotImported();
 
     connect(this, SIGNAL(movieUpdated()),
             this, SLOT(startProcess()));
