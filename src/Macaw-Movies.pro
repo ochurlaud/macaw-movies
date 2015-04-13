@@ -33,6 +33,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Macaw-Movies
 TEMPLATE = app
 
+ICON = img/logov0_256.ico
+RC_ICONS = img/logov0_256.ico
 
 SOURCES += main.cpp \
     DatabaseManager.cpp \
@@ -85,6 +87,6 @@ OTHER_FILES += \
     ../DDB_SCHEMA.md
 
 RESOURCES += \
-    images.qrc \
+    images.qrc
 
 DISTFILES +=
