@@ -113,7 +113,8 @@ private:
     void removeMovieFromPlaylist(Movie &movie, Playlist &playlist);
     bool permanentlyDeleteFile(QFile * movieFileToDelete);
     bool moveFileToTrash(Movie &movie);
-    bool linux_moveFileToTrash(QString movieFilePath, QString trashbinDirectory);
+    QString unix_findTrashFolder(QString movieFilePath);
+    bool linux_moveFileToTrash(QString movieFilePath);
     bool windows_moveFileToTrash(QString movieFilePath);
     bool macosx_moveFileToTrash(QString movieFilePath);
 

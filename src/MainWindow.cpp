@@ -493,13 +493,13 @@ bool MainWindow::moveFileToTrash(Movie &movie)
                         l_successfullyDeleted = permanentlyDeleteFile(movieFileToDelete);
                     }
                 } else {
-                    l_successfullyDeleted = linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
+                    l_successfullyDeleted = linux_moveFileToTrash(movie.filePath());
                 }
             } else {
-                l_successfullyDeleted = linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
+                l_successfullyDeleted = linux_moveFileToTrash(movie.filePath());
             }
         } else {
-            l_successfullyDeleted = linux_moveFileToTrash(movie.filePath(), l_trashbinDirectory);
+            l_successfullyDeleted = linux_moveFileToTrash(movie.filePath());
         }
 #endif
 
@@ -508,7 +508,7 @@ bool MainWindow::moveFileToTrash(Movie &movie)
 #endif
 
 #ifdef Q_OS_OSX
-
+        macosx_moveFileToTrash(movie.filePath())
 #endif
 
         if(l_successfullyDeleted) {
@@ -527,6 +527,95 @@ bool MainWindow::moveFileToTrash(Movie &movie)
 }
 
 /**
+ * @brief searches and returns the right trash folder for GNU/Linux and OSX platforms
+ *
+ * This function chooses the right folder according to file location (local hard drive or external storage)
+ * and the OS specificities. If an error occured a
+ *
+ * @param movieFilePath the path to the movie's file to be moved to trash
+ *
+ * @return QString the right trash folder or an empty string on errors
+ *
+ */
+QString MainWindow::unix_findTrashFolder(QString movieFilePath) {
+
+    if(movieFilePath.left(1) != "/" || movieFilePath.size() < 6)
+    {
+        Macaw::DEBUG("[MainWindow - unix_findTrashFolder] The path to the movie is either too short or not an absolute one");
+        return "";
+    }
+
+    if(movieFilePath.left(4) == "/mnt" || movieFilePath.left(6) == "/media" || movieFilePath.left(8) == "/Volumes") {
+#ifdef Q_OS_LINUX
+        QProcess l_process;
+        QString l_command("df --output=target \"" + QDir::toNativeSeparators(movieFilePath) + "\" | tail -n +2");
+        l_process.start("bash", QStringList() << "-c" << l_command);
+
+        if(!l_process.waitForStarted(500)) // waits a max of 500ms for the process to start
+        {
+            Macaw::DEBUG("[MainWindow - unix_findTrashFolder] The Linux process for folder detection did not start in less than 500ms. Aborting...");
+            return "";
+        }
+
+        bool l_processFinishStatus = false;
+        QByteArray l_buffer;
+
+        while ((l_processFinishStatus = l_process.waitForFinished(500))); // waits for the process to end or a max of 500ms
+
+        l_buffer.append(l_process.readAll());
+
+        if (!l_processFinishStatus) {
+            Macaw::DEBUG("[MainWindow - unix_findTrashFolder] The Linux process for folder detection did not end in less than 500ms. Aborting...");
+            return "";
+        }
+
+        return QString(l_buffer);
+
+#endif
+#ifdef Q_OS_OSX
+        QString l_trashbinDirectory = "/Volumes/";
+        int l_volumeNameSize = movieFilePath.indexOf("/", 9);
+        l_trashbinDirectory = movieFilePath.left(l_volumeNameSize+1).append(".Trashes/");
+        return l_trashbinDirectory;
+#endif
+    }
+    else {
+#ifdef Q_OS_LINUX
+        QString l_trashbinDirectory(QDir::home().path().append(QDir::separator())
+                                                .append(".local/share/Trash"));
+
+        if(!QDir(l_trashbinDirectory).exists()) {
+            l_trashbinDirectory = QDir::home().path().append(QDir::separator()).append(".trash");
+            if(!QDir(l_trashbinDirectory).exists()) {
+                l_trashbinDirectory = QString(getenv("XDG_DATA_HOME")).append("/Trash");
+                if(!QDir(l_trashbinDirectory).exists()) {
+                    Macaw::DEBUG("[MainWindow - unix_findTrashFolder] Did not managed to find the Linux trsh folder of this computer");
+                    /*QMessageBox * l_errorMovingToTrash = new QMessageBox(QMessageBox::Critical, "Trash not found",
+                                                                         "No trash file have been found on your system, maybe your desktop environement do not support trash bin? \n You can insted PERMANANTLY delete this file. Do you want to delete this file from tyour disk ? This action cannot be undone. ",
+                                                                         QMessageBox::Yes|QMessageBox::No, this);
+                    if(l_errorMovingToTrash->exec() == QMessageBox::Yes) {
+                        l_successfullyDeleted = permanentlyDeleteFile(movieFileToDelete);
+                    }*/
+                    return "";
+                } else {
+                    return l_trashbinDirectory;
+                }
+            } else {
+                return l_trashbinDirectory;
+            }
+        } else {
+            return l_trashbinDirectory;
+        }
+#endif
+#ifdef Q_OS_OSX
+        return QDir::home().path().append(QDir::separator()).append(".Trash/");
+#endif
+    }
+}
+
+
+
+/**
  * @brief Moves a movie file to trash bin for Linux.
  *
  * Moving a file to trash on GNU/Linux is made moving the file in a <trash folder>/files directory
@@ -538,12 +627,13 @@ bool MainWindow::moveFileToTrash(Movie &movie)
  * @return bool true if the file have been successfully moved to trash or permanently deleted
  *
  */
-bool MainWindow::linux_moveFileToTrash(QString movieFilePath, QString trashbinDirectory) {
+bool MainWindow::linux_moveFileToTrash(QString movieFilePath) {
     QDir l_dir;
     QFile l_movieFile(movieFilePath);
     QFileInfo l_movieFileInfo(movieFilePath);
-    QString l_trashFilesPath(trashbinDirectory + "/files/");    //folder to put the deleted file
-    QString l_trashInfoPath(trashbinDirectory + "/info/");      //folder to put the info about deleted file
+    QString l_trashbinDirectory = unix_findTrashFolder(movieFilePath);    //root folder for trash
+    QString l_trashFilesPath(l_trashbinDirectory + "/files/");    //folder to put the deleted file
+    QString l_trashInfoPath(l_trashbinDirectory + "/info/");      //folder to put the info about deleted file
 
     QString l_trashName = l_movieFileInfo.fileName();
     QFileInfo l_targetMovieFileInfo(l_trashInfoPath + l_trashName + ".trashinfo");
@@ -563,7 +653,7 @@ bool MainWindow::linux_moveFileToTrash(QString movieFilePath, QString trashbinDi
 
     QFile l_trashInfoFile(l_targetMovieFileInfo.absoluteFilePath());  //file containing the info about deleted file
 
-    Macaw::DEBUG("[MainWindow] Trash folder found here: "+trashbinDirectory);
+    Macaw::DEBUG("[MainWindow] Trash folder found here: "+l_trashbinDirectory);
     Macaw::DEBUG("[MainWindow] Trash name for the file: "+l_trashName);
 
     if(!l_movieFileInfo.exists() || !l_movieFileInfo.isFile()) {
@@ -677,7 +767,7 @@ bool MainWindow::macosx_moveFileToTrash(QString movieFilePath) {
     QDir l_dir;
     QFile l_movieFile(movieFilePath);
     QFileInfo l_movieFileInfo(movieFilePath);
-    QString l_trashFilesPath(QDir::home().path().append(QDir::separator()).append(".Trash/"));    //folder to put the deleted file
+    QString l_trashFilesPath = unix_findTrashFolder(movieFilePath);    //folder to put the deleted file
 
     QString l_trashName = l_movieFileInfo.fileName();
     QFileInfo l_targetMovieFileFiles(l_trashFilesPath + l_trashName);
