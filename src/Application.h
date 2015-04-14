@@ -71,9 +71,7 @@ signals:
 private slots:
     void askForOrphanTagDeletion(Tag &orphanTag);
     void askForOrphanPeopleDeletion(People &orphanPeople);
-    void on_startFetchingMetadata();
-    void on_sendFetchMetadataDialog(Movie& movie, QList<Movie> accurateList);
-    void on_updateFetchMetadataDialog(QList<Movie> updatedList);
+    void on_startFetchingMetadata(const QList<Movie> &movieList);
     void on_fethMetadataJobDone();
 
 private:
@@ -96,16 +94,9 @@ private:
     FetchMetadata *m_fetchMetadata;
 
     /**
-     * @brief Dialog for metadata-fetching manager
-     */
-    FetchMetadataDialog *m_fetchMetadataDialog;
-    QThread m_metadataThread;
-
-    /**
      * @brief Define the paths used in the app
      */
     void definePaths();
-
 
 };
 

@@ -25,40 +25,49 @@
 
 #include "Application.h"
 #include "FetchMetadata/FetchMetadataQuery.h"
+#include "FetchMetadata/FetchMetadataDialog.h"
 
 class FetchMetadataQuery;
+class FetchMetadataDialog;
+
 
 class FetchMetadata : public QObject
 {
 Q_OBJECT
 
 public:
-    explicit FetchMetadata(QObject *parent = 0);
+    explicit FetchMetadata(QList<Movie> movieList, QObject *parent = 0);
     ~FetchMetadata();
 
 signals:
     void jobDone();
-    void movieUpdated();
-    void sendFetchMetadataDialog(Movie&, QList<Movie>);
-    void updateFetchMetadataDialog(QList<Movie>);
-
+    void startAgain();
 
 private slots:
     void startProcess();
-    void processPrimaryResponse(QList<Movie> &movieList);
-    void processMovieResponse(Movie receivedMovie);
-    void on_selectedMovie(Movie movie);
-    void on_searchMovies(QString title);
-    void processPrimaryResponseDialog(QList<Movie> &movieList);
+    void processPrimaryResponse(const QList<Movie> &movieList);
+    void processMovieResponse(const Movie &receivedMovie);
+    void on_selectedMovie(const Movie &movie);
+    void on_searchMovies(const QString title);
+    void processPrimaryResponseDialog(const QList<Movie> &movieList);
     void on_searchCanceled();
+    void on_dontAskUser();
     void networkError(QString error);
 
 private:
     FetchMetadataQuery *m_fetchMetadataQuery;
+
+    /**
+     * @brief Dialog for metadata-fetching manager
+     */
+    FetchMetadataDialog *m_fetchMetadataDialog;
+
     Movie m_movie;
     QList<Movie> m_movieQueue;
-    bool m_processState;
-    QString cleanString(QString title);
+    bool m_askUser;
+    QString cleanString(const QString title);
+    void openFetchMetadataDialog(const Movie &movie, const QList<Movie> &accurateList);
+    void updateFetchMetadataDialog(const QList<Movie> &updatedList);
 };
 
 #endif // FETCH_H

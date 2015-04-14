@@ -33,11 +33,12 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Macaw-Movies
 TEMPLATE = app
 
+ICON = img/logov0_256.ico
+RC_ICONS = img/logov0_256.ico
 
 SOURCES += main.cpp \
     DatabaseManager.cpp \
     Application.cpp \
-    MoviesDebug.cpp \
     Entities/Movie.cpp \
     Entities/People.cpp \
     Entities/Tag.cpp \
@@ -52,12 +53,12 @@ SOURCES += main.cpp \
     SettingsWindow.cpp \
     FetchMetadata/FetchMetadata.cpp \
     FetchMetadata/FetchMetadataDialog.cpp \
-    FetchMetadata/FetchMetadataQuery.cpp
+    FetchMetadata/FetchMetadataQuery.cpp \
+    MacawDebug.cpp
 
 HEADERS  += \
     DatabaseManager.h \
     Application.h \
-    MoviesDebug.h \
     Entities/Movie.h \
     Entities/People.h \
     Entities/Tag.h \
@@ -69,7 +70,8 @@ HEADERS  += \
     SettingsWindow.h \
     FetchMetadata/FetchMetadataDialog.h \
     FetchMetadata/FetchMetadata.h \
-    FetchMetadata/FetchMetadataQuery.h
+    FetchMetadata/FetchMetadataQuery.h \
+    MacawDebug.h
 
 FORMS    += \
     MainWindow.ui \
@@ -85,6 +87,6 @@ OTHER_FILES += \
     ../DDB_SCHEMA.md
 
 RESOURCES += \
-    images.qrc \
+    images.qrc
 
 DISTFILES +=

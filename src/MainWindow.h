@@ -68,7 +68,7 @@ private slots:
     void closeEvent(QCloseEvent *event);
 
 signals:
-    void startFetchingMetadata();
+    void startFetchingMetadata(const QList<Movie>&);
 
 private:
     Ui::MainWindow *m_ui;

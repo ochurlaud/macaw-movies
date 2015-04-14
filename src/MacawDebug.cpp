@@ -17,23 +17,43 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MoviesDebug.h"
+#include "MacawDebug.h"
 
-MoviesDebug::MoviesDebug()
-{
-    m_debug = false;
-}
+MacawDebug::MacawDebug():
+    m_debug(false)
+  , m_spaces(0)
+{}
 
-void MoviesDebug::print(QString text)
+void MacawDebug::print(const QString text)
 {
     if (isDebug())
     {
-        qDebug() << qPrintable(text);
+        qDebug() << qPrintable(this->space())
+                 << qPrintable(text);
     }
     // else do nothing
 }
 
+void MacawDebug::printIn(const QString text)
+{
+    this->print(text);
+    m_spaces++;
+}
+
+void MacawDebug::printOut(const QString text)
+{
+    m_spaces--;
+    this->print(text);
+}
+
+QString MacawDebug::space()
+{
+    QString l_space(m_spaces, ' ');
+
+    return l_space;
+}
+
 namespace Macaw
 {
-    MoviesDebug moviesDebug_extern;
+    MacawDebug macawDebug_extern;
 }

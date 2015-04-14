@@ -26,7 +26,7 @@
 
 #include "include_var.h"
 
-#include "MoviesDebug.h"
+#include "MacawDebug.h"
 
 #include "Entities/Movie.h"
 #include "Entities/Playlist.h"

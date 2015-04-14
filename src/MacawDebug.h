@@ -17,8 +17,8 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MOVIESDEBUG_H
-#define MOVIESDEBUG_H
+#ifndef MACAWDEBUG_H
+#define MACAWDEBUG_H
 
 #include <QtGui>
 #include <QtWidgets>
@@ -28,21 +28,28 @@
 /**
  * @brief Debug mode using qDebug()
  */
-class MoviesDebug : public QObject
+class MacawDebug : public QObject
 {
 public:
-    MoviesDebug();
-    void print(QString);
+    MacawDebug();
+    void print(const QString);
+    void printIn(const QString);
+    void printOut(const QString);
     void setDebug(bool value) { m_debug = value; }
     bool isDebug() { return m_debug; }
 
 private:
     bool m_debug;
+    int m_spaces;
+    QString space();
+
 };
 
 namespace Macaw {
-    extern MoviesDebug moviesDebug_extern;
-    inline void DEBUG(QString text) { moviesDebug_extern.print(text);}
+    extern MacawDebug macawDebug_extern;
+    inline void DEBUG(QString text) { macawDebug_extern.print(text);}
+    inline void DEBUG_IN(QString text) { macawDebug_extern.printIn(text);}
+    inline void DEBUG_OUT(QString text) { macawDebug_extern.printOut(text);}
 }
 
-#endif // MOVIESDEBUG_H
+#endif // MACAWDEBUG_H
