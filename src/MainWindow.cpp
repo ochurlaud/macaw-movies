@@ -479,41 +479,15 @@ bool MainWindow::moveFileToTrash(Movie &movie)
         bool l_successfullyDeleted = false;
 
 #ifdef Q_OS_LINUX
-
-        //try to locate the trash folder
-        //Note : I suppose here that the file is in the computer HD => to improve
-        Macaw::DEBUG("[MainWindow] Trying to locate Linux trash folder");
-        QString l_trashbinDirectory(QDir::home().path().append(QDir::separator())
-                                                .append(".local/share/Trash"));
-
-        if(!QDir(l_trashbinDirectory).exists()) {
-            l_trashbinDirectory = QDir::home().path().append(QDir::separator()).append(".trash");
-            if(!QDir(l_trashbinDirectory).exists()) {
-                l_trashbinDirectory = QString(getenv("XDG_DATA_HOME")).append("/Trash");
-                if(!QDir(l_trashbinDirectory).exists()) {
-                    QMessageBox * l_errorMovingToTrash = new QMessageBox(QMessageBox::Critical, "Trash not found",
-                                                                         "No trash file have been found on your system, maybe your desktop environement do not support trash bin? \n You can insted PERMANANTLY delete this file. Do you want to delete this file from tyour disk ? This action cannot be undone. ",
-                                                                         QMessageBox::Yes|QMessageBox::No, this);
-                    if(l_errorMovingToTrash->exec() == QMessageBox::Yes) {
-                        l_successfullyDeleted = permanentlyDeleteFile(movieFileToDelete);
-                    }
-                } else {
-                    l_successfullyDeleted = linux_moveFileToTrash(movie.filePath());
-                }
-            } else {
-                l_successfullyDeleted = linux_moveFileToTrash(movie.filePath());
-            }
-        } else {
-            l_successfullyDeleted = linux_moveFileToTrash(movie.filePath());
-        }
+        l_successfullyDeleted = linux_moveFileToTrash(movie.filePath());
 #endif
 
 #ifdef Q_OS_WIN
-        windows_moveFileToTrash(movie.filePath())
+        l_successfullyDeleted = windows_moveFileToTrash(movie.filePath())
 #endif
 
 #ifdef Q_OS_OSX
-        macosx_moveFileToTrash(movie.filePath())
+        l_successfullyDeleted = macosx_moveFileToTrash(movie.filePath())
 #endif
 
         if(l_successfullyDeleted) {
@@ -741,7 +715,7 @@ bool MainWindow::windows_moveFileToTrash(QString movieFilePath) {
     int rv = SHFileOperation( &fileop );
 
     if( rv != 0 ){
-        Macaw::DEBUG("Moving file to trash failed with: " + QString::number(rv));
+        Macaw::DEBUG("[MainWindow] Moving file to trash failed with: " + QString::number(rv));
         QMessageBox * l_msgBoxErrorMovingToTrash = new QMessageBox(QMessageBox::Warning, "Error moving file to trash",
                                             "Something went wrong when moving the file to the trash. Do you want to permanently delete it instead? ",
                                             QMessageBox::Yes|QMessageBox::No, this);
@@ -753,7 +727,12 @@ bool MainWindow::windows_moveFileToTrash(QString movieFilePath) {
             return l_permanentlyDelete;
         }
     }
-    return false;
+    else
+    {
+        return true;
+    }
+
+    return false; //this code must never be executed
 }
 #else
 bool MainWindow::windows_moveFileToTrash(QString movieFilePath) {return false;}
@@ -1183,5 +1162,8 @@ void MainWindow::on_actionAbout_triggered()
                        "Macaw-Movies is distributed in the hope that it will be useful, "
                        "but WITHOUT ANY WARRANTY; without even the implied warranty of "
                        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br />"
-                       "See the GNU General Public License for more details.");
+                       "See the GNU General Public License for more details."
+                       "<br /><hr /><br />"
+                       "This application is still under active developpement, it may contain bugs. <br />"
+                       "If you find one please create an issue on <a href='https://github.com/macaw-movies/macaw-movies/issues'>our GitHub space</a>");
 }
