@@ -132,7 +132,7 @@ void Application::on_fethMetadataJobDone()
 
 /**
  * @brief Define the paths used in the app
- * Can be retrieved by `qApp->property("name")`
+ * Can be retrieved by `qApp->property("name").toString`
  */
 void Application::definePaths()
 {

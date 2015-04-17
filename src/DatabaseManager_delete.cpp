@@ -52,6 +52,10 @@ bool DatabaseManager::deleteMovie(Movie &movie)
         }
     }
 
+    if (movie.posterPath() != "") {
+        QDir l_posterPath(qApp->property("postersPath").toString());
+        l_posterPath.remove(movie.posterPath());
+    }
     QSqlQuery l_query(m_db);
     l_query.prepare("DELETE FROM movies WHERE id = :id");
     l_query.bindValue(":id", movie.id());

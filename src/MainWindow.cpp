@@ -423,16 +423,19 @@ void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
  */
 void MainWindow::on_actionDelete_triggered()
 {
-    int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
     DatabaseManager *databaseManager = DatabaseManager::instance();
-
-    Movie l_movie = databaseManager->getOneMovieById(l_movieId);
+    QList<Movie> l_movieList;
+    foreach (QTableWidgetItem *l_item, m_ui->mainPannel->selectedItems())
+    {
+        int l_movieId = l_item->data(Macaw::ObjectId).toInt();
+        l_movieList.append(databaseManager->getOneMovieById(l_movieId));
+    }
 
     if(m_ui->toWatchButton->isChecked()) {
         Playlist l_playlist = databaseManager->getOnePlaylistById(1);
-        removeMovieFromPlaylist(l_movie, l_playlist);
+        removeMovieFromPlaylist(l_movieList, l_playlist);
     } else {
-        moveFileToTrash(l_movie);
+        moveFileToTrash(l_movieList);
     }
 }
 
@@ -441,7 +444,7 @@ void MainWindow::on_actionDelete_triggered()
  * @param movie to remove from the playlist
  * @param playlist to update
  */
-void MainWindow::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
+void MainWindow::removeMovieFromPlaylist(const QList<Movie> &movieList, Playlist &playlist)
 {
     DatabaseManager *databaseManager = DatabaseManager::instance();
     QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Question, "Remove from ToWatch list ?",
@@ -450,11 +453,13 @@ void MainWindow::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
     l_confirmationDialog->setDefaultButton(QMessageBox::No);
 
     if(l_confirmationDialog->exec() == QMessageBox::Yes) {
-        if(databaseManager->removeMovieFromPlaylist(movie, playlist))
-        {
-            Macaw::DEBUG("[MainWindow] Movie removed from playlist "+ playlist.name());
-            this->updatePannels();
+        foreach(Movie l_movie, movieList) {
+            if(databaseManager->removeMovieFromPlaylist(l_movie, playlist)) {
+                Macaw::DEBUG("[MainWindow] Movie " + l_movie.title()
+                             + " removed from playlist " + playlist.name());
+            }
         }
+        this->updatePannels();
     }
 }
 
@@ -464,42 +469,47 @@ void MainWindow::removeMovieFromPlaylist(Movie &movie, Playlist &playlist)
  * If the function cannot find the trash bin, it asks the user for the file permanant deletion.
  * @param movie to delete
  */
-bool MainWindow::moveFileToTrash(Movie &movie)
+bool MainWindow::moveFileToTrash(QList<Movie> &movieList)
 {
     DatabaseManager *databaseManager = DatabaseManager::instance();
-    QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Warning, "Move to trash? ",
-                                                         "Move this file to trash? All data in Macaw-Movies specific to this movie will be deleted, this cannot be undone. ",
+    QMessageBox *l_confirmationDialog = new QMessageBox(QMessageBox::Warning, "Move to trash? ",
+                                                         "Move to trash? All data in Macaw-Movies specific to the concerned movie(s) will be deleted, this cannot be undone. ",
                                                          QMessageBox::Yes|QMessageBox::No, this);
 
-    QFile * movieFileToDelete = new QFile(movie.filePath());
     l_confirmationDialog->setDefaultButton(QMessageBox::No);
 
-    if(l_confirmationDialog->exec() == QMessageBox::Yes)
-    {
-        bool l_successfullyDeleted = false;
+    if(l_confirmationDialog->exec() == QMessageBox::Yes) {
+        foreach (Movie l_movie, movieList) {
+            bool l_successfullyDeleted = false;
+            QFile *movieFileToDelete = new QFile(l_movie.filePath());
 
+            if(movieFileToDelete->exists()) {
 #ifdef Q_OS_LINUX
-        l_successfullyDeleted = linux_moveFileToTrash(movie.filePath());
+                l_successfullyDeleted = linux_moveFileToTrash(l_movie.filePath());
 #endif
 
 #ifdef Q_OS_WIN
-        l_successfullyDeleted = windows_moveFileToTrash(movie.filePath())
+                l_successfullyDeleted = windows_moveFileToTrash(l_movie.filePath())
 #endif
 
 #ifdef Q_OS_OSX
-        l_successfullyDeleted = macosx_moveFileToTrash(movie.filePath())
+                l_successfullyDeleted = macosx_moveFileToTrash(l_movie.filePath())
 #endif
+            } else {
+                Macaw::DEBUG("[MainWindow] File doesn't exist");
+                l_successfullyDeleted = true;
+            }
 
-        if(l_successfullyDeleted) {
-            if(!databaseManager->deleteMovie(movie)) {
-                QMessageBox * msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
+            if(l_successfullyDeleted) {
+                if(!databaseManager->deleteMovie(l_movie)) {
+                    QMessageBox * msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
                                                     "Error deleting the movie from the database. ",
                                                     QMessageBox::Ok, this);
-                msgBox->exec();
-                return false;
+                    msgBox->exec();
+                    return false;
+                }
             }
         }
-
         this->updatePannels();
     }
     return true;
