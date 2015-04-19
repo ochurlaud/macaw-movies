@@ -464,7 +464,8 @@ void MainWindow::removeMovieFromPlaylist(const QList<Movie> &movieList, Playlist
 }
 
 /**
- * @brief move the specified movie's file to trash bin
+ * @brief move the specified movie's file to trash bin.
+ *
  * This function tries to move a file to trash,  as trash bin is not implemeted the same way amond OSes this could fail.
  * If the function cannot find the trash bin, it asks the user for the file permanant deletion.
  * @param movie to delete
@@ -519,7 +520,7 @@ bool MainWindow::moveFileToTrash(QList<Movie> &movieList)
  * @brief searches and returns the right trash folder for GNU/Linux and OSX platforms
  *
  * This function chooses the right folder according to file location (local hard drive or external storage)
- * and the OS specificities. If an error occured a
+ * and the OS specificities. If an error occured an empty string is returned (and aDebug message is sent if debug is on).
  *
  * @param movieFilePath the path to the movie's file to be moved to trash
  *
@@ -579,12 +580,6 @@ QString MainWindow::unix_findTrashFolder(QString movieFilePath) {
                 l_trashbinDirectory = QString(getenv("XDG_DATA_HOME")).append("/Trash");
                 if(!QDir(l_trashbinDirectory).exists()) {
                     Macaw::DEBUG("[MainWindow - unix_findTrashFolder] Did not managed to find the Linux trsh folder of this computer");
-                    /*QMessageBox * l_errorMovingToTrash = new QMessageBox(QMessageBox::Critical, "Trash not found",
-                                                                         "No trash file have been found on your system, maybe your desktop environement do not support trash bin? \n You can insted PERMANANTLY delete this file. Do you want to delete this file from tyour disk ? This action cannot be undone. ",
-                                                                         QMessageBox::Yes|QMessageBox::No, this);
-                    if(l_errorMovingToTrash->exec() == QMessageBox::Yes) {
-                        l_successfullyDeleted = permanentlyDeleteFile(movieFileToDelete);
-                    }*/
                     return "";
                 } else {
                     return l_trashbinDirectory;
@@ -609,9 +604,9 @@ QString MainWindow::unix_findTrashFolder(QString movieFilePath) {
  *
  * Moving a file to trash on GNU/Linux is made moving the file in a <trash folder>/files directory
  * and creating and info file in <trash folder>/info
+ * The <trash folder> is found and returned by unix_findTrashFolder(movieFilePath)
  *
  * @param moviePath the path to the movie's file
- * @param trashbinDirectory the path to trash bin on the Linux distro
  *
  * @return bool true if the file have been successfully moved to trash or permanently deleted
  *
@@ -695,6 +690,9 @@ bool MainWindow::linux_moveFileToTrash(QString movieFilePath) {
 
 /**
  * @brief Moves a movie file to trash bin for MS Windows.
+ *
+ * This function is highly inspired from one of the answers on Stackoverflow:
+ * http://stackoverflow.com/questions/17964439/move-files-to-trash-recycle-bin-in-qt
  *
  * @param moviePath the path to the movie's file
  * @return bool true if the file have been successfully moved to trash
