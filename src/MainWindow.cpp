@@ -1123,6 +1123,8 @@ void MainWindow::fillMetadataPannel(Movie movie)
     QString l_posterPath = qApp->property("postersPath").toString()
             + movie.posterPath();
     QPixmap l_poster(l_posterPath);
+    QSize l_size(m_ui->metadataPannel->width()-30, m_ui->metadataPannel->height()-30);
+    l_poster = l_poster.scaled(l_size, Qt::KeepAspectRatio);
     m_ui->metadataCover->setPixmap(l_poster);
 
     Macaw::DEBUG_OUT("[MainWindow] Exit fillMetadataPannel");
