@@ -43,6 +43,8 @@ Application::Application(int &argc, char **argv) :
             this, SLOT(askForOrphanPeopleDeletion(People&)));
     connect(m_mainWindow, SIGNAL(startFetchingMetadata(const QList<Movie>&)),
             this, SLOT(on_startFetchingMetadata(const QList<Movie>&)));
+    connect(this, SIGNAL(updatedMainWindow()),
+            m_mainWindow, SLOT(selfUpdate()));
 
     qApp->property("filesPath");
     m_mainWindow->show();
@@ -128,6 +130,7 @@ void Application::on_startFetchingMetadata(const QList<Movie> &movieList)
 void Application::on_fethMetadataJobDone()
 {
     delete m_fetchMetadata;
+    emit updatedMainWindow();
 }
 
 /**

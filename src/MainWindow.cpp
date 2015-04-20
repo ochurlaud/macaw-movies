@@ -52,7 +52,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_typePeople = People::Director;
 
     this->updatePannels();
-
     Macaw::DEBUG_OUT("[MainWindow] Construction done");
 }
 
@@ -89,7 +88,7 @@ void MainWindow::fillLeftPannel()
     DatabaseManager *databaseManager = DatabaseManager::instance();
 
     if(m_typeElement != Macaw::isPlaylist) {
-        QListWidgetItem *l_item = new QListWidgetItem("All");
+        QListWidgetItem *l_item = new QListWidgetItem(" All");
         l_item->setData(Macaw::ObjectId, 0);
         m_ui->leftPannel->addItem(l_item);
 
@@ -140,7 +139,7 @@ void MainWindow::fillLeftPannel()
     if (m_typeElement == Macaw::isPeople) {
         foreach(int l_objectId, m_leftElementsIdList) {
             if(l_objectId == -1) {
-                QListWidgetItem *l_item = new QListWidgetItem("Unknown");
+                QListWidgetItem *l_item = new QListWidgetItem(" Unknown");
                 l_item->setData(Macaw::ObjectId, -1);
                 l_item->setData(Macaw::ObjectType, Macaw::isPeople);
                 m_ui->leftPannel->addItem(l_item);
@@ -166,7 +165,7 @@ void MainWindow::fillLeftPannel()
     } else if(m_typeElement == Macaw::isTag) {
         foreach(int l_objectId, m_leftElementsIdList) {
             if(l_objectId == -1) {
-                QListWidgetItem *l_item = new QListWidgetItem("No Tag");
+                QListWidgetItem *l_item = new QListWidgetItem(" No Tag");
                 l_item->setData(Macaw::ObjectId, -1);
                 l_item->setData(Macaw::ObjectType, Macaw::isTag);
                 m_ui->leftPannel->addItem(l_item);
@@ -194,6 +193,7 @@ void MainWindow::fillLeftPannel()
         m_ui->leftPannel->item(0)->setSelected(true);
     }
     this->setLeftPannelLabel();
+    m_ui->leftPannel->sortItems();
     Macaw::DEBUG_OUT("[MainWindow] Exits fillLeftPannel()");
 }
 

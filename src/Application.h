@@ -67,6 +67,7 @@ public:
 
 signals:
     void fetchMetadata();
+    void updatedMainWindow();
 
 private slots:
     void askForOrphanTagDeletion(Tag &orphanTag);
