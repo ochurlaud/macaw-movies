@@ -42,9 +42,11 @@ public:
 signals:
     void jobDone();
     void startAgain();
+    void exitInitWaitingLoop();
 
 private slots:
     void startProcess();
+    void initTimerDone();
     void processPrimaryResponse(const QList<Movie> &movieList);
     void processMovieResponse(const Movie &receivedMovie);
     void on_selectedMovie(const Movie &movie);

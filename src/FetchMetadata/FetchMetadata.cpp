@@ -21,12 +21,12 @@
 
 FetchMetadata::FetchMetadata(QList<Movie> movieList, QObject *parent) :
     QObject(parent)
-  , m_askUser(true)
   , m_movieQueue(movieList)
 
 {
     Macaw::DEBUG("[FetchMetadata] Constructor");
 
+    m_askUser = true;
     m_fetchMetadataQuery = new FetchMetadataQuery(this);
     m_fetchMetadataDialog = NULL;
 
@@ -45,17 +45,44 @@ FetchMetadata::~FetchMetadata()
 void FetchMetadata::startProcess()
 {
     Macaw::DEBUG("[FetchMetadata] Start the process of metadata fetching");
-    if (!m_movieQueue.isEmpty()) {
-        m_movie = m_movieQueue.takeFirst();
-        connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(const QList<Movie>&)),
-                this, SLOT(processPrimaryResponse(const QList<Movie>&)));
-        connect(m_fetchMetadataQuery, SIGNAL(networkError(QString)),
-                this, SLOT(networkError(QString)));
-
-        QString l_cleanedTitle = cleanString(m_movie.title());
-        m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
+    if (!m_fetchMetadataQuery->isInitialized()) {
+        Macaw::DEBUG("[FetchMetadata] FetchMetadataQuery not initialized, wait a little.");
+        int l_maxTime = 1000;
+        QTimer::singleShot(l_maxTime, this, SLOT(initTimerDone()));
+        QEventLoop l_initWaitingLoop;
+        connect(this, SIGNAL(exitInitWaitingLoop()),
+                &l_initWaitingLoop, SLOT(quit()));
+        l_initWaitingLoop.exec();
     } else {
+        if (!m_movieQueue.isEmpty()) {
+            m_movie = m_movieQueue.takeFirst();
+            connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(const QList<Movie>&)),
+                    this, SLOT(processPrimaryResponse(const QList<Movie>&)));
+            connect(m_fetchMetadataQuery, SIGNAL(networkError(QString)),
+                    this, SLOT(networkError(QString)));
+
+            QString l_cleanedTitle = cleanString(m_movie.title());
+            m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
+        } else {
+            emit jobDone();
+        }
+    }
+}
+
+void FetchMetadata::initTimerDone()
+{
+    Macaw::DEBUG("[FetchMetadata] Initialization timer is done");
+    emit exitInitWaitingLoop();
+    if (!m_fetchMetadataQuery->isInitialized()) {
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.setText("Initialization of the connection to TMDb failed");
+        msgBox.setInformativeText("Please check your internet connection or try again later...");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+
         emit jobDone();
+    } else {
+        emit startAgain();
     }
 }
 
@@ -148,8 +175,8 @@ void FetchMetadata::on_selectedMovie(const Movie &movie)
 
 void FetchMetadata::on_searchMovies(QString title)
 {
-    connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>&)),
-            this, SLOT(processPrimaryResponseDialog(QList<Movie>&)));
+    connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(const QList<Movie>&)),
+            this, SLOT(processPrimaryResponseDialog(const QList<Movie>&)));
 
     QString l_cleanedTitle = cleanString(title);
     m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);

@@ -24,9 +24,11 @@ FetchMetadataQuery::FetchMetadataQuery(QObject *parent) :
 {
     m_app = qobject_cast<Application *>(qApp);
     Macaw::DEBUG("[FetchMetadataQuery] Constructor");
-
+    m_initialized = false;
     m_networkManager = new QNetworkAccessManager;
     m_networkManager2 = new QNetworkAccessManager;
+
+    this->sendInitRequest();
     connect(this, SIGNAL(peopleResponse()),
             this, SLOT(on_peopleResponse()));
 }
@@ -34,6 +36,21 @@ FetchMetadataQuery::FetchMetadataQuery(QObject *parent) :
 FetchMetadataQuery::~FetchMetadataQuery()
 {
     delete m_networkManager;
+    delete m_networkManager2;
+}
+
+void FetchMetadataQuery::sendInitRequest()
+{
+    connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(on_initRequestResponse(QNetworkReply*)));
+
+    QNetworkRequest l_request;
+    l_request.setUrl(QUrl("GEThttp://api.themoviedb.org/3/configuration"
+                          "?api_key="+ m_app->tmdbkey()
+                          , QUrl::TolerantMode));
+    m_networkManager->get(l_request);
+
+    Macaw::DEBUG("[FetchMetadataQuery] Init request sent");
 }
 
 void FetchMetadataQuery::sendPrimaryRequest(QString title)
@@ -42,7 +59,9 @@ void FetchMetadataQuery::sendPrimaryRequest(QString title)
             this, SLOT(on_primaryRequestResponse(QNetworkReply*)));
 
     QNetworkRequest l_request;
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/search/movie?api_key="+ m_app->tmdbkey() +"&query="+ title, QUrl::TolerantMode));
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/search/movie"
+                          "?api_key="+ m_app->tmdbkey() +"&query="+ title
+                          , QUrl::TolerantMode));
     m_networkManager->get(l_request);
 
     Macaw::DEBUG("[FetchMetadataQuery] Primary request sent");
@@ -54,7 +73,11 @@ void FetchMetadataQuery::sendMovieRequest(int tmdbID)
             this, SLOT(on_movieRequestResponse(QNetworkReply*)));
 
     QNetworkRequest l_request;
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/movie/"+QString::number(tmdbID)+"?api_key=" + m_app->tmdbkey() + "&append_to_response=credits&language=en", QUrl::TolerantMode));
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/movie/" +
+                          QString::number(tmdbID) +
+                          "?api_key=" + m_app->tmdbkey() +
+                          "&append_to_response=credits&language=en"
+                          , QUrl::TolerantMode));
     m_networkManager->get(l_request);
 
     Macaw::DEBUG("[FetchMetadataQuery] Movie Request sent");
@@ -66,7 +89,10 @@ void FetchMetadataQuery::sendPeopleRequest(int tmdbID)
             this, SLOT(on_peopleRequestResponse(QNetworkReply*)));
 
     QNetworkRequest l_request;
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/person/"+QString::number(tmdbID)+"?api_key="+ m_app->tmdbkey(), QUrl::StrictMode));
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/person/" +
+                          QString::number(tmdbID) +
+                          "?api_key="+ m_app->tmdbkey()
+                          , QUrl::StrictMode));
     m_networkManager->get(l_request);
 
     Macaw::DEBUG("[FetchMetadataQuery] People request sent, id="+QString::number(tmdbID));
@@ -77,10 +103,31 @@ void FetchMetadataQuery::sendPosterRequest(QString poster_path) {
             this, SLOT(on_posterRequestResponse(QNetworkReply*)));
 
     QNetworkRequest l_request;
-    l_request.setUrl(QUrl("http://image.tmdb.org/t/p/w396" + poster_path, QUrl::StrictMode));
+    l_request.setUrl(QUrl(m_posterUrl+ "/w396" + poster_path
+                          , QUrl::StrictMode));
     m_networkManager2->get(l_request);
 
     Macaw::DEBUG("[FetchMetadataQuery] Poster request sent");
+}
+
+void FetchMetadataQuery::on_initRequestResponse(QNetworkReply* reply)
+{
+    Macaw::DEBUG("[FetchMetadataQuery] Init Request response received");
+    disconnect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
+               this, SLOT(on_initRequestResponse(QNetworkReply*)));
+
+    QByteArray l_receivedData = reply->readAll();
+    reply->deleteLater();
+    QJsonDocument l_stream = QJsonDocument::fromJson(l_receivedData);
+
+    if (!l_stream.isEmpty()) {
+        QJsonObject l_jsonObject = l_stream.object();
+        if (!l_jsonObject.isEmpty()) {
+            QJsonObject l_imagesObject = l_jsonObject.value("images").toObject();
+            m_posterUrl = l_imagesObject.value("secure_base_url").toString();
+        }
+    }
+    m_initialized = true;
 }
 
 void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply* reply)

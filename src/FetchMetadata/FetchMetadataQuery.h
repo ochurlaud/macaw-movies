@@ -35,10 +35,12 @@ class FetchMetadataQuery : public QObject
 public:
     FetchMetadataQuery(QObject *parent = 0);
     ~FetchMetadataQuery();
+    void sendInitRequest();
     void sendPrimaryRequest(QString title);
     void sendMovieRequest(int tmdbID);
     void sendPeopleRequest(int tmdbID);
     void sendPosterRequest(QString poster_path);
+    bool isInitialized() { return m_initialized; }
 
 signals:
     void primaryResponse(const QList<Movie>&);
@@ -47,6 +49,7 @@ signals:
     void peopleResponse();
 
 private slots:
+    void on_initRequestResponse(QNetworkReply *reply);
     void on_primaryRequestResponse(QNetworkReply *reply);
     void on_movieRequestResponse(QNetworkReply *reply);
     void on_peopleRequestResponse(QNetworkReply *reply);
@@ -57,6 +60,8 @@ private slots:
 private:
     QNetworkAccessManager *m_networkManager;
     QNetworkAccessManager *m_networkManager2;
+    QString m_posterUrl;
+    bool m_initialized;
     Application *m_app;
     Movie m_movie;
     QList<int> m_peopleRequestQueue;
