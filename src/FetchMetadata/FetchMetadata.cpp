@@ -74,13 +74,14 @@ void FetchMetadata::initTimerDone()
     Macaw::DEBUG("[FetchMetadata] Initialization timer is done");
     emit exitInitWaitingLoop();
     if (!m_fetchMetadataQuery->isInitialized()) {
-        QMessageBox msgBox;
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.setText("Initialization of the connection to TMDb failed");
-        msgBox.setInformativeText("Please check your internet connection or try again later...");
-        msgBox.setStandardButtons(QMessageBox::Ok);
-
-        emit jobDone();
+        QMessageBox l_msgBox;
+        l_msgBox.setIcon(QMessageBox::Critical);
+        l_msgBox.setText("Initialization of the connection to TMDb failed");
+        l_msgBox.setInformativeText("Please check your internet connection or try again later...");
+        l_msgBox.setStandardButtons(QMessageBox::Ok);
+        if(l_msgBox.exec()) {
+            emit jobDone();
+        }
     } else {
         emit startAgain();
     }
@@ -184,6 +185,9 @@ void FetchMetadata::on_searchMovies(QString title)
 
 void FetchMetadata::processPrimaryResponseDialog(const QList<Movie> &movieList)
 {
+    disconnect(m_fetchMetadataQuery, SIGNAL(primaryResponse(const QList<Movie>&)),
+                this, SLOT(processPrimaryResponseDialog(const QList<Movie>&)));
+
     this->updateFetchMetadataDialog(movieList);
 }
 

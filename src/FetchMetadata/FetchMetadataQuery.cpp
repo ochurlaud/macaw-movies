@@ -45,7 +45,7 @@ void FetchMetadataQuery::sendInitRequest()
             this, SLOT(on_initRequestResponse(QNetworkReply*)));
 
     QNetworkRequest l_request;
-    l_request.setUrl(QUrl("GEThttp://api.themoviedb.org/3/configuration"
+    l_request.setUrl(QUrl("http://api.themoviedb.org/3/configuration"
                           "?api_key="+ m_app->tmdbkey()
                           , QUrl::TolerantMode));
     m_networkManager->get(l_request);
@@ -103,7 +103,7 @@ void FetchMetadataQuery::sendPosterRequest(QString poster_path) {
             this, SLOT(on_posterRequestResponse(QNetworkReply*)));
 
     QNetworkRequest l_request;
-    l_request.setUrl(QUrl(m_posterUrl+ "/w396" + poster_path
+    l_request.setUrl(QUrl(m_posterUrl+ "w396" + poster_path
                           , QUrl::StrictMode));
     m_networkManager2->get(l_request);
 
@@ -125,9 +125,13 @@ void FetchMetadataQuery::on_initRequestResponse(QNetworkReply* reply)
         if (!l_jsonObject.isEmpty()) {
             QJsonObject l_imagesObject = l_jsonObject.value("images").toObject();
             m_posterUrl = l_imagesObject.value("secure_base_url").toString();
+            m_initialized = true;
+        } else {
+            Macaw::DEBUG("[FetchMetadataQuery] initRequestResponse JSON object empty");
         }
+    } else {
+        Macaw::DEBUG("[FetchMetadataQuery] initRequestResponse stream empty");
     }
-    m_initialized = true;
 }
 
 void FetchMetadataQuery::on_primaryRequestResponse(QNetworkReply* reply)
@@ -192,8 +196,9 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
             m_movie.setReleaseDate(l_releaseDate);
 
             m_movie.setSynopsis(l_jsonObject.value("overview").toString());
-
-            sendPosterRequest(l_jsonObject.value("poster_path").toString());
+            if (l_jsonObject.value("poster_path").toString() != "") {
+                sendPosterRequest(l_jsonObject.value("poster_path").toString());
+            }
 
             People l_people;
             QString l_personName;

@@ -503,7 +503,7 @@ bool MainWindow::moveFileToTrash(QList<Movie> &movieList)
 
             if(l_successfullyDeleted) {
                 if(!databaseManager->deleteMovie(l_movie)) {
-                    QMessageBox * msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
+                    QMessageBox *msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
                                                     "Error deleting the movie from the database. ",
                                                     QMessageBox::Ok, this);
                     msgBox->exec();
@@ -675,7 +675,7 @@ bool MainWindow::linux_moveFileToTrash(QString movieFilePath) {
         Macaw::DEBUG("[MainWindow] Failled to create and open the file's' trash info");
     }
 
-    QMessageBox * l_msgBoxErrorMovingToTrash = new QMessageBox(QMessageBox::Warning, "Error moving file to trash",
+    QMessageBox *l_msgBoxErrorMovingToTrash = new QMessageBox(QMessageBox::Warning, "Error moving file to trash",
                                         "Something went wrong when moving the file to the trash. Do you want to permanently delete it instead? ",
                                         QMessageBox::Yes|QMessageBox::No, this);
 
