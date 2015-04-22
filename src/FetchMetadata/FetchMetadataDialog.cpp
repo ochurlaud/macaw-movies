@@ -67,17 +67,22 @@ void FetchMetadataDialog::on_listWidget_doubleClicked(const QModelIndex &index)
 
 void FetchMetadataDialog::on_searchButton_clicked()
 {
+    this->m_ui->searchButton->setEnabled(false);
     emit(searchMovies(m_ui->lineEdit->text()));
 }
 
 void FetchMetadataDialog::on_lineEdit_returnPressed()
 {
-    emit(searchMovies(m_ui->lineEdit->text()));
+    if (!this->m_ui->searchButton->isEnabled()) {
+        emit(searchMovies(m_ui->lineEdit->text()));
+        this->m_ui->searchButton->setEnabled(false);
+    }
 }
 
 void FetchMetadataDialog::setMovieList(const QList<Movie> &movieList)
 {
     m_ui->listWidget->clear();
+    this->m_ui->searchButton->setEnabled(true);
     if (!movieList.isEmpty()) {
         foreach (Movie l_movie, movieList) {
             QListWidgetItem *l_item = new QListWidgetItem;

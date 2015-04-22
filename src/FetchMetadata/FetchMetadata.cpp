@@ -29,8 +29,6 @@ FetchMetadata::FetchMetadata(QObject *parent) :
     m_fetchMetadataQuery = new FetchMetadataQuery(this);
     m_fetchMetadataDialog = NULL;
 
-    connect(this, SIGNAL(startAgain()),
-            this, SLOT(startProcess()));
     connect(this, SIGNAL(jobDone()),
             this, SLOT(on_jobDone()));
 
@@ -129,7 +127,7 @@ void FetchMetadata::processPrimaryResponse(const QList<Movie> &movieList)
     } else if(movieList.count() > 1) {
         foreach(Movie l_movie, movieList) {
             if(cleanString(l_movie.title()).compare(cleanString(m_movie.title()), Qt::CaseInsensitive) == 0) {
-                Macaw::DEBUG("[FetchMetadata] One title found");
+                Macaw::DEBUG("[FetchMetadata] One title matches");
                 l_accurateList.push_back(l_movie);
             }
         }

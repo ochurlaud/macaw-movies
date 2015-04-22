@@ -38,13 +38,13 @@ Q_OBJECT
 public:
     explicit FetchMetadata(QObject *parent = 0);
     ~FetchMetadata();
+    void addMoviesToQueue(const QList<Movie> &movieList);
 
 signals:
     void jobDone();
     void exitInitWaitingLoop();
 
 private slots:
-    void addMoviesToQueue(const QList<Movie> &movieList);
     void initTimerDone();
     void processPrimaryResponse(const QList<Movie> &movieList);
     void processMovieResponse(const Movie &receivedMovie);

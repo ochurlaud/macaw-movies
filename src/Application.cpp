@@ -116,11 +116,9 @@ void Application::on_startFetchingMetadata(const QList<Movie> &movieList)
         m_fetchMetadata = new FetchMetadata();
     }
 
-    connect(this, SIGNAL(fetchMetadata(const QList<Movie>&)),
-            m_fetchMetadata, SLOT(addMoviesToQueue(const QList<Movie>&)));
     connect(m_fetchMetadata, SIGNAL(jobDone()),
             this, SLOT(on_fethMetadataJobDone()));
-    emit fetchMetadata(movieList);
+    m_fetchMetadata->addMoviesToQueue(movieList);
 }
 
 /**
