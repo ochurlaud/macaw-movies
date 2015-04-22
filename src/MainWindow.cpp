@@ -1122,11 +1122,15 @@ void MainWindow::fillMetadataPannel(Movie movie)
 
     m_ui->metadataTop->setText(l_title+l_originalTitle + l_directors +l_producers + l_actors);
     m_ui->metadataPlot->setText(movie.synopsis());
-    QString l_posterPath = qApp->property("postersPath").toString()
-            + movie.posterPath();
-    QPixmap l_poster(l_posterPath);
-    QSize l_size(m_ui->metadataPannel->width()-30, m_ui->metadataPannel->height()-30);
-    l_poster = l_poster.scaled(l_size, Qt::KeepAspectRatio);
+    QPixmap l_poster;
+    if (movie.posterPath() != "")
+    {
+        QString l_posterPath = qApp->property("postersPath").toString()
+                               + movie.posterPath();
+        l_poster.load(l_posterPath);
+        QSize l_size(m_ui->metadataPannel->width()-30, m_ui->metadataPannel->height()-30);
+        l_poster = l_poster.scaled(l_size, Qt::KeepAspectRatio);
+    }
     m_ui->metadataCover->setPixmap(l_poster);
 
     Macaw::DEBUG_OUT("[MainWindow] Exit fillMetadataPannel");
