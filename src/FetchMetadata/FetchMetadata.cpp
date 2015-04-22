@@ -19,19 +19,20 @@
 
 #include "FetchMetadata.h"
 
-FetchMetadata::FetchMetadata(QList<Movie> movieList, QObject *parent) :
+FetchMetadata::FetchMetadata(QObject *parent) :
     QObject(parent)
-  , m_movieQueue(movieList)
-
 {
     Macaw::DEBUG("[FetchMetadata] Constructor");
 
+    m_running = false;
     m_askUser = true;
     m_fetchMetadataQuery = new FetchMetadataQuery(this);
     m_fetchMetadataDialog = NULL;
 
     connect(this, SIGNAL(startAgain()),
             this, SLOT(startProcess()));
+    connect(this, SIGNAL(jobDone()),
+            this, SLOT(on_jobDone()));
 
     Macaw::DEBUG("[FetchMetadata] Construction done");
 }
@@ -40,6 +41,22 @@ FetchMetadata::~FetchMetadata()
 {
     delete m_fetchMetadataQuery;
     Macaw::DEBUG("[FetchMetadata] Object destructed");
+}
+
+void FetchMetadata::addMoviesToQueue(const QList<Movie> &movieList)
+{
+    Macaw::DEBUG("[FetchMetadata] Add movies to the queue list");
+
+    m_movieQueue.append(movieList);
+    if (m_running == false) {
+        this->startProcess();
+        m_running = true;
+    }
+}
+
+void FetchMetadata::on_jobDone()
+{
+     m_running = false;
 }
 
 void FetchMetadata::startProcess()
@@ -83,7 +100,7 @@ void FetchMetadata::initTimerDone()
             emit jobDone();
         }
     } else {
-        emit startAgain();
+        this->startProcess();
     }
 }
 
@@ -131,7 +148,7 @@ void FetchMetadata::processPrimaryResponse(const QList<Movie> &movieList)
         }
         this->openFetchMetadataDialog(m_movie, l_accurateList);
     } else {
-        emit startAgain();
+        this->startProcess();
     }
 }
 
@@ -158,13 +175,13 @@ void FetchMetadata::processMovieResponse(const Movie &receivedMovie)
     m_movie.setImported(true);
 
     databaseManager->updateMovie(m_movie);
-    emit startAgain();
+    this->startProcess();
 }
 
 void FetchMetadata::on_searchCanceled()
 {
     Macaw::DEBUG("[FetchMetadata] Dialog canceled");
-    emit startAgain();
+    this->startProcess();
 }
 
 void FetchMetadata::on_selectedMovie(const Movie &movie)

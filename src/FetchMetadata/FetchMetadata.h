@@ -36,16 +36,15 @@ class FetchMetadata : public QObject
 Q_OBJECT
 
 public:
-    explicit FetchMetadata(QList<Movie> movieList, QObject *parent = 0);
+    explicit FetchMetadata(QObject *parent = 0);
     ~FetchMetadata();
 
 signals:
     void jobDone();
-    void startAgain();
     void exitInitWaitingLoop();
 
 private slots:
-    void startProcess();
+    void addMoviesToQueue(const QList<Movie> &movieList);
     void initTimerDone();
     void processPrimaryResponse(const QList<Movie> &movieList);
     void processMovieResponse(const Movie &receivedMovie);
@@ -54,6 +53,7 @@ private slots:
     void processPrimaryResponseDialog(const QList<Movie> &movieList);
     void on_searchCanceled();
     void on_dontAskUser();
+    void on_jobDone();
     void networkError(QString error);
 
 private:
@@ -67,9 +67,11 @@ private:
     Movie m_movie;
     QList<Movie> m_movieQueue;
     bool m_askUser;
+    bool m_running;
     QString cleanString(const QString title);
     void openFetchMetadataDialog(const Movie &movie, const QList<Movie> &accurateList);
     void updateFetchMetadataDialog(const QList<Movie> &updatedList);
+    void startProcess();
 };
 
 #endif // FETCH_H

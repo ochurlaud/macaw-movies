@@ -113,14 +113,14 @@ void Application::on_startFetchingMetadata(const QList<Movie> &movieList)
 {
     Macaw::DEBUG("[Application] startFetchingMetadata called");
     if(m_fetchMetadata == NULL) {
-        m_fetchMetadata = new FetchMetadata(movieList);
+        m_fetchMetadata = new FetchMetadata();
     }
 
-    connect(this, SIGNAL(fetchMetadata()),
-            m_fetchMetadata, SLOT(startProcess()));
+    connect(this, SIGNAL(fetchMetadata(const QList<Movie>&)),
+            m_fetchMetadata, SLOT(addMoviesToQueue(const QList<Movie>&)));
     connect(m_fetchMetadata, SIGNAL(jobDone()),
             this, SLOT(on_fethMetadataJobDone()));
-    emit fetchMetadata();
+    emit fetchMetadata(movieList);
 }
 
 /**

@@ -66,7 +66,7 @@ public:
     QString tmdbkey() { return m_tmdbkey; }
 
 signals:
-    void fetchMetadata();
+    void fetchMetadata(const QList<Movie>&);
     void updatedMainWindow();
 
 private slots:

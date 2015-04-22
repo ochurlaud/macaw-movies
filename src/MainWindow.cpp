@@ -1066,7 +1066,11 @@ void MainWindow::addNewMovies()
         }
         databaseManager->setMoviesPathImported(l_moviesPath,true);
     }
-    emit startFetchingMetadata(databaseManager->getMoviesNotImported());
+
+    QList<Movie> l_moviesToFetch = databaseManager->getMoviesNotImported();
+    if (!l_moviesToFetch.isEmpty()) {
+        emit startFetchingMetadata(l_moviesToFetch);
+    }
     this->updatePannels();
     Macaw::DEBUG_OUT("[MainWindow] Exit addNewMovies");
 }
