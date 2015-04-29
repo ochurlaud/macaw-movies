@@ -40,3 +40,5 @@ qt5_wrap_ui(FORMS_MOC ${FORMS})
 add_executable(${EXECUTABLE_NAME} ${SRCS} ${RSRCS_RCC} ${FORMS_MOC})
 qt5_use_modules(${EXECUTABLE_NAME} Widgets Network Sql)
 
+install(TARGETS ${EXECUTABLE_NAME} RUNTIME DESTINATION bin)
+

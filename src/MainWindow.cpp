@@ -1025,7 +1025,7 @@ void MainWindow::updatePannels()
  */
 void MainWindow::addNewMovies()
 {
-    Macaw::DEBUG("[MainWindow] Enter addNewMovies");
+    Macaw::DEBUG_IN("[MainWindow] Enter addNewMovies");
 
     DatabaseManager *databaseManager = DatabaseManager::instance();
     bool l_imported = false;
