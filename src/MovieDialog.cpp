@@ -161,7 +161,7 @@ void MovieDialog::setPeopleList(const QList<People> &peopleList)
     m_ui->actorsWidget->clear();
     m_ui->producersWidget->clear();
 
-    QListWidget *l_peopleWidget;
+    QListWidget *l_peopleWidget = NULL;
     foreach(People l_people, peopleList)
     {
         switch (l_people.type())
@@ -180,7 +180,9 @@ void MovieDialog::setPeopleList(const QList<People> &peopleList)
         QListWidgetItem *l_item = new QListWidgetItem(l_people.name());
         l_item->setData(Macaw::ObjectId, l_people.id());
         l_item->setData(Macaw::PeopleType, l_people.type());
-        l_peopleWidget->addItem(l_item);
+        if (l_peopleWidget != NULL) {
+            l_peopleWidget->addItem(l_item);
+        }
     }
 }
 
@@ -241,7 +243,7 @@ void MovieDialog::setMovieSelectedTagList(const QList<Tag> &tagList)
 void MovieDialog::addPeople(const People &people)
 {
     Macaw::DEBUG("[MovieDialog] Enters addPeople()");
-    QListWidget *l_peopleWidget;
+    QListWidget *l_peopleWidget = NULL;
 
     switch (people.type())
     {
@@ -258,7 +260,9 @@ void MovieDialog::addPeople(const People &people)
     QListWidgetItem *l_item = new QListWidgetItem(people.name());
     l_item->setData(Macaw::ObjectId, people.id());
     l_item->setData(Macaw::PeopleType, people.type());
-    l_peopleWidget->addItem(l_item);
+    if (l_peopleWidget != NULL) {
+        l_peopleWidget->addItem(l_item);
+    }
 
     m_movie.addPeople(people);
     Macaw::DEBUG("[MovieDialog] Exists addPeople()");

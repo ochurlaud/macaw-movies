@@ -490,11 +490,11 @@ bool MainWindow::moveFileToTrash(QList<Movie> &movieList)
 #endif
 
 #ifdef Q_OS_WIN
-                l_successfullyDeleted = windows_moveFileToTrash(l_movie.filePath())
+                l_successfullyDeleted = windows_moveFileToTrash(l_movie.filePath());
 #endif
 
 #ifdef Q_OS_OSX
-                l_successfullyDeleted = macosx_moveFileToTrash(l_movie.filePath())
+                l_successfullyDeleted = macosx_moveFileToTrash(l_movie.filePath());
 #endif
             } else {
                 Macaw::DEBUG("[MainWindow] File doesn't exist");
