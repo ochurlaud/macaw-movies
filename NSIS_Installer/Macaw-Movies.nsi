@@ -95,6 +95,9 @@ Section -MainProgram
 ${INSTALL_TYPE}
 SetOverwrite ifnewer
 SetOutPath "$INSTDIR"
+File "..\build-win\libstdc++-6.dll"
+File "..\build-win\libwinpthread-1.dll"
+File "..\build-win\libgcc_s_dw2-1.dll"
 File "..\build-win\icudt53.dll"
 File "..\build-win\icuin53.dll"
 File "..\build-win\icuuc53.dll"
@@ -190,6 +193,9 @@ SectionEnd
 
 Section Uninstall
 ${INSTALL_TYPE}
+Delete "$INSTDIR\libstdc++-6.dll"
+Delete "$INSTDIR\libgcc_s_dw2-1.dll"
+Delete "$INSTDIR\libwinpthread-1.dll"
 Delete "$INSTDIR\icudt53.dll"
 Delete "$INSTDIR\icuin53.dll"
 Delete "$INSTDIR\icuuc53.dll"

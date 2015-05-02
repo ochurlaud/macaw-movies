@@ -20,6 +20,7 @@ and generate the documentation
 
 * Compile with Qt in release mode in the folder build-win
 * go in this folder and execute from the command line: `windeployqt.exe Macaw-Movies.exe`
+* add the dll `libgcc_s_dw2-1.dll` `libstdc++-6.dll` `libwinpthread-1.dll` to the `build-win` folder.
 * Create the installer
  * *if you know what you are doing,* modify the concerned lines in `NSIS_Installer\Macaw-Movies.nsi`. **Don't forget the uninstall part!!**
  * *else* download http://nsis.sourceforge.net/NSIS_Quick_Setup_Script_Generator do the configuration. Then go in the file and change all the absolute links by relative links (follow the current `NSIS_Installer\Macaw-Movies.nsi`)
