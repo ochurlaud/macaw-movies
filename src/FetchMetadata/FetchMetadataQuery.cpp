@@ -48,7 +48,6 @@ void FetchMetadataQuery::sendInitRequest()
     QUrl l_initUrl = QUrl("http://api.themoviedb.org/3/configuration"
                           "?api_key="+ m_app->tmdbkey()
                           , QUrl::TolerantMode);
-    Macaw::DEBUG("[FetchMetadataQuery] init request: " + l_initUrl.toString());
     l_request.setUrl(l_initUrl);
     m_networkManager->get(l_request);
 
@@ -57,6 +56,8 @@ void FetchMetadataQuery::sendInitRequest()
 
 void FetchMetadataQuery::sendPrimaryRequest(QString title)
 {
+    // We start another cycle, so we first make sure that m_movie is empty
+    m_movie = Movie();
     connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(on_primaryRequestResponse(QNetworkReply*)));
 

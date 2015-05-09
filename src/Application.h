@@ -73,6 +73,7 @@ private slots:
     void askForOrphanPeopleDeletion(People &orphanPeople);
     void on_startFetchingMetadata(const QList<Movie> &movieList);
     void on_fethMetadataJobDone();
+    void on_fethMetadataUpdatedMovie();
 
 private:
 

@@ -128,6 +128,14 @@ void Application::on_startFetchingMetadata(const QList<Movie> &movieList)
 void Application::on_fethMetadataJobDone()
 {
     m_fetchMetadata->deleteLater();
+}
+
+/**
+ * @brief Slot triggered when m_fetchMetadata finished to update a Movie
+ * Updates MainWindow
+ */
+void Application::on_fethMetadataUpdatedMovie()
+{
     emit updatedMainWindow();
 }
 

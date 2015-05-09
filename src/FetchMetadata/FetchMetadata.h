@@ -43,6 +43,7 @@ public:
 signals:
     void jobDone();
     void exitInitWaitingLoop();
+    void updatedMovie();
 
 private slots:
     void initTimerDone();

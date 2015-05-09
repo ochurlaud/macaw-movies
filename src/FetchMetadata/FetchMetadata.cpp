@@ -173,7 +173,9 @@ void FetchMetadata::processMovieResponse(const Movie &receivedMovie)
     m_movie.setImported(true);
 
     databaseManager->updateMovie(m_movie);
+    emit updatedMovie();
     this->startProcess();
+
 }
 
 void FetchMetadata::on_searchCanceled()
