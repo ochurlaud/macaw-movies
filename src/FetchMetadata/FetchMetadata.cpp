@@ -37,7 +37,6 @@ FetchMetadata::FetchMetadata(QObject *parent) :
 
 FetchMetadata::~FetchMetadata()
 {
-    delete m_fetchMetadataQuery;
     Macaw::DEBUG("[FetchMetadata] Object destructed");
 }
 
@@ -62,7 +61,7 @@ void FetchMetadata::startProcess()
     Macaw::DEBUG("[FetchMetadata] Start the process of metadata fetching");
     if (!m_fetchMetadataQuery->isInitialized()) {
         Macaw::DEBUG("[FetchMetadata] FetchMetadataQuery not initialized, wait a little.");
-        int l_maxTime = 1000;
+        int l_maxTime = 5000;
         QTimer::singleShot(l_maxTime, this, SLOT(initTimerDone()));
         QEventLoop l_initWaitingLoop;
         connect(this, SIGNAL(exitInitWaitingLoop()),
@@ -79,6 +78,7 @@ void FetchMetadata::startProcess()
             QString l_cleanedTitle = cleanString(m_movie.title());
             m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
         } else {
+            m_fetchMetadataQuery->deleteLater();
             emit jobDone();
         }
     }
@@ -194,8 +194,7 @@ void FetchMetadata::on_searchMovies(QString title)
     connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(const QList<Movie>&)),
             this, SLOT(processPrimaryResponseDialog(const QList<Movie>&)));
 
-    QString l_cleanedTitle = cleanString(title);
-    m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
+    m_fetchMetadataQuery->sendPrimaryRequest(title);
 }
 
 void FetchMetadata::processPrimaryResponseDialog(const QList<Movie> &movieList)
