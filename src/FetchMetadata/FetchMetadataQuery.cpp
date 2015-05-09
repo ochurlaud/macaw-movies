@@ -45,9 +45,11 @@ void FetchMetadataQuery::sendInitRequest()
             this, SLOT(on_initRequestResponse(QNetworkReply*)));
 
     QNetworkRequest l_request;
-    l_request.setUrl(QUrl("http://api.themoviedb.org/3/configuration"
+    QUrl l_initUrl = QUrl("http://api.themoviedb.org/3/configuration"
                           "?api_key="+ m_app->tmdbkey()
-                          , QUrl::TolerantMode));
+                          , QUrl::TolerantMode);
+    Macaw::DEBUG("[FetchMetadataQuery] init request: " + l_initUrl.toString());
+    l_request.setUrl(l_initUrl);
     m_networkManager->get(l_request);
 
     Macaw::DEBUG("[FetchMetadataQuery] Init request sent");

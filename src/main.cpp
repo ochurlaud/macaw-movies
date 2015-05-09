@@ -71,6 +71,9 @@ int main(int argv, char **args)
     if (l_parser.isSet(QStringLiteral("debug")))
     {
         Macaw::macawDebug_extern.setDebug(true);
+#ifndef QT_DEBUG
+        Macaw::DEBUG("[Macaw-Movies] Debug starts here");
+#endif
     }
 
     return l_app.exec();
