@@ -1171,7 +1171,7 @@ void MainWindow::readSettings()
 void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox::about(this, "About " APP_NAME,
-                       "<h1>" APP_NAME "</h1><br />"
+                       "<h1>" APP_NAME " " APP_VERSION "</h1><br />"
                        "<em>Copyright (C) 2014 Macaw-Movies<br />"
                        "(Olivier CHURLAUD, Sébastien TOUZÉ)</em>"
                        "<br /><br />"
