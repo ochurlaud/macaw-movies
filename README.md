@@ -2,7 +2,7 @@
 
 Movies organizer. Qt/C++/Sqlite
 
-*This application is a movie organizer. It helps anyone to order, choose and find back a movie in his collection.*
+*This application is a movie organizer. It helps to order, choose and find back a movie in his collection.*
 
 *The program is written in C++, with the Qt framework. It will be released for Linux, Windows and Mac OS X*
 
@@ -20,10 +20,11 @@ This application is a movie organizer. It only let the user order and find the m
 We should be able do add several metadata to each movie. To make it easily, the application will get and fill theses data thanks to an Internet movie database (like gracenote for the music).
 
 ### Metadata to add 
+```
 * **Bold** means that it's implemented
 * *Italic* means that the field exists but is not used
 * Regular means that it has to be done
-
+```
 
 * **Title (I)**
 * **Original title (I)**
