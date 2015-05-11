@@ -49,9 +49,8 @@ public:
 
 private slots:
     void on_actionEdit_Settings_triggered();
-    void on_peopleBox_activated(int type);
+    void on_leftPannelBox_activated(int type);
     void on_toWatchButton_clicked();
-    void on_tagsButton_clicked();
     void on_customContextMenuRequested(const QPoint &);
     void on_mainPannel_itemDoubleClicked(QTableWidgetItem *item);
     void on_leftPannel_itemSelectionChanged();
@@ -105,7 +104,6 @@ private:
     void readSettings();
     void fillMainPannel();
     void fillLeftPannel();
-    void setLeftPannelLabel();
     QList<Movie> moviesToDisplay(int id);
     void updatePannels();
     void fillMetadataPannel(Movie movie);

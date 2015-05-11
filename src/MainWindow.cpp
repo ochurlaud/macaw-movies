@@ -192,7 +192,6 @@ void MainWindow::fillLeftPannel()
     if(m_ui->leftPannel->selectedItems().isEmpty()) {
         m_ui->leftPannel->item(0)->setSelected(true);
     }
-    this->setLeftPannelLabel();
     m_ui->leftPannel->sortItems();
     Macaw::DEBUG_OUT("[MainWindow] Exits fillLeftPannel()");
 }
@@ -260,21 +259,23 @@ void MainWindow::fillMainPannel()
 }
 
 /**
- * @brief Slot triggered when an option from peopleBox is selected.
+ * @brief Slot triggered when an option from leftPannelBox is selected.
  * Refill all the pannels.
  *
- * @param type of People
+ * @param type of Element (0 = tag, else it's a people, of type `type`)
  */
-void MainWindow::on_peopleBox_activated(int type)
+void MainWindow::on_leftPannelBox_activated(int type)
 {
-    Macaw::DEBUG_IN("[MainWindow] Enters on_peopleBox_activated()");
+    Macaw::DEBUG_IN("[MainWindow] Enters on_leftPannelBox_activated()");
 
-    m_ui->tagsButton->setChecked(false);
-
-    // People::typePeople begins by None
-    // so we need to increment by 1
-    int l_peopleType = type + 1;
-    m_typeElement = Macaw::isPeople;
+    // 0 = Tags
+    // People::typePeople
+    int l_peopleType = type;
+    if (type==0) {
+        m_typeElement = Macaw::isTag;
+    } else {
+        m_typeElement = Macaw::isPeople;
+    }
     m_typePeople = l_peopleType;
 
     // We change of Macaw::typeElement,
@@ -283,7 +284,7 @@ void MainWindow::on_peopleBox_activated(int type)
 
     this->updatePannels();
 
-    Macaw::DEBUG_OUT("[MainWindow] Exits on_peopleBox_activated()");
+    Macaw::DEBUG_OUT("[MainWindow] Exits on_leftPannelBox_activated()");
 }
 
 /**
@@ -297,26 +298,6 @@ void MainWindow::on_toWatchButton_clicked()
     this->updatePannels();
 }
 
-/**
- * @brief Slot triggered when the tagsButton is clicked.
- * Has an effect only if the button was not already cheked.
- */
-void MainWindow::on_tagsButton_clicked()
-{
-    Macaw::DEBUG("[MainWindow] tagsButton clicked");
-
-    if(m_typeElement != Macaw::isTag) {
-
-        m_ui->tagsButton->setChecked(true);
-        m_typeElement =  Macaw::isTag;
-
-        // We change of Macaw::typeElement,
-        // so we reinitialise the selection in the leftPannel
-        m_leftPannelSelectedId = 0;
-
-        this->updatePannels();
-    }
-}
 
 /**
  * @brief Slot triggered when the context menu is requested.
@@ -942,35 +923,6 @@ QList<Movie> MainWindow::moviesToDisplay(int id)
     QList<Movie> l_emptyList;
 
     return  l_emptyList;
-}
-
-/**
- * @brief Set the leftPannelLabel based on m_typeElement and m_typePeople
- */
-void MainWindow::setLeftPannelLabel()
-{
-    switch (m_typeElement)
-    {
-    case Macaw::isTag:
-        m_ui->leftPannelLabel->setText("Tags");
-        break;
-    case Macaw::isPlaylist:
-        m_ui->leftPannelLabel->setText("Playlists");
-        break;
-    case Macaw::isPeople:
-        switch (m_typePeople)
-        {
-        case People::Director:
-            m_ui->leftPannelLabel->setText("Directors");
-            break;
-        case People::Producer:
-            m_ui->leftPannelLabel->setText("Producers");
-            break;
-        case People::Actor:
-            m_ui->leftPannelLabel->setText("Actors");
-            break;
-        }
-    }
 }
 
 /**

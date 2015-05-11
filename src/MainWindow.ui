@@ -66,49 +66,7 @@
         <item>
          <layout class="QHBoxLayout" name="buttonsLayout">
           <item>
-           <widget class="QComboBox" name="peopleBox">
-            <property name="currentText">
-             <string>Directors</string>
-            </property>
-            <item>
-             <property name="text">
-              <string>Directors</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Producers</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Actors</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="tagsButton">
-            <property name="text">
-             <string>Tags</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="toWatchButton">
-            <property name="text">
-             <string>To Watch</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="topRightSpacer">
+           <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -119,6 +77,13 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="toWatchButton">
+            <property name="text">
+             <string>To Watch</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -209,21 +174,30 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="leftPannelLabel">
-             <property name="maximumSize">
-              <size>
-               <width>400</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
+            <widget class="QComboBox" name="leftPannelBox">
+             <property name="currentText">
               <string>Directors</string>
              </property>
+             <item>
+              <property name="text">
+               <string>Tags</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Directors</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Producers</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Actors</string>
+              </property>
+             </item>
             </widget>
            </item>
            <item>
@@ -392,7 +366,7 @@
      <x>0</x>
      <y>0</y>
      <width>684</width>
-     <height>20</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSettings">
