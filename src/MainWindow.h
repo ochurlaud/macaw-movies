@@ -32,8 +32,13 @@
 #include "Entities/Playlist.h"
 #include "Entities/Tag.h"
 #include "MainWindowWidgets/LeftPannel.h"
+#include "MainWindowWidgets/MainPannel.h"
+#include "MainWindowWidgets/MoviesPannel.h"
 
 class LeftPannel;
+class MainPannel;
+class MoviesPannel;
+
 namespace Ui {
 class MainWindow;
 }
@@ -50,17 +55,11 @@ public:
 
 private slots:
     void on_actionEdit_Settings_triggered();
-    void on_toWatchButton_clicked();
-    void on_customContextMenuRequested(const QPoint &);
-    void on_mainPannel_itemDoubleClicked(QTableWidgetItem *item);
-    void on_mainPannel_itemSelectionChanged();
-    void on_actionEdit_mainPannelMetadata_triggered();
-    void on_actionDelete_triggered();
+    void on_toWatchButton_clicked();  
     void selfUpdate();
     void updateMainPannel();
     void addNewMovies();
     void on_searchEdit_returnPressed();
-    void addPlaylistMenu_triggered(QAction* action);
     void on_actionAbout_triggered();
     void closeEvent(QCloseEvent *event);
 
@@ -70,6 +69,7 @@ signals:
 private:
     Ui::MainWindow *m_ui;
     LeftPannel *m_leftPannel;
+    MainPannel *m_mainPannel;
 
     /**
      * @brief QList of movies that can be listed in the main window
@@ -83,17 +83,9 @@ private:
     QList<Movie> m_displayedMoviesList;
 
     void readSettings();
-    void fillMainPannel();
     QList<Movie> moviesToDisplay(int id);
     void updatePannels();
     void fillMetadataPannel(Movie movie);
-    void removeMovieFromPlaylist(const QList<Movie> &movieList, Playlist &playlist);
-    bool permanentlyDeleteFile(QFile *movieFileToDelete);
-    bool moveFileToTrash(QList<Movie> &movieList);
-    QString unix_findTrashFolder(QString movieFilePath);
-    bool linux_moveFileToTrash(QString movieFilePath);
-    bool windows_moveFileToTrash(QString movieFilePath);
-    bool macosx_moveFileToTrash(QString movieFilePath);
 
 };
 

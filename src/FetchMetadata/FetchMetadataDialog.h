@@ -26,8 +26,6 @@
 #include "Application.h"
 #include "Entities/Movie.h"
 
-class Application;
-
 namespace Ui {
 class FetchMetadataDialog;
 }

@@ -19,9 +19,16 @@
   You should have received a copy of the GNU General Public License
   along with Macaw-Movies.  If not, see http://www.gnu.org/licenses/
  </comment>
- <exportmacro/>
  <class>LeftPannel</class>
- <widget class="QWidget" name="leftPannelWidget" native="true">
+ <widget class="QWidget" name="LeftPannel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>256</width>
+    <height>223</height>
+   </rect>
+  </property>
   <property name="minimumSize">
    <size>
     <width>100</width>
@@ -56,7 +63,7 @@
    <item>
     <widget class="QComboBox" name="leftPannelBox">
      <property name="currentText">
-      <string>Directors</string>
+      <string>Tags</string>
      </property>
      <item>
       <property name="text">
@@ -81,7 +88,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QListWidget" name="leftPannel">
+    <widget class="QListWidget" name="listWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -133,4 +140,6 @@
    </property>
   </action>
  </widget>
+ <resources/>
+ <connections/>
 </ui>

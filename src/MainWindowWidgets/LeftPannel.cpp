@@ -6,10 +6,10 @@ LeftPannel::LeftPannel(QWidget *parent) :
     m_ui(new Ui::LeftPannel)
 {
     m_ui->setupUi(this);
-    m_ui->leftPannel->setContentsMargins(0,1,1,0);
-    connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
+    m_ui->listWidget->setContentsMargins(0,1,1,0);
+    connect(m_ui->listWidget, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
-    m_ui->leftPannel->addAction(m_ui->actionEdit_leftPannelMetadata);
+    m_ui->listWidget->addAction(m_ui->actionEdit_leftPannelMetadata);
 
     m_selectedId = 0;
     m_typeElement =  Macaw::isPeople;
@@ -23,7 +23,7 @@ LeftPannel::~LeftPannel()
 
 void LeftPannel::fill()
 {
-    m_ui->leftPannel->clear();
+    m_ui->listWidget->clear();
     m_elementIdsList.clear();
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
@@ -33,7 +33,7 @@ void LeftPannel::fill()
     if(m_typeElement != Macaw::isPlaylist) {
         QListWidgetItem *l_item = new QListWidgetItem(" All");
         l_item->setData(Macaw::ObjectId, 0);
-        m_ui->leftPannel->addItem(l_item);
+        m_ui->listWidget->addItem(l_item);
 
         if (m_selectedId == 0) {
             l_item->setSelected(true);
@@ -85,7 +85,7 @@ void LeftPannel::fill()
                 QListWidgetItem *l_item = new QListWidgetItem(" Unknown");
                 l_item->setData(Macaw::ObjectId, -1);
                 l_item->setData(Macaw::ObjectType, Macaw::isPeople);
-                m_ui->leftPannel->addItem(l_item);
+                m_ui->listWidget->addItem(l_item);
                 if (m_selectedId == -1) {
                     l_item->setSelected(true);
                 }
@@ -102,7 +102,7 @@ void LeftPannel::fill()
                     l_item->setSelected(true);
                 }
 
-                m_ui->leftPannel->addItem(l_item);
+                m_ui->listWidget->addItem(l_item);
             }
         }
     } else if(m_typeElement == Macaw::isTag) {
@@ -111,7 +111,7 @@ void LeftPannel::fill()
                 QListWidgetItem *l_item = new QListWidgetItem(" No Tag");
                 l_item->setData(Macaw::ObjectId, -1);
                 l_item->setData(Macaw::ObjectType, Macaw::isTag);
-                m_ui->leftPannel->addItem(l_item);
+                m_ui->listWidget->addItem(l_item);
                 if (m_selectedId == -1)
                 {
                     l_item->setSelected(true);
@@ -128,14 +128,14 @@ void LeftPannel::fill()
                     l_item->setSelected(true);
                 }
 
-                m_ui->leftPannel->addItem(l_item);
+                m_ui->listWidget->addItem(l_item);
             }
         }
     }
-    if(m_ui->leftPannel->selectedItems().isEmpty()) {
-        m_ui->leftPannel->item(0)->setSelected(true);
+    if(m_ui->listWidget->selectedItems().isEmpty()) {
+        m_ui->listWidget->item(0)->setSelected(true);
     }
-    m_ui->leftPannel->sortItems();
+    m_ui->listWidget->sortItems();
 }
 
 /**
@@ -185,11 +185,11 @@ void LeftPannel::on_customContextMenuRequested(const QPoint &point)
 
     // One item selected which id is not 0 or -1
     // (not to be "All" or "Unknown")
-    if(!m_ui->leftPannel->selectedItems().isEmpty()
-        && m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId) > 0)
+    if(!m_ui->listWidget->selectedItems().isEmpty()
+        && m_ui->listWidget->selectedItems().at(0)->data(Macaw::ObjectId) > 0)
     {
         l_menu->addAction(m_ui->actionEdit_leftPannelMetadata);
-        l_menu->exec(m_ui->leftPannel->mapToGlobal(point));
+        l_menu->exec(m_ui->listWidget->mapToGlobal(point));
     }
 }
 
@@ -206,12 +206,12 @@ void LeftPannel::on_actionEdit_leftPannelMetadata_triggered()
 
     // The left pannel must have one item selected which id is not -1 or 0
     // (not to be "All" or "Unknown")
-    if(!m_ui->leftPannel->selectedItems().isEmpty()) {
-        int l_id = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
+    if(!m_ui->listWidget->selectedItems().isEmpty()) {
+        int l_id = m_ui->listWidget->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
         // It's editable only if id is not 0 or -1
         if(l_id > 0) {
             Macaw::DEBUG("Element is editable");
-            int l_typeElement = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectType).toInt();
+            int l_typeElement = m_ui->listWidget->selectedItems().at(0)->data(Macaw::ObjectType).toInt();
             if (l_typeElement == Macaw::isPeople) {
                 PeopleDialog *l_movieDialog = new PeopleDialog(l_id);
                 connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
@@ -226,14 +226,14 @@ void LeftPannel::on_actionEdit_leftPannelMetadata_triggered()
 }
 
 /**
- * @brief Slot triggered when an element of the leftPannel is selected
- * Fill the Main Pannel according to the selected element
+ * @brief Slot triggered when an element of the listWidget is selected
+ * Request to fill the Main Pannel according to the selected element
  */
-void LeftPannel::on_leftPannel_itemSelectionChanged()
+void LeftPannel::on_listWidget_itemSelectionChanged()
 {
-    Macaw::DEBUG("[LeftPannel] item selected on leftPannel");
-    if (m_ui->leftPannel->selectedItems().count() > 0) {
-        QListWidgetItem *l_item = m_ui->leftPannel->selectedItems().first();
+    Macaw::DEBUG("[LeftPannel] item selected on listWidget");
+    if (m_ui->listWidget->selectedItems().count() > 0) {
+        QListWidgetItem *l_item = m_ui->listWidget->selectedItems().first();
 
         m_selectedId = l_item->data(Macaw::ObjectId).toInt();
         emit updateMainPannel();

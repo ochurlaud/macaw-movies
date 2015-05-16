@@ -9,6 +9,7 @@ list(APPEND SRCS MacawDebug.cpp)
 list(APPEND SRCS MainWindow.cpp)
 list(APPEND SRCS MovieDialog.cpp)
 list(APPEND SRCS PeopleDialog.cpp)
+list(APPEND SRCS ServicesManager.cpp)
 list(APPEND SRCS SettingsWindow.cpp)
 list(APPEND SRCS main.cpp)
 list(APPEND SRCS Entities/Movie.cpp)
@@ -18,6 +19,9 @@ list(APPEND SRCS Entities/Tag.cpp)
 list(APPEND SRCS FetchMetadata/FetchMetadata.cpp)
 list(APPEND SRCS FetchMetadata/FetchMetadataDialog.cpp)
 list(APPEND SRCS FetchMetadata/FetchMetadataQuery.cpp)
+list(APPEND SRCS MainWindowWidgets/LeftPannel.cpp)
+list(APPEND SRCS MainWindowWidgets/MainPannel.cpp)
+list(APPEND SRCS MainWindowWidgets/MoviesPannel.cpp)
 
 
 # Forms
@@ -26,7 +30,8 @@ list(APPEND FORMS MovieDialog.ui)
 list(APPEND FORMS PeopleDialog.ui)
 list(APPEND FORMS SettingsWindow.ui)
 list(APPEND FORMS FetchMetadata/FetchMetadataDialog.ui)
-
+list(APPEND FORMS MainWindowWidgets/LeftPannel.ui)
+list(APPEND FORMS MainWindowWidgets/MoviesPannel.ui)
 
 
 # Resources

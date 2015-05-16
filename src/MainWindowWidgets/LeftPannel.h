@@ -5,7 +5,7 @@
 #include "Application.h"
 
 namespace Ui {
-class LeftPannel;
+    class LeftPannel;
 }
 
 class LeftPannel : public QWidget
@@ -28,7 +28,7 @@ private slots:
     void on_leftPannelBox_activated(int type);
     void on_customContextMenuRequested(const QPoint &point);
     void on_actionEdit_leftPannelMetadata_triggered();
-    void on_leftPannel_itemSelectionChanged();
+    void on_listWidget_itemSelectionChanged();
 
 private:
     Ui::LeftPannel *m_ui;
