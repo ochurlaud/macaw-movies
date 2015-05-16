@@ -40,13 +40,13 @@ int main(int argv, char **args)
     l_parser.addVersionOption();
 
     // --authors option
-    const QCommandLineOption l_author(QStringList() << QStringLiteral("author"), QApplication::tr("Show author informations"));
+    const QCommandLineOption l_author(QStringList() << QStringLiteral("author"), tr("Show author informations"));
     l_parser.addOption(l_author);
     // --license option
-    const QCommandLineOption l_license(QStringList() << QStringLiteral("license"), QApplication::tr("Show license informations"));
+    const QCommandLineOption l_license(QStringList() << QStringLiteral("license"), tr("Show license informations"));
     l_parser.addOption(l_license);
     // --DEBUG option
-    const QCommandLineOption l_debug(QStringList() << QStringLiteral("debug"), QApplication::tr("Define the debug mode"));
+    const QCommandLineOption l_debug(QStringList() << QStringLiteral("debug"), tr("Define the debug mode"));
     l_parser.addOption(l_debug);
 
     /**
@@ -57,12 +57,12 @@ int main(int argv, char **args)
     if (l_parser.isSet(QStringLiteral("license")))
     {
         //the installer should put our license in the good folder and read it
-        printf("%s\n",qPrintable(QApplication::tr("GPLv3")));
+        printf("%s\n",qPrintable(tr("GPLv3")));
         ::exit(EXIT_SUCCESS);
     }
     if (l_parser.isSet(QStringLiteral("author")))
     {
-        printf("%s\n",qPrintable(QApplication::tr(APP_NAME " was written by")));
+        printf("%s\n",qPrintable(tr(APP_NAME " was written by")));
         printf("%s\n",qPrintable("    Olivier Churlaud <olivier@churlaud.com>"));
         printf("%s\n",qPrintable("    Sébastien Touzé"));
         ::exit(EXIT_SUCCESS);

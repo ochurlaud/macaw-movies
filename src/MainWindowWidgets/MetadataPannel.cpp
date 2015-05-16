@@ -25,9 +25,9 @@ void MetadataPannel::fill(const Movie &movie)
     Macaw::DEBUG_IN("[MetadataPannel] Enters fill()");
     QString l_title = "<html>"+movie.title()+"<br />";
     QString l_originalTitle = "<i>"+movie.originalTitle()+"</i></br /><br />";
-    QString l_directors = "<i>Directed by</i><br />";
-    QString l_producers = "<i>Produced by</i><br />";
-    QString l_actors = "<i>With</i><br />";
+    QString l_directors = tr("<i>Directed by</i><br />");
+    QString l_producers = tr("<i>Produced by</i><br />");
+    QString l_actors = tr("<i>With</i><br />");
 
     foreach (People l_people, movie.peopleList()) {
         switch (l_people.type())

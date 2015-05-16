@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>30</height>
+    <width>412</width>
+    <height>74</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -50,10 +50,13 @@
       <enum>QAbstractScrollArea::AdjustIgnored</enum>
      </property>
      <property name="editTriggers">
-      <set>QAbstractItemView::EditKeyPressed</set>
+      <set>QAbstractItemView::NoEditTriggers</set>
      </property>
      <property name="alternatingRowColors">
       <bool>true</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectRows</enum>

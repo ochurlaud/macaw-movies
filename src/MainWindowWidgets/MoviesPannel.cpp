@@ -16,6 +16,7 @@ MoviesPannel::MoviesPannel(QWidget *parent) :
     connect(m_ui->tableWidget, SIGNAL(customContextMenuRequested(const QPoint &)),
                 this, SLOT(on_customContextMenuRequested(const QPoint &)));
 
+    this->setHeaders();
     m_ui->tableWidget->addAction(m_ui->actionDelete);
     m_ui->tableWidget->addAction(m_ui->actionEdit_mainPannelMetadata);
 }
@@ -29,11 +30,54 @@ MoviesPannel::~MoviesPannel()
 }
 
 /**
+ * @brief Set the headers of the tableWidget
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
+void MoviesPannel::setHeaders()
+{
+    int l_columnCount = 4;
+    m_ui->tableWidget->setColumnCount(l_columnCount);
+    QHeaderView* l_headerView = m_ui->tableWidget->horizontalHeader();
+    l_headerView->setStretchLastSection(true);
+    l_headerView->setSectionsMovable(true);
+    QStringList l_headers;
+    l_headers << "Title" << "Original Title" << "Release Date" << "Path of the file";
+    m_ui->tableWidget->setHorizontalHeaderLabels(l_headers);
+}
+
+/**
+ * @brief Add a new row with a given Movie to the tableWidget
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ *
+ * @param movie
+ */
+void MoviesPannel::addMovieToPannel(const Movie &movie)
+{
+    int l_column = 0;
+    int l_row = m_ui->tableWidget->rowCount();
+    QStringList l_movieData;
+    m_ui->tableWidget->insertRow(l_row);
+
+    l_movieData << movie.title()
+                << movie.originalTitle()
+                << movie.releaseDate().toString("dd MMM yyyy")
+                << movie.filePath();
+    QVector<QTableWidgetItem*> l_itemList(4);
+
+    foreach(QTableWidgetItem *l_item, l_itemList) {
+        l_item = new QTableWidgetItem(l_movieData.at(l_column));
+        l_item->setData(Macaw::ObjectId, movie.id());
+        l_item->setData(Macaw::ObjectType, Macaw::isMovie);
+        m_ui->tableWidget->setItem(l_row, l_column, l_item);
+        l_column++;
+    }
+}
+
+/**
  * @brief Fill the Main Pannel.
  *
  * 1. Clear the pannel
- * 2. Set the number of columns, rows, set the headers
- * 3. Fill each cell of the pannel
+ * 2. Fill each cell of the pannel
  *
  * @author Olivier CHURLAUD <olivier@churlaud.com>
  * @param list of movies to show
@@ -48,44 +92,14 @@ void MoviesPannel::fill(const QList<Movie> &moviesList)
     ServicesManager *servicesManager = ServicesManager::instance();
     DatabaseManager *databaseManager = servicesManager->databaseManager();
 
-    // Create function setHeaders
-    // And call it only the first time or when settings changed
-    int l_columnCount = 4;
-    m_ui->tableWidget->setColumnCount(l_columnCount);
-    QHeaderView* l_headerView = m_ui->tableWidget->horizontalHeader();
-    l_headerView->setStretchLastSection(true);
-    l_headerView->setSectionsMovable(true);
-    QStringList l_headers;
-    l_headers << "Title" << "Original Title" << "Release Date" << "Path of the file";
-    m_ui->tableWidget->setHorizontalHeaderLabels(l_headers);
-    // End function setHeaders
-
-    QList<Movie> l_authorizedMoviesList = servicesManager->authorizedMoviesList();
-    int l_row = 0;
-    foreach (Movie l_movie, l_authorizedMoviesList) {
+    QList<Movie> l_matchingMoviesList = servicesManager->matchingMoviesList();
+    foreach (Movie l_movie, l_matchingMoviesList) {
         if(moviesList.contains(l_movie)) {
             if( (servicesManager->toWatchState()
                  && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
                  ) || !servicesManager->toWatchState()
                ) {
-               //Create function `ADD MOVIE TO PANNEL`
-                int l_column = 0;
-                QStringList l_movieData;
-                m_ui->tableWidget->insertRow(m_ui->tableWidget->rowCount());
-
-                l_movieData << l_movie.title()
-                            << l_movie.originalTitle()
-                            << l_movie.releaseDate().toString("dd MMM yyyy")
-                            << l_movie.filePath();
-                QVector<QTableWidgetItem*> l_itemList(4);
-                foreach(QTableWidgetItem *l_item, l_itemList) {
-                    l_item = new QTableWidgetItem(l_movieData.at(l_column));
-                    l_item->setData(Macaw::ObjectId, l_movie.id());
-                    l_item->setData(Macaw::ObjectType, Macaw::isMovie);
-                    m_ui->tableWidget->setItem(l_row, l_column, l_item);
-                    l_column++;
-                }
-                l_row++;
+                this->addMovieToPannel(l_movie);
             }
         }
     }

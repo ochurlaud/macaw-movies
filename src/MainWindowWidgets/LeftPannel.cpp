@@ -41,7 +41,7 @@ void LeftPannel::fill()
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
     ServicesManager *servicesManager = ServicesManager::instance();
-    QList<Movie> l_authorizedMoviesList = servicesManager->authorizedMoviesList();
+    QList<Movie> l_matchingMoviesList = servicesManager->matchingMoviesList();
 
     if(m_typeElement != Macaw::isPlaylist) {
         QListWidgetItem *l_item = new QListWidgetItem(" All");
@@ -55,7 +55,7 @@ void LeftPannel::fill()
     //Create function for the following (code is repeated)
     // ??? Templates ???
     if (m_typeElement == Macaw::isPeople) {
-        foreach(Movie l_movie, l_authorizedMoviesList) {
+        foreach(Movie l_movie, l_matchingMoviesList) {
             if( (servicesManager->toWatchState()
                  && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
                  ) || !servicesManager->toWatchState()
@@ -73,7 +73,7 @@ void LeftPannel::fill()
             }
         }
     } else if(m_typeElement == Macaw::isTag) {
-        foreach(Movie l_movie, l_authorizedMoviesList) {
+        foreach(Movie l_movie, l_matchingMoviesList) {
             if( (servicesManager->toWatchState()
                  && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
                  ) || !servicesManager->toWatchState()

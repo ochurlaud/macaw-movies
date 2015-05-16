@@ -28,9 +28,10 @@ private slots:
     void on_tableWidget_itemSelectionChanged();
     void addPlaylistMenu_triggered(QAction* action);
 
-
 private:
     Ui::MoviesPannel *m_ui;
+    void setHeaders();
+    void addMovieToPannel(const Movie &movie);
     void removeMovieFromPlaylist(const QList<Movie> &movieList, Playlist &playlist);
     bool permanentlyDeleteFile(QFile *movieFileToDelete);
     bool moveFileToTrash(QList<Movie> &movieList);

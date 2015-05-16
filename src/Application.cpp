@@ -71,8 +71,8 @@ void Application::askForOrphanTagDeletion(Tag &orphanTag)
 
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Question);
-    msgBox.setText("The tag <b>"+ orphanTag.name() +"</b> is not used in any movie now. ");
-    msgBox.setInformativeText("Do you want to delete this tag?");
+    msgBox.setText(tr("The tag <b>"+ orphanTag.name() +"</b> is not used in any movie now. "));
+    msgBox.setInformativeText(tr("Do you want to delete this tag?"));
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
 
@@ -95,8 +95,8 @@ void Application::askForOrphanPeopleDeletion(People &orphanPeople)
 
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Question);
-    msgBox.setText("The person <b>" +l_name+ "</b> is not linked to any movie now.");
-    msgBox.setInformativeText("Do you want to delete it?");
+    msgBox.setText(tr("The person <b>" +l_name+ "</b> is not linked to any movie now."));
+    msgBox.setInformativeText(tr("Do you want to delete it?"));
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
 

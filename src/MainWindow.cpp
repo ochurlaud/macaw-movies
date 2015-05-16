@@ -171,7 +171,7 @@ void MainWindow::updatePannels()
     QString l_text = m_ui->searchEdit->text();
 
     ServicesManager *servicesManager = ServicesManager::instance();
-    servicesManager->setAuthorizedMoviesList(l_text);
+    servicesManager->setMatchingMoviesList(l_text);
 
     m_leftPannel->fill();
     QList<Movie> l_moviesList = moviesToDisplay(m_leftPannel->selectedId());
@@ -296,19 +296,19 @@ void MainWindow::readSettings()
  */
 void MainWindow::on_actionAbout_triggered()
 {
-    QMessageBox::about(this, "About " APP_NAME,
-                       "<h1>" APP_NAME
-                       " <span style=\"font-size:large;\">v" APP_VERSION "</span></h1><br />"
-                       "<em>Copyright (C) 2014 Macaw-Movies<br />"
-                       "(Olivier CHURLAUD, Sébastien TOUZÉ)</em>"
-                       "<br /><br />"
-                       "Compiled with Qt " QT_VERSION_STR ", uses the API of <a href='http://www.themoviedb.org/'>TMDB</a>"
-                       "<br /><br />"
-                       "Macaw-Movies is distributed in the hope that it will be useful, "
-                       "but WITHOUT ANY WARRANTY; without even the implied warranty of "
-                       "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br />"
-                       "See the GNU General Public License for more details."
-                       "<br /><hr /><br />"
-                       "This application is still under active developpement, it may contain bugs. <br />"
-                       "If you find one please create an issue on <a href='https://github.com/macaw-movies/macaw-movies/issues'>our GitHub space</a>");
+    QMessageBox::about(this, tr("About " APP_NAME),
+                       tr( "<h1>" APP_NAME
+                           " <span style=\"font-size:large;\">v" APP_VERSION "</span></h1><br />"
+                           "<em>Copyright (C) 2014 Macaw-Movies<br />"
+                           "(Olivier CHURLAUD, Sébastien TOUZÉ)</em>"
+                           "<br /><br />"
+                           "Compiled with Qt " QT_VERSION_STR ", uses the API of <a href='http://www.themoviedb.org/'>TMDB</a>"
+                           "<br /><br />"
+                           "Macaw-Movies is distributed in the hope that it will be useful, "
+                           "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+                           "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br />"
+                           "See the GNU General Public License for more details."
+                           "<br /><hr /><br />"
+                           "This application is still under active developpement, it may contain bugs. <br />"
+                           "If you find one please create an issue on <a href='https://github.com/macaw-movies/macaw-movies/issues'>our GitHub space</a>"));
 }

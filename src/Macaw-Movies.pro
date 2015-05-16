@@ -93,6 +93,10 @@ FORMS    += \
     MainWindowWidgets/MoviesPannel.ui \
     MainWindowWidgets/MetadataPannel.ui
 
+TRANSLATIONS += \
+    ../translate/macaw_fr.ts \
+    ../translate/macaw_de.ts
+
 OTHER_FILES += \
     ../.gitignore \
     ../COPYING \

@@ -118,9 +118,9 @@ void SettingsWindow::on_removeButton_clicked()
 void SettingsWindow::addToKnownPathsList(QString path)
 {
     if (!QDir(path).exists() || path.isEmpty()) {
-        m_ui->folderPathMessage->setText("Choose an existant path");
+        m_ui->folderPathMessage->setText(tr("Choose an existant path"));
     } else if (m_ui->knownPathsList->findItems(path,Qt::MatchExactly).count()) {
-        m_ui->folderPathMessage->setText("This path is already known");
+        m_ui->folderPathMessage->setText(tr("This path is already known"));
     } else {
         m_ui->knownPathsList->addItem(path);
     }

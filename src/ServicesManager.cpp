@@ -5,7 +5,7 @@ Q_GLOBAL_STATIC(ServicesManager, servicesManager)
 ServicesManager::ServicesManager(QObject *parent) : QObject(parent)
 {
     m_databaseManager = new DatabaseManager;
-    this->setAuthorizedMoviesList("");
+    this->setMatchingMoviesList("");
 }
 
 ServicesManager *ServicesManager::instance()
@@ -13,9 +13,9 @@ ServicesManager *ServicesManager::instance()
     return servicesManager;
 }
 
-void ServicesManager::setAuthorizedMoviesList(QString pattern)
+void ServicesManager::setMatchingMoviesList(QString pattern)
 {
-    m_authorizedMoviesList = m_databaseManager->getMoviesByAny(pattern);
+    m_matchingMoviesList = m_databaseManager->getMoviesByAny(pattern);
 }
 
 void ServicesManager::pannelsUpdate()
