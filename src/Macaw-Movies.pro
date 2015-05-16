@@ -37,56 +37,56 @@ ICON = img/logov0_256.ico
 RC_ICONS = img/logov0_256.ico
 
 SOURCES += main.cpp \
-    DatabaseManager.cpp \
     Application.cpp \
-    Entities/Movie.cpp \
-    Entities/People.cpp \
-    Entities/Tag.cpp \
-    MainWindow.cpp \
-    PeopleDialog.cpp \
-    MovieDialog.cpp \
-    Entities/Playlist.cpp \
+    DatabaseManager.cpp \
     DatabaseManager_getters.cpp \
     DatabaseManager_insert.cpp \
     DatabaseManager_update.cpp \
     DatabaseManager_delete.cpp \
-    SettingsWindow.cpp \
+    MacawDebug.cpp \    
+    MainWindow.cpp \    
+    ServicesManager.cpp \
+    Dialogs/PeopleDialog.cpp \
+    Dialogs/MovieDialog.cpp \
+    Dialogs/SettingsWindow.cpp \
+    Entities/Movie.cpp \
+    Entities/People.cpp \
+    Entities/Playlist.cpp \
+    Entities/Tag.cpp \
     FetchMetadata/FetchMetadata.cpp \
     FetchMetadata/FetchMetadataDialog.cpp \
     FetchMetadata/FetchMetadataQuery.cpp \
-    MacawDebug.cpp \
     MainWindowWidgets/LeftPannel.cpp \
-    ServicesManager.cpp \
     MainWindowWidgets/MoviesPannel.cpp \
     MainWindowWidgets/MainPannel.cpp
 
 HEADERS  += \
-    DatabaseManager.h \
+    include_var.h \
     Application.h \
+    DatabaseManager.h \
+    MacawDebug.h \
+    MainWindow.h \
+    ServicesManager.h \
+    Dialogs/MovieDialog.h \
+    Dialogs/PeopleDialog.h \
+    Dialogs/SettingsWindow.h \
     Entities/Movie.h \
     Entities/People.h \
-    Entities/Tag.h \
-    MainWindow.h \
-    MovieDialog.h \
-    PeopleDialog.h \
     Entities/Playlist.h \
-    include_var.h \
-    SettingsWindow.h \
+    Entities/Tag.h \
     FetchMetadata/FetchMetadataDialog.h \
     FetchMetadata/FetchMetadata.h \
     FetchMetadata/FetchMetadataQuery.h \
-    MacawDebug.h \
     MainWindowWidgets/LeftPannel.h \
-    ServicesManager.h \
     MainWindowWidgets/MoviesPannel.h \
     MainWindowWidgets/MainPannel.h
 
 FORMS    += \
     MainWindow.ui \
-    MovieDialog.ui \
-    PeopleDialog.ui \
+    Dialogs/MovieDialog.ui \
+    Dialogs/PeopleDialog.ui \
+    Dialogs/SettingsWindow.ui \
     FetchMetadata/FetchMetadataDialog.ui \
-    SettingsWindow.ui \
     MainWindowWidgets/LeftPannel.ui \
     MainWindowWidgets/MoviesPannel.ui
 

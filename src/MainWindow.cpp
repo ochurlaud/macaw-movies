@@ -157,7 +157,6 @@ void MainWindow::updateMainPannel()
 
 /**
  * @brief Filter the pannels to follow the requirements of the search field, playlists...
- * Black magic. To be simplified
  */
 void MainWindow::updatePannels()
 {
