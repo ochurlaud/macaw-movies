@@ -43,10 +43,9 @@ Application::Application(int &argc, char **argv) :
             this, SLOT(askForOrphanPeopleDeletion(People&)));
     connect(m_mainWindow, SIGNAL(startFetchingMetadata(const QList<Movie>&)),
             this, SLOT(on_startFetchingMetadata(const QList<Movie>&)));
-    connect(this, SIGNAL(updatedMainWindow()),
+    connect(this, SIGNAL(updateMainWindow()),
             m_mainWindow, SLOT(selfUpdate()));
 
-    qApp->property("filesPath");
     m_mainWindow->show();
 
     Macaw::DEBUG_OUT("[Application] Application initialized");
@@ -136,7 +135,7 @@ void Application::on_fethMetadataJobDone()
  */
 void Application::on_fethMetadataUpdatedMovie()
 {
-    emit updatedMainWindow();
+    emit updateMainWindow();
 }
 
 /**

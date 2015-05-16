@@ -26,6 +26,7 @@
 
 #include "DatabaseManager.h"
 #include "MainWindow.h"
+#include "ServicesManager.h"
 
 #include "Entities/Movie.h"
 #include "FetchMetadata/FetchMetadata.h"
@@ -66,7 +67,7 @@ public:
     QString tmdbkey() { return m_tmdbkey; }
 
 signals:
-    void updatedMainWindow();
+    void updateMainWindow();
 
 private slots:
     void askForOrphanTagDeletion(Tag &orphanTag);

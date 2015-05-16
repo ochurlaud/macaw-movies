@@ -54,7 +54,9 @@ SOURCES += main.cpp \
     FetchMetadata/FetchMetadata.cpp \
     FetchMetadata/FetchMetadataDialog.cpp \
     FetchMetadata/FetchMetadataQuery.cpp \
-    MacawDebug.cpp
+    MacawDebug.cpp \
+    MainWindowWidgets/LeftPannel.cpp \
+    ServicesManager.cpp
 
 HEADERS  += \
     DatabaseManager.h \
@@ -71,14 +73,17 @@ HEADERS  += \
     FetchMetadata/FetchMetadataDialog.h \
     FetchMetadata/FetchMetadata.h \
     FetchMetadata/FetchMetadataQuery.h \
-    MacawDebug.h
+    MacawDebug.h \
+    MainWindowWidgets/LeftPannel.h \
+    ServicesManager.h
 
 FORMS    += \
     MainWindow.ui \
     MovieDialog.ui \
     PeopleDialog.ui \
     FetchMetadata/FetchMetadataDialog.ui \
-    SettingsWindow.ui
+    SettingsWindow.ui \
+    MainWindowWidgets/LeftPannel.ui
 
 OTHER_FILES += \
     ../.gitignore \

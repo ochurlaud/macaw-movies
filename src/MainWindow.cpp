@@ -35,21 +35,19 @@ MainWindow::MainWindow(QWidget *parent) :
     Macaw::DEBUG_IN("[MainWindow] Constructor called");
 
     m_ui->setupUi(this);
-    m_ui->leftPannelWidget->setContentsMargins(0,1,1,0);
+    m_leftPannel = new LeftPannel;
+
+    connect(m_leftPannel, SIGNAL(updateMainPannel()),
+            this, SLOT(updateMainPannel()));
+    m_ui->leftPannelSplitter->addWidget(m_leftPannel);
     this->readSettings();
 
     this->setWindowTitle(APP_NAME);
     connect(m_ui->mainPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(on_customContextMenuRequested(const QPoint &)));
-    connect(m_ui->leftPannel, SIGNAL(customContextMenuRequested(const QPoint &)),
-            this, SLOT(on_customContextMenuRequested(const QPoint &)));
+
     m_ui->mainPannel->addAction(m_ui->actionDelete);
     m_ui->mainPannel->addAction(m_ui->actionEdit_mainPannelMetadata);
-    m_ui->leftPannel->addAction(m_ui->actionEdit_leftPannelMetadata);
-
-    m_leftPannelSelectedId = 0;
-    m_typeElement =  Macaw::isPeople;
-    m_typePeople = People::Director;
 
     this->updatePannels();
     Macaw::DEBUG_OUT("[MainWindow] Construction done");
@@ -78,125 +76,6 @@ void MainWindow::on_actionEdit_Settings_triggered()
 }
 
 /**
- * @brief Fill the left Pannel.
- */
-void MainWindow::fillLeftPannel()
-{
-    Macaw::DEBUG_IN("[MainWindow] Enters fillLeftPannel()");
-    m_ui->leftPannel->clear();
-    m_leftElementsIdList.clear();
-    DatabaseManager *databaseManager = DatabaseManager::instance();
-
-    if(m_typeElement != Macaw::isPlaylist) {
-        QListWidgetItem *l_item = new QListWidgetItem(" All");
-        l_item->setData(Macaw::ObjectId, 0);
-        m_ui->leftPannel->addItem(l_item);
-
-        if (m_leftPannelSelectedId == 0) {
-            l_item->setSelected(true);
-        }
-    }
-//Create function for the following (code is repeated)
-   // ??? Templates ???
-    if (m_typeElement == Macaw::isPeople) {
-        foreach(Movie l_movie, m_authorizedMoviesList) {
-            if( (m_ui->toWatchButton->isChecked()
-                 && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
-                 ) || !m_ui->toWatchButton->isChecked()
-               ) {
-                if(l_movie.peopleList().isEmpty()
-                   && !m_leftElementsIdList.contains(-1)
-                  ) {
-                    m_leftElementsIdList.append(-1);
-                }
-                foreach(People l_people, l_movie.peopleList(m_typePeople)) {
-                    if(!m_leftElementsIdList.contains(l_people.id())) {
-                        m_leftElementsIdList.append(l_people.id());
-                    }
-                }
-            }
-        }
-    } else if(m_typeElement == Macaw::isTag) {
-        foreach(Movie l_movie, m_authorizedMoviesList) {
-            if( (m_ui->toWatchButton->isChecked()
-                 && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
-                 ) || !m_ui->toWatchButton->isChecked()
-               ) {
-                if(l_movie.tagList().isEmpty()
-                   && !m_leftElementsIdList.contains(-1)
-                  ) {
-                    m_leftElementsIdList.append(-1);
-                }
-                foreach(Tag l_tag, l_movie.tagList()) {
-                    if(!m_leftElementsIdList.contains(l_tag.id())) {
-                        m_leftElementsIdList.append(l_tag.id());
-                    }
-                }
-            }
-        }
-    }
-
-    if (m_typeElement == Macaw::isPeople) {
-        foreach(int l_objectId, m_leftElementsIdList) {
-            if(l_objectId == -1) {
-                QListWidgetItem *l_item = new QListWidgetItem(" Unknown");
-                l_item->setData(Macaw::ObjectId, -1);
-                l_item->setData(Macaw::ObjectType, Macaw::isPeople);
-                m_ui->leftPannel->addItem(l_item);
-                if (m_leftPannelSelectedId == -1) {
-                    l_item->setSelected(true);
-                }
-            } else {
-                People l_people = databaseManager->getOnePeopleById(l_objectId);
-                QString l_name(l_people.name());
-
-                QListWidgetItem *l_item = new QListWidgetItem(l_name);
-                l_item->setData(Macaw::ObjectId, l_people.id());
-                l_item->setData(Macaw::ObjectType, Macaw::isPeople);
-                l_item->setData(Macaw::PeopleType, m_typePeople);
-                if (m_leftPannelSelectedId == l_people.id())
-                {
-                    l_item->setSelected(true);
-                }
-
-                m_ui->leftPannel->addItem(l_item);
-            }
-        }
-    } else if(m_typeElement == Macaw::isTag) {
-        foreach(int l_objectId, m_leftElementsIdList) {
-            if(l_objectId == -1) {
-                QListWidgetItem *l_item = new QListWidgetItem(" No Tag");
-                l_item->setData(Macaw::ObjectId, -1);
-                l_item->setData(Macaw::ObjectType, Macaw::isTag);
-                m_ui->leftPannel->addItem(l_item);
-                if (m_leftPannelSelectedId == -1)
-                {
-                    l_item->setSelected(true);
-                }
-            } else {
-                Tag l_tag = databaseManager->getOneTagById(l_objectId);
-                QString l_name(l_tag.name());
-
-                QListWidgetItem *l_item = new QListWidgetItem(l_name);
-                l_item->setData(Macaw::ObjectId, l_tag.id());
-                l_item->setData(Macaw::ObjectType, Macaw::isTag);
-                if (m_leftPannelSelectedId == l_tag.id())
-                {
-                    l_item->setSelected(true);
-                }
-
-                m_ui->leftPannel->addItem(l_item);
-            }
-        }
-    }
-    if(m_ui->leftPannel->selectedItems().isEmpty()) {
-        m_ui->leftPannel->item(0)->setSelected(true);
-    }
-    m_ui->leftPannel->sortItems();
-    Macaw::DEBUG_OUT("[MainWindow] Exits fillLeftPannel()");
-}
-
-/**
  * @brief Fill the Main Pannel.
  *
  * 1. Clear the pannel
@@ -211,7 +90,7 @@ void MainWindow::fillMainPannel()
     m_ui->mainPannel->setRowCount(0);
     m_displayedMoviesList.clear();
     DatabaseManager *databaseManager = DatabaseManager::instance();
-
+    ServicesManager *servicesManager = ServicesManager::instance();
     // Create function setHeaders
     // And call it only the first time or when settings changed
     int l_columnCount = 4;
@@ -224,13 +103,14 @@ void MainWindow::fillMainPannel()
     m_ui->mainPannel->setHorizontalHeaderLabels(l_headers);
     // End function setHeaders
 
-    QList<Movie> l_moviesList = moviesToDisplay(m_leftPannelSelectedId);
+    QList<Movie> l_moviesList = moviesToDisplay(m_leftPannel->selectedId());
+    QList<Movie> l_authorizedMoviesList = servicesManager->authorizedMoviesList();
     int l_row = 0;
-    foreach (Movie l_movie, m_authorizedMoviesList) {
+    foreach (Movie l_movie, l_authorizedMoviesList) {
         if(l_moviesList.contains(l_movie)) {
-            if( (m_ui->toWatchButton->isChecked()
+            if( (servicesManager->toWatchState()
                  && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
-                 ) || !m_ui->toWatchButton->isChecked()
+                 ) || !servicesManager->toWatchState()
                ) {
                //Create function `ADD MOVIE TO PANNEL`
                 int l_column = 0;
@@ -259,41 +139,15 @@ void MainWindow::fillMainPannel()
 }
 
 /**
- * @brief Slot triggered when an option from leftPannelBox is selected.
- * Refill all the pannels.
- *
- * @param type of Element (0 = tag, else it's a people, of type `type`)
- */
-void MainWindow::on_leftPannelBox_activated(int type)
-{
-    Macaw::DEBUG_IN("[MainWindow] Enters on_leftPannelBox_activated()");
-
-    // 0 = Tags
-    // People::typePeople
-    int l_peopleType = type;
-    if (type==0) {
-        m_typeElement = Macaw::isTag;
-    } else {
-        m_typeElement = Macaw::isPeople;
-    }
-    m_typePeople = l_peopleType;
-
-    // We change of Macaw::typeElement,
-    // so we reinitialise the selection in the leftPannel
-    m_leftPannelSelectedId = 0;
-
-    this->updatePannels();
-
-    Macaw::DEBUG_OUT("[MainWindow] Exits on_leftPannelBox_activated()");
-}
-
-/**
  * @brief Slot triggered when the toWatchButton is clicked.
  * Only the movies from the playlist 1 ("To Watch") are displayed.
  */
 void MainWindow::on_toWatchButton_clicked()
 {
     Macaw::DEBUG("[MainWindow] toWatchButton clicked");
+
+    ServicesManager *servicesManager = ServicesManager::instance();
+    servicesManager->setToWatchState(!servicesManager->toWatchState());
 
     this->updatePannels();
 }
@@ -303,11 +157,9 @@ void MainWindow::on_toWatchButton_clicked()
  * @brief Slot triggered when the context menu is requested.
  *
  * 1. Create the menu.
- * 2. Check which pannel has focus.
- *      -# if leftPannel, check that an editable element is selected
- *          then add actions on the menu and display it.
- *      -# if mainPannel, check that an editable element is selected
- *          then add actions on the menu and display it.
+ * 2. Check that an editable element is selected
+ * 3. Add actions on the menu
+ * 4. Display it
  *
  * @param point: coordinates of the cursor when requested
  */
@@ -316,17 +168,7 @@ void MainWindow::on_customContextMenuRequested(const QPoint &point)
     Macaw::DEBUG("[MainWindow] customContextMenuRequested()");
     QMenu *l_menu = new QMenu(this);
 
-    // The left pannel must have focus, one item selected which id is not 0 or -1
-    // (not to be "All" or "Unknown")
-    if(m_ui->leftPannel->hasFocus()
-            && !m_ui->leftPannel->selectedItems().isEmpty()
-            && m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId) > 0)
-    {
-        l_menu->addAction(m_ui->actionEdit_leftPannelMetadata);
-        l_menu->exec(m_ui->leftPannel->mapToGlobal(point));
-    }
-    else if (m_ui->mainPannel->hasFocus()
-               && !m_ui->mainPannel->selectedItems().isEmpty())
+    if (m_ui->mainPannel->selectedItems().isEmpty())
     {
         if(m_ui->toWatchButton->isChecked()) {
             Macaw::DEBUG("[MainWindow] In ToWatch detected");
@@ -362,38 +204,6 @@ void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
         MovieDialog *l_movieDialog = new MovieDialog(l_id);
         connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
         l_movieDialog->show();
-    }
-}
-
-/**
- * @brief Slot triggered when the edition of the metadata of an element from the leftPannel is asked.
- *
- * 1. Check if editable
- * 2. Check the type of element selected
- * 3. Create and show a PeopleDialog (or a TagDialog or a ...) based on the id of this element
- */
-void MainWindow::on_actionEdit_leftPannelMetadata_triggered()
-{
-    Macaw::DEBUG("[MainWindow] actionEdit_leftPannelMetadata_triggered()");
-
-    // The left pannel must have one item selected which id is not -1 or 0
-    // (not to be "All" or "Unknown")
-    if(!m_ui->leftPannel->selectedItems().isEmpty()) {
-        int l_id = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
-        // It's editable only if id is not 0 or -1
-        if(l_id > 0) {
-            Macaw::DEBUG("Element is editable");
-            int l_typeElement = m_ui->leftPannel->selectedItems().at(0)->data(Macaw::ObjectType).toInt();
-            if (l_typeElement == Macaw::isPeople) {
-                PeopleDialog *l_movieDialog = new PeopleDialog(l_id);
-                connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
-                l_movieDialog->show();
-            } else if (l_typeElement == Macaw::isTag) {
-                qDebug() << "Tag !";
-            } else if (l_typeElement == Macaw::isPlaylist) {
-                qDebug() << "Playlist !";
-            }
-        }
     }
 }
 
@@ -853,21 +663,6 @@ void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
 }
 
 /**
- * @brief Slot triggered when an element of the leftPannel is selected
- * Fill the Main Pannel according to the selected element
- */
-void MainWindow::on_leftPannel_itemSelectionChanged()
-{
-    Macaw::DEBUG("[MainWindow] item selected on leftPannel");
-    if (m_ui->leftPannel->selectedItems().count() > 0) {
-        QListWidgetItem *l_item = m_ui->leftPannel->selectedItems().first();
-
-        m_leftPannelSelectedId = l_item->data(Macaw::ObjectId).toInt();
-        this->fillMainPannel();
-    }
-}
-
-/**
  * @brief Slot triggered when a movie of the mainPannel is selected
  * Call `fillMetadataPannel` to fill the pannel with the selected Movie data
  */
@@ -896,28 +691,27 @@ void MainWindow::on_mainPannel_itemSelectionChanged()
 QList<Movie> MainWindow::moviesToDisplay(int id)
 {
     Macaw::DEBUG("[MainWindow] prepareMoviesToDisplay()");
-
     DatabaseManager *databaseManager = DatabaseManager::instance();
 
-    m_leftPannelSelectedId = id;
-    if(m_leftPannelSelectedId == 0) {
+    m_leftPannel->setSelectedId(id);
+    if(m_leftPannel->selectedId() == 0) {
 
         return databaseManager->getAllMovies();
-    } else if(m_typeElement == Macaw::isPeople) {
-        if (m_leftPannelSelectedId == -1) {
+    } else if(m_leftPannel->typeElement() == Macaw::isPeople) {
+        if (m_leftPannel->selectedId() == -1) {
 
-            return databaseManager->getMoviesWithoutPeople(m_typePeople);
+            return databaseManager->getMoviesWithoutPeople(m_leftPannel->typePeople());
         } else {
 
-            return databaseManager->getMoviesByPeople(m_leftPannelSelectedId, m_typePeople);
+            return databaseManager->getMoviesByPeople(m_leftPannel->selectedId(), m_leftPannel->typePeople());
         }
-    } else if (m_typeElement == Macaw::isTag) {
-        if (m_leftPannelSelectedId == -1) {
+    } else if (m_leftPannel->typeElement() == Macaw::isTag) {
+        if (m_leftPannel->selectedId() == -1) {
 
             return databaseManager->getMoviesWithoutTag();
         } else {
 
-            return databaseManager->getMoviesByTag(m_leftPannelSelectedId);
+            return databaseManager->getMoviesByTag(m_leftPannel->selectedId());
         }
     }
     QList<Movie> l_emptyList;
@@ -947,6 +741,12 @@ void MainWindow::selfUpdate()
     this->updatePannels();
 }
 
+void MainWindow::updateMainPannel()
+{
+    Macaw::DEBUG("[MainWindow] updateMainWindow triggered");
+    this->fillMainPannel();
+}
+
 /**
  * @brief Filter the pannels to follow the requirements of the search field, playlists...
  * Black magic. To be simplified
@@ -955,10 +755,12 @@ void MainWindow::updatePannels()
 {
     Macaw::DEBUG_IN("[MainWindow] Enters updatePannels()");
 
-    DatabaseManager *databaseManager = DatabaseManager::instance();
     QString l_text = m_ui->searchEdit->text();
-    m_authorizedMoviesList = databaseManager->getMoviesByAny(l_text);
-    fillLeftPannel();
+
+    ServicesManager *servicesManager = ServicesManager::instance();
+    servicesManager->setAuthorizedMoviesList(l_text);
+
+    m_leftPannel->fill();
     fillMainPannel();
     Macaw::DEBUG_OUT("[MainWindow] Exits updatePannels()");
 }

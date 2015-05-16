@@ -31,8 +31,9 @@
 #include "Entities/Movie.h"
 #include "Entities/Playlist.h"
 #include "Entities/Tag.h"
-#include "FetchMetadata/FetchMetadata.h"
+#include "MainWindowWidgets/LeftPannel.h"
 
+class LeftPannel;
 namespace Ui {
 class MainWindow;
 }
@@ -49,16 +50,14 @@ public:
 
 private slots:
     void on_actionEdit_Settings_triggered();
-    void on_leftPannelBox_activated(int type);
     void on_toWatchButton_clicked();
     void on_customContextMenuRequested(const QPoint &);
     void on_mainPannel_itemDoubleClicked(QTableWidgetItem *item);
-    void on_leftPannel_itemSelectionChanged();
     void on_mainPannel_itemSelectionChanged();
-    void on_actionEdit_leftPannelMetadata_triggered();
     void on_actionEdit_mainPannelMetadata_triggered();
     void on_actionDelete_triggered();
     void selfUpdate();
+    void updateMainPannel();
     void addNewMovies();
     void on_searchEdit_returnPressed();
     void addPlaylistMenu_triggered(QAction* action);
@@ -70,6 +69,7 @@ signals:
 
 private:
     Ui::MainWindow *m_ui;
+    LeftPannel *m_leftPannel;
 
     /**
      * @brief QList of movies that can be listed in the main window
@@ -82,28 +82,8 @@ private:
      */
     QList<Movie> m_displayedMoviesList;
 
-    /**
-     * @brief QList of ids of the leftPannel
-     */
-    QList<int> m_leftElementsIdList;
-
-    /**
-     * @brief type of elements lastly shown in the leftPannel (Tags/People)
-     */
-    int m_typeElement;
-
-    /**
-     * @brief type of People (if People) lastly shown in the leftPannel
-     */
-    int m_typePeople;
-
-    /**
-     * @brief id of the selected element in leftPannel
-     */
-    int m_leftPannelSelectedId;
     void readSettings();
     void fillMainPannel();
-    void fillLeftPannel();
     QList<Movie> moviesToDisplay(int id);
     void updatePannels();
     void fillMetadataPannel(Movie movie);
