@@ -36,14 +36,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_leftPannel = new LeftPannel;
     m_mainPannel = new MoviesPannel;
+    m_metadataPannel = new MetadataPannel;
 
     m_ui->setupUi(this);
     m_ui->leftPannelLayout->addWidget(m_leftPannel);
     m_ui->mainPannelLayout->addWidget(m_mainPannel);
+    m_ui->MetadataPannelLayout->addWidget(m_metadataPannel);
 
     connect(m_leftPannel, SIGNAL(updateMainPannel()),
             this, SLOT(updateMainPannel()));
-
+    connect(m_mainPannel, SIGNAL(updatePannels()),
+            this, SLOT(selfUpdate()));
+    connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
+            this, SLOT(fillMetadataPannel(const Movie&)));
     this->readSettings();
 
     this->setWindowTitle(APP_NAME);
@@ -241,60 +246,14 @@ void MainWindow::addNewMovies()
 /**
  * @brief Fill the Metadata pannel with the data of a given movie
  *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  * @param movie which metadata should be shown
  */
-void MainWindow::fillMetadataPannel(Movie movie)
+void MainWindow::fillMetadataPannel(const Movie &movie)
 {
     Macaw::DEBUG_IN("[MainWindow] Enter fillMetadataPannel");
 
-    QString l_title = "<html>"+movie.title()+"<br />";
-    QString l_originalTitle = "<i>"+movie.originalTitle()+"</i></br /><br />";
-    QString l_directors = "<i>Directed by</i><br />";
-    QString l_producers = "<i>Produced by</i><br />";
-    QString l_actors = "<i>With</i><br />";
-
-    foreach (People l_people, movie.peopleList()) {
-        switch (l_people.type())
-        {
-        case People::Director:
-            l_directors += l_people.name() + ", ";
-            break;
-        case People::Producer:
-            l_producers += l_people.name() + ", ";
-            break;
-        case People::Actor:
-            l_actors += l_people.name() + ", ";
-            break;
-        }
-    }
-    // Need to remove ", " = 2 chars
-    if (l_directors.right(2) == ", ") {
-        l_directors = l_directors.remove(l_directors.size()-2, 2);
-
-    }
-    l_directors += "<br /><br />";
-    if (l_producers.right(2) == ", ") {
-        l_producers = l_producers.remove(l_producers.size()-2,2);
-    }
-    l_producers += "<br /><br />";
-    if (l_actors.right(2) == ", ") {
-        l_actors = l_actors.remove(l_actors.size()-2,2);
-    }
-    l_actors += "<br /><br />";
-    l_actors += "</html>";
-
-    m_ui->metadataTop->setText(l_title+l_originalTitle + l_directors +l_producers + l_actors);
-    m_ui->metadataPlot->setText(movie.synopsis());
-    QPixmap l_poster;
-    if (movie.posterPath() != "")
-    {
-        QString l_posterPath = qApp->property("postersPath").toString()
-                               + movie.posterPath();
-        l_poster.load(l_posterPath);
-        QSize l_size(m_ui->metadataPannel->width()-30, m_ui->metadataPannel->height()-30);
-        l_poster = l_poster.scaled(l_size, Qt::KeepAspectRatio);
-    }
-    m_ui->metadataCover->setPixmap(l_poster);
+    m_metadataPannel->fill(movie);
 
     Macaw::DEBUG_OUT("[MainWindow] Exit fillMetadataPannel");
 }
@@ -302,6 +261,8 @@ void MainWindow::fillMetadataPannel(Movie movie)
 /**
  * @brief Slot triggered when the application is closed.
  * Overload the QMainWindow class: save the window state to QSettings
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  *
  * @param event
  */
@@ -317,6 +278,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 /**
  * @brief Read the QSettings of the application to give restore the last state of the window
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 void MainWindow::readSettings()
 {
@@ -334,7 +296,8 @@ void MainWindow::readSettings()
 void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox::about(this, "About " APP_NAME,
-                       "<h1>" APP_NAME "</h1><br />"
+                       "<h1>" APP_NAME
+                       " <span style=\"font-size:large;\">v" APP_VERSION "</span></h1><br />"
                        "<em>Copyright (C) 2014 Macaw-Movies<br />"
                        "(Olivier CHURLAUD, Sébastien TOUZÉ)</em>"
                        "<br /><br />"

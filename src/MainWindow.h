@@ -33,10 +33,12 @@
 #include "Entities/Tag.h"
 #include "MainWindowWidgets/LeftPannel.h"
 #include "MainWindowWidgets/MainPannel.h"
+#include "MainWindowWidgets/MetadataPannel.h"
 #include "MainWindowWidgets/MoviesPannel.h"
 
 class LeftPannel;
 class MainPannel;
+class MetadataPannel;
 class MoviesPannel;
 
 namespace Ui {
@@ -62,6 +64,8 @@ private slots:
     void on_searchEdit_returnPressed();
     void on_actionAbout_triggered();
     void closeEvent(QCloseEvent *event);
+    void fillMetadataPannel(const Movie &movie);
+
 
 signals:
     void startFetchingMetadata(const QList<Movie>&);
@@ -70,22 +74,11 @@ private:
     Ui::MainWindow *m_ui;
     LeftPannel *m_leftPannel;
     MainPannel *m_mainPannel;
-
-    /**
-     * @brief QList of movies that can be listed in the main window
-     * (because they match the searching field)
-     */
-    QList<Movie> m_authorizedMoviesList;
-
-    /**
-     * @brief QList of movies that are actually listed in the main window
-     */
-    QList<Movie> m_displayedMoviesList;
+    MetadataPannel *m_metadataPannel;
 
     void readSettings();
     QList<Movie> moviesToDisplay(int id);
     void updatePannels();
-    void fillMetadataPannel(Movie movie);
 
 };
 

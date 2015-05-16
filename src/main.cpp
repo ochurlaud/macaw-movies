@@ -35,7 +35,7 @@ int main(int argv, char **args)
     Application l_app(argv, args);
 
     QCommandLineParser l_parser;
-    l_parser.setApplicationDescription("DESCRIPTION");
+    l_parser.setApplicationDescription("Macaw Movies is an opensource movie collection manager.");
     l_parser.addHelpOption();
     l_parser.addVersionOption();
 
@@ -56,9 +56,8 @@ int main(int argv, char **args)
 
     if (l_parser.isSet(QStringLiteral("license")))
     {
-
         //the installer should put our license in the good folder and read it
-        printf("%s\n",qPrintable(QApplication::tr("Licence dsds")));
+        printf("%s\n",qPrintable(QApplication::tr("GPLv3")));
         ::exit(EXIT_SUCCESS);
     }
     if (l_parser.isSet(QStringLiteral("author")))

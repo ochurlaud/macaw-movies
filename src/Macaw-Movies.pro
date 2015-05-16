@@ -58,7 +58,8 @@ SOURCES += main.cpp \
     FetchMetadata/FetchMetadataQuery.cpp \
     MainWindowWidgets/LeftPannel.cpp \
     MainWindowWidgets/MoviesPannel.cpp \
-    MainWindowWidgets/MainPannel.cpp
+    MainWindowWidgets/MainPannel.cpp \
+    MainWindowWidgets/MetadataPannel.cpp
 
 HEADERS  += \
     include_var.h \
@@ -79,7 +80,8 @@ HEADERS  += \
     FetchMetadata/FetchMetadataQuery.h \
     MainWindowWidgets/LeftPannel.h \
     MainWindowWidgets/MoviesPannel.h \
-    MainWindowWidgets/MainPannel.h
+    MainWindowWidgets/MainPannel.h \
+    MainWindowWidgets/MetadataPannel.h
 
 FORMS    += \
     MainWindow.ui \
@@ -88,7 +90,8 @@ FORMS    += \
     Dialogs/SettingsWindow.ui \
     FetchMetadata/FetchMetadataDialog.ui \
     MainWindowWidgets/LeftPannel.ui \
-    MainWindowWidgets/MoviesPannel.ui
+    MainWindowWidgets/MoviesPannel.ui \
+    MainWindowWidgets/MetadataPannel.ui
 
 OTHER_FILES += \
     ../.gitignore \

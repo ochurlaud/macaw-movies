@@ -16,6 +16,8 @@ public:
 
 signals:
     void fillMetadataPannel(const Movie&);
+    void updatePannels();
+
 };
 
 #endif // MAINPANNEL_H

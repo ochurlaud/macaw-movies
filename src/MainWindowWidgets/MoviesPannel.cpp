@@ -1,6 +1,12 @@
 #include "MoviesPannel.h"
 #include "ui_MoviesPannel.h"
 
+/**
+ * @brief constructor
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ *
+ * @param parent
+ */
 MoviesPannel::MoviesPannel(QWidget *parent) :
     MainPannel(parent),
     m_ui(new Ui::MoviesPannel)
@@ -14,6 +20,9 @@ MoviesPannel::MoviesPannel(QWidget *parent) :
     m_ui->tableWidget->addAction(m_ui->actionEdit_mainPannelMetadata);
 }
 
+/**
+ * @brief Destructor
+ */
 MoviesPannel::~MoviesPannel()
 {
     delete m_ui;
@@ -26,6 +35,7 @@ MoviesPannel::~MoviesPannel()
  * 2. Set the number of columns, rows, set the headers
  * 3. Fill each cell of the pannel
  *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  * @param list of movies to show
  */
 void MoviesPannel::fill(const QList<Movie> &moviesList)
@@ -91,6 +101,7 @@ void MoviesPannel::fill(const QList<Movie> &moviesList)
  * 3. Add actions on the menu
  * 4. Display it
  *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  * @param point: coordinates of the cursor when requested
  */
 void MoviesPannel::on_customContextMenuRequested(const QPoint &point)
@@ -125,6 +136,8 @@ void MoviesPannel::on_customContextMenuRequested(const QPoint &point)
 /**
  * @brief Slot triggered when the edition of the metadata of an element from the mainPannel is asked.
  * It creates and shows a MovieDialog based on the id of this element.
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 void MoviesPannel::on_actionEdit_mainPannelMetadata_triggered()
 {
@@ -133,7 +146,7 @@ void MoviesPannel::on_actionEdit_mainPannelMetadata_triggered()
         int l_id = m_ui->tableWidget->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
 
         MovieDialog *l_movieDialog = new MovieDialog(l_id);
-        connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
+        connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(requestUpdate()));
         l_movieDialog->show();
     }
 }
@@ -141,6 +154,8 @@ void MoviesPannel::on_actionEdit_mainPannelMetadata_triggered()
 /**
  * @brief triggered when the user delete a movie.
  * Depending on the case it will delete the file or remove the movie from the playlist
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 void MoviesPannel::on_actionDelete_triggered()
 {
@@ -164,6 +179,8 @@ void MoviesPannel::on_actionDelete_triggered()
 
 /**
  * @brief Remove a movie from a playlist
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ *
  * @param movie to remove from the playlist
  * @param playlist to update
  */
@@ -191,9 +208,11 @@ void MoviesPannel::removeMovieFromPlaylist(const QList<Movie> &movieList, Playli
  * @brief Slot triggered when an element of the MainWindow is double clicked.
  * Start the movie in the default player
  *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ *
  * @param item which was double clicked
  */
-void MoviesPannel::on_itemDoubleClicked(QTableWidgetItem *item)
+void MoviesPannel::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
 {
     Macaw::DEBUG("[MoviesPannel] itemDoubleClicked on mainPannel");
 
@@ -208,10 +227,12 @@ void MoviesPannel::on_itemDoubleClicked(QTableWidgetItem *item)
 }
 
 /**
- * @brief Slot triggered when a movie of the mainPannel is selected
+ * @brief Slot triggered when a movie of the tableWidget is selected
  * Call `fillMetadataPannel` to fill the pannel with the selected Movie data
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
-void MoviesPannel::on_itemSelectionChanged()
+void MoviesPannel::on_tableWidget_itemSelectionChanged()
 {
     Macaw::DEBUG("[MoviesPannel] mainPannel selected");
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();

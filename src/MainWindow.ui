@@ -141,76 +141,8 @@
         </property>
        </layout>
       </widget>
-      <widget class="QWidget" name="metadataPannel" native="true">
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <widget class="QLabel" name="metadataPlot">
-        <property name="geometry">
-         <rect>
-          <x>6</x>
-          <y>165</y>
-          <width>100</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Plot</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QLabel" name="metadataCover">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>35</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Cover</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="metadataTop">
-        <property name="geometry">
-         <rect>
-          <x>6</x>
-          <y>85</y>
-          <width>47</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Topdata</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
+      <widget class="QWidget" name="verticalLayoutWidget_3">
+       <layout class="QVBoxLayout" name="MetadataPannelLayout"/>
       </widget>
      </widget>
     </item>

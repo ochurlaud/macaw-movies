@@ -21,6 +21,7 @@ list(APPEND SRCS FetchMetadata/FetchMetadataDialog.cpp)
 list(APPEND SRCS FetchMetadata/FetchMetadataQuery.cpp)
 list(APPEND SRCS MainWindowWidgets/LeftPannel.cpp)
 list(APPEND SRCS MainWindowWidgets/MainPannel.cpp)
+list(APPEND SRCS MainWindowWidgets/MetadataPannel.cpp)
 list(APPEND SRCS MainWindowWidgets/MoviesPannel.cpp)
 
 
@@ -31,6 +32,7 @@ list(APPEND FORMS Dialogs/MovieDialog.ui)
 list(APPEND FORMS Dialogs/PeopleDialog.ui)
 list(APPEND FORMS FetchMetadata/FetchMetadataDialog.ui)
 list(APPEND FORMS MainWindowWidgets/LeftPannel.ui)
+list(APPEND FORMS MainWindowWidgets/MetadataPannel.ui)
 list(APPEND FORMS MainWindowWidgets/MoviesPannel.ui)
 
 

@@ -20,15 +20,12 @@ public:
     ~MoviesPannel();
     void fill(const QList<Movie> &moviesList);
 
-signals:
-    void updatePannels();
-
 private slots:
     void on_customContextMenuRequested(const QPoint &point);
     void on_actionEdit_mainPannelMetadata_triggered();
     void on_actionDelete_triggered();
-    void on_itemDoubleClicked(QTableWidgetItem *item);
-    void on_itemSelectionChanged();
+    void on_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
+    void on_tableWidget_itemSelectionChanged();
     void addPlaylistMenu_triggered(QAction* action);
 
 
