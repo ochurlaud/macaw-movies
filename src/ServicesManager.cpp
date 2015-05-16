@@ -17,3 +17,8 @@ void ServicesManager::setAuthorizedMoviesList(QString pattern)
 {
     m_authorizedMoviesList = m_databaseManager->getMoviesByAny(pattern);
 }
+
+void ServicesManager::pannelsUpdate()
+{
+    emit requestPannelsUpdate();
+}

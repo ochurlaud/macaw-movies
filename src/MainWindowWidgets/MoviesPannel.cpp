@@ -146,7 +146,9 @@ void MoviesPannel::on_actionEdit_mainPannelMetadata_triggered()
         int l_id = m_ui->tableWidget->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
 
         MovieDialog *l_movieDialog = new MovieDialog(l_id);
-        connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(requestUpdate()));
+
+        ServicesManager *servicesManager = ServicesManager::instance();
+        connect(l_movieDialog, SIGNAL(destroyed()), servicesManager, SLOT(pannelsUpdate()));
         l_movieDialog->show();
     }
 }

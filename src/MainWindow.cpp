@@ -43,10 +43,11 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->mainPannelLayout->addWidget(m_mainPannel);
     m_ui->MetadataPannelLayout->addWidget(m_metadataPannel);
 
+    ServicesManager *servicesManager = ServicesManager::instance();
+    connect(servicesManager, SIGNAL(requestPannelsUpdate()),
+            this, SLOT(selfUpdate()));
     connect(m_leftPannel, SIGNAL(updateMainPannel()),
             this, SLOT(updateMainPannel()));
-    connect(m_mainPannel, SIGNAL(updatePannels()),
-            this, SLOT(selfUpdate()));
     connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
             this, SLOT(fillMetadataPannel(const Movie&)));
     this->readSettings();

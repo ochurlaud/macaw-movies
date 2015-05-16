@@ -18,9 +18,12 @@ public:
     void setToWatchState(const bool state) { m_toWatchState = state; }
     DatabaseManager* databaseManager() { return m_databaseManager; }
 
+
 signals:
+    void requestPannelsUpdate();
 
 public slots:
+    void pannelsUpdate();
 
 private:
     QList<Movie> m_authorizedMoviesList;

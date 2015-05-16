@@ -32,7 +32,6 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     Macaw::DEBUG("[MovieDialog] Constructor called");
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
-
     m_movie = databaseManager->getOneMovieById(id);
 
     m_ui->setupUi(this);

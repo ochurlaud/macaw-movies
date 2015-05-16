@@ -13,9 +13,16 @@ MetadataPannel::~MetadataPannel()
     delete m_ui;
 }
 
+/**
+ * @brief Fill the MetadataPannel with the data of the given Movie
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ * @author Sébastien TOUZE
+ * @param movie
+ */
 void MetadataPannel::fill(const Movie &movie)
 {
-    Macaw::DEBUG_IN("[MetadataPannel] fill");
+    Macaw::DEBUG_IN("[MetadataPannel] Enters fill()");
     QString l_title = "<html>"+movie.title()+"<br />";
     QString l_originalTitle = "<i>"+movie.originalTitle()+"</i></br /><br />";
     QString l_directors = "<i>Directed by</i><br />";
@@ -64,5 +71,5 @@ void MetadataPannel::fill(const Movie &movie)
         l_poster = l_poster.scaled(l_size, Qt::KeepAspectRatio);
     }
     m_ui->posterLabel->setPixmap(l_poster);
-    Macaw::DEBUG_OUT("[MetadataPannel] fill");
+    Macaw::DEBUG_OUT("[MetadataPannel] Exits fill()");
 }

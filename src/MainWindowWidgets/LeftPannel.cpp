@@ -1,6 +1,12 @@
 #include "LeftPannel.h"
 #include "ui_LeftPannel.h"
 
+/**
+ * @brief Constructor
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ *
+ * @param parent
+ */
 LeftPannel::LeftPannel(QWidget *parent) :
     QWidget(parent),
     m_ui(new Ui::LeftPannel)
@@ -16,11 +22,18 @@ LeftPannel::LeftPannel(QWidget *parent) :
     m_typePeople = People::Director;
 }
 
+/**
+ * @brief Destructor
+ */
 LeftPannel::~LeftPannel()
 {
     delete m_ui;
 }
 
+/**
+ * @brief Fill the leftPannel
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 void LeftPannel::fill()
 {
     m_ui->listWidget->clear();
@@ -140,7 +153,9 @@ void LeftPannel::fill()
 
 /**
  * @brief Slot triggered when an option from leftPannelBox is selected.
- * Refill all the pannels.
+ * Request to update the mainPannel
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  *
  * @param type of Element (0 = tag, else it's a people, of type `type`)
  */
@@ -176,6 +191,7 @@ void LeftPannel::on_leftPannelBox_activated(int type)
  * 3. Add actions on the menu
  * 4. Display it
  *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  * @param point: coordinates of the cursor when requested
  */
 void LeftPannel::on_customContextMenuRequested(const QPoint &point)
@@ -199,6 +215,8 @@ void LeftPannel::on_customContextMenuRequested(const QPoint &point)
  * 1. Check if editable
  * 2. Check the type of element selected
  * 3. Create and show a PeopleDialog (or a TagDialog or a ...) based on the id of this element
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 void LeftPannel::on_actionEdit_leftPannelMetadata_triggered()
 {
@@ -214,7 +232,8 @@ void LeftPannel::on_actionEdit_leftPannelMetadata_triggered()
             int l_typeElement = m_ui->listWidget->selectedItems().at(0)->data(Macaw::ObjectType).toInt();
             if (l_typeElement == Macaw::isPeople) {
                 PeopleDialog *l_movieDialog = new PeopleDialog(l_id);
-                connect(l_movieDialog, SIGNAL(destroyed()), this, SLOT(selfUpdate()));
+                ServicesManager *servicesManager = ServicesManager::instance();
+                connect(l_movieDialog, SIGNAL(destroyed()), servicesManager, SLOT(pannelsUpdate()));
                 l_movieDialog->show();
             } else if (l_typeElement == Macaw::isTag) {
                 qDebug() << "Tag !";
@@ -228,6 +247,8 @@ void LeftPannel::on_actionEdit_leftPannelMetadata_triggered()
 /**
  * @brief Slot triggered when an element of the listWidget is selected
  * Request to fill the Main Pannel according to the selected element
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 void LeftPannel::on_listWidget_itemSelectionChanged()
 {
