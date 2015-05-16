@@ -16,7 +16,7 @@ public:
     void setAuthorizedMoviesList(const QString pattern);
     bool toWatchState() const { return m_toWatchState; }
     void setToWatchState(const bool state) { m_toWatchState = state; }
-
+    DatabaseManager* databaseManager() { return m_databaseManager; }
 
 signals:
 
@@ -24,7 +24,7 @@ public slots:
 
 private:
     QList<Movie> m_authorizedMoviesList;
-    DatabaseManager m_databaseManager;
+    DatabaseManager *m_databaseManager;
     bool m_toWatchState;
 };
 

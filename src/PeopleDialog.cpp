@@ -26,7 +26,8 @@ PeopleDialog::PeopleDialog(int id, QWidget *parent) :
 {
     Macaw::DEBUG("[PeopleDialog] Constructor called");
 
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     m_ui->setupUi(this);
     this->setWindowTitle("Edit People Metadata");
     this->setAttribute(Qt::WA_DeleteOnClose);
@@ -139,7 +140,8 @@ void PeopleDialog::on_validationButtons_accepted()
     else
     {
         Macaw::DEBUG("[PeopleDialog] validationButtons method: type=0");
-        DatabaseManager *databaseManager = DatabaseManager::instance();
+        DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
         databaseManager->updatePeople(m_people);
     }
 

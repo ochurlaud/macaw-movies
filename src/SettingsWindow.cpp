@@ -29,7 +29,8 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     m_ui(new Ui::SettingsWindow)
 {
     Macaw::DEBUG_IN("[SettingsWindow] Constructor called");
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
 
     m_ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -63,7 +64,8 @@ void SettingsWindow::on_buttonBox_accepted()
 {
     Macaw::DEBUG_IN("[SettingsWindow] Enters on_buttonBox_accepted()");
 
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
 
     QString l_newPath = m_ui->folderPathEdit->text();
     addToKnownPathsList(l_newPath);

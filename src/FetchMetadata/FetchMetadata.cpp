@@ -153,7 +153,7 @@ void FetchMetadata::processPrimaryResponse(const QList<Movie> &movieList)
 void FetchMetadata::processMovieResponse(const Movie &receivedMovie)
 {
     Macaw::DEBUG("[FetchMetadata] Signal from movie request received");
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
     disconnect(m_fetchMetadataQuery, SIGNAL(movieResponse(const Movie&)),
             this, SLOT(processMovieResponse(const Movie&)));

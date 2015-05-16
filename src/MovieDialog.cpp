@@ -30,7 +30,8 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     m_ui(new Ui::MovieDialog)
 {
     Macaw::DEBUG("[MovieDialog] Constructor called");
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
 
     m_movie = databaseManager->getOneMovieById(id);
 
@@ -188,7 +189,8 @@ void MovieDialog::setPeopleList(const QList<People> &peopleList)
 
 QList<People> MovieDialog::getPeopleList(int type)
 {
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     QListWidget *l_peopleWidget = NULL;
     switch (type)
     {
@@ -292,7 +294,8 @@ void MovieDialog::on_validationButtons_accepted()
 {
     Macaw::DEBUG("[MovieDialog] validationButtons accepted");
 
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     m_movie.setTitle(getTitle());
     m_movie.setOriginalTitle(getOriginalTitle());
     m_movie.setReleaseDate(getReleaseDate());
@@ -345,7 +348,8 @@ void MovieDialog::addPeopleButton_clicked(int type)
 {
     Macaw::DEBUG("[MovieDialog] Enters addPeopleButton_clicked(), type = "+QString::number(type));
 
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
 
     QLineEdit *l_peopleEdit = NULL;
     QListWidget *l_peopleWidget = NULL;
@@ -415,7 +419,8 @@ void MovieDialog::delPeopleButton_clicked(int type)
 {
     Macaw::DEBUG("[MovieDialog] Enters delPeopleButton_clicked()");
 
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     QListWidget *l_peopleWidget = NULL;
     switch (type)
     {
@@ -465,7 +470,8 @@ void MovieDialog::on_actorEdit_textEdited()
 void MovieDialog::on_peopleEdit_textEdited(int type)
 {
     Macaw::DEBUG("[MovieDialog] Enters on_peopleEdit_textEdited()");
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
 
     QLineEdit *l_peopleEdit = NULL;
     switch (type)
@@ -509,7 +515,8 @@ void MovieDialog::on_peopleEdit_textEdited(int type)
  */
 void MovieDialog::on_addNewTagButton_clicked()
 {
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     QString newTag =  m_ui->newTagLineEdit->text();
 
     if (newTag != "" && newTag != " ") {

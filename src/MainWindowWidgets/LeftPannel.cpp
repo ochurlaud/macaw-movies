@@ -25,7 +25,8 @@ void LeftPannel::fill()
 {
     m_ui->leftPannel->clear();
     m_elementIdsList.clear();
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     ServicesManager *servicesManager = ServicesManager::instance();
     QList<Movie> l_authorizedMoviesList = servicesManager->authorizedMoviesList();
 

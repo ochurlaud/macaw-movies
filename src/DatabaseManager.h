@@ -41,7 +41,6 @@ class DatabaseManager : public QObject
 
 public:
     DatabaseManager();
-    static DatabaseManager* instance();
     // Database management
     bool openDB();
     bool createTables();

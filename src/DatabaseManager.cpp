@@ -19,8 +19,6 @@
 
 #include "DatabaseManager.h"
 
-Q_GLOBAL_STATIC(DatabaseManager, databaseManager)
-
 /**
  * @brief Constructor.
  * Opens the Database. If empty, create the schema.
@@ -36,10 +34,6 @@ DatabaseManager::DatabaseManager()
     Macaw::DEBUG("[DatabaseManager] object created");
 }
 
-DatabaseManager *DatabaseManager::instance()
-{
-    return databaseManager;
-}
 
 /**
  * @brief Opens (or create the file of) the database

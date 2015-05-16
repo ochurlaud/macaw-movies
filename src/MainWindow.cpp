@@ -89,7 +89,8 @@ void MainWindow::fillMainPannel()
     m_ui->mainPannel->clearContents();
     m_ui->mainPannel->setRowCount(0);
     m_displayedMoviesList.clear();
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     ServicesManager *servicesManager = ServicesManager::instance();
     // Create function setHeaders
     // And call it only the first time or when settings changed
@@ -214,7 +215,8 @@ void MainWindow::on_actionEdit_mainPannelMetadata_triggered()
  */
 void MainWindow::on_actionDelete_triggered()
 {
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     QList<Movie> l_movieList;
     foreach (QTableWidgetItem *l_item, m_ui->mainPannel->selectedItems())
     {
@@ -237,7 +239,8 @@ void MainWindow::on_actionDelete_triggered()
  */
 void MainWindow::removeMovieFromPlaylist(const QList<Movie> &movieList, Playlist &playlist)
 {
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Question, "Remove from ToWatch list ?",
                                                          "Do you want to remove this movie from the ToWatch list ?",
                                                          QMessageBox::Yes|QMessageBox::No, this);
@@ -263,7 +266,8 @@ void MainWindow::removeMovieFromPlaylist(const QList<Movie> &movieList, Playlist
  */
 bool MainWindow::moveFileToTrash(QList<Movie> &movieList)
 {
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     QMessageBox *l_confirmationDialog = new QMessageBox(QMessageBox::Warning, "Move to trash? ",
                                                          "Move to trash? All data in Macaw-Movies specific to the concerned movie(s) will be deleted, this cannot be undone. ",
                                                          QMessageBox::Yes|QMessageBox::No, this);
@@ -632,7 +636,8 @@ bool MainWindow::permanentlyDeleteFile(QFile * movieFileToDelete) {
 void MainWindow::addPlaylistMenu_triggered(QAction* action)
 {
     Macaw::DEBUG("[MainWindow] addPlaylistMenu_triggered");
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     int l_actionId = action->data().toInt();
     if (!m_ui->mainPannel->selectedItems().isEmpty() && l_actionId != 0) {
         int l_movieId = m_ui->mainPannel->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
@@ -651,7 +656,8 @@ void MainWindow::addPlaylistMenu_triggered(QAction* action)
  */
 void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
 {
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     Macaw::DEBUG("[MainWindow] itemDoubleClicked on mainPannel");
 
     int l_movieId = item->data(Macaw::ObjectId).toInt();
@@ -669,7 +675,8 @@ void MainWindow::on_mainPannel_itemDoubleClicked(QTableWidgetItem *item)
 void MainWindow::on_mainPannel_itemSelectionChanged()
 {
     Macaw::DEBUG("[MainWindow] mainPannel selected");
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
 
     Movie l_movie;
     if (!m_ui->mainPannel->selectedItems().isEmpty()) {
@@ -691,7 +698,8 @@ void MainWindow::on_mainPannel_itemSelectionChanged()
 QList<Movie> MainWindow::moviesToDisplay(int id)
 {
     Macaw::DEBUG("[MainWindow] prepareMoviesToDisplay()");
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
 
     m_leftPannel->setSelectedId(id);
     if(m_leftPannel->selectedId() == 0) {
@@ -781,7 +789,8 @@ void MainWindow::addNewMovies()
 {
     Macaw::DEBUG_IN("[MainWindow] Enter addNewMovies");
 
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     bool l_imported = false;
     int l_addedCount(0);
     QStringList l_moviesPathsList = databaseManager->getMoviesPaths(l_imported);

@@ -28,7 +28,7 @@ Application::Application(int &argc, char **argv) :
     Macaw::DEBUG_IN("[Application] started");
 
     this->definePaths();
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
     this->setApplicationName(APP_NAME);
     this->setApplicationVersion(APP_VERSION);
@@ -67,7 +67,7 @@ Application::~Application()
  */
 void Application::askForOrphanTagDeletion(Tag &orphanTag)
 {
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Question);
@@ -89,7 +89,7 @@ void Application::askForOrphanTagDeletion(Tag &orphanTag)
  */
 void Application::askForOrphanPeopleDeletion(People &orphanPeople)
 {
-    DatabaseManager *databaseManager = DatabaseManager::instance();
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
     QString l_name = orphanPeople.name();
 
