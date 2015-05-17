@@ -37,7 +37,7 @@ list(APPEND FORMS MainWindowWidgets/MoviesPannel.ui)
 
 
 # Resources
-list(APPEND RSRCS images.qrc)
+list(APPEND RSRCS resources.qrc)
 
 
 
