@@ -21,6 +21,7 @@
 #define MOVIE_H
 
 #include <QtWidgets>
+
 #include "People.h"
 #include "Tag.h"
 

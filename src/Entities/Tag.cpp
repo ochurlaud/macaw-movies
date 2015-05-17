@@ -19,48 +19,9 @@
 
 #include "Tag.h"
 
-
-
-Tag::Tag(QString name) :
-    m_id(0),
-    m_name(name)
+Tag::Tag(const QString name) :
+    Entity(name)
 {
 
 }
 
-
-int Tag::id() const
-{
-    return m_id;
-}
-
-void Tag::setId(int id)
-{
-    m_id = id;
-}
-
-QString Tag::name() const
-{
-    return m_name;
-}
-
-void Tag::setName(QString name)
-{
-    m_name = name;
-}
-
-bool Tag::operator== (const Tag &other)
-{
-    if ( this->id() == other.id() &&
-         this->name() == other.name() )
-    {
-        return true;
-    }
-
-    return false;
-}
-
-bool Tag::operator!= (const Tag &other)
-{
-    return !this->operator==(other);
-}

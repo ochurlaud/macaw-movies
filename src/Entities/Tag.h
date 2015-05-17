@@ -22,20 +22,13 @@
 
 #include <QtWidgets>
 
-class Tag
+#include "Entities/Entity.h"
+
+class Tag : public Entity
 {
 public:
-    Tag(QString name = "");
-    int id() const;
-    void setId(int id);
-    QString name() const;
-    void setName(QString name);
-    bool operator== (const Tag &other);
-    bool operator!= (const Tag &other);
+    Tag(const QString name = "");
 
-private:
-    int m_id;
-    QString m_name;
 };
 
 #endif // TAG_H

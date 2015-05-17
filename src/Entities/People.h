@@ -22,14 +22,12 @@
 
 #include <QtWidgets>
 
-class People
+#include "Entities/Entity.h"
+
+class People : public Entity
 {
 public:
-    People();
-    int id() const;
-    void setId(int);
-    QString name() const;
-    void setName(const QString name);
+    People(const QString name = "");
     QDate birthday() const;
     void setBirthday(const QDate birthday);
     QString biography() const;

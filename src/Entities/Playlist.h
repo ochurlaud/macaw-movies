@@ -22,9 +22,10 @@
 
 #include <QWidget>
 
+#include "Entities/Entity.h"
 #include "Movie.h"
 
-class Playlist
+class Playlist : public Entity
 {
 public:
     Playlist(QString name="");

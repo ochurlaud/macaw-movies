@@ -19,8 +19,8 @@
 
 #include "Playlist.h"
 
-Playlist::Playlist(QString name):
-    m_name(name),
+Playlist::Playlist(const QString name):
+    Entity(name),
     m_rate(0),
     m_creationDate(QDateTime::currentDateTime())
 {

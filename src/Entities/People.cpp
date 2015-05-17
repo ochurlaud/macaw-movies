@@ -19,31 +19,10 @@
 
 #include "People.h"
 
-People::People()
+People::People(const QString name) :
+    Entity(name)
 {
-    m_id = 0;
-    m_name = "";
     m_biography = "";
-}
-
-int People::id() const
-{
-    return m_id;
-}
-
-void People::setId(const int id)
-{
-    m_id = id;
-}
-
-QString People::name() const
-{
-    return m_name;
-}
-
-void People::setName(const QString name)
-{
-    m_name = name;
 }
 
 QDate People::birthday() const
