@@ -296,13 +296,13 @@ void MainWindow::readSettings()
  */
 void MainWindow::on_actionAbout_triggered()
 {
-    QMessageBox::about(this, tr("About " APP_NAME),
-                       tr( "<h1>" APP_NAME
-                           " <span style=\"font-size:large;\">v" APP_VERSION "</span></h1><br />"
+    QMessageBox::about(this, tr("About %1").arg(APP_NAME),
+                       tr( "<h1> %1 "
+                           " <span style=\"font-size:large;\">v%2 </span></h1><br />"
                            "<em>Copyright (C) 2014 Macaw-Movies<br />"
                            "(Olivier CHURLAUD, Sébastien TOUZÉ)</em>"
                            "<br /><br />"
-                           "Compiled with Qt " QT_VERSION_STR ", uses the API of <a href='http://www.themoviedb.org/'>TMDB</a>"
+                           "Compiled with Qt %3, uses the API of <a href='http://www.themoviedb.org/'>TMDB</a>"
                            "<br /><br />"
                            "Macaw-Movies is distributed in the hope that it will be useful, "
                            "but WITHOUT ANY WARRANTY; without even the implied warranty of "
@@ -310,5 +310,10 @@ void MainWindow::on_actionAbout_triggered()
                            "See the GNU General Public License for more details."
                            "<br /><hr /><br />"
                            "This application is still under active developpement, it may contain bugs. <br />"
-                           "If you find one please create an issue on <a href='https://github.com/macaw-movies/macaw-movies/issues'>our GitHub space</a>"));
+                           "If you find one please create an issue on "
+                           "<a href='https://github.com/macaw-movies/macaw-movies/issues'>our GitHub space</a>"
+                           ).arg(APP_NAME)
+                            .arg(APP_VERSION)
+                            .arg(QT_VERSION_STR)
+                       );
 }

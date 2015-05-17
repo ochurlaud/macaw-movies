@@ -27,12 +27,20 @@ Application::Application(int &argc, char **argv) :
 {
     Macaw::DEBUG_IN("[Application] started");
 
-    this->definePaths();
-    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
-
     this->setApplicationName(APP_NAME);
     this->setApplicationVersion(APP_VERSION);
     this->setWindowIcon(QIcon(":/img/logov0_1.png"));
+    this->definePaths();
+
+    Macaw::DEBUG_OUT("[Application] Application initialized");
+}
+
+int Application::exec()
+{
+    Macaw::DEBUG_IN("[Application] exec()");
+
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
     m_tmdbkey = "6e4cbac7861ad5b847ef8f60489dc04e";
     m_mainWindow = new MainWindow;
     m_fetchMetadata = NULL;
@@ -48,7 +56,9 @@ Application::Application(int &argc, char **argv) :
 
     m_mainWindow->show();
 
-    Macaw::DEBUG_OUT("[Application] Application initialized");
+    Macaw::DEBUG_OUT("[Application] exec()");
+
+    return QApplication::exec();
 }
 
 /**
@@ -71,7 +81,7 @@ void Application::askForOrphanTagDeletion(Tag &orphanTag)
 
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Question);
-    msgBox.setText(tr("The tag <b>"+ orphanTag.name() +"</b> is not used in any movie now. "));
+    msgBox.setText(QApplication::tr("The tag <b>%1</b> is not used in any movie now.").arg(orphanTag.name()));
     msgBox.setInformativeText(tr("Do you want to delete this tag?"));
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
@@ -95,7 +105,7 @@ void Application::askForOrphanPeopleDeletion(People &orphanPeople)
 
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Question);
-    msgBox.setText(tr("The person <b>" +l_name+ "</b> is not linked to any movie now."));
+    msgBox.setText(QApplication::tr("The person <b>%2</b> is not linked to any movie now.").arg(l_name));
     msgBox.setInformativeText(tr("Do you want to delete it?"));
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);

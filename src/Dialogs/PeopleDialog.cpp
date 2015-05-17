@@ -29,7 +29,7 @@ PeopleDialog::PeopleDialog(int id, QWidget *parent) :
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
     m_ui->setupUi(this);
-    this->setWindowTitle("Edit People Metadata");
+    this->setWindowTitle(tr("Edit People Metadata"));
     this->setAttribute(Qt::WA_DeleteOnClose);
 
     // If id is 0 it means we create a new People

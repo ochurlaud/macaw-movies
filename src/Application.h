@@ -64,6 +64,7 @@ Q_OBJECT
 public:
     Application(int &argc, char **argv);
     ~Application();
+    int exec();
     QString tmdbkey() { return m_tmdbkey; }
 
 signals:

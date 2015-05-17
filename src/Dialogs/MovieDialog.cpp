@@ -35,7 +35,7 @@ MovieDialog::MovieDialog(int id, QWidget *parent) :
     m_movie = databaseManager->getOneMovieById(id);
 
     m_ui->setupUi(this);
-    this->setWindowTitle("Edit Metadata of: " + m_movie.title());
+    this->setWindowTitle(tr("Edit Metadata of: %1").arg(m_movie.title()));
     this->setAttribute(Qt::WA_DeleteOnClose);
 
     m_ui->tagListWidget->setSelectionMode(QAbstractItemView::NoSelection);

@@ -63,7 +63,7 @@
    <item>
     <widget class="QComboBox" name="leftPannelBox">
      <property name="currentText">
-      <string>Tags</string>
+      <string>Directors</string>
      </property>
      <item>
       <property name="text">
