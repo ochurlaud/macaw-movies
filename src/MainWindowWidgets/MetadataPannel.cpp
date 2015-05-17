@@ -71,5 +71,6 @@ void MetadataPannel::fill(const Movie &movie)
         l_poster = l_poster.scaled(l_size, Qt::KeepAspectRatio);
     }
     m_ui->posterLabel->setPixmap(l_poster);
+
     Macaw::DEBUG_OUT("[MetadataPannel] Exits fill()");
 }

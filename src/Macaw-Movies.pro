@@ -59,7 +59,8 @@ SOURCES += main.cpp \
     MainWindowWidgets/LeftPannel.cpp \
     MainWindowWidgets/MoviesPannel.cpp \
     MainWindowWidgets/MainPannel.cpp \
-    MainWindowWidgets/MetadataPannel.cpp
+    MainWindowWidgets/MetadataPannel.cpp \
+    Entities/Entity.cpp
 
 HEADERS  += \
     include_var.h \
@@ -81,7 +82,8 @@ HEADERS  += \
     MainWindowWidgets/LeftPannel.h \
     MainWindowWidgets/MoviesPannel.h \
     MainWindowWidgets/MainPannel.h \
-    MainWindowWidgets/MetadataPannel.h
+    MainWindowWidgets/MetadataPannel.h \
+    Entities/Entity.h
 
 FORMS    += \
     MainWindow.ui \

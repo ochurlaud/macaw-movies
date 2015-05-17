@@ -52,6 +52,11 @@ private:
      * @brief QList of ids of the leftPannel
      */
     QList<int> m_elementIdsList;
+
+    void setElementIdsList();
+    template<typename T> void updateElementIdsList(const QList<T> &list);
+    void fillListWidget();
+    void addEntityToListWidget(const Entity &entity);
 };
 
 #endif // LEFTPANNEL_H

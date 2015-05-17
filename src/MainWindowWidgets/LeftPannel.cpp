@@ -36,119 +36,148 @@ LeftPannel::~LeftPannel()
  */
 void LeftPannel::fill()
 {
-    m_ui->listWidget->clear();
+    Macaw::DEBUG_IN("[LefPannel] Enters fill()");
+
+    this->setElementIdsList();
+    this->fillListWidget();
+
+    Macaw::DEBUG_OUT("[LefPannel] Exits fill()");
+}
+
+/**
+ * @brief Set the ElementIdsList, used to fill the listWidget
+ */
+void LeftPannel::setElementIdsList()
+{
+    Macaw::DEBUG_IN("[LeftPannel] Enters setElementIdsList()");
+
     m_elementIdsList.clear();
-    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
     ServicesManager *servicesManager = ServicesManager::instance();
+    DatabaseManager *databaseManager = servicesManager->databaseManager();
+
     QList<Movie> l_matchingMoviesList = servicesManager->matchingMoviesList();
 
+    foreach(Movie l_movie, l_matchingMoviesList) {
+        if( (servicesManager->toWatchState()
+                 && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
+                 ) || !servicesManager->toWatchState()
+               ) {
+            switch (m_typeElement)
+            {
+                case Macaw::isPeople:
+                {
+                    QList<People> l_peopleList = l_movie.peopleList(m_typePeople);
+                    this->updateElementIdsList(l_peopleList);
+                    break;
+                }
+                case Macaw::isTag:
+                {
+                    QList<Tag> l_tagList = l_movie.tagList();
+                    this->updateElementIdsList(l_tagList);
+                    break;
+                }
+            }
+        }
+    }
+    Macaw::DEBUG_OUT("[LefPannel] Exits setElementIdsList()");
+}
+
+/**
+ * @brief Add/Update the elementIdsList
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ *
+ * @param list of objects of the movie
+ */
+template<typename T> void LeftPannel::updateElementIdsList(const QList<T> &entityList)
+{
+    Macaw::DEBUG_IN("[LeftPannel] Enters updateElementIdsList");
+    if(entityList.isEmpty()
+       && !m_elementIdsList.contains(-1)
+      ) {
+        m_elementIdsList.append(-1);
+    }
+    foreach(T l_entity, entityList) {
+        if(!m_elementIdsList.contains(l_entity.id())) {
+            m_elementIdsList.append(l_entity.id());
+        }
+    }
+
+    Macaw::DEBUG_OUT("[LeftPannel] Exits updateElementIdsList");
+}
+
+/**
+ * @brief fill the listWidget based on m_elementIdsList
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
+void LeftPannel::fillListWidget()
+{
+    Macaw::DEBUG_IN("[LeftPannel] Enters fillListWidget()");
+
+    m_ui->listWidget->clear();
+
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
+    // Add the "All" element
     if(m_typeElement != Macaw::isPlaylist) {
-        QListWidgetItem *l_item = new QListWidgetItem(" All");
-        l_item->setData(Macaw::ObjectId, 0);
-        m_ui->listWidget->addItem(l_item);
+        // First space needed for sorting
+        Entity l_entity(" All");
+        l_entity.setId(0);
 
-        if (m_selectedId == 0) {
-            l_item->setSelected(true);
-        }
-    }
-    //Create function for the following (code is repeated)
-    // ??? Templates ???
-    if (m_typeElement == Macaw::isPeople) {
-        foreach(Movie l_movie, l_matchingMoviesList) {
-            if( (servicesManager->toWatchState()
-                 && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
-                 ) || !servicesManager->toWatchState()
-               ) {
-                if(l_movie.peopleList().isEmpty()
-                   && !m_elementIdsList.contains(-1)
-                  ) {
-                    m_elementIdsList.append(-1);
-                }
-                foreach(People l_people, l_movie.peopleList(m_typePeople)) {
-                    if(!m_elementIdsList.contains(l_people.id())) {
-                        m_elementIdsList.append(l_people.id());
-                    }
-                }
-            }
-        }
-    } else if(m_typeElement == Macaw::isTag) {
-        foreach(Movie l_movie, l_matchingMoviesList) {
-            if( (servicesManager->toWatchState()
-                 && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
-                 ) || !servicesManager->toWatchState()
-               ) {
-                if(l_movie.tagList().isEmpty()
-                   && !m_elementIdsList.contains(-1)
-                  ) {
-                    m_elementIdsList.append(-1);
-                }
-                foreach(Tag l_tag, l_movie.tagList()) {
-                    if(!m_elementIdsList.contains(l_tag.id())) {
-                        m_elementIdsList.append(l_tag.id());
-                    }
-                }
-            }
-        }
+        this->addEntityToListWidget(l_entity);
     }
 
-    if (m_typeElement == Macaw::isPeople) {
-        foreach(int l_objectId, m_elementIdsList) {
-            if(l_objectId == -1) {
-                QListWidgetItem *l_item = new QListWidgetItem(" Unknown");
-                l_item->setData(Macaw::ObjectId, -1);
-                l_item->setData(Macaw::ObjectType, Macaw::isPeople);
-                m_ui->listWidget->addItem(l_item);
-                if (m_selectedId == -1) {
-                    l_item->setSelected(true);
-                }
-            } else {
-                People l_people = databaseManager->getOnePeopleById(l_objectId);
-                QString l_name(l_people.name());
+    foreach(int l_objectId, m_elementIdsList) {
+        if(l_objectId == -1) {
+            // First space needed for sorting
+            Entity l_entity(" Unknown");
+            l_entity.setId(-1);
 
-                QListWidgetItem *l_item = new QListWidgetItem(l_name);
-                l_item->setData(Macaw::ObjectId, l_people.id());
-                l_item->setData(Macaw::ObjectType, Macaw::isPeople);
-                l_item->setData(Macaw::PeopleType, m_typePeople);
-                if (m_selectedId == l_people.id())
-                {
-                    l_item->setSelected(true);
-                }
-
-                m_ui->listWidget->addItem(l_item);
+            this->addEntityToListWidget(l_entity);
+        } else {
+            Entity l_entity;
+            switch (m_typeElement)
+            {
+            case Macaw::isPeople:
+                l_entity = databaseManager->getOnePeopleById(l_objectId);
+                break;
+            case Macaw::isTag:
+                l_entity = databaseManager->getOneTagById(l_objectId);
+                break;
             }
-        }
-    } else if(m_typeElement == Macaw::isTag) {
-        foreach(int l_objectId, m_elementIdsList) {
-            if(l_objectId == -1) {
-                QListWidgetItem *l_item = new QListWidgetItem(" No Tag");
-                l_item->setData(Macaw::ObjectId, -1);
-                l_item->setData(Macaw::ObjectType, Macaw::isTag);
-                m_ui->listWidget->addItem(l_item);
-                if (m_selectedId == -1)
-                {
-                    l_item->setSelected(true);
-                }
-            } else {
-                Tag l_tag = databaseManager->getOneTagById(l_objectId);
-                QString l_name(l_tag.name());
 
-                QListWidgetItem *l_item = new QListWidgetItem(l_name);
-                l_item->setData(Macaw::ObjectId, l_tag.id());
-                l_item->setData(Macaw::ObjectType, Macaw::isTag);
-                if (m_selectedId == l_tag.id())
-                {
-                    l_item->setSelected(true);
-                }
-
-                m_ui->listWidget->addItem(l_item);
-            }
+            this->addEntityToListWidget(l_entity);
         }
     }
     if(m_ui->listWidget->selectedItems().isEmpty()) {
         m_ui->listWidget->item(0)->setSelected(true);
     }
     m_ui->listWidget->sortItems();
+
+    Macaw::DEBUG_OUT("[LeftPannel] Exits fillListWidget()");
+}
+
+/**
+ * @brief Add an element to the list widget, based on an Entity
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ *
+ * @param Entity to add in ListWidget
+ */
+void LeftPannel::addEntityToListWidget(const Entity &entity)
+{
+    Macaw::DEBUG_IN("[LeftPannel] Enters addEntityToListWidget()");
+
+    QListWidgetItem *l_item = new QListWidgetItem(entity.name());
+    l_item->setData(Macaw::ObjectId, entity.id());
+    l_item->setData(Macaw::ObjectType, m_typeElement);
+    l_item->setData(Macaw::PeopleType, m_typePeople);
+
+    if (m_selectedId == entity.id()) {
+        l_item->setSelected(true);
+    }
+
+    m_ui->listWidget->addItem(l_item);
+    Macaw::DEBUG_OUT("[LeftPannel] Exits addEntityToListWidget()");
 }
 
 /**
@@ -166,7 +195,7 @@ void LeftPannel::on_leftPannelBox_activated(int type)
     // 0 = Tags
     // People::typePeople
     int l_peopleType = type;
-    if (type==0) {
+    if (type == 0) {
         m_typeElement = Macaw::isTag;
     } else {
         m_typeElement = Macaw::isPeople;
@@ -177,7 +206,8 @@ void LeftPannel::on_leftPannelBox_activated(int type)
     // so we reinitialise the selection in the leftPannel
     m_selectedId = 0;
 
-    emit updateMainPannel();
+    ServicesManager *servicesManager = ServicesManager::instance();
+    servicesManager->pannelsUpdate();
 
     Macaw::DEBUG_OUT("[LeftPannel] Exits on_leftPannelBox_activated()");
 }

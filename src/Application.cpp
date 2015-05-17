@@ -25,19 +25,19 @@
 Application::Application(int &argc, char **argv) :
     QApplication(argc, argv)
 {
-    Macaw::DEBUG_IN("[Application] started");
+    Macaw::DEBUG_IN("[Application] Enters initialization");
 
     this->setApplicationName(APP_NAME);
     this->setApplicationVersion(APP_VERSION);
     this->setWindowIcon(QIcon(":/img/logov0_1.png"));
     this->definePaths();
 
-    Macaw::DEBUG_OUT("[Application] Application initialized");
+    Macaw::DEBUG_OUT("[Application] Initialization done");
 }
 
 int Application::exec()
 {
-    Macaw::DEBUG_IN("[Application] exec()");
+    Macaw::DEBUG_IN("[Application] Execution started");
 
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
@@ -56,9 +56,11 @@ int Application::exec()
 
     m_mainWindow->show();
 
-    Macaw::DEBUG_OUT("[Application] exec()");
+    int l_execVal = QApplication::exec();
 
-    return QApplication::exec();
+    Macaw::DEBUG_OUT("[Application] Execution exits");
+
+    return l_execVal;
 }
 
 /**
