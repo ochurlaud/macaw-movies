@@ -36,8 +36,8 @@ int main(int argv, char **args)
     Application l_app(argv, args);
 
     // Translations
-    QTranslator macawTranslator;
-    macawTranslator.load("macaw_" + QLocale::system().name(),"../translate");
+    QTranslator macawTranslator;qDebug() << QLocale::system().name();
+    macawTranslator.load("macaw_" + QLocale::system().name(),":/locales");
     l_app.installTranslator(&macawTranslator);
 
     // Parsing

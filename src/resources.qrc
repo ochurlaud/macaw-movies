@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/img">
+        <file alias="logov0_1.png">img/logov0_1.png</file>
+    </qresource>
+    <qresource prefix="/locales">
+        <file alias="macaw_fr.qm">locales/macaw_fr.qm</file>
+    </qresource>
+</RCC>

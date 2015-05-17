@@ -94,8 +94,8 @@ FORMS    += \
     MainWindowWidgets/MetadataPannel.ui
 
 TRANSLATIONS += \
-    ../translate/macaw_fr.ts \
-    ../translate/macaw_de.ts
+    locales/macaw_fr.ts \
+    locales/macaw_de.ts
 
 OTHER_FILES += \
     ../.gitignore \
@@ -104,6 +104,6 @@ OTHER_FILES += \
     ../DDB_SCHEMA.md
 
 RESOURCES += \
-    images.qrc
+    resources.qrc
 
 DISTFILES +=
