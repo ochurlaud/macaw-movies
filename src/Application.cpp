@@ -107,7 +107,7 @@ void Application::askForOrphanPeopleDeletion(People &orphanPeople)
 
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Question);
-    msgBox.setText(QApplication::tr("The person <b>%2</b> is not linked to any movie now.").arg(l_name));
+    msgBox.setText(QApplication::tr("The person <b>%1</b> is not linked to any movie now.").arg(l_name));
     msgBox.setInformativeText(tr("Do you want to delete it?"));
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
