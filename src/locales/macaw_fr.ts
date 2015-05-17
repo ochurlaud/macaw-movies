@@ -92,7 +92,7 @@
     <message>
         <location filename="../MainWindow.ui" line="168"/>
         <source>Settin&amp;gs</source>
-        <translation>&amp;Settings</translation>
+        <translation>&amp;Options</translation>
     </message>
     <message>
         <location filename="../MainWindow.ui" line="174"/>
@@ -258,6 +258,99 @@ Multi-selection with &lt;Ctrl&gt;</source>
         <source>E</source>
         <translation>E</translation>
     </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="44"/>
+        <source>Title</source>
+        <translation>Titre</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="44"/>
+        <source>Original Title</source>
+        <translation>Titre d&apos;origine</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="44"/>
+        <source>Release Date</source>
+        <translation>Date de sortie</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="44"/>
+        <source>Path of the file</source>
+        <translation>Chemin du fichier</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="131"/>
+        <source>Remove from ToWatch list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="133"/>
+        <source>To Watch</source>
+        <translation>A voir</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="141"/>
+        <source>Move to trash</source>
+        <translation>Déplacer dans la corbeille</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="207"/>
+        <source>Remove from ToWatch list ?</source>
+        <translation>Retirer de la list A voir ?</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="208"/>
+        <source>Do you want to remove this movie from the ToWatch list ?</source>
+        <translation>Voulez-vous retirer ce film de la liste A voir ?</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="303"/>
+        <source>Move to trash?</source>
+        <translation>Déplacer dans la corbeille ?</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="304"/>
+        <source>Move to trash? All data in Macaw-Movies specific to the concerned movie(s) will be deleted, this cannot be undone.</source>
+        <translation>Déplacer dans la corbeille ? Toutes les données de Macaw-Movies concernant ce(s) film(s) seront supprimée(s), ceci est irréversible.</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="333"/>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="533"/>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="610"/>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="651"/>
+        <source>Error deleting</source>
+        <translation>Erreur de suppression</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="334"/>
+        <source>Error deleting the movie from the database.</source>
+        <translation>Erreur lors de la suppression du film de la base de donnée.</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="505"/>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="554"/>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="627"/>
+        <source>Error moving file to trash</source>
+        <translation>Erreur lors du déplacement vers la corbeille</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="506"/>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="555"/>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="628"/>
+        <source>Something went wrong when moving the file to the trash. Do you want to permanently delete it instead?</source>
+        <translation>Le déplacement vers la corbeille a échoué. Souhaitez-vous plutôt supprimer le fichier définitivement ?</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="534"/>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="611"/>
+        <source>File does not exists or is not a file, it cannot be deleted.</source>
+        <translation>Le fichier n&apos;existe pas ou n&apos;est pas un fichier, il ne peut pas êre supprimé.</translation>
+    </message>
+    <message>
+        <location filename="../MainWindowWidgets/MoviesPannel.cpp" line="652"/>
+        <source>Error deleting the file.</source>
+        <translation>Erreur lors de la suppression du fichier.</translation>
+    </message>
 </context>
 <context>
     <name>PeopleDialog</name>
@@ -296,8 +389,8 @@ Multi-selection with &lt;Ctrl&gt;</source>
     </message>
     <message>
         <location filename="../Application.cpp" line="110"/>
-        <source>The person &lt;b&gt;%2&lt;/b&gt; is not linked to any movie now.</source>
-        <translation></translation>
+        <source>The person &lt;b&gt;%1&lt;/b&gt; is not linked to any movie now.</source>
+        <translation>La personne &lt;b&gt;%1&lt;/b&gt; n&apos;est plus liée à aucun film.</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="50"/>

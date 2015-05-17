@@ -41,7 +41,7 @@ void MoviesPannel::setHeaders()
     l_headerView->setStretchLastSection(true);
     l_headerView->setSectionsMovable(true);
     QStringList l_headers;
-    l_headers << "Title" << "Original Title" << "Release Date" << "Path of the file";
+    l_headers << tr("Title") << tr("Original Title") << tr("Release Date") << tr("Path of the file");
     m_ui->tableWidget->setHorizontalHeaderLabels(l_headers);
 }
 
@@ -128,9 +128,9 @@ void MoviesPannel::on_customContextMenuRequested(const QPoint &point)
     {
         if(servicesManager->toWatchState()) {
             Macaw::DEBUG("[MainWindow] In ToWatch detected");
-            m_ui->actionDelete->setText("Remove from ToWatch list");
+            m_ui->actionDelete->setText(tr("Remove from ToWatch list"));
         } else {
-            QAction *l_actionAddInToWatch = new QAction("To Watch",
+            QAction *l_actionAddInToWatch = new QAction(tr("To Watch"),
                                                         l_menu);
             l_actionAddInToWatch->setData(1);
 
@@ -138,7 +138,7 @@ void MoviesPannel::on_customContextMenuRequested(const QPoint &point)
                                          this, SLOT(addPlaylistMenu_triggered(QAction*)));
 
             l_menu->addAction(l_actionAddInToWatch);
-            m_ui->actionDelete->setText("Move to trash");
+            m_ui->actionDelete->setText(tr("Move to trash"));
         }
 
         l_menu->addAction(m_ui->actionEdit_mainPannelMetadata);
@@ -204,8 +204,8 @@ void MoviesPannel::removeMovieFromPlaylist(const QList<Movie> &movieList, Playli
 {
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
-    QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Question, "Remove from ToWatch list ?",
-                                                         "Do you want to remove this movie from the ToWatch list ?",
+    QMessageBox * l_confirmationDialog = new QMessageBox(QMessageBox::Question, tr("Remove from ToWatch list ?"),
+                                                         tr("Do you want to remove this movie from the ToWatch list ?"),
                                                          QMessageBox::Yes|QMessageBox::No, this);
     l_confirmationDialog->setDefaultButton(QMessageBox::No);
 
@@ -300,8 +300,8 @@ bool MoviesPannel::moveFileToTrash(QList<Movie> &movieList)
 {
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
-    QMessageBox *l_confirmationDialog = new QMessageBox(QMessageBox::Warning, "Move to trash? ",
-                                                         "Move to trash? All data in Macaw-Movies specific to the concerned movie(s) will be deleted, this cannot be undone. ",
+    QMessageBox *l_confirmationDialog = new QMessageBox(QMessageBox::Warning, tr("Move to trash?"),
+                                                         tr("Move to trash? All data in Macaw-Movies specific to the concerned movie(s) will be deleted, this cannot be undone."),
                                                          QMessageBox::Yes|QMessageBox::No, this);
 
     l_confirmationDialog->setDefaultButton(QMessageBox::No);
@@ -330,8 +330,8 @@ bool MoviesPannel::moveFileToTrash(QList<Movie> &movieList)
 
             if(l_successfullyDeleted) {
                 if(!databaseManager->deleteMovie(l_movie)) {
-                    QMessageBox *msgBox = new QMessageBox(QMessageBox::Critical, "Error deleting",
-                                                    "Error deleting the movie from the database. ",
+                    QMessageBox *msgBox = new QMessageBox(QMessageBox::Critical, tr("Error deleting"),
+                                                    tr("Error deleting the movie from the database."),
                                                     QMessageBox::Ok, this);
                     msgBox->exec();
                     return false;
@@ -502,8 +502,8 @@ bool MoviesPannel::linux_moveFileToTrash(QString movieFilePath) {
         Macaw::DEBUG("[MoviesPannel] Failled to create and open the file's' trash info");
     }
 
-    QMessageBox *l_msgBoxErrorMovingToTrash = new QMessageBox(QMessageBox::Warning, "Error moving file to trash",
-                                        "Something went wrong when moving the file to the trash. Do you want to permanently delete it instead? ",
+    QMessageBox *l_msgBoxErrorMovingToTrash = new QMessageBox(QMessageBox::Warning, tr("Error moving file to trash"),
+                                        tr("Something went wrong when moving the file to the trash. Do you want to permanently delete it instead?"),
                                         QMessageBox::Yes|QMessageBox::No, this);
 
     if(l_msgBoxErrorMovingToTrash->exec() == QMessageBox::Yes)
@@ -530,8 +530,8 @@ bool MoviesPannel::windows_moveFileToTrash(QString movieFilePath) {
     QFileInfo fileinfo( movieFilePath );
 
     if( !fileinfo.exists() ) {
-        QMessageBox * l_msgBoxErrorFileNotExist = new QMessageBox(QMessageBox::Critical, "Error deleting",
-                                            "File does not exists or is not a file, it cannot be deleted. ",
+        QMessageBox * l_msgBoxErrorFileNotExist = new QMessageBox(QMessageBox::Critical, tr("Error deleting"),
+                                            tr("File does not exists or is not a file, it cannot be deleted."),
                                             QMessageBox::Ok, this);
         l_msgBoxErrorFileNotExist->exec();
         return false;
@@ -551,8 +551,8 @@ bool MoviesPannel::windows_moveFileToTrash(QString movieFilePath) {
 
     if( rv != 0 ){
         Macaw::DEBUG("[MoviesPannel] Moving file to trash failed with: " + QString::number(rv));
-        QMessageBox * l_msgBoxErrorMovingToTrash = new QMessageBox(QMessageBox::Warning, "Error moving file to trash",
-                                            "Something went wrong when moving the file to the trash. Do you want to permanently delete it instead? ",
+        QMessageBox * l_msgBoxErrorMovingToTrash = new QMessageBox(QMessageBox::Warning, tr("Error moving file to trash"),
+                                            tr("Something went wrong when moving the file to the trash. Do you want to permanently delete it instead?"),
                                             QMessageBox::Yes|QMessageBox::No, this);
 
         if(l_msgBoxErrorMovingToTrash->exec() == QMessageBox::Yes)
@@ -607,8 +607,8 @@ bool MoviesPannel::macosx_moveFileToTrash(QString movieFilePath) {
     Macaw::DEBUG("[MoviesPannel] Trash name for the file: "+l_trashName);
 
     if(!l_movieFileInfo.exists() || !l_movieFileInfo.isFile()) {
-        QMessageBox * l_msgBoxErrorFileNotExist = new QMessageBox(QMessageBox::Critical, "Error deleting",
-                                            "File does not exists or is not a file, it cannot be deleted. ",
+        QMessageBox * l_msgBoxErrorFileNotExist = new QMessageBox(QMessageBox::Critical, tr("Error deleting"),
+                                            tr("File does not exists or is not a file, it cannot be deleted."),
                                             QMessageBox::Ok, this);
         l_msgBoxErrorFileNotExist->exec();
         return false;
@@ -624,8 +624,8 @@ bool MoviesPannel::macosx_moveFileToTrash(QString movieFilePath) {
         Macaw::DEBUG("[MoviesPannel] Failled to move file to trash");
     }
 
-    QMessageBox * l_msgBoxErrorMovingToTrash = new QMessageBox(QMessageBox::Warning, "Error moving file to trash",
-                                        "Something went wrong when moving the file to the trash. Do you want to permanently delete it instead? ",
+    QMessageBox * l_msgBoxErrorMovingToTrash = new QMessageBox(QMessageBox::Warning, tr("Error moving file to trash"),
+                                        tr("Something went wrong when moving the file to the trash. Do you want to permanently delete it instead?"),
                                         QMessageBox::Yes|QMessageBox::No, this);
 
     if(l_msgBoxErrorMovingToTrash->exec() == QMessageBox::Yes)
@@ -648,8 +648,8 @@ bool MoviesPannel::permanentlyDeleteFile(QFile * movieFileToDelete) {
         Macaw::DEBUG("[MoviesPannel] Permanently deleting file");
         if(!movieFileToDelete->remove())
         {
-            QMessageBox * l_msgBoxErrorDeleting = new QMessageBox(QMessageBox::Critical, "Error deleting",
-                                                "Error deleting the file. ",
+            QMessageBox * l_msgBoxErrorDeleting = new QMessageBox(QMessageBox::Critical, tr("Error deleting"),
+                                                tr("Error deleting the file."),
                                                 QMessageBox::Ok, this);
             l_msgBoxErrorDeleting->exec();
             return false;
