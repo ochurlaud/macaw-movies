@@ -106,7 +106,6 @@ OTHER_FILES += \
     ../DDB_SCHEMA.md
 
 RESOURCES += \
-    resources.qrc \
-    images.qrc
+    resources.qrc
 
 DISTFILES +=
