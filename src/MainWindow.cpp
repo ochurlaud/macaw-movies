@@ -214,11 +214,8 @@ void MainWindow::addNewMovies()
                                    << "mpg"
                                    << "flv"
                                    << "mov"
-<<<<<<< HEAD
                                    << "m4v";
-=======
-				   << "m4v";
->>>>>>> f8e122cca9c063ef12985e9bdfc5076483203d09
+
             if (l_authorizedSuffixList.contains(l_fileSuffix, Qt::CaseInsensitive)) {
                 Macaw::DEBUG("[MainWindow.updateApp()] Suffix accepted");
                 bool l_movieExists = databaseManager->existMovie(l_filePath);
