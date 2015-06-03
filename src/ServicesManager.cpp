@@ -22,3 +22,15 @@ void ServicesManager::pannelsUpdate()
 {
     emit requestPannelsUpdate();
 }
+
+/**
+ * @brief send a signal to show the provided message in MainWindow statusbar
+ * The signal shoul be connected to the proper action in MainWindow
+ * @author Sébastien TOUZÉ <sebtouze@gmx.fr>
+ *
+ * @param QString message
+ */
+void ServicesManager::showTempStatusBarMessage(QString message)
+{
+    emit requestTempStatusBarMessage(message);
+}

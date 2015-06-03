@@ -46,6 +46,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ServicesManager *servicesManager = ServicesManager::instance();
     connect(servicesManager, SIGNAL(requestPannelsUpdate()),
             this, SLOT(selfUpdate()));
+    connect(servicesManager, SIGNAL(requestTempStatusBarMessage(QString)),
+            this, SLOT(putTempStatusBarMessage(QString)));
     connect(m_leftPannel, SIGNAL(updateMainPannel()),
             this, SLOT(updateMainPannel()));
     connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
@@ -258,6 +260,22 @@ void MainWindow::fillMetadataPannel(const Movie &movie)
     m_metadataPannel->fill(movie);
 
     Macaw::DEBUG_OUT("[MainWindow] Exit fillMetadataPannel");
+}
+
+/**
+ * @brief Puts <message> as a temporary statusBar entry
+ *
+ * @author Sébastien TOUZÉ <sebtouze@gmx.fr>
+ * @param QString message
+ */
+void MainWindow::putTempStatusBarMessage(QString message)
+{
+    Macaw::DEBUG_IN("[MainWindow] Enter putTempStatusBarMessage");
+
+    m_ui->statusbar->clearMessage();
+    m_ui->statusbar->showMessage(message);
+
+    Macaw::DEBUG_OUT("[MainWindow] Exit putTempStatusBarMessage");
 }
 
 /**
