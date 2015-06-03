@@ -11,7 +11,7 @@ Movies organizer. Qt/C++/Sqlite
 
 ## 1. Rules for coding
 
-See [Code rules](https://github.com/macaw-movies/macaw-movies/wiki/Code-rules) on the Wiki.
+See [Code rules](https://community.kde.org/Macaw-Movies/Development/Code_Rules) on the Wiki.
 
 ## 2. Presentation of the project
 
