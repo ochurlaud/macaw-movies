@@ -50,9 +50,11 @@ public:
 
     // Getters for paths, config
     QStringList getMoviesPaths(bool imported = true);
+    QString getMediaPlayerPath();
 
     // Insertions for paths, config
     bool addMoviesPath(QString moviesPath);
+    bool addMediaPlayerPath(QString mediaPlayerPath);
     int createTag(QString name);
     bool setMoviesPathImported(QString moviesPath, bool imported);
     bool deleteMoviesPath(QString moviesPath);
