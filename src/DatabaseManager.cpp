@@ -230,8 +230,6 @@ bool DatabaseManager::createTables()
         }
     }
 
-    showTables();
-
     return l_ret;
 }
 
