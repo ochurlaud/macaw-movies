@@ -37,7 +37,13 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
 
     QStringList l_moviesPathsList = databaseManager->getMoviesPaths(0);
     l_moviesPathsList << databaseManager->getMoviesPaths(1);
+
     m_ui->knownPathsList->addItems(l_moviesPathsList);
+
+    QString l_mediaPlayerPath(databaseManager->getMediaPlayerPath());
+
+    m_ui->playerPathEdit->setText(l_mediaPlayerPath);
+
     Macaw::DEBUG_OUT("[SettingsWindow] Construction done");
 }
 
@@ -59,13 +65,11 @@ void SettingsWindow::on_browseButton_clicked()
     Macaw::DEBUG_OUT("[SettingsWindow] Exits browseFilesPathDialog()");
 }
 
-
 void SettingsWindow::on_buttonBox_accepted()
 {
     Macaw::DEBUG_IN("[SettingsWindow] Enters on_buttonBox_accepted()");
 
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
-
 
     QString l_newPath = m_ui->folderPathEdit->text();
     addToKnownPathsList(l_newPath);
@@ -87,6 +91,13 @@ void SettingsWindow::on_buttonBox_accepted()
             databaseManager->setMoviesPathImported(l_path, false);
         }
     }
+
+    if (m_ui->playerPathEdit->text() != "") {
+        if (m_ui->playerPathEdit->text().compare(databaseManager->getMediaPlayerPath())) {
+            databaseManager->addMediaPlayerPath(m_ui->playerPathEdit->text());
+        }
+    }
+
     emit closeAndSave();
     close();
     Macaw::DEBUG_OUT("[SettingsWindow] Exits on_buttonBox_accepted()");
@@ -125,4 +136,15 @@ void SettingsWindow::addToKnownPathsList(QString path)
         m_ui->knownPathsList->addItem(path);
     }
     m_ui->folderPathEdit->clear();
+}
+
+void SettingsWindow::on_playerBrowseButton_clicked()
+{
+    Macaw::DEBUG_IN("[SettingsWindow] Enters browseFilesPathDialog()");
+    QString l_mediaPlayer = QFileDialog::getOpenFileName(this,
+                                                         tr("Select File"),
+                                                         "/home/",
+                                                         tr("Program Files (*.app *.exe *.bat)"));
+    m_ui->playerPathEdit->setText(l_mediaPlayer);
+    Macaw::DEBUG_OUT("[SettingsWindow] Exits browseFilesPathDialog()");
 }

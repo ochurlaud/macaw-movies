@@ -267,7 +267,7 @@ void MainWindow::fillMetadataPannel(const Movie &movie)
  *
  * @param event
  */
-void MainWindow::updateFetchStatus(int done, int todo)
+/*void MainWindow::updateFetchStatus(int done, int todo)
 {
     Macaw::DEBUG_OUT("[MainWindow] updateFetchStatus()");
     if(done < todo)
@@ -279,7 +279,7 @@ void MainWindow::updateFetchStatus(int done, int todo)
         this->statusBar()->showMessage(QString("Fetching Metadata Ready. %1 / %2 Files Fetched").arg(done).arg(todo+done), 5000);
     }
 }
-
+*/
 /**
  * @brief Slot triggered when the application is closed.
  * Overload the QMainWindow class: save the window state to QSettings
