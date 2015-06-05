@@ -452,7 +452,7 @@ bool DatabaseManager::deleteMoviesPath(QString moviesPath)
 QString DatabaseManager::getMediaPlayerPath()
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT * FROM media_player");
+    l_query.prepare("SELECT media_player_path FROM media_player");
 
     if(!l_query.exec())
     {
