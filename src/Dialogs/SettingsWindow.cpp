@@ -92,11 +92,11 @@ void SettingsWindow::on_buttonBox_accepted()
         }
     }
 
-    if (m_ui->playerPathEdit->text() != "") {
+    //if (m_ui->playerPathEdit->text() != "") {
         if (m_ui->playerPathEdit->text().compare(databaseManager->getMediaPlayerPath())) {
             databaseManager->addMediaPlayerPath(m_ui->playerPathEdit->text());
         }
-    }
+    //}
 
     emit closeAndSave();
     close();
@@ -147,4 +147,10 @@ void SettingsWindow::on_playerBrowseButton_clicked()
                                                          tr("Program Files (*.app *.exe *.bat)"));
     m_ui->playerPathEdit->setText(l_mediaPlayer);
     Macaw::DEBUG_OUT("[SettingsWindow] Exits browseFilesPathDialog()");
+}
+
+void SettingsWindow::on_playerClearButton_clicked()
+{
+    Macaw::DEBUG_IN("[SettingsWindow] on_playerClearButton_clicked()");
+    m_ui->playerPathEdit->clear();
 }
