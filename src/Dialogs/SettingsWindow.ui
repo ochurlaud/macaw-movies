@@ -40,11 +40,11 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="movieLocationsTab">
       <attribute name="title">
-       <string>Movie Locations</string>
+       <string>Movie Folders</string>
       </attribute>
       <widget class="QWidget" name="verticalLayoutWidget">
        <property name="geometry">
@@ -130,7 +130,7 @@
      </widget>
      <widget class="QWidget" name="generalSettingsTab">
       <attribute name="title">
-       <string>General Settings</string>
+       <string>Preferences</string>
       </attribute>
       <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
@@ -150,12 +150,35 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="playerPathEdit"/>
+         <widget class="QLineEdit" name="playerPathEdit">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="playerBrowseButton">
           <property name="text">
            <string>Browse</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="playerClearButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>82</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Clear</string>
           </property>
          </widget>
         </item>
