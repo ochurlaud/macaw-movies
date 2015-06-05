@@ -118,6 +118,21 @@ bool DatabaseManager::createTables()
             l_query.next();
             if(l_query.value(0) != DB_VERSION) //TODO : make en intelligent upgrade of the database
             {
+                switch (DB_VERSION) {
+                case 2:
+                    //add media player path table
+                    l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS media_player_path("
+                                                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                                                  "media_player_path VARCHAR(255) UNIQUE"
+                                                  ")");
+                    // Set the database version
+                    l_ret = l_ret && l_query.exec("INSERT INTO config (`db_version`) "
+                                                  "VALUES ('" + QString::number(DB_VERSION) + "')");
+                    break;
+                default:
+                    break;
+                }
+/*
                 QMessageBox msgBox;
                 msgBox.setText("Error your database version is "+ l_query.value(0).toString() +" which is too old.\n"+
                                "This program is not currently able to update the database and will close.\n"+
@@ -125,6 +140,7 @@ bool DatabaseManager::createTables()
                 msgBox.setIcon(QMessageBox::Critical);
                 msgBox.exec();
                 exit(1);
+*/
             }
         }
         else    //if config table do not exists then the db is empty...
