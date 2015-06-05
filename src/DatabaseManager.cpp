@@ -98,6 +98,43 @@ bool DatabaseManager::deleteDB()
 }
 
 /**
+ * @brief Upgrades DB between diffent DB versions
+ *
+ * @return bool
+ */
+bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
+{
+    //TODO: add more intelligence later on. At the moment this
+    //function can only handle move from version 1 to version 2.
+    Macaw::DEBUG("[DatabaseManager] upgradeDB");
+    bool  l_ret = false;
+
+    if (m_db.isOpen())
+    {
+        QSqlQuery l_query(m_db);
+
+        l_ret = l_query.exec("PRAGMA foreign_keys = ON");
+
+        //switch from DB_VERSION 1 to DB_VERSION 2
+        if (fromVersion == 1 && toVersion == 2) {
+            //add media player table
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS media_player("
+                                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                                      "media_player_path VARCHAR(255) UNIQUE"
+                                      ")");
+            // Update the database version if media player table was inserted successfully
+            if(l_ret) {
+                l_ret = l_ret && l_query.exec("UPDATE config "
+                                              "SET db_version = "
+                                              + QString::number(toVersion));
+            }
+        }
+    }
+
+    return l_ret;
+}
+
+/**
  * @brief Creates all the tables
  *
  * @return bool
@@ -118,20 +155,7 @@ bool DatabaseManager::createTables()
             l_query.next();
             if(l_query.value(0) != DB_VERSION) //TODO : make en intelligent upgrade of the database
             {
-                switch (DB_VERSION) {
-                case 2:
-                    //add media player path table
-                    l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS media_player_path("
-                                                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                                                  "media_player_path VARCHAR(255) UNIQUE"
-                                                  ")");
-                    // Set the database version
-                    l_ret = l_ret && l_query.exec("INSERT INTO config (`db_version`) "
-                                                  "VALUES ('" + QString::number(DB_VERSION) + "')");
-                    break;
-                default:
-                    break;
-                }
+                l_ret = upgradeDB(l_query.value(0).toInt(), DB_VERSION);
 /*
                 QMessageBox msgBox;
                 msgBox.setText("Error your database version is "+ l_query.value(0).toString() +" which is too old.\n"+
@@ -232,7 +256,7 @@ bool DatabaseManager::createTables()
                                           ")");
 
             // Path to media player
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS media_player_path("
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS media_player("
                                           "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                                           "media_player_path VARCHAR(255) UNIQUE"
                                           ")");
@@ -326,7 +350,7 @@ bool DatabaseManager::addMediaPlayerPath(QString mediaPlayerPath)
         if (!l_query.record().isEmpty()) {
             l_query.prepare("INSERT INTO media_player (media_player_path) VALUES (:media_player_path)");
         } else {
-            l_query.prepare("UPDATE media_player SET media_player_path (:media_player_path)");
+            l_query.prepare("UPDATE media_player SET media_player_path = '(:media_player_path)'");
         }
         l_query.bindValue(":media_player_path", mediaPlayerPath);
     }
