@@ -243,13 +243,16 @@ void MoviesPannel::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
     if (!databaseManager->getMediaPlayerPath().compare("")) {
         QString l_executeMediaPlayerPath;
         #ifdef Q_OS_LINUX
-            l_executeMediaPlayerPath(QString("source \"%1\"").arg(databaseManager->getMediaPlayerPath()));
+            l_executeMediaPlayerPath = QString("source \"%1\"")
+                                               .arg(databaseManager->getMediaPlayerPath());
         #endif
         #ifdef Q_OS_WIN
-            l_executeMediaPlayerPath = QString("\"%1\"").arg(databaseManager->getMediaPlayerPath());
+            l_executeMediaPlayerPath = QString("\"%1\"")
+                                               .arg(databaseManager->getMediaPlayerPath());
         #endif
         #ifdef Q_OS_OSX
-            l_executeMediaPlayerPath = QString("open %1").arg(databaseManager->getMediaPlayerPath());
+            l_executeMediaPlayerPath = QString("open \"%1\"")
+                                               .arg(databaseManager->getMediaPlayerPath());
         #endif
 
         QProcess::startDetached(QString("%1 \"%2\"")

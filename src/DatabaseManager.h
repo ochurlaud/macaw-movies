@@ -47,6 +47,7 @@ public:
     bool closeDB();
     bool deleteDB();
     QSqlError lastError();
+    bool upgradeDB(int fromVersion, int toVersion);
 
     // Getters for paths, config
     QStringList getMoviesPaths(bool imported = true);
