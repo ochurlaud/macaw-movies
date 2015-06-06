@@ -262,6 +262,23 @@ void MainWindow::fillMetadataPannel(const Movie &movie)
 
     Macaw::DEBUG_OUT("[MainWindow] Exit fillMetadataPannel");
 }
+
+/**
+ * @brief Puts <message> as a temporary statusBar entry
+ *
+ * @author Sébastien TOUZÉ <sebtouze@gmx.fr>
+ * @param QString message
+ */
+void MainWindow::putTempStatusBarMessage(QString message)
+{
+    Macaw::DEBUG_IN("[MainWindow] Enter putTempStatusBarMessage");
+
+    m_ui->statusbar->clearMessage();
+    m_ui->statusbar->showMessage(message);
+
+    Macaw::DEBUG_OUT("[MainWindow] Exit putTempStatusBarMessage");
+}
+
 /**
  * @brief Slot triggered when the metadata for a file is fetched.
  *
@@ -282,22 +299,6 @@ void MainWindow::fillMetadataPannel(const Movie &movie)
     }
 }
 */
-/**
- * @brief Puts <message> as a temporary statusBar entry
- *
- * @author Sébastien TOUZÉ <sebtouze@gmx.fr>
- * @param QString message
- */
-void MainWindow::putTempStatusBarMessage(QString message)
-{
-    Macaw::DEBUG_IN("[MainWindow] Enter putTempStatusBarMessage");
-
-    m_ui->statusbar->clearMessage();
-    m_ui->statusbar->showMessage(message);
-
-    Macaw::DEBUG_OUT("[MainWindow] Exit putTempStatusBarMessage");
-}
-
 /**
  * @brief Slot triggered when the application is closed.
  * Overload the QMainWindow class: save the window state to QSettings
