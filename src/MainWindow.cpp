@@ -46,6 +46,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ServicesManager *servicesManager = ServicesManager::instance();
     connect(servicesManager, SIGNAL(requestPannelsUpdate()),
             this, SLOT(selfUpdate()));
+    connect(servicesManager, SIGNAL(requestTempStatusBarMessage(QString)),
+            this, SLOT(putTempStatusBarMessage(QString)));
     connect(m_leftPannel, SIGNAL(updateMainPannel()),
             this, SLOT(updateMainPannel()));
     connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
@@ -260,6 +262,42 @@ void MainWindow::fillMetadataPannel(const Movie &movie)
 
     Macaw::DEBUG_OUT("[MainWindow] Exit fillMetadataPannel");
 }
+/**
+ * @brief Slot triggered when the metadata for a file is fetched.
+ *
+ * @author Jani RUTANEN <jani.m.rutanen@gmail.com>
+ *
+ * @param event
+ */
+/*void MainWindow::updateFetchStatus(int done, int todo)
+{
+    Macaw::DEBUG_OUT("[MainWindow] updateFetchStatus()");
+    if(done < todo)
+    {
+        this->statusBar()->showMessage(QString("Metadata for %1 / %2 Files Fetched").arg(done).arg(todo+done));
+    }
+    else
+    {
+        this->statusBar()->showMessage(QString("Fetching Metadata Ready. %1 / %2 Files Fetched").arg(done).arg(todo+done), 5000);
+    }
+}
+*/
+/**
+ * @brief Puts <message> as a temporary statusBar entry
+ *
+ * @author Sébastien TOUZÉ <sebtouze@gmx.fr>
+ * @param QString message
+ */
+void MainWindow::putTempStatusBarMessage(QString message)
+{
+    Macaw::DEBUG_IN("[MainWindow] Enter putTempStatusBarMessage");
+
+    m_ui->statusbar->clearMessage();
+    m_ui->statusbar->showMessage(message);
+
+    Macaw::DEBUG_OUT("[MainWindow] Exit putTempStatusBarMessage");
+}
+
 /**
  * @brief Slot triggered when the metadata for a file is fetched.
  *

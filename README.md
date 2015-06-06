@@ -6,12 +6,12 @@ Movies organizer. Qt/C++/Sqlite
 
 *The program is written in C++, with the Qt framework. It will be released for Linux, Windows and Mac OS X*
 
-1. Rules for coding
-2. Presentation of the project
+## 1. Contribute
 
-## 1. Rules for coding
-
-See [Code rules](https://github.com/macaw-movies/macaw-movies/wiki/Code-rules) on the Wiki.
+Any help is welcome !!!
+Please read this before doing a pull-request:
+* [Code rules](https://community.kde.org/Macaw-Movies/Development/Code_Rules)
+* [Contributing](https://community.kde.org/Macaw-Movies/Development/Contributing)
 
 ## 2. Presentation of the project
 
