@@ -98,6 +98,43 @@ bool DatabaseManager::deleteDB()
 }
 
 /**
+ * @brief Upgrades DB between diffent DB versions
+ *
+ * @return bool
+ */
+bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
+{
+    //TODO: add more intelligence later on. At the moment this
+    //function can only handle move from version 1 to version 2.
+    Macaw::DEBUG("[DatabaseManager] upgradeDB");
+    bool  l_ret = false;
+
+    if (m_db.isOpen())
+    {
+        QSqlQuery l_query(m_db);
+
+        l_ret = l_query.exec("PRAGMA foreign_keys = ON");
+
+        //switch from DB_VERSION 1 to DB_VERSION 2
+        if (fromVersion == 1 && toVersion == 2) {
+            //add media player table
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS media_player("
+                                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                                      "media_player_path VARCHAR(255) UNIQUE"
+                                      ")");
+            // Update the database version if media player table was inserted successfully
+            if(l_ret) {
+                l_ret = l_ret && l_query.exec("UPDATE config "
+                                              "SET db_version = "
+                                              + QString::number(toVersion));
+            }
+        }
+    }
+
+    return l_ret;
+}
+
+/**
  * @brief Creates all the tables
  *
  * @return bool
@@ -118,6 +155,8 @@ bool DatabaseManager::createTables()
             l_query.next();
             if(l_query.value(0) != DB_VERSION) //TODO : make en intelligent upgrade of the database
             {
+                l_ret = upgradeDB(l_query.value(0).toInt(), DB_VERSION);
+/*
                 QMessageBox msgBox;
                 msgBox.setText("Error your database version is "+ l_query.value(0).toString() +" which is too old.\n"+
                                "This program is not currently able to update the database and will close.\n"+
@@ -125,6 +164,7 @@ bool DatabaseManager::createTables()
                 msgBox.setIcon(QMessageBox::Critical);
                 msgBox.exec();
                 exit(1);
+*/
             }
         }
         else    //if config table do not exists then the db is empty...
@@ -215,9 +255,15 @@ bool DatabaseManager::createTables()
                                           "imported BOOLEAN DEFAULT 0"
                                           ")");
 
+            // Path to media player
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS media_player("
+                                          "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                                          "media_player_path VARCHAR(255) UNIQUE"
+                                          ")");
+
             // Config table (for update purposes)
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS config("
-                                          "db_version INTERGER )");
+                                          "db_version INTEGER )");
 
             // Set the database version
             l_ret = l_ret && l_query.exec("INSERT INTO config (`db_version`) VALUES ('" + QString::number(DB_VERSION) + "')");
@@ -270,7 +316,48 @@ bool DatabaseManager::addMoviesPath(QString moviesPath)
 
     if(!l_query.exec())
     {
-        Macaw::DEBUG("In addMoviesPath():");
+        Macaw::DEBUG("[DatabaseManager] In addMoviesPath():");
+        Macaw::DEBUG(l_query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Adds a path to the media player
+ *
+ * @param QString mediaPlayerPath: containing the path to the media player
+ * @return true if the path has been updated correctly
+ */
+bool DatabaseManager::addMediaPlayerPath(QString mediaPlayerPath)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT * FROM media_player");
+    if(!l_query.exec())
+    {
+        Macaw::DEBUG("[DatabaseManager] In addMediaPlayerPath():");
+        Macaw::DEBUG(l_query.lastError().text());
+
+        return false;
+    }
+
+    if (mediaPlayerPath.trimmed().isEmpty()) {
+        //remove current record
+        l_query.prepare("DELETE FROM media_player");
+    } else {
+        if (!l_query.record().isEmpty()) {
+            l_query.prepare("INSERT INTO media_player (media_player_path) VALUES (:media_player_path)");
+        } else {
+            l_query.prepare("UPDATE media_player SET media_player_path = '(:media_player_path)'");
+        }
+        l_query.bindValue(":media_player_path", mediaPlayerPath);
+    }
+
+    if(!l_query.exec())
+    {
+        Macaw::DEBUG("[DatabaseManager] In addMediaPlayerPath():");
         Macaw::DEBUG(l_query.lastError().text());
 
         return false;
@@ -357,3 +444,29 @@ bool DatabaseManager::deleteMoviesPath(QString moviesPath)
 
     return true;
 }
+
+/**
+ * @brief Get path to media player
+ * @return QStringList containing the path to the media player
+ */
+QString DatabaseManager::getMediaPlayerPath()
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT media_player_path FROM media_player");
+
+    if(!l_query.exec())
+    {
+        Macaw::DEBUG("In getMediaPlayerPath():");
+        Macaw::DEBUG(l_query.lastError().text());
+    }
+
+    QString l_mediaPlayerPath("");
+
+    while(l_query.next())
+    {
+        l_mediaPlayerPath.append(l_query.value(0).toString());
+    }
+
+    return l_mediaPlayerPath;
+}
+

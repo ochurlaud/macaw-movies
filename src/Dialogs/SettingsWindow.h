@@ -48,6 +48,10 @@ private slots:
     void on_addButton_clicked();
     void on_removeButton_clicked();
 
+    void on_playerBrowseButton_clicked();
+
+    void on_playerClearButton_clicked();
+
 private:
     Ui::SettingsWindow *m_ui;
     void addToKnownPathsList(QString path);

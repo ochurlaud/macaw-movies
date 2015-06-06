@@ -216,7 +216,8 @@ void MainWindow::addNewMovies()
                                    << "mpg"
                                    << "flv"
                                    << "mov"
-				   << "m4v";
+                                   << "m4v";
+
             if (l_authorizedSuffixList.contains(l_fileSuffix, Qt::CaseInsensitive)) {
                 Macaw::DEBUG("[MainWindow.updateApp()] Suffix accepted");
                 bool l_movieExists = databaseManager->existMovie(l_filePath);
@@ -261,7 +262,26 @@ void MainWindow::fillMetadataPannel(const Movie &movie)
 
     Macaw::DEBUG_OUT("[MainWindow] Exit fillMetadataPannel");
 }
-
+/**
+ * @brief Slot triggered when the metadata for a file is fetched.
+ *
+ * @author Jani RUTANEN <jani.m.rutanen@gmail.com>
+ *
+ * @param event
+ */
+/*void MainWindow::updateFetchStatus(int done, int todo)
+{
+    Macaw::DEBUG_OUT("[MainWindow] updateFetchStatus()");
+    if(done < todo)
+    {
+        this->statusBar()->showMessage(QString("Metadata for %1 / %2 Files Fetched").arg(done).arg(todo+done));
+    }
+    else
+    {
+        this->statusBar()->showMessage(QString("Fetching Metadata Ready. %1 / %2 Files Fetched").arg(done).arg(todo+done), 5000);
+    }
+}
+*/
 /**
  * @brief Puts <message> as a temporary statusBar entry
  *
