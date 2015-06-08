@@ -64,55 +64,6 @@ void Movie::setOriginalTitle(const QString originalTitle)
     m_originalTitle = originalTitle;
 }
 
-QList<People> Movie::peopleList() const
-{
-    return m_peopleList;
-}
-
-QList<People> Movie::peopleList(const int type) const
-{
-    QList<People> l_peopleList;
-    foreach (People l_people, m_peopleList)
-    {
-        if (l_people.type() == type)
-        {
-            l_peopleList.push_back(l_people);
-        }
-    }
-
-    return l_peopleList;
-}
-
-void Movie::setPeopleList(const QList<People> &peopleList)
-{
-    m_peopleList = peopleList;
-}
-
-void Movie::addPeople(const People &people)
-{
-    m_peopleList.push_back(people);
-}
-
-void Movie::removePeople(const People &people)
-{
-    int l_index = m_peopleList.indexOf(people);
-    if (l_index != -1)
-    {
-        m_peopleList.removeAt(l_index);
-    }
-}
-
-void Movie::updatePeople(const People &people)
-{
-    for (int i = 0 ; i < m_peopleList.size() ; i++)
-    {
-        if(m_peopleList.at(i).id() == people.id())
-        {
-            m_peopleList.replace(i, people);
-        }
-   }
-}
-
 QDate Movie::releaseDate() const
 {
     return m_releaseDate;
@@ -221,6 +172,55 @@ bool Movie::isImported() const
 void Movie::setImported(const bool imported)
 {
     m_imported = imported;
+}
+
+QList<People> Movie::peopleList() const
+{
+    return m_peopleList;
+}
+
+QList<People> Movie::peopleList(const int type) const
+{
+    QList<People> l_peopleList;
+    foreach (People l_people, m_peopleList)
+    {
+        if (l_people.type() == type)
+        {
+            l_peopleList.push_back(l_people);
+        }
+    }
+
+    return l_peopleList;
+}
+
+void Movie::setPeopleList(const QList<People> &peopleList)
+{
+    m_peopleList = peopleList;
+}
+
+void Movie::addPeople(const People &people)
+{
+    m_peopleList.push_back(people);
+}
+
+void Movie::removePeople(const People &people)
+{
+    int l_index = m_peopleList.indexOf(people);
+    if (l_index != -1)
+    {
+        m_peopleList.removeAt(l_index);
+    }
+}
+
+void Movie::updatePeople(const People &people)
+{
+    for (int i = 0 ; i < m_peopleList.size() ; i++)
+    {
+        if(m_peopleList.at(i).id() == people.id())
+        {
+            m_peopleList.replace(i, people);
+        }
+   }
 }
 
 QList<Tag> Movie::tagList()  const

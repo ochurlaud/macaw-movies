@@ -23,6 +23,7 @@
 #include <QtWidgets>
 
 #include "People.h"
+#include "Series.h"
 #include "Tag.h"
 
 class  Movie
@@ -35,34 +36,34 @@ public:
     void setTitle(const QString title);
     QString originalTitle() const;
     void setOriginalTitle(const QString originalTitle);
+    bool isColored() const;
+    void setColored(const bool colored);
+    QString country() const;
+    void setCountry(const QString country);
+    QTime duration() const;
+    void setDuration(const QTime duration);
+    QString filePath() const;
+    void setFilePath(const QString filePath);
+    QString format() const;
+    void setFormat(const QString format);
+    bool isImported() const;
+    void setImported(const bool imported);
+    QString posterPath() const;
+    void setPosterPath(const QString posterPath);
+    int rank() const;
+    void setRank(const int rank);
+    QDate releaseDate() const;
+    void setReleaseDate(const QDate releaseDate);
+    QString suffix() const;
+    void setSuffix(const QString suffix);
+    QString synopsis() const;
+    void setSynopsis(const QString synopsis);
     QList<People> peopleList() const;
     QList<People> peopleList(const int type) const;
     void setPeopleList(const QList<People> &peopleList);
     void addPeople(const People &people);
     void removePeople(const People &people);
     void updatePeople(const People &people);
-    QDate releaseDate() const;
-    void setReleaseDate(const QDate releaseDate);
-    QString country() const;
-    void setCountry(const QString country);
-    QTime duration() const;
-    void setDuration(const QTime duration);
-    QString synopsis() const;
-    void setSynopsis(const QString synopsis);
-    QString filePath() const;
-    void setFilePath(const QString filePath);
-    QString posterPath() const;
-    void setPosterPath(const QString posterPath);
-    bool isColored() const;
-    void setColored(const bool colored);
-    QString format() const;
-    void setFormat(const QString format);
-    QString suffix() const;
-    void setSuffix(const QString suffix);
-    int rank() const;
-    void setRank(const int rank);
-    bool isImported() const;
-    void setImported(const bool imported);
     QList<Tag> tagList() const;
     void setTagList(const QList<Tag> &tagList);
     void addTag(const Tag &tag);
@@ -74,18 +75,19 @@ private:
     int m_id;
     QString m_title;
     QString m_originalTitle;
-    QList<People> m_peopleList;
-    QDate m_releaseDate;
+    bool m_colored;
     QString m_country;
     QTime m_duration;
-    QString m_synopsis;
     QString m_filePath;
-    QString m_posterPath;
-    bool m_colored;
     QString m_format;
-    QString m_suffix;
-    int m_rank;
     bool m_imported;
+    QString m_posterPath;
+    int m_rank;
+    QDate m_releaseDate;
+    bool m_isSeries;
+    QString m_suffix;
+    QString m_synopsis;
+    QList<People> m_peopleList;
     QList<Tag> m_tagList;
 };
 
