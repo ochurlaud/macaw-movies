@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_leftPannel = new LeftPannel;
     m_mainPannel = new MoviesPannel;
     m_metadataPannel = new MetadataPannel;
+    m_metadataPannel->hide();
 
     m_ui->setupUi(this);
     m_ui->leftPannelLayout->addWidget(m_leftPannel);
