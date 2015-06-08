@@ -334,33 +334,25 @@ bool DatabaseManager::addMoviesPath(QString moviesPath)
 bool DatabaseManager::addMediaPlayerPath(QString mediaPlayerPath)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT * FROM media_player");
-    if(!l_query.exec())
-    {
+    l_query.prepare("DELETE FROM media_player");
+
+    if(!l_query.exec()) {
         Macaw::DEBUG("[DatabaseManager] In addMediaPlayerPath():");
         Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
 
-    if (mediaPlayerPath.trimmed().isEmpty()) {
-        //remove current record
-        l_query.prepare("DELETE FROM media_player");
-    } else {
-        if (!l_query.record().isEmpty()) {
-            l_query.prepare("INSERT INTO media_player (media_player_path) VALUES (:media_player_path)");
-        } else {
-            l_query.prepare("UPDATE media_player SET media_player_path = '(:media_player_path)'");
-        }
+    if (!mediaPlayerPath.trimmed().isEmpty()) {
+        l_query.prepare("INSERT INTO media_player (media_player_path) VALUES (:media_player_path)");
         l_query.bindValue(":media_player_path", mediaPlayerPath);
-    }
 
-    if(!l_query.exec())
-    {
-        Macaw::DEBUG("[DatabaseManager] In addMediaPlayerPath():");
-        Macaw::DEBUG(l_query.lastError().text());
+        if(!l_query.exec()) {
+            Macaw::DEBUG("[DatabaseManager] In addMediaPlayerPath():");
+            Macaw::DEBUG(l_query.lastError().text());
 
-        return false;
+            return false;
+        }
     }
 
     return true;
