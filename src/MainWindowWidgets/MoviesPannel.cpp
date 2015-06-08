@@ -591,7 +591,7 @@ bool MoviesPannel::windows_moveFileToTrash(QString movieFilePath) {
     return false; //this code must never be executed
 }
 #else
-bool MoviesPannel::windows_moveFileToTrash(QString movieFilePath) {return false;}
+bool MoviesPannel::windows_moveFileToTrash(QString movieFilePath) {(void)movieFilePath;return false;}
 #endif
 
 

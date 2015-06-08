@@ -93,6 +93,7 @@ void MetadataPannel::fill(const Movie &movie)
 
 void MetadataPannel::resizeEvent(QResizeEvent *event)
 {
+    (void)event;
     this->setPoster();
 }
 
