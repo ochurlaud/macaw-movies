@@ -74,7 +74,8 @@ void MetadataPannel::fill(const Movie &movie)
             QString l_posterPath = qApp->property("postersPath").toString()
                                    + movie.posterPath();
             l_poster.load(l_posterPath);
-            QSize l_size(this->width()-30, this->height()-30);
+
+            QSize l_size(this->width()-30, this->height()/2.5);
             l_poster = l_poster.scaled(l_size, Qt::KeepAspectRatio);
         }
         m_ui->posterLabel->setPixmap(l_poster);

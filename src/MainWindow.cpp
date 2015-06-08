@@ -40,6 +40,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_metadataPannel->hide();
 
     m_ui->setupUi(this);
+    m_ui->mainSplitter->setStretchFactor(0,1);
+    m_ui->mainSplitter->setStretchFactor(1,2);
+    m_ui->mainSplitter->setStretchFactor(2,1);
     m_ui->leftPannelLayout->addWidget(m_leftPannel);
     m_ui->mainPannelLayout->addWidget(m_mainPannel);
     m_ui->MetadataPannelLayout->addWidget(m_metadataPannel);
@@ -68,6 +71,15 @@ MainWindow::~MainWindow()
 {
     delete m_ui;
     Macaw::DEBUG("[MainWindow] Destructed");
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    this->setMaximumHeight(this->height());
+    m_metadataPannel->setMaximumHeight(this->height());
+
+    this->updateGeometry();
+    m_metadataPannel->updateGeometry();
 }
 
 /**
@@ -258,7 +270,6 @@ void MainWindow::addNewMovies()
 void MainWindow::fillMetadataPannel(const Movie &movie)
 {
     Macaw::DEBUG_IN("[MainWindow] Enter fillMetadataPannel");
-
     m_metadataPannel->fill(movie);
 
     Macaw::DEBUG_OUT("[MainWindow] Exit fillMetadataPannel");
