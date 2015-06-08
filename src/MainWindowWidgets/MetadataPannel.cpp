@@ -22,21 +22,23 @@ MetadataPannel::~MetadataPannel()
  */
 void MetadataPannel::fill(const Movie &movie)
 {
+    m_movie = movie;
     Macaw::DEBUG_IN("[MetadataPannel] Enters fill()");
 
     // without title, it means we don't want to show the metadata
-    if (movie.title() == "") {
+    if (m_movie.title() == "") {
         this->hide();
+
     } else {
         this->show();
 
-        QString l_title = "<html>"+movie.title()+"<br />";
-        QString l_originalTitle = "<i>"+movie.originalTitle()+"</i></br /><br />";
+        QString l_title = "<html>"+m_movie.title()+"<br />";
+        QString l_originalTitle = "<i>"+m_movie.originalTitle()+"</i></br /><br />";
         QString l_directors = tr("<i>Directed by</i><br />");
         QString l_producers = tr("<i>Produced by</i><br />");
         QString l_actors = tr("<i>With</i><br />");
 
-        foreach (People l_people, movie.peopleList()) {
+        foreach (People l_people, m_movie.peopleList()) {
             switch (l_people.type())
             {
             case People::Director:
@@ -67,18 +69,28 @@ void MetadataPannel::fill(const Movie &movie)
         l_actors += "</html>";
 
         m_ui->informationsLabel->setText(l_title+l_originalTitle + l_directors +l_producers + l_actors);
-        m_ui->plotLabel->setText(movie.synopsis());
-        QPixmap l_poster;
-        if (movie.posterPath() != "")
-        {
-            QString l_posterPath = qApp->property("postersPath").toString()
-                                   + movie.posterPath();
-            l_poster.load(l_posterPath);
-
-            QSize l_size(this->width()-30, this->height()/2.5);
-            l_poster = l_poster.scaled(l_size, Qt::KeepAspectRatio);
-        }
-        m_ui->posterLabel->setPixmap(l_poster);
+        m_ui->plotLabel->setText(m_movie.synopsis());
+        this->setPoster();
     }
     Macaw::DEBUG_OUT("[MetadataPannel] Exits fill()");
+}
+
+void MetadataPannel::resizeEvent(QResizeEvent *event)
+{
+    this->setPoster();
+}
+
+void MetadataPannel::setPoster()
+{
+    QPixmap l_poster;
+    if (m_movie.posterPath() != "")
+    {
+        QString l_posterPath = qApp->property("postersPath").toString()
+                               + m_movie.posterPath();
+        l_poster.load(l_posterPath);
+
+        QSize l_size(this->width()-30, this->height()/2.5);
+        l_poster = l_poster.scaled(l_size, Qt::KeepAspectRatio);
+    }
+    m_ui->posterLabel->setPixmap(l_poster);
 }
