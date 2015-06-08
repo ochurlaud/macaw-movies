@@ -73,15 +73,6 @@ MainWindow::~MainWindow()
     Macaw::DEBUG("[MainWindow] Destructed");
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event)
-{
-    this->setMaximumHeight(this->height());
-    m_metadataPannel->setMaximumHeight(this->height());
-
-    this->updateGeometry();
-    m_metadataPannel->updateGeometry();
-}
-
 /**
  * @brief Call and shows the settings window.
  * Calls the SettingsWindow class and waits until it closes to handle the results.

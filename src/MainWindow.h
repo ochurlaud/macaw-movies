@@ -66,7 +66,6 @@ private slots:
     void closeEvent(QCloseEvent *event);
     void fillMetadataPannel(const Movie &movie);
     void putTempStatusBarMessage(QString message);
-    void resizeEvent(QResizeEvent *event);
 
 signals:
     void startFetchingMetadata(const QList<Movie>&);
