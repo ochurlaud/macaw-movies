@@ -71,7 +71,7 @@ int main(int argv, char **args)
     {
         printf("%s\n",qPrintable(QApplication::tr(APP_NAME " was written by")));
         printf("%s\n",qPrintable("    Olivier Churlaud <olivier@churlaud.com>"));
-        printf("%s\n",qPrintable("    Sébastien Touzé"));
+        printf("%s\n",qPrintable("    Sébastien Touzé <sebastien.touze@yahoo.fr>"));
         ::exit(EXIT_SUCCESS);
     }
     if (l_parser.isSet(QStringLiteral("debug")))

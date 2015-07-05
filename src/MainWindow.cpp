@@ -270,7 +270,7 @@ void MainWindow::fillMetadataPannel(const Movie &movie)
 /**
  * @brief Puts <message> as a temporary statusBar entry
  *
- * @author Sébastien TOUZÉ <sebtouze@gmx.fr>
+ * @author Sébastien TOUZÉ <sebastien.touze@yahoo.fr>
  * @param QString message
  */
 void MainWindow::putTempStatusBarMessage(QString message, int time = 0)

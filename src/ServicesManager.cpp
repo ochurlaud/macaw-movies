@@ -24,11 +24,14 @@ void ServicesManager::pannelsUpdate()
 }
 
 /**
- * @brief send a signal to show the provided message in MainWindow statusbar
+ * @brief send a signal to show provided message in MainWindow statusbar
  * The signal shoul be connected to the proper action in MainWindow
- * @author Sébastien TOUZÉ <sebtouze@gmx.fr>
+ * the time parameter is optional if not given time = 0
+ * @author Sébastien TOUZÉ <sebastien.touze@yahoo.fr>
  *
  * @param QString message
+ * @param int time how long (in milliseconds) message shoud be showed.
+ * If not givent time=0 and the message will persist until a new message is sent.
  */
 void ServicesManager::showTempStatusBarMessage(QString message, int time)
 {

@@ -17,7 +17,7 @@ MetadataPannel::~MetadataPannel()
  * @brief Fill the MetadataPannel with the data of the given Movie
  *
  * @author Olivier CHURLAUD <olivier@churlaud.com>
- * @author Sébastien TOUZE
+ * @author Sébastien TOUZÉ <sebastien.touze@yahoo.fr>
  * @param movie
  */
 void MetadataPannel::fill(const Movie &movie)
