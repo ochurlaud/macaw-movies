@@ -28,6 +28,8 @@ FetchMetadata::FetchMetadata(QObject *parent) :
     m_askUser = true;
     m_fetchMetadataQuery = new FetchMetadataQuery(this);
     m_fetchMetadataDialog = NULL;
+    m_initialMovieQueueSize = 0;
+    m_moviesProcessed = 0;
 
     connect(this, SIGNAL(jobDone()),
             this, SLOT(on_jobDone()));
@@ -69,6 +71,10 @@ void FetchMetadata::startProcess()
         l_initWaitingLoop.exec();
     } else {
         if (!m_movieQueue.isEmpty()) {
+            //Showing a message in staus bar on the processing status
+            m_initialMovieQueueSize == 0 ? m_initialMovieQueueSize = m_movieQueue.size() : m_moviesProcessed++;
+            ServicesManager::instance()->requestTempStatusBarMessage("Movies fetched: "+QString::number(m_moviesProcessed) + "/"+QString::number(m_initialMovieQueueSize));
+
             m_movie = m_movieQueue.takeFirst();
             connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(const QList<Movie>&)),
                     this, SLOT(processPrimaryResponse(const QList<Movie>&)));
@@ -79,6 +85,7 @@ void FetchMetadata::startProcess()
             m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
         } else {
             m_fetchMetadataQuery->deleteLater();
+            ServicesManager::instance()->requestTempStatusBarMessage("Movies fetching completed! ", 10000);
             emit jobDone();
         }
     }

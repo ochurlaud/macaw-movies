@@ -69,6 +69,7 @@ private:
     QList<Movie> m_movieQueue;
     bool m_askUser;
     bool m_running;
+    int m_initialMovieQueueSize, m_moviesProcessed;
     QString cleanString(const QString title);
     void openFetchMetadataDialog(const Movie &movie, const QList<Movie> &accurateList);
     void updateFetchMetadataDialog(const QList<Movie> &updatedList);

@@ -50,8 +50,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ServicesManager *servicesManager = ServicesManager::instance();
     connect(servicesManager, SIGNAL(requestPannelsUpdate()),
             this, SLOT(selfUpdate()));
-    connect(servicesManager, SIGNAL(requestTempStatusBarMessage(QString)),
-            this, SLOT(putTempStatusBarMessage(QString)));
+    connect(servicesManager, SIGNAL(requestTempStatusBarMessage(QString, int)),
+            this, SLOT(putTempStatusBarMessage(QString, int)));
     connect(m_leftPannel, SIGNAL(updateMainPannel()),
             this, SLOT(updateMainPannel()));
     connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
@@ -206,6 +206,14 @@ void MainWindow::addNewMovies()
     bool l_imported = false;
     int l_addedCount(0);
     QStringList l_moviesPathsList = databaseManager->getMoviesPaths(l_imported);
+    QStringList l_authorizedSuffixList;
+    l_authorizedSuffixList << "mkv"
+                           << "avi"
+                           << "mp4"
+                           << "mpg"
+                           << "flv"
+                           << "mov"
+                           << "m4v";
 
     foreach (QString l_moviesPath, l_moviesPathsList) {
         QDirIterator l_file(l_moviesPath, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
@@ -213,14 +221,6 @@ void MainWindow::addNewMovies()
             l_file.next();
             QString l_filePath = l_file.fileInfo().absoluteFilePath();
             QString l_fileSuffix = l_file.fileInfo().suffix();
-            QStringList l_authorizedSuffixList;
-            l_authorizedSuffixList << "mkv"
-                                   << "avi"
-                                   << "mp4"
-                                   << "mpg"
-                                   << "flv"
-                                   << "mov"
-                                   << "m4v";
 
             if (l_authorizedSuffixList.contains(l_fileSuffix, Qt::CaseInsensitive)) {
                 Macaw::DEBUG("[MainWindow.updateApp()] Suffix accepted");
@@ -233,6 +233,7 @@ void MainWindow::addNewMovies()
                     l_movie.setSuffix(l_fileSuffix);
                     databaseManager->insertNewMovie(l_movie);
                     l_addedCount++;
+                    ServicesManager::instance()->requestTempStatusBarMessage("Movies imported: "+QString::number(l_addedCount));
                     if(l_addedCount == 5) {
                         this->updatePannels();
                     }
@@ -272,12 +273,12 @@ void MainWindow::fillMetadataPannel(const Movie &movie)
  * @author Sébastien TOUZÉ <sebtouze@gmx.fr>
  * @param QString message
  */
-void MainWindow::putTempStatusBarMessage(QString message)
+void MainWindow::putTempStatusBarMessage(QString message, int time = 0)
 {
     Macaw::DEBUG_IN("[MainWindow] Enter putTempStatusBarMessage");
 
     m_ui->statusbar->clearMessage();
-    m_ui->statusbar->showMessage(message);
+    m_ui->statusbar->showMessage(message, time);
 
     Macaw::DEBUG_OUT("[MainWindow] Exit putTempStatusBarMessage");
 }

@@ -30,7 +30,7 @@ void ServicesManager::pannelsUpdate()
  *
  * @param QString message
  */
-void ServicesManager::showTempStatusBarMessage(QString message)
+void ServicesManager::showTempStatusBarMessage(QString message, int time)
 {
-    emit requestTempStatusBarMessage(message);
+    emit requestTempStatusBarMessage(message, time);
 }

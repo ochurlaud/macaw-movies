@@ -21,11 +21,11 @@ public:
 
 signals:
     void requestPannelsUpdate();
-    void requestTempStatusBarMessage(QString message);
+    void requestTempStatusBarMessage(QString message, int time = 0);
 
 public slots:
     void pannelsUpdate();
-    void showTempStatusBarMessage(QString message);
+    void showTempStatusBarMessage(QString message, int time);
 
 private:
     QList<Movie> m_matchingMoviesList;

@@ -65,7 +65,7 @@ private slots:
     void on_actionAbout_triggered();
     void closeEvent(QCloseEvent *event);
     void fillMetadataPannel(const Movie &movie);
-    void putTempStatusBarMessage(QString message);
+    void putTempStatusBarMessage(QString message, int time);
 
 signals:
     void startFetchingMetadata(const QList<Movie>&);
