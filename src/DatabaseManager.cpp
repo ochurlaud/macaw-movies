@@ -99,37 +99,81 @@ bool DatabaseManager::deleteDB()
 
 /**
  * @brief Upgrades DB between diffent DB versions
+ * This function needs to be updated each time a change to the DB structure is made
  *
  * @return bool
  */
 bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
 {
-    //TODO: add more intelligence later on. At the moment this
-    //function can only handle move from version 1 to version 2.
-    Macaw::DEBUG("[DatabaseManager] upgradeDB");
+    //At the moment this function can only handle move from
+    //version 1 to version 3.
+
+    Macaw::DEBUG_IN("[DatabaseManager] upgradeDB");
     bool  l_ret = false;
+    int l_fromVersion(fromVersion);
 
     if (m_db.isOpen())
     {
+        // We need to have a clean version of the db instance.
+        //They should be a better way to do this.
+        m_db.close();
+        m_db.open();
+
         QSqlQuery l_query(m_db);
 
         l_ret = l_query.exec("PRAGMA foreign_keys = ON");
 
         //switch from DB_VERSION 1 to DB_VERSION 2
-        if (fromVersion == 1 && toVersion == 2) {
+        if (l_fromVersion == 1 && toVersion >= 2) {
             //add media player table
+            Macaw::DEBUG_IN("[DatabaseManager] upgrade from v1 to v2");
+
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS media_player("
                                       "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                                       "media_player_path VARCHAR(255) UNIQUE"
                                       ")");
+            if(!l_ret)
+            {
+                Macaw::DEBUG(l_query.lastError().text());
+            }
+
             // Update the database version if media player table was inserted successfully
             if(l_ret) {
                 l_ret = l_ret && l_query.exec("UPDATE config "
-                                              "SET db_version = "
-                                              + QString::number(toVersion));
+                                              "SET db_version = 2");
+            l_fromVersion = 2;
             }
+            Macaw::DEBUG_OUT("[DatabaseManager] exits upgrade from v1 to v2");
         }
+
+        //switch from DB_VERSION 2 to DB_VERSION 3
+        if (l_fromVersion == 2 && toVersion >= 3) {
+
+            Macaw::DEBUG_IN("[DatabaseManager] upgrade from v2 to v3");
+            l_query.finish();
+            l_query.clear();
+            l_ret = l_ret && l_query.exec("DROP TABLE media_player");
+            if(!l_ret)
+            {
+                Macaw::DEBUG(l_query.lastError().text());
+            }
+
+            l_ret = l_ret && l_query.exec("ALTER TABLE config ADD media_player VARCHAR(255)");
+            if(!l_ret)
+            {
+                Macaw::DEBUG(l_query.lastError().text());
+            }
+
+            if(l_ret) {
+                l_ret = l_ret && l_query.exec("UPDATE config "
+                                              "SET db_version = 3");
+                l_fromVersion = 3;
+            }
+            Macaw::DEBUG_OUT("[DatabaseManager] exits upgrade from v2 to v3");
+        }
+
     }
+    Macaw::DEBUG_OUT("[DatabaseManager] exits upgradeDB");
 
     return l_ret;
 }
@@ -153,18 +197,9 @@ bool DatabaseManager::createTables()
             Macaw::DEBUG("[DatabaseManager.createTable] config table exists");
             l_query.exec("SELECT db_version FROM config");
             l_query.next();
-            if(l_query.value(0) != DB_VERSION) //TODO : make en intelligent upgrade of the database
+            if(l_query.value(0) != DB_VERSION)
             {
                 l_ret = upgradeDB(l_query.value(0).toInt(), DB_VERSION);
-/*
-                QMessageBox msgBox;
-                msgBox.setText("Error your database version is "+ l_query.value(0).toString() +" which is too old.\n"+
-                               "This program is not currently able to update the database and will close.\n"+
-                               "Please delete your old database. ");
-                msgBox.setIcon(QMessageBox::Critical);
-                msgBox.exec();
-                exit(1);
-*/
             }
         }
         else    //if config table do not exists then the db is empty...
@@ -255,15 +290,10 @@ bool DatabaseManager::createTables()
                                           "imported BOOLEAN DEFAULT 0"
                                           ")");
 
-            // Path to media player
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS media_player("
-                                          "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                                          "media_player_path VARCHAR(255) UNIQUE"
-                                          ")");
-
             // Config table (for update purposes)
             l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS config("
-                                          "db_version INTEGER )");
+                                          "db_version INTEGER,"
+                                          "media_player VARCHAR(255))");
 
             // Set the database version
             l_ret = l_ret && l_query.exec("INSERT INTO config (`db_version`) VALUES ('" + QString::number(DB_VERSION) + "')");
