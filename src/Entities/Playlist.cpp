@@ -26,26 +26,6 @@ Playlist::Playlist(const QString name):
 {
 }
 
-int Playlist::id() const
-{
-    return m_id;
-}
-
-void Playlist::setId(const int id)
-{
-    m_id = id;
-}
-
-QString Playlist::name() const
-{
-    return m_name;
-}
-
-void Playlist::setName(const QString name)
-{
-    m_name = name;
-}
-
 int Playlist::rate() const
 {
     return m_rate;
@@ -77,16 +57,12 @@ void Playlist::setMovieList(const QList<Movie> &movieList)
 
 void Playlist::addMovie(const Movie &movie)
 {
-    m_movieList.push_back(movie);
+    m_movieList.append(movie);
 }
 
 void Playlist::removeMovie(const Movie &movie)
 {
-    int l_index = m_movieList.indexOf(movie);
-    if (l_index != -1)
-    {
-        m_movieList.removeAt(l_index);
-    }
+    m_movieList.removeAll(movie);
 }
 
 /**

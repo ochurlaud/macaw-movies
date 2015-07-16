@@ -16,6 +16,8 @@ list(APPEND SRCS Entities/Entity.cpp)
 list(APPEND SRCS Entities/Movie.cpp)
 list(APPEND SRCS Entities/People.cpp)
 list(APPEND SRCS Entities/Playlist.cpp)
+list(APPEND SRCS Entities/Series.cpp)
+list(APPEND SRCS Entities/SeriesConnection.cpp)
 list(APPEND SRCS Entities/Tag.cpp)
 list(APPEND SRCS FetchMetadata/FetchMetadata.cpp)
 list(APPEND SRCS FetchMetadata/FetchMetadataDialog.cpp)
@@ -24,7 +26,7 @@ list(APPEND SRCS MainWindowWidgets/LeftPannel.cpp)
 list(APPEND SRCS MainWindowWidgets/MainPannel.cpp)
 list(APPEND SRCS MainWindowWidgets/MetadataPannel.cpp)
 list(APPEND SRCS MainWindowWidgets/MoviesPannel.cpp)
-
+list(APPEND SRCS MainWindowWidgets/SeriesPannel.cpp)
 
 # Forms
 list(APPEND FORMS MainWindow.ui)
@@ -35,7 +37,7 @@ list(APPEND FORMS FetchMetadata/FetchMetadataDialog.ui)
 list(APPEND FORMS MainWindowWidgets/LeftPannel.ui)
 list(APPEND FORMS MainWindowWidgets/MetadataPannel.ui)
 list(APPEND FORMS MainWindowWidgets/MoviesPannel.ui)
-
+list(APPEND FORMS MainWindowWidgets/SeriesPannel.ui)
 
 # Resources
 list(APPEND RSRCS resources.qrc)

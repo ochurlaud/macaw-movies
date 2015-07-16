@@ -21,11 +21,26 @@
 #define SERIES_H
 
 #include "Entities/Entity.h"
+#include "Entities/Movie.h"
+#include "Entities/SeriesConnection.h"
+
+class SeriesConnection;
 
 class Series : public Entity
 {
 public:
-    Series();
+    Series(QString const name = "");
+    bool isFinished() const;
+    void setFinished(const bool finished);
+    QList<SeriesConnection> seriesConnectionList() const;
+    void setSeriesConnection(const QList<SeriesConnection> &seriesConnectionList);
+    void addSeriesConnection(const SeriesConnection &seriesConnection);
+    void removeSeriesConnection(const SeriesConnection &seriesConnection);
+    void updateSeriesConnection(const SeriesConnection &seriesConnection);
+
+private:
+    bool m_finished; // series finished of not
+    QList<SeriesConnection> m_seriesConnectionList;
 };
 
 #endif // SERIES_H

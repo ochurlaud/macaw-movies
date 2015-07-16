@@ -135,7 +135,7 @@ void FetchMetadata::processPrimaryResponse(const QList<Movie> &movieList)
         foreach(Movie l_movie, movieList) {
             if(cleanString(l_movie.title()).compare(cleanString(m_movie.title()), Qt::CaseInsensitive) == 0) {
                 Macaw::DEBUG("[FetchMetadata] One title matches");
-                l_accurateList.push_back(l_movie);
+                l_accurateList.append(l_movie);
             }
         }
     }

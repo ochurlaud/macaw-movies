@@ -17,33 +17,37 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLAYLIST_H
-#define PLAYLIST_H
+#ifndef SERIESCONNECTION_H
+#define SERIESCONNECTION_H
 
-#include <QWidget>
-
-#include "Entities/Entity.h"
+#include "Entities/Series.h"
 #include "Entities/Movie.h"
 
-class Playlist : public Entity
+class Series;
+
+class SeriesConnection
 {
 public:
-    Playlist(const QString name = "");
-    int rate() const;
-    void setRate(const int rate);
-    QDateTime creationDate() const;
-    void setCreationDate(const QDateTime creationDate);
-    QList<Movie> movieList() const;
-    void setMovieList(const QList<Movie> &movieList);
-    void addMovie(const Movie &movie);
-    void removeMovie(const Movie &movie);
-    void updateMovie(const Movie &movie);
-    enum typePlaylist { New = -1, None = 0, ToWatch = 1 };
+    SeriesConnection();
+    int id() const;
+    void setId(const int id);
+    int episode() const;
+    void setEpisode(const int episode);
+    Movie movie() const;
+    void setMovie(const Movie &movie);
+    int season() const;
+    void setSeason(const int series);
+    /*Series series() const;
+    void setSeries(const Series series);*/
+    bool operator== (const SeriesConnection&);
+    bool operator!= (const SeriesConnection&);
 
 private:
-    int m_rate;
-    QDateTime m_creationDate;
-    QList<Movie> m_movieList;
+    int m_id;
+    //Series m_series;
+    Movie m_movie;
+    int m_season;
+    int m_episode;
 };
 
-#endif // PLAYLIST_H
+#endif // SERIESCONNECTION_H

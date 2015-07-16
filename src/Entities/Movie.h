@@ -22,9 +22,8 @@
 
 #include <QtWidgets>
 
-#include "People.h"
-#include "Series.h"
-#include "Tag.h"
+#include "Entities/People.h"
+#include "Entities/Tag.h"
 
 class  Movie
 {
@@ -54,6 +53,8 @@ public:
     void setRank(const int rank);
     QDate releaseDate() const;
     void setReleaseDate(const QDate releaseDate);
+    bool isSeries() const;
+    void setSeries(const bool series);
     QString suffix() const;
     void setSuffix(const QString suffix);
     QString synopsis() const;
@@ -84,7 +85,7 @@ private:
     QString m_posterPath;
     int m_rank;
     QDate m_releaseDate;
-    bool m_isSeries;
+    bool m_series;
     QString m_suffix;
     QString m_synopsis;
     QList<People> m_peopleList;

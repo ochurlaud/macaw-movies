@@ -19,8 +19,49 @@
 
 #include "Series.h"
 
-Series::Series()
+Series::Series(const QString name) :
+    Entity(name)
 {
 
+}
+
+bool Series::isFinished() const
+{
+    return m_finished;
+}
+
+void Series::setFinished(const bool finished)
+{
+    m_finished = finished;
+}
+
+QList<SeriesConnection> Series::seriesConnectionList() const
+{
+    return m_seriesConnectionList;
+}
+void Series::setSeriesConnection(const QList<SeriesConnection> &seriesConnectionList)
+{
+    m_seriesConnectionList = seriesConnectionList;
+}
+
+void Series::addSeriesConnection(const SeriesConnection &seriesConnection)
+{
+    m_seriesConnectionList.append(seriesConnection);
+}
+
+void Series::removeSeriesConnection(const SeriesConnection &seriesConnection)
+{
+    m_seriesConnectionList.removeAll(seriesConnection);
+}
+
+void Series::updateSeriesConnection(const SeriesConnection &seriesConnection)
+{
+    for (int i = 0 ; i < m_seriesConnectionList.size() ; i++)
+    {
+        if(m_seriesConnectionList.at(i).id() == seriesConnection.id())
+        {
+            m_seriesConnectionList.replace(i, seriesConnection);
+        }
+   }
 }
 

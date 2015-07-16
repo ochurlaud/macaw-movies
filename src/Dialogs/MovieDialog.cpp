@@ -211,7 +211,7 @@ QList<People> MovieDialog::getPeopleList(int type)
         {
             int l_id = l_peopleWidget->item(i)->data(Macaw::ObjectId).toInt();
             People l_people = databaseManager->getOnePeopleById(l_id, type);
-            l_peopleList.push_back(l_people);
+            l_peopleList.append(l_people);
         }
     }
     return l_peopleList;

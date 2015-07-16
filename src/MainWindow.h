@@ -35,11 +35,13 @@
 #include "MainWindowWidgets/MainPannel.h"
 #include "MainWindowWidgets/MetadataPannel.h"
 #include "MainWindowWidgets/MoviesPannel.h"
+#include "MainWindowWidgets/SeriesPannel.h"
 
 class LeftPannel;
 class MainPannel;
 class MetadataPannel;
 class MoviesPannel;
+class SeriesPannel;
 
 namespace Ui {
 class MainWindow;
@@ -66,6 +68,8 @@ private slots:
     void closeEvent(QCloseEvent *event);
     void fillMetadataPannel(const Movie &movie);
     void putTempStatusBarMessage(QString message, int time);
+    void on_moviesButton_clicked();
+    void on_seriesButton_clicked();
 
 signals:
     void startFetchingMetadata(const QList<Movie>&);

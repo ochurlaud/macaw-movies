@@ -41,8 +41,6 @@ public:
     enum typePeople {None, Director, Producer, Actor};
 
 private:
-    int m_id;
-    QString m_name;
     QDate m_birthday;
     QString m_biography;
     int m_type;

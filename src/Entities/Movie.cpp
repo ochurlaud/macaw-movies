@@ -69,9 +69,19 @@ QDate Movie::releaseDate() const
     return m_releaseDate;
 }
 
-void Movie::setReleaseDate(QDate releaseDate)
+void Movie::setReleaseDate(const QDate releaseDate)
 {
     m_releaseDate = releaseDate;
+}
+
+bool Movie::isSeries() const
+{
+    return m_series;
+}
+
+void Movie::setSeries(const bool series)
+{
+    m_series = series;
 }
 
 QString Movie::country() const
@@ -79,7 +89,7 @@ QString Movie::country() const
     return m_country;
 }
 
-void Movie::setCountry(QString country)
+void Movie::setCountry(const QString country)
 {
     m_country = country;
 }
@@ -186,7 +196,7 @@ QList<People> Movie::peopleList(const int type) const
     {
         if (l_people.type() == type)
         {
-            l_peopleList.push_back(l_people);
+            l_peopleList.append(l_people);
         }
     }
 
@@ -200,16 +210,12 @@ void Movie::setPeopleList(const QList<People> &peopleList)
 
 void Movie::addPeople(const People &people)
 {
-    m_peopleList.push_back(people);
+    m_peopleList.append(people);
 }
 
 void Movie::removePeople(const People &people)
 {
-    int l_index = m_peopleList.indexOf(people);
-    if (l_index != -1)
-    {
-        m_peopleList.removeAt(l_index);
-    }
+    m_peopleList.removeAll(people);
 }
 
 void Movie::updatePeople(const People &people)
@@ -236,16 +242,12 @@ void Movie::setTagList(const QList<Tag> &tagList)
 
 void Movie::addTag(const Tag &tag)
 {
-    m_tagList.push_back(tag);
+    m_tagList.append(tag);
 }
 
 void Movie::removeTag(const Tag &tag)
 {
-    int l_index = m_tagList.indexOf(tag);
-    if (l_index != -1)
-    {
-        m_tagList.removeAt(l_index);
-    }
+    m_tagList.removeAll(tag);
 }
 
 

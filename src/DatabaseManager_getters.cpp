@@ -70,7 +70,7 @@ QList<Movie> DatabaseManager::getAllMovies(const QString fieldOrder)
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_movieList.push_back(l_movie);
+        l_movieList.append(l_movie);
     }
 
     return l_movieList;
@@ -108,7 +108,7 @@ QList<Movie> DatabaseManager::getMoviesByPeople(const int id,
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_movieList.push_back(l_movie);
+        l_movieList.append(l_movie);
     }
 
     return l_movieList;
@@ -159,7 +159,7 @@ QList<Movie> DatabaseManager::getMoviesByTag(const int id,
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_movieList.push_back(l_movie);
+        l_movieList.append(l_movie);
     }
 
     return l_movieList;
@@ -207,7 +207,7 @@ QList<Movie> DatabaseManager::getMoviesByPlaylist(const int id,
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_movieList.push_back(l_movie);
+        l_movieList.append(l_movie);
     }
 
     return l_movieList;
@@ -249,7 +249,7 @@ QList<Movie> DatabaseManager::getMoviesWithoutPeople(const int type,
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_movieList.push_back(l_movie);
+        l_movieList.append(l_movie);
     }
 
     return l_movieList;
@@ -275,7 +275,7 @@ QList<Movie> DatabaseManager::getMoviesWithoutTag(const QString fieldOrder)
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_movieList.push_back(l_movie);
+        l_movieList.append(l_movie);
     }
 
     return l_movieList;
@@ -330,7 +330,7 @@ QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_movieList.push_back(l_movie);
+        l_movieList.append(l_movie);
     }
 
     return l_movieList;
@@ -355,7 +355,7 @@ QList<Movie> DatabaseManager::getMoviesNotImported(const QString fieldOrder)
     while(l_query.next())
     {
         Movie l_movie = hydrateMovie(l_query);
-        l_movieList.push_back(l_movie);
+        l_movieList.append(l_movie);
     }
 
     return l_movieList;
@@ -481,7 +481,7 @@ QList<People> DatabaseManager::getPeopleUsedByType(const int type,
     while(l_query.next())
     {
         People l_people = hydratePeople(l_query);
-        l_peopleList.push_back(l_people);
+        l_peopleList.append(l_people);
     }
 
     Macaw::DEBUG("[DatabaseManager] peopleByType returns "
@@ -517,7 +517,7 @@ QList<People> DatabaseManager::getPeopleByName(const QString name,
     while(l_query.next())
     {
         People l_people = hydratePeople(l_query);
-        l_peopleList.push_back(l_people);
+        l_peopleList.append(l_people);
     }
 
     Macaw::DEBUG("[DatabaseManager] peopleByName returns "
@@ -577,7 +577,7 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
     while(l_query.next())
     {
         People l_people = hydratePeople(l_query);
-        l_peopleList.push_back(l_people);
+        l_peopleList.append(l_people);
     }
 
     Macaw::DEBUG("[DatabaseManager] peopleByAny returns "
@@ -673,7 +673,7 @@ QList<Tag> DatabaseManager::getAllTags(const QString fieldOrder)
         Tag l_tag;
         l_tag.setId(l_query.value(0).toInt());
         l_tag.setName(l_query.value(1).toString());
-        l_tagList.push_back(l_tag);
+        l_tagList.append(l_tag);
     }
 
     Macaw::DEBUG("[DatabaseManager] getAllTags returns "
@@ -713,7 +713,7 @@ QList<Tag> DatabaseManager::getTagsUsed(const QString fieldOrder)
         Tag l_tag;
         l_tag.setId(l_query.value(0).toInt());
         l_tag.setName(l_query.value(1).toString());
-        l_tagList.push_back(l_tag);
+        l_tagList.append(l_tag);
     }
 
     Macaw::DEBUG("[DatabaseManager] getTagsUsed returns "
@@ -773,7 +773,7 @@ QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString field
     while(l_query.next())
     {
         Tag l_tag = hydrateTag(l_query);
-        l_tagList.push_back(l_tag);
+        l_tagList.append(l_tag);
     }
 
     Macaw::DEBUG("[DatabaseManager] tagsByAny returns "

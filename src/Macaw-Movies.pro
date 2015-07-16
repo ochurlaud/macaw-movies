@@ -60,8 +60,10 @@ SOURCES += main.cpp \
     MainWindowWidgets/MoviesPannel.cpp \
     MainWindowWidgets/MainPannel.cpp \
     MainWindowWidgets/MetadataPannel.cpp \
+    MainWindowWidgets/SeriesPannel.cpp \
     Entities/Entity.cpp \
-    Entities/Series.cpp
+    Entities/Series.cpp \
+    Entities/SeriesConnection.cpp
 
 HEADERS  += \
     include_var.h \
@@ -84,8 +86,10 @@ HEADERS  += \
     MainWindowWidgets/MoviesPannel.h \
     MainWindowWidgets/MainPannel.h \
     MainWindowWidgets/MetadataPannel.h \
+    MainWindowWidgets/SeriesPannel.h \
     Entities/Entity.h \
-    Entities/Series.h
+    Entities/Series.h \
+    Entities/SeriesConnection.h \
 
 FORMS    += \
     MainWindow.ui \
@@ -95,7 +99,8 @@ FORMS    += \
     FetchMetadata/FetchMetadataDialog.ui \
     MainWindowWidgets/LeftPannel.ui \
     MainWindowWidgets/MoviesPannel.ui \
-    MainWindowWidgets/MetadataPannel.ui
+    MainWindowWidgets/MetadataPannel.ui \
+    MainWindowWidgets/SeriesPannel.ui
 
 TRANSLATIONS += \
     locales/macaw_fr.ts \

@@ -45,7 +45,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->mainSplitter->setStretchFactor(2,1);
     m_ui->leftPannelLayout->addWidget(m_leftPannel);
     m_ui->mainPannelLayout->addWidget(m_mainPannel);
-    m_ui->MetadataPannelLayout->addWidget(m_metadataPannel);
+    m_ui->metadataPannelLayout->addWidget(m_metadataPannel);
+    m_ui->moviesButton->setFlat(true);
+    m_ui->moviesButton->setChecked(true);
 
     ServicesManager *servicesManager = ServicesManager::instance();
     connect(servicesManager, SIGNAL(requestPannelsUpdate()),
@@ -98,6 +100,46 @@ void MainWindow::on_toWatchButton_clicked()
     servicesManager->setToWatchState(!servicesManager->toWatchState());
 
     this->updatePannels();
+}
+
+/**
+ * @brief Slot triggered when the moviesButton is clicked.
+ * Shows the moviesPannel and disable the seriesPannel
+ */
+void MainWindow::on_moviesButton_clicked()
+{
+    m_ui->moviesButton->toggle();
+    if (!m_ui->moviesButton->isChecked()) {
+        Macaw::DEBUG("[MainWindow] moviesButton clicked");
+        m_ui->moviesButton->setFlat(true);
+        m_ui->moviesButton->setChecked(true);
+        m_ui->seriesButton->setFlat(false);
+        m_ui->seriesButton->setChecked(false);
+        delete m_mainPannel;
+        m_mainPannel = new MoviesPannel;
+        m_ui->mainPannelLayout->addWidget(m_mainPannel);
+        this->updatePannels();
+    }
+}
+
+/**
+ * @brief Slot triggered when the seriesButton is clicked.
+ * Shows the seriesPannel and disable the moviesPannel
+ */
+void MainWindow::on_seriesButton_clicked()
+{
+    m_ui->seriesButton->toggle();
+    if (!m_ui->seriesButton->isChecked()) {
+        Macaw::DEBUG("[MainWindow] seriesButton clicked");
+        m_ui->seriesButton->setFlat(true);
+        m_ui->seriesButton->setChecked(true);
+        m_ui->moviesButton->setFlat(false);
+        m_ui->moviesButton->setChecked(false);
+        delete m_mainPannel;
+        m_mainPannel = new SeriesPannel;
+        m_ui->mainPannelLayout->addWidget(m_mainPannel);
+        this->updatePannels();
+    }
 }
 
 /**
