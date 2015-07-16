@@ -118,6 +118,10 @@ void MainWindow::on_moviesButton_clicked()
         delete m_mainPannel;
         m_mainPannel = new MoviesPannel;
         m_ui->mainPannelLayout->addWidget(m_mainPannel);
+        connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
+                this, SLOT(fillMetadataPannel(const Movie&)));
+        m_metadataPannel->hide();
+
         this->updatePannels();
     }
 }
@@ -138,6 +142,10 @@ void MainWindow::on_seriesButton_clicked()
         delete m_mainPannel;
         m_mainPannel = new SeriesPannel;
         m_ui->mainPannelLayout->addWidget(m_mainPannel);
+        connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
+                this, SLOT(fillMetadataPannel(const Movie&)));
+        m_metadataPannel->hide();
+
         this->updatePannels();
     }
 }

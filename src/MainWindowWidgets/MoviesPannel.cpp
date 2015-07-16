@@ -293,7 +293,6 @@ void MoviesPannel::on_tableWidget_itemSelectionChanged()
     Macaw::DEBUG("[MoviesPannel] mainPannel selected");
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
-
     Movie l_movie;
     if (!m_ui->tableWidget->selectedItems().isEmpty()) {
         QTableWidgetItem *l_item = m_ui->tableWidget->selectedItems().first();
@@ -688,7 +687,7 @@ bool MoviesPannel::permanentlyDeleteFile(QFile * movieFileToDelete) {
         Macaw::DEBUG("[MoviesPannel] Permanently deleting file");
         if(!movieFileToDelete->remove())
         {
-            QMessageBox * l_msgBoxErrorDeleting = new QMessageBox(QMessageBox::Critical, tr("Error deleting"),
+            QMessageBox *l_msgBoxErrorDeleting = new QMessageBox(QMessageBox::Critical, tr("Error deleting"),
                                                 tr("Error deleting the file."),
                                                 QMessageBox::Ok, this);
             l_msgBoxErrorDeleting->exec();
