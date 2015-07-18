@@ -182,35 +182,34 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
             Macaw::DEBUG_IN("[DatabaseManager] upgrade from v2 to v3");
             l_query.finish();
             l_query.clear();
-            l_ret &= l_query.exec("DROP TABLE media_player");
-            if(!l_ret)
-            {
-                Macaw::DEBUG(l_query.lastError().text());
+
+            if (m_db.tables().contains("media_player")) {
+                l_ret &= l_query.exec("DROP TABLE media_player");
+                if(!l_ret)
+                {
+                    Macaw::DEBUG(l_query.lastError().text());
+                }
             }
 
-            l_ret &= l_query.exec("ALTER TABLE config ADD media_player VARCHAR(255)");
-            if(!l_ret)
-            {
-                Macaw::DEBUG(l_query.lastError().text());
+            if (!m_db.record("config").contains("media_player")) {
+                l_ret &= l_query.exec("ALTER TABLE config ADD media_player VARCHAR(255)");
+                if(!l_ret)
+                {
+                    Macaw::DEBUG(l_query.lastError().text());
+                }
             }
 
-            l_ret &= l_query.exec("ALTER TABLE movies ADD series BOOLEAN");
-            l_ret &= l_query.exec("UPDATE movies SET series = 0");
-            if(!l_ret)
-            {
-                Macaw::DEBUG(l_query.lastError().text());
+            if (!m_db.record("movies").contains("series")) {
+                l_ret &= l_query.exec("ALTER TABLE movies ADD series BOOLEAN");
+                l_ret &= l_query.exec("UPDATE movies SET series = 0");
+                if(!l_ret)
+                {
+                    Macaw::DEBUG(l_query.lastError().text());
+                }
             }
 
             l_ret &= createTableSeries(l_query);
-            if(!l_ret)
-            {
-                Macaw::DEBUG(l_query.lastError().text());
-            }
             l_ret &= createTableEpisodes(l_query);
-            if(!l_ret)
-            {
-                Macaw::DEBUG(l_query.lastError().text());
-            }
 
             if(l_ret) {
                 l_ret &= l_query.exec("UPDATE config "
