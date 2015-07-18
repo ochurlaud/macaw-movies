@@ -390,50 +390,103 @@ QList<Movie> DatabaseManager::getMoviesNotImported(const bool series, const QStr
 
 Episode DatabaseManager::getOneEpisodeById(const int id)
 {
+    Episode l_episode;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT " + m_episodeFields + " "
+                    "FROM episodes AS e "
+                    "WHERE e.id = :id");
+    l_query.bindValue(":id", id);
+
+
+    if (!l_query.exec())
+    {
+        Macaw::DEBUG("In getEpisodeById:");
+        Macaw::DEBUG(l_query.lastError().text());
+    }
+
+    if(l_query.next())
+    {
+       l_episode = hydrateEpisode(l_query);
+    }
+
+    return l_episode;
 }
 
 QList<Episode> DatabaseManager::getAllEpisodes(const QString fieldOrder)
 {
+    QList<Episode> l_episodeList;
+
+    return l_episodeList;
 }
 
 QList<Episode> DatabaseManager::getEpisodesByPeople(const int id, const int type, const QString fieldOrder)
 {
+    QList<Episode> l_episodeList;
+
+    return l_episodeList;
 }
 
 QList<Episode> DatabaseManager::getEpisodesByPeople(const People &people, const int type, const QString fieldOrder)
 {
+    QList<Episode> l_episodeList;
+
+    return l_episodeList;
 }
 
 QList<Episode> DatabaseManager::getEpisodesByTag(const int id, const QString fieldOrder)
 {
+    QList<Episode> l_episodeList;
+
+    return l_episodeList;
 }
 
 QList<Episode> DatabaseManager::getEpisodesByTag(const Tag &tag, const QString fieldOrder)
 {
+    QList<Episode> l_episodeList;
+
+    return l_episodeList;
 }
 
 QList<Episode> DatabaseManager::getEpisodesByPlaylist(const int id, const QString fieldOrder)
 {
+    QList<Episode> l_episodeList;
+
+    return l_episodeList;
 }
 
 QList<Episode> DatabaseManager::getEpisodesByPlaylist(const Playlist &playlist, const QString fieldOrder)
 {
+    QList<Episode> l_episodeList;
+
+    return l_episodeList;
 }
 
 QList<Episode> DatabaseManager::getEpisodesWithoutPeople(const int type, const QString fieldOrder)
 {
+    QList<Episode> l_episodeList;
+
+    return l_episodeList;
 }
 
 QList<Episode> DatabaseManager::getEpisodesWithoutTag(const QString fieldOrder)
 {
+    QList<Episode> l_episodeList;
+
+    return l_episodeList;
 }
 
 QList<Episode> DatabaseManager::getEpisodesByAny(const QString text, const QString fieldOrder)
 {
+    QList<Episode> l_episodeList;
+
+    return l_episodeList;
 }
 
 QList<Episode> DatabaseManager::getEpisodesNotImported(const QString fieldOrder)
 {
+    QList<Episode> l_episodeList;
+
+    return l_episodeList;
 }
 
 /**
@@ -1083,6 +1136,54 @@ void DatabaseManager::setMoviesToPlaylist(Playlist &playlist)
 }
 
 /**
+ * @brief Gets the movie of an episode and adds it to the object
+ * @param Episode
+ */
+void DatabaseManager::setMovieToEpisode(Episode &episode)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT " +m_movieFields + " "
+                    "FROM movies AS m, episodes AS e "
+                    "WHERE e.id_movie = m.id AND e.id = :id");
+    l_query.bindValue(":id", episode.id());
+
+    if (!l_query.exec())
+    {
+        Macaw::DEBUG("In setMovieToEpisode():");
+        Macaw::DEBUG(l_query.lastError().text());
+    }
+    while (l_query.next())
+    {
+        Movie l_movie = hydrateMovie(l_query);
+        episode.setMovie(l_movie);
+    }
+}
+
+/**
+ * @brief Gets the series object from an episode and adds it to the object
+ * @param Episode
+ */
+void DatabaseManager::setSeriesToEpisode(Episode &episode)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT " +m_seriesFields + " "
+                    "FROM series AS s, episodes AS e "
+                    "WHERE e.id_series = s.id AND e.id = :id");
+    l_query.bindValue(":id", episode.id());
+
+    if (!l_query.exec())
+    {
+        Macaw::DEBUG("In setSeriesToEpisode():");
+        Macaw::DEBUG(l_query.lastError().text());
+    }
+    while (l_query.next())
+    {
+        Series l_series = hydrateSeries(l_query);
+        episode.setSeries(l_series);
+    }
+}
+
+/**
  * @brief Hydrates a movie from the database
  *
  * @param QSqlQuery containing the data
@@ -1110,6 +1211,41 @@ Movie DatabaseManager::hydrateMovie(QSqlQuery &query)
     setPeopleToMovie(l_movie);
 
     return l_movie;
+}
+
+
+/**
+ * @brief Hydrates an episode (from series) from the database
+ *
+ * @param QSqlQuery containing the data
+ * @return Episode hydrated object
+ */
+Episode DatabaseManager::hydrateEpisode(QSqlQuery &query)
+{
+    Episode l_episode;
+    l_episode.setId(query.value(0).toInt());
+    l_episode.setNumber(query.value(1).toInt());
+    l_episode.setSeason(query.value(2).toInt());
+    setSeriesToEpisode(l_episode);
+    setMovieToEpisode(l_episode);
+
+    return l_episode;
+}
+
+/**
+ * @brief Hydrates series from the database
+ *
+ * @param QSqlQuery containing the data
+ * @return Series hydrated object
+ */
+Series DatabaseManager::hydrateSeries(QSqlQuery &query)
+{
+    Series l_series;
+    l_series.setId(query.value(0).toInt());
+    l_series.setName(query.value(1).toString());
+    l_series.setFinished(query.value(2).toBool());
+
+    return l_series;
 }
 
 /**

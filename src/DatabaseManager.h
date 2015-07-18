@@ -130,11 +130,15 @@ public:
 
 private:
     // Other functions for getters
+    void setMovieToEpisode(Episode &episode);
+    void setSeriesToEpisode(Episode &episode);
     void setPeopleToMovie(Movie &movie);
     void setTagsToMovie(Movie &movie);
     void setMoviesToPlaylist(Playlist &playlist);
+    Episode hydrateEpisode(QSqlQuery &query);
     Movie hydrateMovie(QSqlQuery &query);
     People hydratePeople(QSqlQuery &query);
+    Series hydrateSeries(QSqlQuery &query);
     Tag hydrateTag(QSqlQuery &query);
     Playlist hydratePlaylist(QSqlQuery &query);
 
@@ -173,6 +177,8 @@ public:
 private:
     QSqlDatabase m_db;
     QString m_movieFields;
+    QString m_episodeFields;
+    QString m_seriesFields;
     QString m_peopleFields;
     QString m_tagFields;
 

@@ -26,7 +26,6 @@
 DatabaseManager::DatabaseManager()
 {
     openDB();
-
     createTables();
     m_movieFields = "m.id, "
                     "m.title, "
@@ -43,6 +42,16 @@ DatabaseManager::DatabaseManager()
                     "m.rank, "
                     "m.imported, "
                     "m.series";
+
+    m_episodeFields = "e.id, "
+                      "e.number, "
+                      "e.season, "
+                      "e.id_series, "
+                      "e.id_movie";
+
+    m_seriesFields =  "s.id, "
+                      "s.name, "
+                      "s.finished";
 
     m_peopleFields = "p.id, "
                      "p.name, "
@@ -199,7 +208,6 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
             }
             Macaw::DEBUG_OUT("[DatabaseManager] exits upgrade from v2 to v3");
         }
-
     }
     Macaw::DEBUG_OUT("[DatabaseManager] exits upgradeDB");
 
@@ -252,7 +260,23 @@ bool DatabaseManager::createTables()
                       "suffix VARCHAR(10), "
                       "rank INTEGER, "
                       "imported BOOLEAN, "
-                      "series BOOLEAN,"
+                      "series BOOLEAN"
+                      ")");
+
+            // Episodes
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS episodes("
+                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                      "number INTEGER, "
+                      "season INTEGER, "
+                      "id_series, INTEGER NOT NULL, "
+                      "id_movie, INTEGER UNIQUE NOT NULL"
+                      ")");
+
+            // Series
+            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS series("
+                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                      "name VARCHAR(255), "
+                      "finished BOOLEAN"
                       ")");
 
             // Peoples (directors, actor, music...)
@@ -520,4 +544,3 @@ QString DatabaseManager::getMediaPlayerPath()
 
     return l_mediaPlayerPath;
 }
-
