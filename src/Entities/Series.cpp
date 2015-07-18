@@ -35,6 +35,7 @@ void Series::setFinished(const bool finished)
     m_finished = finished;
 }
 
+/*
 QList<Episode> Series::EpisodeList() const
 {
     return m_episodeList;
@@ -64,4 +65,4 @@ void Series::updateEpisode(const Episode &episode)
         }
    }
 }
-
+*/

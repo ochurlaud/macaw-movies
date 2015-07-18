@@ -22,9 +22,6 @@
 
 #include "Entities/Entity.h"
 #include "Entities/Movie.h"
-#include "Entities/Episode.h"
-
-class Episode;
 
 class Series : public Entity
 {
@@ -32,15 +29,17 @@ public:
     Series(QString const name = "");
     bool isFinished() const;
     void setFinished(const bool finished);
+/*
     QList<Episode> EpisodeList() const;
     void setEpisode(const QList<Episode> &episodeList);
     void addEpisode(const Episode &episode);
     void removeEpisode(const Episode &episode);
     void updateEpisode(const Episode &episode);
+*/
 
 private:
-    bool m_finished; // series finished of not
-    QList<Episode> m_episodeList;
+    bool m_finished;
+//    QList<Episode> m_episodeList;
 };
 
 #endif // SERIES_H

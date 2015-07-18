@@ -31,23 +31,23 @@ public:
     Episode();
     int id() const;
     void setId(const int id);
-    int episode() const;
-    void setEpisode(const int episode);
+    int number() const;
+    void setNumber(const int number);
     Movie movie() const;
     void setMovie(const Movie &movie);
     int season() const;
     void setSeason(const int series);
-    /*Series series() const;
-    void setSeries(const Series series);*/
+    Series series() const;
+    void setSeries(const Series &series);
     bool operator== (const Episode&);
     bool operator!= (const Episode&);
 
 private:
     int m_id;
-    //Series m_series;
+    Series m_series;
     Movie m_movie;
     int m_season;
-    int m_episode;
+    int m_number;
 };
 
 #endif // EPISODE

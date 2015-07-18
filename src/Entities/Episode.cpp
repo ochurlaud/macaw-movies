@@ -22,7 +22,7 @@
 Episode::Episode():
     m_id(0),
     m_season(0),
-    m_episode(0)
+    m_number(0)
 {
 }
 
@@ -36,14 +36,14 @@ void Episode::setId(const int id)
     m_id = id;
 }
 
-int Episode::episode() const
+int Episode::number() const
 {
-    return m_episode;
+    return m_number;
 }
 
-void Episode::setEpisode(const int episode)
+void Episode::setNumber(const int number)
 {
-    m_episode = episode;
+    m_number = number;
 }
 
 Movie Episode::movie() const
@@ -65,7 +65,7 @@ void Episode::setSeason(const int season)
 {
     m_season = season;
 }
-/*
+
 Series Episode::series() const
 {
     return m_series;
@@ -75,13 +75,13 @@ void Episode::setSeries(const Series &series)
 {
     m_series = series;
 }
-*/
+
 bool Episode::operator== (const Episode &other)
 {
     if ( this->id() == other.id() &&
-         this->episode() == other.episode() &&
+         this->number() == other.number() &&
          this->season() == other.season() &&
-         /*this->series() == other.series() &&*/
+         this->series() == other.series() &&
          this->movie() == other.movie() )
     {
         return true;
