@@ -158,10 +158,10 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
             //add media player table
             Macaw::DEBUG_IN("[DatabaseManager] upgrade from v1 to v2");
 
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS media_player("
-                                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                                      "media_player_path VARCHAR(255) UNIQUE"
-                                      ")");
+            l_ret &= l_query.exec("CREATE TABLE IF NOT EXISTS media_player("
+                                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                                  "media_player_path VARCHAR(255) UNIQUE"
+                                  ")");
             if(!l_ret)
             {
                 Macaw::DEBUG(l_query.lastError().text());
@@ -169,7 +169,7 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
 
             // Update the database version if media player table was inserted successfully
             if(l_ret) {
-                l_ret = l_ret && l_query.exec("UPDATE config "
+                l_ret &= l_query.exec("UPDATE config "
                                               "SET db_version = 2");
             l_fromVersion = 2;
             }
@@ -182,27 +182,38 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
             Macaw::DEBUG_IN("[DatabaseManager] upgrade from v2 to v3");
             l_query.finish();
             l_query.clear();
-            l_ret = l_ret && l_query.exec("DROP TABLE media_player");
+            l_ret &= l_query.exec("DROP TABLE media_player");
             if(!l_ret)
             {
                 Macaw::DEBUG(l_query.lastError().text());
             }
 
-            l_ret = l_ret && l_query.exec("ALTER TABLE config ADD media_player VARCHAR(255)");
+            l_ret &= l_query.exec("ALTER TABLE config ADD media_player VARCHAR(255)");
             if(!l_ret)
             {
                 Macaw::DEBUG(l_query.lastError().text());
             }
 
-            l_ret = l_ret && l_query.exec("ALTER TABLE movies ADD series BOOLEAN");
-            l_ret = l_ret && l_query.exec("UPDATE movies SET series = 0");
+            l_ret &= l_query.exec("ALTER TABLE movies ADD series BOOLEAN");
+            l_ret &= l_query.exec("UPDATE movies SET series = 0");
+            if(!l_ret)
+            {
+                Macaw::DEBUG(l_query.lastError().text());
+            }
+
+            l_ret &= createTableSeries(l_query);
+            if(!l_ret)
+            {
+                Macaw::DEBUG(l_query.lastError().text());
+            }
+            l_ret &= createTableEpisodes(l_query);
             if(!l_ret)
             {
                 Macaw::DEBUG(l_query.lastError().text());
             }
 
             if(l_ret) {
-                l_ret = l_ret && l_query.exec("UPDATE config "
+                l_ret &= l_query.exec("UPDATE config "
                                               "SET db_version = 3");
                 l_fromVersion = 3;
             }
@@ -242,114 +253,21 @@ bool DatabaseManager::createTables()
         {
             Macaw::DEBUG("[DatabaseManager.createTable] configTable does not exist");
 
-            // Movies
             l_ret = l_query.exec("PRAGMA foreign_keys = ON");
 
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies("
-                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "title VARCHAR(255) NOT NULL, "
-                      "original_title VARCHAR(255), "
-                      "release_date VARCHAR(10), "
-                      "country VARCHAR(50), "
-                      "duration INTEGER, "
-                      "synopsis TEXT, "
-                      "file_path VARCHAR(255) UNIQUE NOT NULL, "
-                      "poster_path VARCHAR(255), "
-                      "colored BOOLEAN, "
-                      "format VARCHAR(10), "
-                      "suffix VARCHAR(10), "
-                      "rank INTEGER, "
-                      "imported BOOLEAN, "
-                      "series BOOLEAN"
-                      ")");
-
-            // Episodes
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS episodes("
-                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "number INTEGER, "
-                      "season INTEGER, "
-                      "id_series, INTEGER NOT NULL, "
-                      "id_movie, INTEGER UNIQUE NOT NULL"
-                      ")");
-
-            // Series
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS series("
-                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "name VARCHAR(255), "
-                      "finished BOOLEAN"
-                      ")");
-
-            // Peoples (directors, actor, music...)
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS people("
-                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "name VARCHAR(200) NOT NULL, "
-                      "birthday VARCHAR(10), "
-                      "biography TEXT"
-                      ")");
-
-            // Links between people and movies (a type of person is given here)
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies_people("
-                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "id_movie INTEGER NOT NULL, "
-                      "id_people INTEGER NOT NULL, "
-                      "type INTEGER NOT NULL, "
-                      "UNIQUE (id_people, id_movie, type) ON CONFLICT IGNORE, "
-                      "FOREIGN KEY(id_movie) REFERENCES movies ON DELETE CASCADE, "
-                      "FOREIGN KEY(id_people) REFERENCES people ON DELETE CASCADE"
-                      ")");
-
-            // Tags that can be attributed to the movies
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS tags("
-                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "name VARCHAR(255) UNIQUE NOT NULL"
-                      ")");
-
-            // Links between tags and movies
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies_tags("
-                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "id_movie INTEGER NOT NULL, "
-                      "id_tag INTEGER NOT NULL, "
-                      "UNIQUE (id_tag, id_movie) ON CONFLICT IGNORE, "
-                      "FOREIGN KEY(id_movie) REFERENCES movies ON DELETE CASCADE, "
-                      "FOREIGN KEY(id_tag) REFERENCES tags ON DELETE CASCADE"
-                      ")");
-
-            // Playlists
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS playlists("
-                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "name VARCHAR(255) UNIQUE NOT NULL, "
-                      "rate INTEGER, "
-                      "creation_date INT"
-                      ")");
-
-            // Default Playlist: To Watch
-            l_ret = l_ret && l_query.exec ("INSERT INTO playlists "
-                                           "VALUES(1, 'To Watch', 0, 0)");
-
-            // Links between playlist and movies
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS movies_playlists("
-                      "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                      "id_movie INTEGER NOT NULL, "
-                      "id_playlist INTEGER NOT NULL, "
-                      "UNIQUE (id_playlist, id_movie) ON CONFLICT IGNORE, "
-                      "FOREIGN KEY(id_movie) REFERENCES movies ON DELETE CASCADE, "
-                      "FOREIGN KEY(id_playlist) REFERENCES playlists ON DELETE CASCADE"
-                      ")");
-
-            // List of paths where the movies are stored
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS paths_list("
-                                          "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                                          "movies_path VARCHAR(255) UNIQUE,"
-                                          "imported BOOLEAN DEFAULT 0"
-                                          ")");
-
-            // Config table (for update purposes)
-            l_ret = l_ret && l_query.exec("CREATE TABLE IF NOT EXISTS config("
-                                          "db_version INTEGER,"
-                                          "media_player VARCHAR(255))");
-
-            // Set the database version
-            l_ret = l_ret && l_query.exec("INSERT INTO config (`db_version`) VALUES ('" + QString::number(DB_VERSION) + "')");
+            l_ret &= createTableMovies(l_query);
+            l_ret &= createTablePeople(l_query);
+            l_ret &= createTableMoviesPeople(l_query);
+            l_ret &= createTablePlaylists(l_query);
+            l_ret &= createTableMoviesPlaylists(l_query);
+            l_ret &= createTableTags(l_query);
+            l_ret &= createTableMoviesTags(l_query);
+            l_ret &= createTableSeries(l_query);
+            l_ret &= createTableEpisodes(l_query);
+            l_ret &= createTablePathsList(l_query);
+            if (l_ret) {
+                l_ret &= createTableConfig(l_query);
+            }
         }
     }
 
@@ -357,10 +275,300 @@ bool DatabaseManager::createTables()
 }
 
 /**
+ * @brief Create the table `movies`
+ * @param query
+ * @return
+ */
+bool DatabaseManager::createTableMovies(QSqlQuery &query)
+{
+    query.prepare("CREATE TABLE IF NOT EXISTS movies("
+                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                  "title VARCHAR(255) NOT NULL, "
+                  "original_title VARCHAR(255), "
+                  "release_date VARCHAR(10), "
+                  "country VARCHAR(50), "
+                  "duration INTEGER, "
+                  "synopsis TEXT, "
+                  "file_path VARCHAR(255) UNIQUE NOT NULL, "
+                  "poster_path VARCHAR(255), "
+                  "colored BOOLEAN, "
+                  "format VARCHAR(10), "
+                  "suffix VARCHAR(10), "
+                  "rank INTEGER, "
+                  "imported BOOLEAN, "
+                  "series BOOLEAN"
+                  ")");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTableMovies:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Create the table `people`
+ * @param query
+ * @return
+ */
+bool DatabaseManager::createTablePeople(QSqlQuery &query)
+{
+    query.prepare("CREATE TABLE IF NOT EXISTS people("
+                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                  "name VARCHAR(200) NOT NULL, "
+                  "birthday VARCHAR(10), "
+                  "biography TEXT"
+                  ")");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTablePeople:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+/**
+ * @brief Create the table `movies_people` which links between people and movies (a type of person is given here)
+ * @param query
+ * @return
+ */
+bool DatabaseManager::createTableMoviesPeople(QSqlQuery &query)
+{
+    query.prepare("CREATE TABLE IF NOT EXISTS movies_people("
+                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                  "id_movie INTEGER NOT NULL, "
+                  "id_people INTEGER NOT NULL, "
+                  "type INTEGER NOT NULL, "
+                  "UNIQUE (id_people, id_movie, type) ON CONFLICT IGNORE, "
+                  "FOREIGN KEY(id_movie) REFERENCES movies ON DELETE CASCADE, "
+                  "FOREIGN KEY(id_people) REFERENCES people ON DELETE CASCADE"
+                  ")");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTableMoviesPeople:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Create the table `playlists` and the "To Watch" default playlist
+ * @param query
+ * @return
+ */
+bool DatabaseManager::createTablePlaylists(QSqlQuery &query)
+{
+    query.prepare("CREATE TABLE IF NOT EXISTS playlists("
+                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                  "name VARCHAR(255) UNIQUE NOT NULL, "
+                  "rate INTEGER, "
+                  "creation_date INT"
+                  ")");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTablePlaylists:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    // Default Playlist: To Watch
+    query.prepare("INSERT INTO playlists "
+                  "VALUES(1, 'To Watch', 0, 0)");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTablePlaylists:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Create the table `movies_playlists` which links movies to playlists
+ * @param query
+ * @return
+ */
+bool DatabaseManager::createTableMoviesPlaylists(QSqlQuery &query)
+{
+    query.prepare("CREATE TABLE IF NOT EXISTS movies_playlists("
+                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                  "id_movie INTEGER NOT NULL, "
+                  "id_playlist INTEGER NOT NULL, "
+                  "UNIQUE (id_playlist, id_movie) ON CONFLICT IGNORE, "
+                  "FOREIGN KEY(id_movie) REFERENCES movies ON DELETE CASCADE, "
+                  "FOREIGN KEY(id_playlist) REFERENCES playlists ON DELETE CASCADE"
+                  ")");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTableMoviesPlaylists:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Create the table `tags`, to store the tags that can be attributed to the movies
+ * @param query
+ * @return
+ */
+bool DatabaseManager::createTableTags(QSqlQuery &query)
+{
+    query.prepare("CREATE TABLE IF NOT EXISTS tags("
+                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                  "name VARCHAR(255) UNIQUE NOT NULL"
+                  ")");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTableTags:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Create the table `movies_tags` where are the links between tags and movies
+ * @param query
+ * @return
+ */
+bool DatabaseManager::createTableMoviesTags(QSqlQuery &query)
+{
+    query.prepare("CREATE TABLE IF NOT EXISTS movies_tags("
+                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                  "id_movie INTEGER NOT NULL, "
+                  "id_tag INTEGER NOT NULL, "
+                  "UNIQUE (id_tag, id_movie) ON CONFLICT IGNORE, "
+                  "FOREIGN KEY(id_movie) REFERENCES movies ON DELETE CASCADE, "
+                  "FOREIGN KEY(id_tag) REFERENCES tags ON DELETE CASCADE"
+                  ")");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTableMoviesTags:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+bool DatabaseManager::createTableSeries(QSqlQuery &query)
+{
+    query.prepare("CREATE TABLE IF NOT EXISTS series("
+                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                  "name VARCHAR(255), "
+                  "finished BOOLEAN"
+                  ")");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTableSeries:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+bool DatabaseManager::createTableEpisodes(QSqlQuery &query)
+{
+    query.prepare("CREATE TABLE IF NOT EXISTS episodes("
+                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                  "number INTEGER, "
+                  "season INTEGER, "
+                  "id_series, INTEGER NOT NULL, "
+                  "id_movie, INTEGER UNIQUE NOT NULL, "
+                  "FOREIGN KEY(id_movie) REFERENCES movies ON DELETE CASCADE, "
+                  "FOREIGN KEY(id_series) REFERENCES series ON DELETE CASCADE, "
+                  ")");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTableEpisodes:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Create table `paths_lists`, where the paths to import are stored
+ * @param query
+ * @return
+ */
+bool DatabaseManager::createTablePathsList(QSqlQuery &query)
+{
+    query.prepare("CREATE TABLE IF NOT EXISTS paths_list("
+                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
+                  "movies_path VARCHAR(255) UNIQUE,"
+                  "imported BOOLEAN DEFAULT 0"
+                  ")");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTablePathsList:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Create table `config`, for update purpose and app configuration
+ * Then set the version of the db
+ * @param query
+ * @return
+ */
+bool DatabaseManager::createTableConfig(QSqlQuery &query)
+{
+    query.prepare("CREATE TABLE IF NOT EXISTS config("
+                  "db_version INTEGER,"
+                  "media_player VARCHAR(255))");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTableConfig:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    // Set the database version
+    query.prepare("INSERT INTO config (`db_version`) "
+                  "VALUES ('" + QString::number(DB_VERSION) + "')");
+
+    if (!query.exec()) {
+        Macaw::DEBUG("In createTableConfig:");
+        Macaw::DEBUG(query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * @brief add a new tag with specifed name to the database.
  * Returns the id of created tag, -1 if an error occured.
  * @param name new tag's name
- * @returns the id of newly created tag in the db
+ * @returns the id of newly created tag in the db, -1 if an error occurs
  */
 int DatabaseManager::createTag(QString name)
 {

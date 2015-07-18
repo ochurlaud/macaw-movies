@@ -43,9 +43,20 @@ public:
     DatabaseManager();
     // Database management
     bool openDB();
-    bool createTables();
     bool closeDB();
     bool deleteDB();
+    bool createTables();
+    bool createTableMovies(QSqlQuery&);
+    bool createTablePeople(QSqlQuery&);
+    bool createTableMoviesPeople(QSqlQuery&);
+    bool createTablePlaylists(QSqlQuery&);
+    bool createTableMoviesPlaylists(QSqlQuery&);
+    bool createTableTags(QSqlQuery&);
+    bool createTableMoviesTags(QSqlQuery&);
+    bool createTableSeries(QSqlQuery&);
+    bool createTableEpisodes(QSqlQuery&);
+    bool createTablePathsList(QSqlQuery&);
+    bool createTableConfig(QSqlQuery&);
     QSqlError lastError();
     bool upgradeDB(int fromVersion, int toVersion);
 
