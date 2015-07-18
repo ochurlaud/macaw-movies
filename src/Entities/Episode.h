@@ -17,18 +17,18 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SERIESCONNECTION_H
-#define SERIESCONNECTION_H
+#ifndef EPISODE_H
+#define EPISODE_H
 
 #include "Entities/Series.h"
 #include "Entities/Movie.h"
 
 class Series;
 
-class SeriesConnection
+class Episode
 {
 public:
-    SeriesConnection();
+    Episode();
     int id() const;
     void setId(const int id);
     int episode() const;
@@ -39,8 +39,8 @@ public:
     void setSeason(const int series);
     /*Series series() const;
     void setSeries(const Series series);*/
-    bool operator== (const SeriesConnection&);
-    bool operator!= (const SeriesConnection&);
+    bool operator== (const Episode&);
+    bool operator!= (const Episode&);
 
 private:
     int m_id;
@@ -50,4 +50,4 @@ private:
     int m_episode;
 };
 
-#endif // SERIESCONNECTION_H
+#endif // EPISODE

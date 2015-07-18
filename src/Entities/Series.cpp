@@ -35,32 +35,32 @@ void Series::setFinished(const bool finished)
     m_finished = finished;
 }
 
-QList<SeriesConnection> Series::seriesConnectionList() const
+QList<Episode> Series::EpisodeList() const
 {
-    return m_seriesConnectionList;
+    return m_episodeList;
 }
-void Series::setSeriesConnection(const QList<SeriesConnection> &seriesConnectionList)
+void Series::setEpisode(const QList<Episode> &episodeList)
 {
-    m_seriesConnectionList = seriesConnectionList;
-}
-
-void Series::addSeriesConnection(const SeriesConnection &seriesConnection)
-{
-    m_seriesConnectionList.append(seriesConnection);
+    m_episodeList = episodeList;
 }
 
-void Series::removeSeriesConnection(const SeriesConnection &seriesConnection)
+void Series::addEpisode(const Episode &episode)
 {
-    m_seriesConnectionList.removeAll(seriesConnection);
+    m_episodeList.append(episode);
 }
 
-void Series::updateSeriesConnection(const SeriesConnection &seriesConnection)
+void Series::removeEpisode(const Episode &episode)
 {
-    for (int i = 0 ; i < m_seriesConnectionList.size() ; i++)
+    m_episodeList.removeAll(episode);
+}
+
+void Series::updateEpisode(const Episode &episode)
+{
+    for (int i = 0 ; i < m_episodeList.size() ; i++)
     {
-        if(m_seriesConnectionList.at(i).id() == seriesConnection.id())
+        if(m_episodeList.at(i).id() == episode.id())
         {
-            m_seriesConnectionList.replace(i, seriesConnection);
+            m_episodeList.replace(i, episode);
         }
    }
 }

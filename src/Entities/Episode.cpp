@@ -17,66 +17,66 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SeriesConnection.h"
+#include "Episode.h"
 
-SeriesConnection::SeriesConnection():
+Episode::Episode():
     m_id(0),
     m_season(0),
     m_episode(0)
 {
 }
 
-int SeriesConnection::id() const
+int Episode::id() const
 {
     return m_id;
 }
 
-void SeriesConnection::setId(const int id)
+void Episode::setId(const int id)
 {
     m_id = id;
 }
 
-int SeriesConnection::episode() const
+int Episode::episode() const
 {
     return m_episode;
 }
 
-void SeriesConnection::setEpisode(const int episode)
+void Episode::setEpisode(const int episode)
 {
     m_episode = episode;
 }
 
-Movie SeriesConnection::movie() const
+Movie Episode::movie() const
 {
     return m_movie;
 }
 
-void SeriesConnection::setMovie(const Movie &movie)
+void Episode::setMovie(const Movie &movie)
 {
     m_movie = movie;
 }
 
-int SeriesConnection::season() const
+int Episode::season() const
 {
     return m_season;
 }
 
-void SeriesConnection::setSeason(const int season)
+void Episode::setSeason(const int season)
 {
     m_season = season;
 }
 /*
-Series SeriesConnection::series() const
+Series Episode::series() const
 {
     return m_series;
 }
 
-void SeriesConnection::setSeries(const Series &series)
+void Episode::setSeries(const Series &series)
 {
     m_series = series;
 }
 */
-bool SeriesConnection::operator== (const SeriesConnection &other)
+bool Episode::operator== (const Episode &other)
 {
     if ( this->id() == other.id() &&
          this->episode() == other.episode() &&
@@ -90,7 +90,7 @@ bool SeriesConnection::operator== (const SeriesConnection &other)
     return false;
 }
 
-bool SeriesConnection::operator!= (const SeriesConnection &other)
+bool Episode::operator!= (const Episode &other)
 {
     return !this->operator==(other);
 }

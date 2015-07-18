@@ -28,9 +28,30 @@ DatabaseManager::DatabaseManager()
     openDB();
 
     createTables();
-    m_movieFields = "m.id, m.title, m.original_title, m.release_date, m.country, m.duration, m.synopsis, m.file_path, m.poster_path, m.colored, m.format, m.suffix, m.rank, m.imported";
-    m_peopleFields = "p.id, p.name, p.birthday, p.biography";
-    m_tagFields = "t.id, t.name";
+    m_movieFields = "m.id, "
+                    "m.title, "
+                    "m.original_title, "
+                    "m.release_date, "
+                    "m.country, "
+                    "m.duration, "
+                    "m.synopsis, "
+                    "m.file_path, "
+                    "m.poster_path, "
+                    "m.colored, "
+                    "m.format, "
+                    "m.suffix, "
+                    "m.rank, "
+                    "m.imported, "
+                    "m.series";
+
+    m_peopleFields = "p.id, "
+                     "p.name, "
+                     "p.birthday, "
+                     "p.biography";
+
+    m_tagFields = "t.id, "
+                  "t.name";
+
     Macaw::DEBUG("[DatabaseManager] object created");
 }
 
@@ -115,7 +136,7 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
     if (m_db.isOpen())
     {
         // We need to have a clean version of the db instance.
-        //They should be a better way to do this.
+        //There might be a better way to do this.
         m_db.close();
         m_db.open();
 
@@ -159,6 +180,13 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
             }
 
             l_ret = l_ret && l_query.exec("ALTER TABLE config ADD media_player VARCHAR(255)");
+            if(!l_ret)
+            {
+                Macaw::DEBUG(l_query.lastError().text());
+            }
+
+            l_ret = l_ret && l_query.exec("ALTER TABLE movies ADD series BOOLEAN");
+            l_ret = l_ret && l_query.exec("UPDATE movies SET series = 0");
             if(!l_ret)
             {
                 Macaw::DEBUG(l_query.lastError().text());
@@ -223,7 +251,8 @@ bool DatabaseManager::createTables()
                       "format VARCHAR(10), "
                       "suffix VARCHAR(10), "
                       "rank INTEGER, "
-                      "imported BOOLEAN"
+                      "imported BOOLEAN, "
+                      "series BOOLEAN,"
                       ")");
 
             // Peoples (directors, actor, music...)
@@ -474,7 +503,7 @@ bool DatabaseManager::deleteMoviesPath(QString moviesPath)
 QString DatabaseManager::getMediaPlayerPath()
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT media_player_path FROM media_player");
+    l_query.prepare("SELECT media_player FROM config");
 
     if(!l_query.exec())
     {

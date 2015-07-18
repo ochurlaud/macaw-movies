@@ -25,9 +25,9 @@
 #include <QtSql>
 
 #include "include_var.h"
-
 #include "MacawDebug.h"
 
+#include "Entities/Episode.h"
 #include "Entities/Movie.h"
 #include "Entities/Playlist.h"
 
@@ -68,17 +68,35 @@ signals:
 public:
     // Movies
     Movie getOneMovieById(const int id);
-    QList<Movie> getAllMovies(const QString fieldOrder = "title");
-    QList<Movie> getMoviesByPeople(const int id, const int type, const QString fieldOrder = "title");
-    QList<Movie> getMoviesByPeople(const People &people, const int type, const QString fieldOrder = "title");
-    QList<Movie> getMoviesByTag(const int id, const QString fieldOrder = "title");
-    QList<Movie> getMoviesByTag(const Tag &tag, const QString fieldOrder = "title");
-    QList<Movie> getMoviesByPlaylist(const int id, const QString fieldOrder = "title");
-    QList<Movie> getMoviesByPlaylist(const Playlist &playlist, const QString fieldOrder = "title");
-    QList<Movie> getMoviesWithoutPeople(const int type, const QString fieldOrder = "title");
-    QList<Movie> getMoviesWithoutTag(const QString fieldOrder = "title");
-    QList<Movie> getMoviesByAny(const QString text, const QString fieldOrder = "title");
-    QList<Movie> getMoviesNotImported(const QString fieldOrder = "title");
+    QList<Movie> getAllMovies(const bool series = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPeople(const int id, const int type, const bool series = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPeople(const People &people, const int type, const bool series = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByTag(const int id, const bool series = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByTag(const Tag &tag, const bool series = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPlaylist(const int id, const bool series = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPlaylist(const Playlist &playlist, const bool series = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesWithoutPeople(const int type, const bool series = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesWithoutTag(const bool series = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByAny(const QString text, const bool series = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesNotImported(const bool series = false, const QString fieldOrder = "title");
+
+    // Episodes
+    Episode getOneEpisodeById(const int id);
+    QList<Episode> getAllEpisodes(const QString fieldOrder = "title");
+    QList<Episode> getEpisodesByPeople(const int id, const int type, const QString fieldOrder = "title");
+    QList<Episode> getEpisodesByPeople(const People &people, const int type, const QString fieldOrder = "title");
+    QList<Episode> getEpisodesByTag(const int id, const QString fieldOrder = "title");
+    QList<Episode> getEpisodesByTag(const Tag &tag, const QString fieldOrder = "title");
+    QList<Episode> getEpisodesByPlaylist(const int id, const QString fieldOrder = "title");
+    QList<Episode> getEpisodesByPlaylist(const Playlist &playlist, const QString fieldOrder = "title");
+    QList<Episode> getEpisodesWithoutPeople(const int type, const QString fieldOrder = "title");
+    QList<Episode> getEpisodesWithoutTag(const QString fieldOrder = "title");
+    QList<Episode> getEpisodesByAny(const QString text, const QString fieldOrder = "title");
+    QList<Episode> getEpisodesNotImported(const QString fieldOrder = "title");
+
+    // Series
+    Series getOneSeriesById(const int id);
+    QList<Series> getAllSeries(const QString fieldOrder = "title");
 
     // People
     People getOnePeopleById(const int id);
@@ -104,6 +122,8 @@ public:
     bool isMovieInPlaylist(Movie &movie, Playlist &playlist);
 
     // Does element exist ?
+    bool existEpisode(const QString);
+    bool existSeries(const QString);
     bool existMovie(const QString);
     bool existTag(const QString);
     bool existPeople(const QString name);

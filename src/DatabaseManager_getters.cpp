@@ -53,13 +53,16 @@ Movie DatabaseManager::getOneMovieById(const int id)
  *
  * @return QList<Movie>
  */
-QList<Movie> DatabaseManager::getAllMovies(const QString fieldOrder)
+QList<Movie> DatabaseManager::getAllMovies(const bool series, const QString fieldOrder)
 {
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT " + m_movieFields + " "
                     "FROM movies AS m "
+                    "WHERE series = :series "
                     "ORDER BY " + fieldOrder);
+
+    l_query.bindValue(":series", series);
 
     if (!l_query.exec())
     {
@@ -86,6 +89,7 @@ QList<Movie> DatabaseManager::getAllMovies(const QString fieldOrder)
  */
 QList<Movie> DatabaseManager::getMoviesByPeople(const int id,
                                                 const int type,
+                                                const bool series,
                                                 const QString fieldOrder)
 {
     QList<Movie> l_movieList;
@@ -95,9 +99,11 @@ QList<Movie> DatabaseManager::getMoviesByPeople(const int id,
                     "WHERE id IN (SELECT id_movie "
                                  "FROM movies_people "
                                  "WHERE id_people = :id AND type = :type) "
-                                 "ORDER BY " + fieldOrder);
+                           "AND series = :series "
+                    "ORDER BY " + fieldOrder);
     l_query.bindValue(":id", id);
     l_query.bindValue(":type", type);
+    l_query.bindValue(":series", series);
 
     if (!l_query.exec())
     {
@@ -124,9 +130,10 @@ QList<Movie> DatabaseManager::getMoviesByPeople(const int id,
  */
 QList<Movie> DatabaseManager::getMoviesByPeople(const People &people,
                                                 const int type,
+                                                const bool series,
                                                 const QString fieldOrder)
 {
-    QList<Movie> l_movieList = getMoviesByPeople(people.id(), type, fieldOrder);
+    QList<Movie> l_movieList = getMoviesByPeople(people.id(), type, series, fieldOrder);
 
     return l_movieList;
 }
@@ -138,6 +145,7 @@ QList<Movie> DatabaseManager::getMoviesByPeople(const People &people,
  * @return QList<Movie>
  */
 QList<Movie> DatabaseManager::getMoviesByTag(const int id,
+                                             const bool series,
                                              const QString fieldOrder)
 {
     QList<Movie> l_movieList;
@@ -147,8 +155,10 @@ QList<Movie> DatabaseManager::getMoviesByTag(const int id,
                     "WHERE id IN (SELECT id_movie "
                                  "FROM movies_tags "
                                  "WHERE id_tag = :id) "
-                                 "ORDER BY " + fieldOrder);
+                        "AND series = :series "
+                    "ORDER BY " + fieldOrder);
     l_query.bindValue(":id", id);
+    l_query.bindValue(":series", series);
 
     if (!l_query.exec())
     {
@@ -171,10 +181,10 @@ QList<Movie> DatabaseManager::getMoviesByTag(const int id,
  * @param Tag tag
  * @return QList<Movie>
  */
-QList<Movie> DatabaseManager::getMoviesByTag(const Tag &tag,
+QList<Movie> DatabaseManager::getMoviesByTag(const Tag &tag, const bool series,
                                              const QString fieldOrder)
 {
-    QList<Movie> l_movieList = getMoviesByTag(tag.id(), fieldOrder);
+    QList<Movie> l_movieList = getMoviesByTag(tag.id(), series, fieldOrder);
 
     return l_movieList;
 }
@@ -186,6 +196,7 @@ QList<Movie> DatabaseManager::getMoviesByTag(const Tag &tag,
  * @return QList<Movie>
  */
 QList<Movie> DatabaseManager::getMoviesByPlaylist(const int id,
+                                                  const bool series,
                                                   const QString fieldOrder)
 {
     QList<Movie> l_movieList;
@@ -195,8 +206,10 @@ QList<Movie> DatabaseManager::getMoviesByPlaylist(const int id,
                     "WHERE m.id IN (SELECT id_movie "
                                  "FROM movies_playlists "
                                  "WHERE id_playlist = :id) "
-                                 "ORDER BY " + fieldOrder);
+                        "AND series = :series "
+                    "ORDER BY " + fieldOrder);
     l_query.bindValue(":id", id);
+    l_query.bindValue(":series", series);
 
     if (!l_query.exec())
     {
@@ -220,14 +233,16 @@ QList<Movie> DatabaseManager::getMoviesByPlaylist(const int id,
  * @return QList<Movie>
  */
 QList<Movie> DatabaseManager::getMoviesByPlaylist(const Playlist &playlist,
-                                             const QString fieldOrder)
+                                                  const bool series,
+                                                  const QString fieldOrder)
 {
-    QList<Movie> l_movieList = getMoviesByPlaylist(playlist.id(), fieldOrder);
+    QList<Movie> l_movieList = getMoviesByPlaylist(playlist.id(), series, fieldOrder);
 
     return l_movieList;
 }
 
 QList<Movie> DatabaseManager::getMoviesWithoutPeople(const int type,
+                                                     const bool series,
                                                      const QString fieldOrder)
 {
     QList<Movie> l_movieList;
@@ -237,8 +252,10 @@ QList<Movie> DatabaseManager::getMoviesWithoutPeople(const int type,
                     "WHERE (SELECT COUNT(*) "
                                 "FROM movies_people AS mp "
                                 "WHERE mp.id_movie = m.id AND mp.type = :type) = 0 "
+                        "AND series = :series "
                     "ORDER BY " + fieldOrder);
     l_query.bindValue(":type", type);
+    l_query.bindValue(":series", series);
 
     if (!l_query.exec())
     {
@@ -255,7 +272,7 @@ QList<Movie> DatabaseManager::getMoviesWithoutPeople(const int type,
     return l_movieList;
 }
 
-QList<Movie> DatabaseManager::getMoviesWithoutTag(const QString fieldOrder)
+QList<Movie> DatabaseManager::getMoviesWithoutTag(const bool series, const QString fieldOrder)
 {
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
@@ -264,7 +281,10 @@ QList<Movie> DatabaseManager::getMoviesWithoutTag(const QString fieldOrder)
                     "WHERE (SELECT COUNT(*) "
                                 "FROM movies_tags AS mt "
                                 "WHERE mt.id_movie = m.id) = 0 "
+                        "AND series = :series "
                     "ORDER BY " + fieldOrder);
+
+    l_query.bindValue(":series", series);
 
     if (!l_query.exec())
     {
@@ -282,13 +302,14 @@ QList<Movie> DatabaseManager::getMoviesWithoutTag(const QString fieldOrder)
 }
 
 QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
+                                             const bool series,
                                              const QString fieldOrder)
 {
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
     QStringList l_splittedText = text.split(" ");
 
-    QString l_queryText = "SELECT " + m_movieFields + " FROM movies AS m WHERE ";
+    QString l_queryText = "SELECT " + m_movieFields + " FROM movies AS m WHERE series = :series AND ";
     for( int i = 0 ; i < l_splittedText.size() ; i++)
     {
         if (i != 0)
@@ -316,6 +337,9 @@ QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
     }
     l_queryText = l_queryText+ "ORDER BY m." + fieldOrder;
     l_query.prepare(l_queryText);
+
+    l_query.bindValue(":series", series);
+
     for( int i = 0 ; i < l_splittedText.size() ; i++)
     {
         l_query.bindValue(":text"+ QString::number(i), l_splittedText.at(i));
@@ -336,15 +360,18 @@ QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
     return l_movieList;
 }
 
-QList<Movie> DatabaseManager::getMoviesNotImported(const QString fieldOrder)
+QList<Movie> DatabaseManager::getMoviesNotImported(const bool series, const QString fieldOrder)
 {
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
     l_query.prepare("SELECT " + m_movieFields + " "
                     "FROM movies AS m "
                     "WHERE m.imported = :imported "
+                    "WHERE m.series = :series "
                     "ORDER BY " + fieldOrder);
     l_query.bindValue(":imported", false);
+    l_query.bindValue(":series", series);
+
 
     if (!l_query.exec())
     {
@@ -359,6 +386,54 @@ QList<Movie> DatabaseManager::getMoviesNotImported(const QString fieldOrder)
     }
 
     return l_movieList;
+}
+
+Episode DatabaseManager::getOneEpisodeById(const int id)
+{
+}
+
+QList<Episode> DatabaseManager::getAllEpisodes(const QString fieldOrder)
+{
+}
+
+QList<Episode> DatabaseManager::getEpisodesByPeople(const int id, const int type, const QString fieldOrder)
+{
+}
+
+QList<Episode> DatabaseManager::getEpisodesByPeople(const People &people, const int type, const QString fieldOrder)
+{
+}
+
+QList<Episode> DatabaseManager::getEpisodesByTag(const int id, const QString fieldOrder)
+{
+}
+
+QList<Episode> DatabaseManager::getEpisodesByTag(const Tag &tag, const QString fieldOrder)
+{
+}
+
+QList<Episode> DatabaseManager::getEpisodesByPlaylist(const int id, const QString fieldOrder)
+{
+}
+
+QList<Episode> DatabaseManager::getEpisodesByPlaylist(const Playlist &playlist, const QString fieldOrder)
+{
+}
+
+QList<Episode> DatabaseManager::getEpisodesWithoutPeople(const int type, const QString fieldOrder)
+{
+}
+
+QList<Episode> DatabaseManager::getEpisodesWithoutTag(const QString fieldOrder)
+{
+}
+
+QList<Episode> DatabaseManager::getEpisodesByAny(const QString text, const QString fieldOrder)
+{
+}
+
+QList<Episode> DatabaseManager::getEpisodesNotImported(const QString fieldOrder)
+{
 }
 
 /**
@@ -1030,6 +1105,7 @@ Movie DatabaseManager::hydrateMovie(QSqlQuery &query)
     l_movie.setSuffix(query.value(11).toString());
     l_movie.setRank(query.value(12).toInt());
     l_movie.setImported(query.value(13).toBool());
+    l_movie.setSeries(query.value(14).toBool());
     setTagsToMovie(l_movie);
     setPeopleToMovie(l_movie);
 
