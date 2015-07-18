@@ -214,7 +214,7 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
 
             if(l_ret) {
                 l_ret &= l_query.exec("UPDATE config "
-                                              "SET db_version = 3");
+                                      "SET db_version = 3");
                 l_fromVersion = 3;
             }
             Macaw::DEBUG_OUT("[DatabaseManager] exits upgrade from v2 to v3");
@@ -492,10 +492,10 @@ bool DatabaseManager::createTableEpisodes(QSqlQuery &query)
                   "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                   "number INTEGER, "
                   "season INTEGER, "
-                  "id_series, INTEGER NOT NULL, "
-                  "id_movie, INTEGER UNIQUE NOT NULL, "
+                  "id_series INTEGER NOT NULL, "
+                  "id_movie INTEGER UNIQUE NOT NULL, "
                   "FOREIGN KEY(id_movie) REFERENCES movies ON DELETE CASCADE, "
-                  "FOREIGN KEY(id_series) REFERENCES series ON DELETE CASCADE, "
+                  "FOREIGN KEY(id_series) REFERENCES series ON DELETE CASCADE "
                   ")");
 
     if (!query.exec()) {
