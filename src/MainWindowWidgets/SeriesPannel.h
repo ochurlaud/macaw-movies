@@ -22,6 +22,8 @@
 
 #include <QWidget>
 
+#include "Application.h"
+
 #include "Entities/Episode.h"
 #include "MainWindowWidgets/MainPannel.h"
 
@@ -36,7 +38,7 @@ class SeriesPannel : public MainPannel
 public:
     explicit SeriesPannel(QWidget *parent = 0);
     ~SeriesPannel();
-    void fill(const QList<Episode> &episodeList);
+    void fill(const QList<Movie> &movieList);
 
 
 private:

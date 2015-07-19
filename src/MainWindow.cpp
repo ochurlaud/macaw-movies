@@ -159,31 +159,31 @@ void MainWindow::on_seriesButton_clicked()
  * @param id of the leftPannel element
  * @return QList of movies to display
  */
-QList<Movie> MainWindow::moviesToDisplay(int id)
+QList<Movie> MainWindow::moviesToDisplay(int id, bool movieOrSeries)
 {
-    Macaw::DEBUG("[MainWindow] prepareMoviesToDisplay()");
+    Macaw::DEBUG("[MainWindow] moviesToDisplay()");
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
 
     m_leftPannel->setSelectedId(id);
     if(m_leftPannel->selectedId() == 0) {
 
-        return databaseManager->getAllMovies();
+        return databaseManager->getAllMovies(movieOrSeries);
     } else if(m_leftPannel->typeElement() == Macaw::isPeople) {
         if (m_leftPannel->selectedId() == -1) {
 
-            return databaseManager->getMoviesWithoutPeople(m_leftPannel->typePeople());
+            return databaseManager->getMoviesWithoutPeople(m_leftPannel->typePeople(),movieOrSeries);
         } else {
 
-            return databaseManager->getMoviesByPeople(m_leftPannel->selectedId(), m_leftPannel->typePeople());
+            return databaseManager->getMoviesByPeople(m_leftPannel->selectedId(), m_leftPannel->typePeople(),movieOrSeries);
         }
     } else if (m_leftPannel->typeElement() == Macaw::isTag) {
         if (m_leftPannel->selectedId() == -1) {
 
-            return databaseManager->getMoviesWithoutTag();
+            return databaseManager->getMoviesWithoutTag(movieOrSeries);
         } else {
 
-            return databaseManager->getMoviesByTag(m_leftPannel->selectedId());
+            return databaseManager->getMoviesByTag(m_leftPannel->selectedId(),movieOrSeries);
         }
     }
     QList<Movie> l_emptyList;
@@ -216,7 +216,7 @@ void MainWindow::selfUpdate()
 void MainWindow::updateMainPannel()
 {
     Macaw::DEBUG("[MainWindow] updateMainWindow triggered");
-    QList<Movie> l_moviesList = moviesToDisplay(m_leftPannel->selectedId());
+    QList<Movie> l_moviesList = moviesToDisplay(m_leftPannel->selectedId(), m_moviesOrSeries);
     m_mainPannel->fill(l_moviesList);
 }
 
@@ -233,7 +233,7 @@ void MainWindow::updatePannels()
     servicesManager->setMatchingMoviesList(l_text, m_moviesOrSeries);
 
     m_leftPannel->fill();
-    QList<Movie> l_moviesList = moviesToDisplay(m_leftPannel->selectedId());
+    QList<Movie> l_moviesList = moviesToDisplay(m_leftPannel->selectedId(), m_moviesOrSeries);
     m_mainPannel->fill(l_moviesList);
     Macaw::DEBUG_OUT("[MainWindow] Exits updatePannels()");
 }

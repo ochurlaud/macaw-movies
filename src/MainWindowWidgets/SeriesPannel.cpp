@@ -32,10 +32,20 @@ SeriesPannel::~SeriesPannel()
     delete m_ui;
 }
 
-void SeriesPannel::fill(const QList<Episode> &episodeList)
+void SeriesPannel::fill(const QList<Movie> &movieList)
 {
-    foreach (Episode l_episode, episodeList) {
-        QTreeWidgetItem *l_episodeItem = new QTreeWidgetItem(QStringList(l_episode.movie().title()));
+    Macaw::DEBUG_IN("[SeriesPannel] Enters fill()");
+
+    m_ui->treeWidget->clear();
+
+    ServicesManager *servicesManager = ServicesManager::instance();
+    DatabaseManager *databaseManager = servicesManager->databaseManager();
+
+    QList<Episode> l_episodeList = databaseManager->getEpisodesByMovies(movieList);
+
+    foreach (Episode l_episode, l_episodeList) {
+        QStringList l_textValues (QString::number(l_episode.number()) + "- " + l_episode.movie().title());
+        QTreeWidgetItem *l_episodeItem = new QTreeWidgetItem(l_textValues);
 
         QList<QTreeWidgetItem*> l_seriesItemList = m_ui->treeWidget->findItems(l_episode.series().name(), Qt::MatchFixedString);
         if (!l_seriesItemList.isEmpty()) {
@@ -59,8 +69,12 @@ void SeriesPannel::fill(const QList<Episode> &episodeList)
             l_seriesItem->setText(0, l_episode.series().name());
             QTreeWidgetItem *l_seasonItem = new QTreeWidgetItem();
             l_seasonItem->setText(0, QString::number(l_episode.season()));
-            l_seasonItem->addChild(l_episodeItem);
+
+            m_ui->treeWidget->addTopLevelItem(l_seriesItem);
             l_seriesItem->addChild(l_seasonItem);
+            l_seasonItem->addChild(l_episodeItem);
+
        }
     }
+    Macaw::DEBUG_OUT("[SeriesPannel] Exits fill()");
 }

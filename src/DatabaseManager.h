@@ -94,7 +94,8 @@ public:
     // Episodes
     Episode getOneEpisodeById(const int id);
     QList<Episode> getAllEpisodes();
-    QList<Episode> getEpisodesByPeople(const int id, const int type, const QString fieldOrder = "s.name, e.season, e.number");
+    QList<Episode> getEpisodesByMovies(QList<Movie> movieList); // Do not pass by reference !
+/*    QList<Episode> getEpisodesByPeople(const int id, const int type, const QString fieldOrder = "s.name, e.season, e.number");
     QList<Episode> getEpisodesByPeople(const People &people, const int type, const QString fieldOrder = "s.name, e.season, e.number");
     QList<Episode> getEpisodesByTag(const int id, const QString fieldOrder = "s.name, e.season, e.number");
     QList<Episode> getEpisodesByTag(const Tag &tag, const QString fieldOrder = "s.name, e.season, e.number");
@@ -104,7 +105,7 @@ public:
     QList<Episode> getEpisodesWithoutTag(const QString fieldOrder = "s.name, e.season, e.number");
     QList<Episode> getEpisodesByAny(const QString text, const QString fieldOrder = "s.name, e.season, e.number");
     QList<Episode> getEpisodesNotImported(const QString fieldOrder = "s.name, e.season, e.number");
-
+*/
     // Series
     Series getOneSeriesById(const int id);
     QList<Series> getAllSeries(const QString fieldOrder = "name");
@@ -147,6 +148,7 @@ private:
     void setTagsToMovie(Movie &movie);
     void setMoviesToPlaylist(Playlist &playlist);
     Episode hydrateEpisode(QSqlQuery &query);
+    Episode hydrateEpisode(QSqlQuery &query, const Movie &movie);
     Movie hydrateMovie(QSqlQuery &query);
     People hydratePeople(QSqlQuery &query);
     Series hydrateSeries(QSqlQuery &query);

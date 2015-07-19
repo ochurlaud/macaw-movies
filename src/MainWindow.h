@@ -82,7 +82,7 @@ private:
     bool m_moviesOrSeries;
 
     void readSettings();
-    QList<Movie> moviesToDisplay(int id);
+    QList<Movie> moviesToDisplay(int id, bool movieOrSeries);
     void updatePannels();
 
 };
