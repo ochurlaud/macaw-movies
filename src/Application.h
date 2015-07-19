@@ -46,6 +46,10 @@ namespace Macaw
         isTag,
         isPlaylist
     };
+    enum movieOrSeries {
+        movies,
+        series
+    };
 
 }
 

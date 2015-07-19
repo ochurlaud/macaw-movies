@@ -93,21 +93,21 @@ public:
 
     // Episodes
     Episode getOneEpisodeById(const int id);
-    QList<Episode> getAllEpisodes(const QString fieldOrder = "title");
-    QList<Episode> getEpisodesByPeople(const int id, const int type, const QString fieldOrder = "title");
-    QList<Episode> getEpisodesByPeople(const People &people, const int type, const QString fieldOrder = "title");
-    QList<Episode> getEpisodesByTag(const int id, const QString fieldOrder = "title");
-    QList<Episode> getEpisodesByTag(const Tag &tag, const QString fieldOrder = "title");
-    QList<Episode> getEpisodesByPlaylist(const int id, const QString fieldOrder = "title");
-    QList<Episode> getEpisodesByPlaylist(const Playlist &playlist, const QString fieldOrder = "title");
-    QList<Episode> getEpisodesWithoutPeople(const int type, const QString fieldOrder = "title");
-    QList<Episode> getEpisodesWithoutTag(const QString fieldOrder = "title");
-    QList<Episode> getEpisodesByAny(const QString text, const QString fieldOrder = "title");
-    QList<Episode> getEpisodesNotImported(const QString fieldOrder = "title");
+    QList<Episode> getAllEpisodes();
+    QList<Episode> getEpisodesByPeople(const int id, const int type, const QString fieldOrder = "s.name, e.season, e.number");
+    QList<Episode> getEpisodesByPeople(const People &people, const int type, const QString fieldOrder = "s.name, e.season, e.number");
+    QList<Episode> getEpisodesByTag(const int id, const QString fieldOrder = "s.name, e.season, e.number");
+    QList<Episode> getEpisodesByTag(const Tag &tag, const QString fieldOrder = "s.name, e.season, e.number");
+    QList<Episode> getEpisodesByPlaylist(const int id, const QString fieldOrder = "s.name, e.season, e.number");
+    QList<Episode> getEpisodesByPlaylist(const Playlist &playlist, const QString fieldOrder = "s.name, e.season, e.number");
+    QList<Episode> getEpisodesWithoutPeople(const int type, const QString fieldOrder = "s.name, e.season, e.number");
+    QList<Episode> getEpisodesWithoutTag(const QString fieldOrder = "s.name, e.season, e.number");
+    QList<Episode> getEpisodesByAny(const QString text, const QString fieldOrder = "s.name, e.season, e.number");
+    QList<Episode> getEpisodesNotImported(const QString fieldOrder = "s.name, e.season, e.number");
 
     // Series
     Series getOneSeriesById(const int id);
-    QList<Series> getAllSeries(const QString fieldOrder = "title");
+    QList<Series> getAllSeries(const QString fieldOrder = "name");
 
     // People
     People getOnePeopleById(const int id);

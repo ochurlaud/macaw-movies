@@ -48,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->metadataPannelLayout->addWidget(m_metadataPannel);
     m_ui->moviesButton->setFlat(true);
     m_ui->moviesButton->setChecked(true);
+    m_moviesOrSeries = Macaw::movies;
 
     ServicesManager *servicesManager = ServicesManager::instance();
     connect(servicesManager, SIGNAL(requestPannelsUpdate()),
@@ -121,6 +122,7 @@ void MainWindow::on_moviesButton_clicked()
         connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
                 this, SLOT(fillMetadataPannel(const Movie&)));
         m_metadataPannel->hide();
+        m_moviesOrSeries = Macaw::movies;
 
         this->updatePannels();
     }
@@ -145,6 +147,7 @@ void MainWindow::on_seriesButton_clicked()
         connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
                 this, SLOT(fillMetadataPannel(const Movie&)));
         m_metadataPannel->hide();
+        m_moviesOrSeries = Macaw::series;
 
         this->updatePannels();
     }
@@ -227,7 +230,7 @@ void MainWindow::updatePannels()
     QString l_text = m_ui->searchEdit->text();
 
     ServicesManager *servicesManager = ServicesManager::instance();
-    servicesManager->setMatchingMoviesList(l_text);
+    servicesManager->setMatchingMoviesList(l_text, m_moviesOrSeries);
 
     m_leftPannel->fill();
     QList<Movie> l_moviesList = moviesToDisplay(m_leftPannel->selectedId());

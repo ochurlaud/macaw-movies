@@ -79,6 +79,7 @@ private:
     LeftPannel *m_leftPannel;
     MainPannel *m_mainPannel;
     MetadataPannel *m_metadataPannel;
+    bool m_moviesOrSeries;
 
     void readSettings();
     QList<Movie> moviesToDisplay(int id);

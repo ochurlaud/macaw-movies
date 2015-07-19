@@ -22,6 +22,7 @@
 
 #include <QWidget>
 
+#include "Entities/Episode.h"
 #include "MainWindowWidgets/MainPannel.h"
 
 namespace Ui {
@@ -35,6 +36,8 @@ class SeriesPannel : public MainPannel
 public:
     explicit SeriesPannel(QWidget *parent = 0);
     ~SeriesPannel();
+    void fill(const QList<Episode> &episodeList);
+
 
 private:
     Ui::SeriesPannel *m_ui;

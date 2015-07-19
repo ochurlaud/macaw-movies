@@ -41,25 +41,25 @@ DatabaseManager::DatabaseManager()
                     "m.suffix, "
                     "m.rank, "
                     "m.imported, "
-                    "m.series";
+                    "m.series ";
 
     m_episodeFields = "e.id, "
                       "e.number, "
                       "e.season, "
                       "e.id_series, "
-                      "e.id_movie";
+                      "e.id_movie ";
 
     m_seriesFields =  "s.id, "
                       "s.name, "
-                      "s.finished";
+                      "s.finished ";
 
     m_peopleFields = "p.id, "
                      "p.name, "
                      "p.birthday, "
-                     "p.biography";
+                     "p.biography ";
 
     m_tagFields = "t.id, "
-                  "t.name";
+                  "t.name ";
 
     Macaw::DEBUG("[DatabaseManager] object created");
 }

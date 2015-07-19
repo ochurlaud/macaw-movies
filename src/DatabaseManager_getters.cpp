@@ -29,7 +29,7 @@ Movie DatabaseManager::getOneMovieById(const int id)
 {
     Movie l_movie;
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " + m_movieFields + " "
+    l_query.prepare("SELECT " + m_movieFields +
                     "FROM movies AS m "
                     "WHERE id = :id");
     l_query.bindValue(":id", id);
@@ -57,7 +57,7 @@ QList<Movie> DatabaseManager::getAllMovies(const bool series, const QString fiel
 {
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " + m_movieFields + " "
+    l_query.prepare("SELECT " + m_movieFields +
                     "FROM movies AS m "
                     "WHERE series = :series "
                     "ORDER BY " + fieldOrder);
@@ -94,7 +94,7 @@ QList<Movie> DatabaseManager::getMoviesByPeople(const int id,
 {
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " + m_movieFields + " "
+    l_query.prepare("SELECT " + m_movieFields +
                     "FROM movies AS m "
                     "WHERE id IN (SELECT id_movie "
                                  "FROM movies_people "
@@ -150,7 +150,7 @@ QList<Movie> DatabaseManager::getMoviesByTag(const int id,
 {
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " + m_movieFields + " "
+    l_query.prepare("SELECT " + m_movieFields +
                     "FROM movies AS m "
                     "WHERE id IN (SELECT id_movie "
                                  "FROM movies_tags "
@@ -201,7 +201,7 @@ QList<Movie> DatabaseManager::getMoviesByPlaylist(const int id,
 {
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " + m_movieFields + " "
+    l_query.prepare("SELECT " + m_movieFields +
                     "FROM movies AS m "
                     "WHERE m.id IN (SELECT id_movie "
                                  "FROM movies_playlists "
@@ -247,7 +247,7 @@ QList<Movie> DatabaseManager::getMoviesWithoutPeople(const int type,
 {
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " + m_movieFields + " "
+    l_query.prepare("SELECT " + m_movieFields +
                     "FROM movies AS m "
                     "WHERE (SELECT COUNT(*) "
                                 "FROM movies_people AS mp "
@@ -276,7 +276,7 @@ QList<Movie> DatabaseManager::getMoviesWithoutTag(const bool series, const QStri
 {
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " + m_movieFields + " "
+    l_query.prepare("SELECT " + m_movieFields +
                     "FROM movies AS m "
                     "WHERE (SELECT COUNT(*) "
                                 "FROM movies_tags AS mt "
@@ -364,7 +364,7 @@ QList<Movie> DatabaseManager::getMoviesNotImported(const bool series, const QStr
 {
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " + m_movieFields + " "
+    l_query.prepare("SELECT " + m_movieFields +
                     "FROM movies AS m "
                     "WHERE m.imported = :imported "
                     "WHERE m.series = :series "
@@ -392,8 +392,10 @@ Episode DatabaseManager::getOneEpisodeById(const int id)
 {
     Episode l_episode;
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " + m_episodeFields + " "
-                    "FROM episodes AS e "
+    l_query.prepare("SELECT " + m_episodeFields + ", " + m_seriesFields +
+                    "FROM episodes AS e"
+                    "LEFT JOIN series AS s "
+                    "ON s.id = e.id_series "
                     "WHERE e.id = :id");
     l_query.bindValue(":id", id);
 
@@ -412,9 +414,27 @@ Episode DatabaseManager::getOneEpisodeById(const int id)
     return l_episode;
 }
 
-QList<Episode> DatabaseManager::getAllEpisodes(const QString fieldOrder)
+QList<Episode> DatabaseManager::getAllEpisodes()
 {
     QList<Episode> l_episodeList;
+
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT " + m_episodeFields + ", " + m_seriesFields +
+                    "FROM episodes AS e"
+                    "LEFT JOIN series AS s "
+                    "ON s.id = e.id_series "
+                    "ORDER BY s.name, e.season, e.number");
+
+    if (!l_query.exec())
+    {
+        Macaw::DEBUG("In getAllEpisodes:");
+        Macaw::DEBUG(l_query.lastError().text());
+    }
+
+    while(l_query.next())
+    {
+       l_episodeList.append(hydrateEpisode(l_query));
+    }
 
     return l_episodeList;
 }
@@ -500,7 +520,7 @@ People DatabaseManager::getOnePeopleById(const int id)
     People l_people;
     QSqlQuery l_query(m_db);
 
-    l_query.prepare("SELECT " + m_peopleFields + " "
+    l_query.prepare("SELECT " + m_peopleFields +
                     "FROM people AS p "
                     "WHERE p.id = :id ");
     l_query.bindValue(":id", id);
@@ -531,7 +551,7 @@ People DatabaseManager::getOnePeopleById(const int id, const int type)
     People l_people;
     QSqlQuery l_query(m_db);
 
-    l_query.prepare("SELECT " + m_peopleFields + " "
+    l_query.prepare("SELECT " + m_peopleFields +
                     "FROM people AS p, movies_people AS pm "
                     "WHERE p.id = :id AND pm.id_people = p.id AND pm.type = :type ");
     l_query.bindValue(":id", id);
@@ -562,7 +582,7 @@ People DatabaseManager::getOnePeopleByName(const QString name)
     People l_people;
     QSqlQuery l_query(m_db);
 
-    l_query.prepare("SELECT " + m_peopleFields + " "
+    l_query.prepare("SELECT " + m_peopleFields +
                     "FROM people AS p "
                     "WHERE p.name = :name ");
     l_query.bindValue(":name", name);
@@ -594,7 +614,7 @@ QList<People> DatabaseManager::getPeopleUsedByType(const int type,
     QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
 
-    l_query.prepare("SELECT " + m_peopleFields + " "
+    l_query.prepare("SELECT " + m_peopleFields +
                     "FROM people AS p "
                     "WHERE id IN (SELECT id_people FROM movies_people WHERE type = :type) "
                     "ORDER BY " + fieldOrder);
@@ -630,7 +650,7 @@ QList<People> DatabaseManager::getPeopleByName(const QString name,
     QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
 
-    l_query.prepare("SELECT " + m_peopleFields + " "
+    l_query.prepare("SELECT " + m_peopleFields +
                     "FROM people AS p "
                     "WHERE p.name LIKE '%'||:name||'%' "
                     "ORDER BY " + fieldOrder);
@@ -1118,7 +1138,7 @@ void DatabaseManager::setTagsToMovie(Movie &movie)
 void DatabaseManager::setMoviesToPlaylist(Playlist &playlist)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " +m_movieFields + " "
+    l_query.prepare("SELECT " +m_movieFields +
                     "FROM movies AS m, movies_playlists AS plm "
                     "WHERE plm.id_movie = m.id AND plm.id_playlist = :id_playlist");
     l_query.bindValue(":id_playlist", playlist.id());
@@ -1142,7 +1162,7 @@ void DatabaseManager::setMoviesToPlaylist(Playlist &playlist)
 void DatabaseManager::setMovieToEpisode(Episode &episode)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " +m_movieFields + " "
+    l_query.prepare("SELECT " +m_movieFields +
                     "FROM movies AS m, episodes AS e "
                     "WHERE e.id_movie = m.id AND e.id = :id");
     l_query.bindValue(":id", episode.id());
@@ -1156,30 +1176,6 @@ void DatabaseManager::setMovieToEpisode(Episode &episode)
     {
         Movie l_movie = hydrateMovie(l_query);
         episode.setMovie(l_movie);
-    }
-}
-
-/**
- * @brief Gets the series object from an episode and adds it to the object
- * @param Episode
- */
-void DatabaseManager::setSeriesToEpisode(Episode &episode)
-{
-    QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " +m_seriesFields + " "
-                    "FROM series AS s, episodes AS e "
-                    "WHERE e.id_series = s.id AND e.id = :id");
-    l_query.bindValue(":id", episode.id());
-
-    if (!l_query.exec())
-    {
-        Macaw::DEBUG("In setSeriesToEpisode():");
-        Macaw::DEBUG(l_query.lastError().text());
-    }
-    while (l_query.next())
-    {
-        Series l_series = hydrateSeries(l_query);
-        episode.setSeries(l_series);
     }
 }
 
@@ -1226,7 +1222,13 @@ Episode DatabaseManager::hydrateEpisode(QSqlQuery &query)
     l_episode.setId(query.value(0).toInt());
     l_episode.setNumber(query.value(1).toInt());
     l_episode.setSeason(query.value(2).toInt());
-    setSeriesToEpisode(l_episode);
+
+    Series l_series;
+    l_series.setId(query.value(3).toInt());
+    l_series.setName(query.value(4).toString());
+    l_series.setFinished(query.value(5).toBool());
+    l_episode.setSeries(l_series);
+
     setMovieToEpisode(l_episode);
 
     return l_episode;
