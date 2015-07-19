@@ -75,9 +75,9 @@ void LeftPannel::setElementIdsList()
     ServicesManager *servicesManager = ServicesManager::instance();
     DatabaseManager *databaseManager = servicesManager->databaseManager();
 
-    QList<Movie> l_matchingMoviesList = servicesManager->matchingMoviesList();
+    QList<Movie> l_matchingMovieList = servicesManager->matchingMovieList();
 
-    foreach(Movie l_movie, l_matchingMoviesList) {
+    foreach(Movie l_movie, l_matchingMovieList) {
         if( (servicesManager->toWatchState()
                  && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
                  ) || !servicesManager->toWatchState()

@@ -31,9 +31,9 @@ ServicesManager *ServicesManager::instance()
     return servicesManager;
 }
 
-void ServicesManager::setMatchingMoviesList(QString pattern, bool series)
+void ServicesManager::setMatchingMovieList(QString pattern, bool series)
 {
-    m_matchingMoviesList = m_databaseManager->getMoviesByAny(pattern, series);
+    m_matchingMovieList = m_databaseManager->getMoviesByAny(pattern, series);
 }
 
 void ServicesManager::pannelsUpdate()

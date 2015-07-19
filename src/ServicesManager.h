@@ -31,8 +31,8 @@ class ServicesManager : public QObject
 public:
     explicit ServicesManager(QObject *parent = 0);
     static ServicesManager* instance();
-    QList<Movie> matchingMoviesList() const { return m_matchingMoviesList; }
-    void setMatchingMoviesList(const QString pattern, bool series);
+    QList<Movie> matchingMovieList() const { return m_matchingMovieList; }
+    void setMatchingMovieList(const QString pattern, bool series);
     bool toWatchState() const { return m_toWatchState; }
     void setToWatchState(const bool state) { m_toWatchState = state; }
     DatabaseManager* databaseManager() { return m_databaseManager; }
@@ -47,7 +47,7 @@ public slots:
     void showTempStatusBarMessage(QString message, int time);
 
 private:
-    QList<Movie> m_matchingMoviesList;
+    QList<Movie> m_matchingMovieList;
     DatabaseManager *m_databaseManager;
     bool m_toWatchState;
 };

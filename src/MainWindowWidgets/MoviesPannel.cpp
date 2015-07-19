@@ -101,7 +101,7 @@ void MoviesPannel::addMovieToPannel(const Movie &movie)
  * @author Olivier CHURLAUD <olivier@churlaud.com>
  * @param list of movies to show
  */
-void MoviesPannel::fill(const QList<Movie> &moviesList)
+void MoviesPannel::fill(const QList<Movie> &movieList)
 {
     Macaw::DEBUG_IN("[MoviesPannel] Enters fill()");
 
@@ -111,9 +111,9 @@ void MoviesPannel::fill(const QList<Movie> &moviesList)
     ServicesManager *servicesManager = ServicesManager::instance();
     DatabaseManager *databaseManager = servicesManager->databaseManager();
 
-    QList<Movie> l_matchingMoviesList = servicesManager->matchingMoviesList();
-    foreach (Movie l_movie, l_matchingMoviesList) {
-        if(moviesList.contains(l_movie)) {
+    QList<Movie> l_matchingMovieList = servicesManager->matchingMovieList();
+    foreach (Movie l_movie, movieList) {
+        if(l_matchingMovieList.contains(l_movie)) {
             if( (servicesManager->toWatchState()
                  && databaseManager->isMovieInPlaylist(l_movie.id(), Playlist::ToWatch)
                  ) || !servicesManager->toWatchState()

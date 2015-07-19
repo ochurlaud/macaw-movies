@@ -31,7 +31,7 @@ class MainPannel : public QWidget
 
 public:
     MainPannel(QWidget *parent);
-    virtual void fill(QList<Movie> const &moviesList){ moviesList.count(); }
+    virtual void fill(QList<Movie> const &movieList){ movieList.count(); }
 
 signals:
     void fillMetadataPannel(const Movie&);

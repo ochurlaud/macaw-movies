@@ -37,7 +37,7 @@ class MoviesPannel : public MainPannel
 public:
     explicit MoviesPannel(QWidget *parent = 0);
     ~MoviesPannel();
-    void fill(const QList<Movie> &moviesList);
+    void fill(const QList<Movie> &movieList);
 
 private slots:
     void on_customContextMenuRequested(const QPoint &point);

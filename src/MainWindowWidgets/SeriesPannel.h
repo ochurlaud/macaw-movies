@@ -43,6 +43,8 @@ public:
 
 private:
     Ui::SeriesPannel *m_ui;
+
+    void addEpisodeToPannel(const Episode &episode);
 };
 
 #endif // SERIESPANNEL_H
