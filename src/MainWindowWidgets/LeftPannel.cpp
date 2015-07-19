@@ -57,20 +57,20 @@ void LeftPannel::fill()
 {
     Macaw::DEBUG_IN("[LefPannel] Enters fill()");
 
-    this->setElementIdsList();
+    this->setElementIdList();
     this->fillListWidget();
 
     Macaw::DEBUG_OUT("[LefPannel] Exits fill()");
 }
 
 /**
- * @brief Set the ElementIdsList, used to fill the listWidget
+ * @brief Set the ElementIdList, used to fill the listWidget
  */
-void LeftPannel::setElementIdsList()
+void LeftPannel::setElementIdList()
 {
-    Macaw::DEBUG_IN("[LeftPannel] Enters setElementIdsList()");
+    Macaw::DEBUG_IN("[LeftPannel] Enters setElementIdList()");
 
-    m_elementIdsList.clear();
+    m_elementIdList.clear();
 
     ServicesManager *servicesManager = ServicesManager::instance();
     DatabaseManager *databaseManager = servicesManager->databaseManager();
@@ -87,46 +87,46 @@ void LeftPannel::setElementIdsList()
                 case Macaw::isPeople:
                 {
                     QList<People> l_peopleList = l_movie.peopleList(m_typePeople);
-                    this->updateElementIdsList(l_peopleList);
+                    this->updateElementIdList(l_peopleList);
                     break;
                 }
                 case Macaw::isTag:
                 {
                     QList<Tag> l_tagList = l_movie.tagList();
-                    this->updateElementIdsList(l_tagList);
+                    this->updateElementIdList(l_tagList);
                     break;
                 }
             }
         }
     }
-    Macaw::DEBUG_OUT("[LefPannel] Exits setElementIdsList()");
+    Macaw::DEBUG_OUT("[LefPannel] Exits setElementIdList()");
 }
 
 /**
- * @brief Add/Update the elementIdsList
+ * @brief Add/Update the elementIdList
  * @author Olivier CHURLAUD <olivier@churlaud.com>
  *
  * @param list of objects of the movie
  */
-template<typename T> void LeftPannel::updateElementIdsList(const QList<T> &entityList)
+template<typename T> void LeftPannel::updateElementIdList(const QList<T> &entityList)
 {
-    Macaw::DEBUG_IN("[LeftPannel] Enters updateElementIdsList");
+    Macaw::DEBUG_IN("[LeftPannel] Enters updateElementIdList");
     if(entityList.isEmpty()
-       && !m_elementIdsList.contains(-1)
+       && !m_elementIdList.contains(-1)
       ) {
-        m_elementIdsList.append(-1);
+        m_elementIdList.append(-1);
     }
     foreach(T l_entity, entityList) {
-        if(!m_elementIdsList.contains(l_entity.id())) {
-            m_elementIdsList.append(l_entity.id());
+        if(!m_elementIdList.contains(l_entity.id())) {
+            m_elementIdList.append(l_entity.id());
         }
     }
 
-    Macaw::DEBUG_OUT("[LeftPannel] Exits updateElementIdsList");
+    Macaw::DEBUG_OUT("[LeftPannel] Exits updateElementIdList");
 }
 
 /**
- * @brief fill the listWidget based on m_elementIdsList
+ * @brief fill the listWidget based on m_elementIdList
  * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 void LeftPannel::fillListWidget()
@@ -146,7 +146,7 @@ void LeftPannel::fillListWidget()
         this->addEntityToListWidget(l_entity);
     }
 
-    foreach(int l_objectId, m_elementIdsList) {
+    foreach(int l_objectId, m_elementIdList) {
         if(l_objectId == -1) {
             // First space needed for sorting
             Entity l_entity(" Unknown");

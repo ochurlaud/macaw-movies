@@ -55,7 +55,7 @@ public:
     bool createTableMoviesTags(QSqlQuery&);
     bool createTableSeries(QSqlQuery&);
     bool createTableEpisodes(QSqlQuery&);
-    bool createTablePathsList(QSqlQuery&);
+    bool createTablePathList(QSqlQuery&);
     bool createTableConfig(QSqlQuery&);
     QSqlError lastError();
     bool upgradeDB(int fromVersion, int toVersion);

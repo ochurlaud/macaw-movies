@@ -35,10 +35,10 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     m_ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    QStringList l_moviesPathsList = databaseManager->getMoviesPaths(0);
-    l_moviesPathsList << databaseManager->getMoviesPaths(1);
+    QStringList l_moviesPathList = databaseManager->getMoviesPaths(0);
+    l_moviesPathList << databaseManager->getMoviesPaths(1);
 
-    m_ui->knownPathsList->addItems(l_moviesPathsList);
+    m_ui->knownPathList->addItems(l_moviesPathList);
 
     QString l_mediaPlayerPath(databaseManager->getMediaPlayerPath());
 
@@ -72,20 +72,20 @@ void SettingsWindow::on_buttonBox_accepted()
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
     QString l_newPath = m_ui->folderPathEdit->text();
-    addToKnownPathsList(l_newPath);
+    addToKnownPathList(l_newPath);
 
-    QStringList l_moviesPathsList = databaseManager->getMoviesPaths(true);
-    l_moviesPathsList << databaseManager->getMoviesPaths(false);
-    foreach (QString l_moviesPath, l_moviesPathsList) {
-        if (m_ui->knownPathsList->findItems(l_moviesPath, Qt::MatchExactly).isEmpty()) {
+    QStringList l_moviesPathList = databaseManager->getMoviesPaths(true);
+    l_moviesPathList << databaseManager->getMoviesPaths(false);
+    foreach (QString l_moviesPath, l_moviesPathList) {
+        if (m_ui->knownPathList->findItems(l_moviesPath, Qt::MatchExactly).isEmpty()) {
             Macaw::DEBUG("[MainWindow] Remove path "+l_moviesPath);
             // We remove the path and all the movies behind
             databaseManager->deleteMoviesPath(l_moviesPath);
         }
     }
 
-    for (int i=0 ; i < m_ui->knownPathsList->count() ; i++) {
-        QString l_path = m_ui->knownPathsList->item(i)->text();
+    for (int i=0 ; i < m_ui->knownPathList->count() ; i++) {
+        QString l_path = m_ui->knownPathList->item(i)->text();
         databaseManager->addMoviesPath(l_path);
         if (m_ui->recheckBox->isChecked()) {
             databaseManager->setMoviesPathImported(l_path, false);
@@ -115,25 +115,25 @@ void SettingsWindow::on_folderPathEdit_textChanged(const QString string)
 void SettingsWindow::on_addButton_clicked()
 {
     QString l_newPath = m_ui->folderPathEdit->text();
-    addToKnownPathsList(l_newPath);
+    addToKnownPathList(l_newPath);
 }
 
 void SettingsWindow::on_removeButton_clicked()
 {
-    QList<QListWidgetItem*> l_selectedItemsList = m_ui->knownPathsList->selectedItems();
-    foreach (QListWidgetItem *l_selectedItem, l_selectedItemsList) {
+    QList<QListWidgetItem*> l_selectedItemList = m_ui->knownPathList->selectedItems();
+    foreach (QListWidgetItem *l_selectedItem, l_selectedItemList) {
         delete l_selectedItem;
     }
 }
 
-void SettingsWindow::addToKnownPathsList(QString path)
+void SettingsWindow::addToKnownPathList(QString path)
 {
     if (!QDir(path).exists() || path.isEmpty()) {
         m_ui->folderPathMessage->setText(tr("Choose an existant path"));
-    } else if (m_ui->knownPathsList->findItems(path,Qt::MatchExactly).count()) {
+    } else if (m_ui->knownPathList->findItems(path,Qt::MatchExactly).count()) {
         m_ui->folderPathMessage->setText(tr("This path is already known"));
     } else {
-        m_ui->knownPathsList->addItem(path);
+        m_ui->knownPathList->addItem(path);
     }
     m_ui->folderPathEdit->clear();
 }

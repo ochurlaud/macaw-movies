@@ -99,7 +99,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QListWidget" name="knownPathsList"/>
+           <widget class="QListWidget" name="knownPathList"/>
           </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout">

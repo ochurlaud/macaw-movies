@@ -70,10 +70,10 @@ private:
     /**
      * @brief QList of ids of the leftPannel
      */
-    QList<int> m_elementIdsList;
+    QList<int> m_elementIdList;
 
-    void setElementIdsList();
-    template<typename T> void updateElementIdsList(const QList<T> &list);
+    void setElementIdList();
+    template<typename T> void updateElementIdList(const QList<T> &list);
     void fillListWidget();
     void addEntityToListWidget(const Entity &entity);
 };

@@ -435,8 +435,8 @@ void MovieDialog::delPeopleButton_clicked(int type)
     }
 
     if (l_peopleWidget != NULL) {
-    QList<QListWidgetItem*> l_itemsListToDelete = l_peopleWidget->selectedItems();
-        foreach (QListWidgetItem *l_itemToDelete, l_itemsListToDelete)
+    QList<QListWidgetItem*> l_itemListToDelete = l_peopleWidget->selectedItems();
+        foreach (QListWidgetItem *l_itemToDelete, l_itemListToDelete)
         {
             int l_peopleId = l_itemToDelete->data(Macaw::ObjectId).toInt();
             People l_people = databaseManager->getOnePeopleById(l_peopleId, type);

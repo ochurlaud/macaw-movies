@@ -207,6 +207,15 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
                     Macaw::DEBUG(l_query.lastError().text());
                 }
             }
+            if (!m_db.tables().contains("path_list")) {
+                l_ret &= createTablePathList(l_query);
+                l_ret &= l_query.exec("INSERT INTO path_list SELECT * FROM paths_list");
+                l_ret &= l_query.exec("DROP TABLE paths_list");
+                if(!l_ret)
+                {
+                    Macaw::DEBUG(l_query.lastError().text());
+                }
+            }
 
             l_ret &= createTableSeries(l_query);
             l_ret &= createTableEpisodes(l_query);
@@ -263,7 +272,7 @@ bool DatabaseManager::createTables()
             l_ret &= createTableMoviesTags(l_query);
             l_ret &= createTableSeries(l_query);
             l_ret &= createTableEpisodes(l_query);
-            l_ret &= createTablePathsList(l_query);
+            l_ret &= createTablePathList(l_query);
             if (l_ret) {
                 l_ret &= createTableConfig(l_query);
             }
@@ -508,20 +517,20 @@ bool DatabaseManager::createTableEpisodes(QSqlQuery &query)
 }
 
 /**
- * @brief Create table `paths_lists`, where the paths to import are stored
+ * @brief Create table `path_list`, where the paths to import are stored
  * @param query
  * @return
  */
-bool DatabaseManager::createTablePathsList(QSqlQuery &query)
+bool DatabaseManager::createTablePathList(QSqlQuery &query)
 {
-    query.prepare("CREATE TABLE IF NOT EXISTS paths_list("
+    query.prepare("CREATE TABLE IF NOT EXISTS path_list("
                   "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                   "movies_path VARCHAR(255) UNIQUE,"
                   "imported BOOLEAN DEFAULT 0"
                   ")");
 
     if (!query.exec()) {
-        Macaw::DEBUG("In createTablePathsList:");
+        Macaw::DEBUG("In createTablePathList:");
         Macaw::DEBUG(query.lastError().text());
 
         return false;
@@ -690,14 +699,14 @@ QStringList DatabaseManager::getMoviesPaths(bool imported)
         Macaw::DEBUG(l_query.lastError().text());
     }
 
-    QStringList l_moviesPathsList;
+    QStringList l_moviesPathList;
 
     while(l_query.next())
     {
-        l_moviesPathsList.append(l_query.value(0).toString());
+        l_moviesPathList.append(l_query.value(0).toString());
     }
 
-    return l_moviesPathsList;
+    return l_moviesPathList;
 }
 
 bool DatabaseManager::deleteMoviesPath(QString moviesPath)

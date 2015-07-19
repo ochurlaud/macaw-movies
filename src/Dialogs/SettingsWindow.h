@@ -54,7 +54,7 @@ private slots:
 
 private:
     Ui::SettingsWindow *m_ui;
-    void addToKnownPathsList(QString path);
+    void addToKnownPathList(QString path);
 
 };
 

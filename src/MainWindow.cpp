@@ -262,7 +262,7 @@ void MainWindow::addNewMovies()
 
     bool l_imported = false;
     int l_addedCount(0);
-    QStringList l_moviesPathsList = databaseManager->getMoviesPaths(l_imported);
+    QStringList l_moviesPathList = databaseManager->getMoviesPaths(l_imported);
     QStringList l_authorizedSuffixList;
     l_authorizedSuffixList << "mkv"
                            << "avi"
@@ -272,7 +272,7 @@ void MainWindow::addNewMovies()
                            << "mov"
                            << "m4v";
 
-    foreach (QString l_moviesPath, l_moviesPathsList) {
+    foreach (QString l_moviesPath, l_moviesPathList) {
         QDirIterator l_file(l_moviesPath, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
         while (l_file.hasNext()) {
             l_file.next();
