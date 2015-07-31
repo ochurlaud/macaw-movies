@@ -4,6 +4,8 @@
 #define VERSION_PATCH "0"
 #define APP_VERSION VERSION_MAJOR "." VERSION_MINOR "." VERSION_PATCH
 
-#define DB_VERSION 3    //database version, must be updated if the database model have changed
+//database version, must be follow the version:
+// 0.5.0 => 50, 12.5.2 => 1252
+#define DB_VERSION 50
 #define APP_NAME "Macaw-Movies"
 #define APP_NAME_SMALL "macaw-movies"

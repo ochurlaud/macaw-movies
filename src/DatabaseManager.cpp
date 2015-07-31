@@ -308,10 +308,10 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
         // PRAGMA is disabled so that renaming and deleting a database don't act on cascade
         l_ret = l_query.exec("PRAGMA foreign_keys = OFF");
 
-        //switch from DB_VERSION 2 to DB_VERSION 3
-        if (l_fromVersion == 2 && toVersion >= 3) {
+        //switch to DB_VERSION 050
+        if (toVersion >= 50) {
 
-            Macaw::DEBUG_IN("[DatabaseManager] upgrade from v2 to v3");
+            Macaw::DEBUG_IN("[DatabaseManager] upgrade to v050");
             l_query.finish();
             l_query.clear();
 
@@ -407,8 +407,8 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
 
             if(l_ret) {
                 l_ret &= l_query.exec("UPDATE config "
-                                      "SET db_version = 3");
-                l_fromVersion = 3;
+                                      "SET db_version = 050");
+                l_fromVersion = 050;
             } else {
                 m_db.close();
 
@@ -427,7 +427,7 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
 
                 this->openDB();
             }
-            Macaw::DEBUG_OUT("[DatabaseManager] exits upgrade from v2 to v3");
+            Macaw::DEBUG_OUT("[DatabaseManager] exits upgrade to v050");
         }
     }
     Macaw::DEBUG_OUT("[DatabaseManager] exits upgradeDB");
@@ -454,7 +454,7 @@ bool DatabaseManager::createTables()
             Macaw::DEBUG("[DatabaseManager.createTable] config table exists");
             l_query.exec("SELECT db_version FROM config");
             l_query.next();
-            if(l_query.value(0) == DB_VERSION)
+            if(l_query.value(0).toInt() != DB_VERSION)
             {
                 l_ret = upgradeDB(l_query.value(0).toInt(), DB_VERSION);
             }

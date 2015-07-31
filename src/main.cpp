@@ -27,6 +27,7 @@
 #include "Application.h"
 #include "MainWindow.h"
 #include "MacawDebug.h"
+#include <iostream>
 
 int main(int argv, char **args)
 {
