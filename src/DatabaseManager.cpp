@@ -25,8 +25,6 @@
  */
 DatabaseManager::DatabaseManager()
 {
-    openDB();
-    createTables();
     m_movieFields = "m.id, "
                     "m.title, "
                     "m.original_title, "
@@ -34,6 +32,7 @@ DatabaseManager::DatabaseManager()
                     "m.country, "
                     "m.duration, "
                     "m.synopsis, "
+                    "m.id_path, "
                     "m.file_path, "
                     "m.poster_path, "
                     "m.colored, "
@@ -61,9 +60,159 @@ DatabaseManager::DatabaseManager()
     m_tagFields = "t.id, "
                   "t.name ";
 
+    openDB();
+    createTables();
     Macaw::DEBUG("[DatabaseManager] object created");
 }
 
+/**
+ * @brief Hydrates a movie from the database
+ *
+ * @param QSqlQuery containing the data
+ * @return Movie hydrated object
+ */
+Movie DatabaseManager::hydrateMovie(QSqlQuery &query)
+{
+    Movie l_movie;
+    l_movie.setId(query.value(0).toInt());
+    l_movie.setTitle(query.value(1).toString());
+    l_movie.setOriginalTitle(query.value(2).toString());
+    l_movie.setReleaseDate(QDate::fromString(query.value(3).toString(), DATE_FORMAT));
+    l_movie.setCountry(query.value(4).toString());
+    l_movie.setDuration(QTime::fromMSecsSinceStartOfDay(query.value(5).toInt()));
+    l_movie.setSynopsis(query.value(6).toString());
+    l_movie.setFilePath(query.value(8).toString());
+    l_movie.setPosterPath(query.value(9).toString());
+    l_movie.setColored(query.value(10).toBool());
+    l_movie.setFormat(query.value(12).toString());
+    l_movie.setSuffix(query.value(13).toString());
+    l_movie.setRank(query.value(14).toInt());
+    l_movie.setImported(query.value(14).toBool());
+    l_movie.setSeries(query.value(15).toBool());
+    setTagsToMovie(l_movie);
+    setPeopleToMovie(l_movie);
+
+    return l_movie;
+}
+
+
+/**
+ * @brief Hydrates an episode (from series) from the database
+ *
+ * @param QSqlQuery containing the data
+ * @return Episode hydrated object
+ */
+Episode DatabaseManager::hydrateEpisode(QSqlQuery &query)
+{
+    Episode l_episode;
+    l_episode.setId(query.value(0).toInt());
+    l_episode.setNumber(query.value(1).toInt());
+    l_episode.setSeason(query.value(2).toInt());
+
+    Series l_series;
+    l_series.setId(query.value(5).toInt());
+    l_series.setName(query.value(6).toString());
+    l_series.setFinished(query.value(7).toBool());
+    l_episode.setSeries(l_series);
+
+    setMovieToEpisode(l_episode);
+
+    return l_episode;
+}
+
+/**
+ * @brief Hydrates an episode (from series) from the database, knowing the movie
+ *
+ * @param QSqlQuery containing the data
+ * @return Episode hydrated object
+ */
+Episode DatabaseManager::hydrateEpisode(QSqlQuery &query, const Movie &movie)
+{
+    Episode l_episode;
+    l_episode.setId(query.value(0).toInt());
+    l_episode.setNumber(query.value(1).toInt());
+    l_episode.setSeason(query.value(2).toInt());
+
+    Series l_series;
+    l_series.setId(query.value(5).toInt());
+    l_series.setName(query.value(6).toString());
+    l_series.setFinished(query.value(7).toBool());
+    l_episode.setSeries(l_series);
+
+    l_episode.setMovie(movie);
+
+    return l_episode;
+}
+
+/**
+ * @brief Hydrates series from the database
+ *
+ * @param QSqlQuery containing the data
+ * @return Series hydrated object
+ */
+Series DatabaseManager::hydrateSeries(QSqlQuery &query)
+{
+    Series l_series;
+    l_series.setId(query.value(0).toInt());
+    l_series.setName(query.value(1).toString());
+    l_series.setFinished(query.value(2).toBool());
+
+    return l_series;
+}
+
+/**
+ * @brief Hydrates a person from the database
+ *
+ * @param QSqlQuery containing the data
+ * @return People hydrated object
+ */
+People DatabaseManager::hydratePeople(QSqlQuery &query)
+{
+    People l_people;
+    l_people.setId(query.value(0).toInt());
+    l_people.setName(query.value(1).toString());
+    l_people.setBirthday(QDate::fromString(query.value(2).toString(), DATE_FORMAT));
+    l_people.setBiography(query.value(3).toString());
+    if (query.value(4).isValid())
+    {
+        l_people.setType(query.value(4).toInt());
+    }
+
+    return l_people;
+}
+
+/**
+ * @brief Hydrates a tag from the database
+ *
+ * @param QSqlQuery containing the data
+ * @return Tag hydrated object
+ */
+Tag DatabaseManager::hydrateTag(QSqlQuery &query)
+{
+    Tag l_tag;
+    l_tag.setId(query.value(0).toInt());
+    l_tag.setName(query.value(1).toString());
+
+    return l_tag;
+}
+
+/**
+ * @brief Hydrates a playlist from the database
+ *
+ * @param QSqlQuery containing the data
+ * @return Playlist hydrated object
+ */
+Playlist DatabaseManager::hydratePlaylist(QSqlQuery &query)
+{
+    Playlist l_playlist;
+    l_playlist.setId(query.value(0).toInt());
+    l_playlist.setName(query.value(1).toString());
+    l_playlist.setRate(query.value(2).toInt());
+    l_playlist.setCreationDate(QDateTime::fromTime_t(query.value(3).toInt()));
+    setMoviesToPlaylist(l_playlist);
+
+    return l_playlist;
+}
 
 /**
  * @brief Opens (or create the file of) the database
@@ -75,7 +224,7 @@ bool DatabaseManager::openDB()
     Macaw::DEBUG("[DatabaseManager] openDB");
     if (QSqlDatabase::contains("Movies-database"))
     {
-        m_db = QSqlDatabase::database("Movies-database");        
+        m_db = QSqlDatabase::database("Movies-database");
     }
     else
     {
@@ -135,9 +284,6 @@ bool DatabaseManager::deleteDB()
  */
 bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
 {
-    //At the moment this function can only handle move from
-    //version 1 to version 3.
-
     Macaw::DEBUG_IN("[DatabaseManager] upgradeDB");
     bool  l_ret = false;
     int l_fromVersion(fromVersion);
@@ -147,34 +293,20 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
         // We need to have a clean version of the db instance.
         //There might be a better way to do this.
         m_db.close();
+
+        Macaw::DEBUG_IN("[DatabaseManager] backup database");
+        QFile::copy(m_db.databaseName(),
+                    m_db.databaseName()+"_backup"
+                                       + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss"));
+
+        Macaw::DEBUG_OUT("[DatabaseManager] database backup done");
+
         m_db.open();
 
         QSqlQuery l_query(m_db);
 
-        l_ret = l_query.exec("PRAGMA foreign_keys = ON");
-
-        //switch from DB_VERSION 1 to DB_VERSION 2
-        if (l_fromVersion == 1 && toVersion >= 2) {
-            //add media player table
-            Macaw::DEBUG_IN("[DatabaseManager] upgrade from v1 to v2");
-
-            l_ret &= l_query.exec("CREATE TABLE IF NOT EXISTS media_player("
-                                  "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                                  "media_player_path VARCHAR(255) UNIQUE"
-                                  ")");
-            if(!l_ret)
-            {
-                Macaw::DEBUG(l_query.lastError().text());
-            }
-
-            // Update the database version if media player table was inserted successfully
-            if(l_ret) {
-                l_ret &= l_query.exec("UPDATE config "
-                                              "SET db_version = 2");
-            l_fromVersion = 2;
-            }
-            Macaw::DEBUG_OUT("[DatabaseManager] exits upgrade from v1 to v2");
-        }
+        // PRAGMA is disabled so that renaming and deleting a database don't act on cascade
+        l_ret = l_query.exec("PRAGMA foreign_keys = OFF");
 
         //switch from DB_VERSION 2 to DB_VERSION 3
         if (l_fromVersion == 2 && toVersion >= 3) {
@@ -182,14 +314,6 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
             Macaw::DEBUG_IN("[DatabaseManager] upgrade from v2 to v3");
             l_query.finish();
             l_query.clear();
-
-            if (m_db.tables().contains("media_player")) {
-                l_ret &= l_query.exec("DROP TABLE media_player");
-                if(!l_ret)
-                {
-                    Macaw::DEBUG(l_query.lastError().text());
-                }
-            }
 
             if (!m_db.record("config").contains("media_player")) {
                 l_ret &= l_query.exec("ALTER TABLE config ADD media_player VARCHAR(255)");
@@ -208,6 +332,7 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
                 }
             }
             if (!m_db.tables().contains("path_list")) {
+                Macaw::DEBUG_IN("[DatabaseManager] upgrade path_list table");
                 l_ret &= createTablePathList(l_query);
                 l_ret &= l_query.exec("INSERT INTO path_list SELECT * FROM paths_list");
                 l_ret &= l_query.exec("DROP TABLE paths_list");
@@ -215,6 +340,66 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
                 {
                     Macaw::DEBUG(l_query.lastError().text());
                 }
+                Macaw::DEBUG_OUT("[DatabaseManager] upgrade path_list table finished");
+            }
+
+            if (!m_db.record("movies").contains("id_path")) {
+                Macaw::DEBUG_IN("[DatabaseManager] upgrade movies table");
+                l_ret &= l_query.exec("ALTER TABLE movies ADD id_path INTEGER");
+                if(!l_ret){
+                    Macaw::DEBUG(l_query.lastError().text());
+                }
+                l_ret &= l_query.exec("ALTER TABLE movies RENAME TO movies_old");
+                if(!l_ret){
+                    Macaw::DEBUG(l_query.lastError().text());
+                }
+                l_ret &= createTableMovies(l_query);
+                if(!l_ret){
+                    Macaw::DEBUG(l_query.lastError().text());
+                }
+                l_ret &= l_query.exec("UPDATE movies_old SET id_path=1");
+                if(!l_ret){
+                    Macaw::DEBUG(l_query.lastError().text());
+                }
+                l_ret &= l_query.exec("INSERT INTO movies SELECT "+ m_movieFields +"FROM movies_old AS m");
+                if(!l_ret){
+                    Macaw::DEBUG("Copying table movies failed");
+                    Macaw::DEBUG(l_query.lastError().text());
+                }
+                l_ret &= l_query.exec("DROP TABLE movies_old");
+                if(!l_ret){
+                    Macaw::DEBUG(l_query.lastError().text());
+                }
+
+                l_query.exec("SELECT id, movies_path FROM path_list");
+                QStringList l_pathList;
+                QList<int> l_idList;
+                while (l_query.next())
+                {
+                    l_idList.append(l_query.value(0).toInt());
+                    l_pathList.append(l_query.value(1).toString());
+                }
+                l_query.exec("SELECT file_path FROM movies");
+
+                while (l_query.next())
+                {
+                    for (int i = 0 ; i < l_pathList.count() ; i++) {
+                        if (l_query.value(0).toString().startsWith(l_pathList.at(i))) {
+                            QString l_moviePath = l_query.value(0).toString();
+                            QString l_moviePath_new = l_moviePath;
+                            l_moviePath_new.remove(0, l_pathList.at(i).count()+1);
+                            QSqlQuery l_query2(m_db);
+                            l_ret &= l_query2.exec("UPDATE movies "
+                                                   "SET file_path='"+l_moviePath_new+"', "+
+                                                   "id_path="+QString::number(l_idList.at(i))+" "+
+                                                   "WHERE file_path='"+l_moviePath+"'");
+                            if(!l_ret){
+                                Macaw::DEBUG(l_query2.lastError().text());
+                            }
+                        }
+                    }
+                }
+                Macaw::DEBUG_OUT("[DatabaseManager] upgrade movies table finished");
             }
 
             l_ret &= createTableSeries(l_query);
@@ -224,6 +409,23 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
                 l_ret &= l_query.exec("UPDATE config "
                                       "SET db_version = 3");
                 l_fromVersion = 3;
+            } else {
+                m_db.close();
+
+                Macaw::DEBUG_IN("[DatabaseManager] FAILED => Come back to backup");
+                QDir l_backups = m_db.databaseName();
+                l_backups.cdUp();
+                QStringList l_backupNameList = l_backups.entryList(QDir::Files|QDir::NoDotAndDotDot,
+                                                                   QDir::Name);
+                Macaw::DEBUG("Return to "+l_backupNameList.last());
+
+                this->deleteDB();
+                QFile::copy(l_backups.absolutePath()+QDir::separator()+l_backupNameList.last(),
+                            m_db.databaseName());
+
+                Macaw::DEBUG_OUT("[DatabaseManager] Returned to backup");
+
+                this->openDB();
             }
             Macaw::DEBUG_OUT("[DatabaseManager] exits upgrade from v2 to v3");
         }
@@ -252,7 +454,7 @@ bool DatabaseManager::createTables()
             Macaw::DEBUG("[DatabaseManager.createTable] config table exists");
             l_query.exec("SELECT db_version FROM config");
             l_query.next();
-            if(l_query.value(0) != DB_VERSION)
+            if(l_query.value(0) == DB_VERSION)
             {
                 l_ret = upgradeDB(l_query.value(0).toInt(), DB_VERSION);
             }
@@ -297,14 +499,16 @@ bool DatabaseManager::createTableMovies(QSqlQuery &query)
                   "country VARCHAR(50), "
                   "duration INTEGER, "
                   "synopsis TEXT, "
-                  "file_path VARCHAR(255) UNIQUE NOT NULL, "
+                  "id_path INTEGER NOT NULL, "
+                  "file_path VARCHAR(255) NOT NULL, "
                   "poster_path VARCHAR(255), "
                   "colored BOOLEAN, "
                   "format VARCHAR(10), "
                   "suffix VARCHAR(10), "
                   "rank INTEGER, "
                   "imported BOOLEAN, "
-                  "series BOOLEAN"
+                  "series BOOLEAN, "
+                  "UNIQUE (id_path, file_path) ON CONFLICT IGNORE "
                   ")");
 
     if (!query.exec()) {
@@ -690,7 +894,7 @@ bool DatabaseManager::setMoviesPathImported(QString moviesPath, bool imported)
 QStringList DatabaseManager::getMoviesPaths(bool imported)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT movies_path FROM paths_list where imported=:imported");
+    l_query.prepare("SELECT movies_path FROM path_list where imported=:imported");
     l_query.bindValue(":imported", imported);
 
     if(!l_query.exec())

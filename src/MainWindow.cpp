@@ -164,7 +164,6 @@ QList<Movie> MainWindow::moviesToDisplay(int id, bool movieOrSeries)
     Macaw::DEBUG("[MainWindow] moviesToDisplay()");
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
-
     m_leftPannel->setSelectedId(id);
     if(m_leftPannel->selectedId() == 0) {
 
