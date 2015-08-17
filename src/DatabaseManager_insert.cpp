@@ -27,24 +27,26 @@
  * @param Movie
  * @return bool
  */
-bool DatabaseManager::insertNewMovie(Movie &movie)
+bool DatabaseManager::insertNewMovie(Movie &movie, int moviesPathId)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("INSERT INTO movies(title, original_title, release_date, country, duration, synopsis, file_path, poster_path, colored, format, suffix, rank, imported) "
-                    "VALUES (:title, :original_title, :release_date, :country, :duration, :synopsis, :file_path, :poster_path, :colored, :format, :suffix, :rank, :imported)");
+    l_query.prepare("INSERT INTO movies(title, original_title, release_date, country, duration, synopsis, id_path, file_path, poster_path, colored, format, suffix, rank, imported, series) "
+                    "VALUES (:title, :original_title, :release_date, :country, :duration, :synopsis, :id_path, :file_path, :poster_path, :colored, :format, :suffix, :rank, :imported, :series)");
     l_query.bindValue(":title", movie.title());
     l_query.bindValue(":original_title", movie.originalTitle()   );
     l_query.bindValue(":release_date", movie.releaseDate().toString(DATE_FORMAT));
     l_query.bindValue(":country", movie.country());
     l_query.bindValue(":duration", movie.duration().msecsSinceStartOfDay());
     l_query.bindValue(":synopsis", movie.synopsis());
-    l_query.bindValue(":file_path", movie.filePath());
+    l_query.bindValue(":id_path", moviesPathId);
+    l_query.bindValue(":file_path", movie.fileRelativePath());
     l_query.bindValue(":poster_path", movie.posterPath());
     l_query.bindValue(":colored", movie.isColored());
     l_query.bindValue(":format", movie.format());
     l_query.bindValue(":suffix", movie.suffix());
     l_query.bindValue(":rank", movie.rank());
     l_query.bindValue(":imported", movie.isImported());
+    l_query.bindValue(":series", movie.isSeries());
 
     if (!l_query.exec())
     {

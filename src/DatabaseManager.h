@@ -26,9 +26,9 @@
 
 #include "include_var.h"
 #include "MacawDebug.h"
-
 #include "Entities/Episode.h"
 #include "Entities/Movie.h"
+#include "Entities/PathForMovies.h"
 #include "Entities/Playlist.h"
 
 /**
@@ -61,7 +61,8 @@ public:
     bool upgradeDB(int fromVersion, int toVersion);
 
     // Getters for paths, config
-    QStringList getMoviesPaths(bool imported = true);
+    QString getMoviesPathById(int id);
+    QList<PathForMovies> getMoviesPaths(bool imported = true);
     QString getMediaPlayerPath();
 
     // Insertions for paths, config
@@ -69,7 +70,7 @@ public:
     bool addMediaPlayerPath(QString mediaPlayerPath);
     int createTag(QString name);
     bool setMoviesPathImported(QString moviesPath, bool imported);
-    bool deleteMoviesPath(QString moviesPath);
+    bool deleteMoviesPath(PathForMovies moviesPath);
 
 signals:
     void orphanTagDetected(Tag &tag);
@@ -157,7 +158,7 @@ private:
 
 //// Inserts - in DatabaseManager_insert.cpp
 public:
-    bool insertNewMovie(Movie &movie);
+    bool insertNewMovie(Movie &movie, int moviesPathId);
     bool insertNewPlaylist(Playlist &playlist);
     bool addTagToMovie(Tag &tag, Movie &movie);
     bool addPeopleToMovie(People &people, Movie &movie, const int type);

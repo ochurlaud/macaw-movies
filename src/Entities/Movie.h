@@ -41,8 +41,10 @@ public:
     void setCountry(const QString country);
     QTime duration() const;
     void setDuration(const QTime duration);
-    QString filePath() const;
-    void setFilePath(const QString filePath);
+    QString fileRelativePath() const;
+    void setFileRelativePath(const QString fileRelativePath);
+    QString fileAbsolutePath() const;
+    void setFileAbsolutePath(const QString fileAbsolutePath);
     QString format() const;
     void setFormat(const QString format);
     bool isImported() const;
@@ -79,7 +81,8 @@ private:
     bool m_colored;
     QString m_country;
     QTime m_duration;
-    QString m_filePath;
+    QString m_fileAbsolutePath;
+    QString m_fileRelativePath;
     QString m_format;
     bool m_imported;
     QString m_posterPath;

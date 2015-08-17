@@ -80,7 +80,7 @@ void MoviesPannel::addMovieToPannel(const Movie &movie)
     l_movieData << movie.title()
                 << movie.originalTitle()
                 << movie.releaseDate().toString("dd MMM yyyy")
-                << movie.filePath();
+                << movie.fileAbsolutePath();
     QVector<QTableWidgetItem*> l_itemList(4);
 
     foreach(QTableWidgetItem *l_item, l_itemList) {
@@ -256,7 +256,7 @@ void MoviesPannel::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
     int l_movieId = item->data(Macaw::ObjectId).toInt();
     Movie l_movie = databaseManager->getOneMovieById(l_movieId);
 
-    Macaw::DEBUG("[MoviesPannel.startMovie()] Opened movie: " + l_movie.filePath());
+    Macaw::DEBUG("[MoviesPannel.startMovie()] Opened movie: " + l_movie.fileAbsolutePath());
 
 
     if (!databaseManager->getMediaPlayerPath().compare("")) {
@@ -276,9 +276,9 @@ void MoviesPannel::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
 
         QProcess::startDetached(QString("%1 \"%2\"")
                                        .arg(l_executeMediaPlayerPath)
-                                       .arg(l_movie.filePath()));
+                                       .arg(l_movie.fileAbsolutePath()));
     } else {
-        QDesktopServices::openUrl(QUrl("file://" + l_movie.filePath(), QUrl::TolerantMode));
+        QDesktopServices::openUrl(QUrl("file://" + l_movie.fileAbsolutePath(), QUrl::TolerantMode));
     }
 }
 
@@ -348,19 +348,19 @@ bool MoviesPannel::moveFileToTrash(QList<Movie> &movieList)
     if(l_confirmationDialog->exec() == QMessageBox::Yes) {
         foreach (Movie l_movie, movieList) {
             bool l_successfullyDeleted = false;
-            QFile *movieFileToDelete = new QFile(l_movie.filePath());
+            QFile *movieFileToDelete = new QFile(l_movie.fileAbsolutePath());
 
             if(movieFileToDelete->exists()) {
 #ifdef Q_OS_LINUX
-                l_successfullyDeleted = linux_moveFileToTrash(l_movie.filePath());
+                l_successfullyDeleted = linux_moveFileToTrash(l_movie.fileAbsolutePath());
 #endif
 
 #ifdef Q_OS_WIN
-                l_successfullyDeleted = windows_moveFileToTrash(l_movie.filePath());
+                l_successfullyDeleted = windows_moveFileToTrash(l_movie.fileAbsolutePath());
 #endif
 
 #ifdef Q_OS_OSX
-                l_successfullyDeleted = macosx_moveFileToTrash(l_movie.filePath());
+                l_successfullyDeleted = macosx_moveFileToTrash(l_movie.fileAbsolutePath());
 #endif
             } else {
                 Macaw::DEBUG("[MoviesPannel] File doesn't exist");

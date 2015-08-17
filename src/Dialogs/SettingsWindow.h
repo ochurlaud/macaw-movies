@@ -47,9 +47,7 @@ private slots:
     void on_folderPathEdit_textChanged(const QString string);
     void on_addButton_clicked();
     void on_removeButton_clicked();
-
     void on_playerBrowseButton_clicked();
-
     void on_playerClearButton_clicked();
 
 private:

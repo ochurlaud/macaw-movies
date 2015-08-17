@@ -35,10 +35,12 @@ SettingsWindow::SettingsWindow(QWidget *parent) :
     m_ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    QStringList l_moviesPathList = databaseManager->getMoviesPaths(0);
-    l_moviesPathList << databaseManager->getMoviesPaths(1);
+    QList<PathForMovies> l_moviesPathList = databaseManager->getMoviesPaths(false);
+    l_moviesPathList << databaseManager->getMoviesPaths(true);
 
-    m_ui->knownPathList->addItems(l_moviesPathList);
+    foreach (PathForMovies l_moviesPath, l_moviesPathList) {
+        m_ui->knownPathList->addItem(l_moviesPath.path());
+    }
 
     QString l_mediaPlayerPath(databaseManager->getMediaPlayerPath());
 
@@ -74,11 +76,11 @@ void SettingsWindow::on_buttonBox_accepted()
     QString l_newPath = m_ui->folderPathEdit->text();
     addToKnownPathList(l_newPath);
 
-    QStringList l_moviesPathList = databaseManager->getMoviesPaths(true);
+    QList<PathForMovies> l_moviesPathList = databaseManager->getMoviesPaths(true);
     l_moviesPathList << databaseManager->getMoviesPaths(false);
-    foreach (QString l_moviesPath, l_moviesPathList) {
-        if (m_ui->knownPathList->findItems(l_moviesPath, Qt::MatchExactly).isEmpty()) {
-            Macaw::DEBUG("[MainWindow] Remove path "+l_moviesPath);
+    foreach (PathForMovies l_moviesPath, l_moviesPathList) {
+        if (m_ui->knownPathList->findItems(l_moviesPath.path(), Qt::MatchExactly).isEmpty()) {
+            Macaw::DEBUG("[MainWindow] Remove path "+l_moviesPath.path());
             // We remove the path and all the movies behind
             databaseManager->deleteMoviesPath(l_moviesPath);
         }

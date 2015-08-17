@@ -81,7 +81,10 @@ Movie DatabaseManager::hydrateMovie(QSqlQuery &query)
     l_movie.setCountry(query.value(4).toString());
     l_movie.setDuration(QTime::fromMSecsSinceStartOfDay(query.value(5).toInt()));
     l_movie.setSynopsis(query.value(6).toString());
-    l_movie.setFilePath(query.value(8).toString());
+    l_movie.setFileAbsolutePath(getMoviesPathById(query.value(7).toInt())
+                                +QDir::separator()
+                                +query.value(8).toString());
+    l_movie.setFileRelativePath(query.value(8).toString());
     l_movie.setPosterPath(query.value(9).toString());
     l_movie.setColored(query.value(10).toBool());
     l_movie.setFormat(query.value(12).toString());
@@ -814,7 +817,7 @@ int DatabaseManager::createTag(QString name)
 bool DatabaseManager::addMoviesPath(QString moviesPath)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("INSERT INTO paths_list (movies_path) VALUES (:movies_path)");
+    l_query.prepare("INSERT INTO path_list (movies_path) VALUES (:movies_path)");
     l_query.bindValue(":movies_path", moviesPath);
 
     if(!l_query.exec())
@@ -871,7 +874,7 @@ bool DatabaseManager::addMediaPlayerPath(QString mediaPlayerPath)
 bool DatabaseManager::setMoviesPathImported(QString moviesPath, bool imported)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("UPDATE paths_list SET imported=:imported WHERE movies_path = :movies_path");
+    l_query.prepare("UPDATE path_list SET imported=:imported WHERE movies_path = :movies_path");
     l_query.bindValue(":movies_path", moviesPath);
     l_query.bindValue(":imported", imported);
 
@@ -887,14 +890,42 @@ bool DatabaseManager::setMoviesPathImported(QString moviesPath, bool imported)
 }
 
 /**
+ * @brief Get the movies directory having the id `id`
+ * @param id
+ * @return QString containing the path of this directory
+ */
+QString DatabaseManager::getMoviesPathById(int id)
+{
+    QString l_moviesPath;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT movies_path FROM path_list WHERE id=:id");
+    l_query.bindValue(":id", id);
+
+    if(!l_query.exec())
+    {
+        Macaw::DEBUG("In getMoviesPathById():");
+        Macaw::DEBUG(l_query.lastError().text());
+    }
+
+    if(l_query.next())
+    {
+        l_moviesPath = l_query.value(0).toString();
+    }
+
+    return l_moviesPath;
+}
+
+/**
  * @brief Get the movies directories
  * @param imported boolean telling if the movies of this path have already been imported
  * @return QStringList containing the paths of these directories
  */
-QStringList DatabaseManager::getMoviesPaths(bool imported)
+QList<PathForMovies> DatabaseManager::getMoviesPaths(bool imported)
 {
+    QList<PathForMovies> l_moviesPathList;
+
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT movies_path FROM path_list where imported=:imported");
+    l_query.prepare("SELECT id, movies_path FROM path_list where imported=:imported");
     l_query.bindValue(":imported", imported);
 
     if(!l_query.exec())
@@ -903,35 +934,36 @@ QStringList DatabaseManager::getMoviesPaths(bool imported)
         Macaw::DEBUG(l_query.lastError().text());
     }
 
-    QStringList l_moviesPathList;
-
     while(l_query.next())
     {
-        l_moviesPathList.append(l_query.value(0).toString());
+        PathForMovies l_moviesPath;
+        l_moviesPath.setId(l_query.value(0).toInt());
+        l_moviesPath.setPath(l_query.value(1).toString());
+        l_moviesPathList.append(l_moviesPath);
     }
 
     return l_moviesPathList;
 }
 
-bool DatabaseManager::deleteMoviesPath(QString moviesPath)
+bool DatabaseManager::deleteMoviesPath(PathForMovies moviesPath)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("DELETE FROM movies WHERE file_path LIKE :movies_path||'%'");
-    l_query.bindValue(":movies_path", moviesPath);
+    l_query.prepare("DELETE FROM movies WHERE id_path = :id_path");
+    l_query.bindValue(":id_path", moviesPath.id());
 
     if(!l_query.exec())
     {
-        Macaw::DEBUG("In removeMoviesPath():");
+        Macaw::DEBUG("In removeMoviesPath(), deleting movies:");
         Macaw::DEBUG(l_query.lastError().text());
 
         return false;
     }
 
-    l_query.prepare("DELETE FROM paths_list WHERE movies_path LIKE :movies_path||'%'");
-    l_query.bindValue(":movies_path", moviesPath);
+    l_query.prepare("DELETE FROM path_list WHERE movies_path LIKE :movies_path||'%'");
+    l_query.bindValue(":movies_path", moviesPath.path());
     if(!l_query.exec())
     {
-        Macaw::DEBUG("In removeMoviesPath():");
+        Macaw::DEBUG("In removeMoviesPath(), deleting path:");
         Macaw::DEBUG(l_query.lastError().text());
 
         return false;

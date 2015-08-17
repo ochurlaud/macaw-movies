@@ -31,7 +31,7 @@ FetchMetadataDialog::FetchMetadataDialog(Movie movie, QList<Movie> moviesProposi
     this->setAttribute(Qt::WA_DeleteOnClose);
     this->setWindowTitle("Search movie...");
     m_ui->lineEdit->setText(m_movie.title());
-    m_ui->moviePathLabel->setText(m_movie.filePath());
+    m_ui->moviePathLabel->setText(m_movie.fileAbsolutePath());
 
     setMovieList(moviesPropositionList);
 }

@@ -26,7 +26,8 @@ Movie::Movie()
     m_originalTitle = "";
     m_country =  "";
     m_synopsis = "";
-    m_filePath = "";
+    m_fileRelativePath = "";
+    m_fileAbsolutePath = "";
     m_colored = true;
     m_format = "";
     m_suffix = "";
@@ -104,6 +105,26 @@ void Movie::setDuration(const QTime duration)
     m_duration = duration;
 }
 
+QString Movie::fileRelativePath() const
+{
+    return m_fileRelativePath;
+}
+
+void Movie::setFileRelativePath(const QString fileRelativePath)
+{
+    m_fileRelativePath = fileRelativePath;
+}
+
+QString Movie::fileAbsolutePath() const
+{
+    return m_fileAbsolutePath;
+}
+
+void Movie::setFileAbsolutePath(const QString fileAbsolutePath)
+{
+    m_fileAbsolutePath = fileAbsolutePath;
+}
+
 QString Movie::synopsis() const
 {
     return m_synopsis;
@@ -112,16 +133,6 @@ QString Movie::synopsis() const
 void Movie::setSynopsis(const QString synopsis)
 {
     m_synopsis = synopsis;
-}
-
-QString Movie::filePath() const
-{
-    return m_filePath;
-}
-
-void Movie::setFilePath(const QString filePath)
-{
-    m_filePath = filePath;
 }
 
 QString Movie::posterPath() const
@@ -259,7 +270,8 @@ bool Movie::operator== (const Movie &other)
          this->country() == other.country() &&
          this->releaseDate() == other.releaseDate() &&
          this->duration() == other.duration() &&
-         this->filePath() == other.filePath() &&
+         this->fileRelativePath() == other.fileRelativePath() &&
+         this->fileAbsolutePath() == other.fileAbsolutePath() &&
          this->synopsis() == other.synopsis() &&
          this->suffix() == other.suffix() &&
          this->rank() == other.rank() &&

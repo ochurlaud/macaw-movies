@@ -367,7 +367,7 @@ QList<Movie> DatabaseManager::getMoviesNotImported(const bool series, const QStr
     l_query.prepare("SELECT " + m_movieFields +
                     "FROM movies AS m "
                     "WHERE m.imported = :imported "
-                    "WHERE m.series = :series "
+                    "AND m.series = :series "
                     "ORDER BY " + fieldOrder);
     l_query.bindValue(":imported", false);
     l_query.bindValue(":series", series);

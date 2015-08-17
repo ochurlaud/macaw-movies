@@ -63,7 +63,8 @@ SOURCES += main.cpp \
     MainWindowWidgets/SeriesPannel.cpp \
     Entities/Entity.cpp \
     Entities/Series.cpp \
-    Entities/Episode.cpp
+    Entities/Episode.cpp \
+    Entities/PathForMovies.cpp
 
 HEADERS  += \
     include_var.h \
@@ -89,7 +90,8 @@ HEADERS  += \
     MainWindowWidgets/SeriesPannel.h \
     Entities/Entity.h \
     Entities/Series.h \
-    Entities/Episode.h
+    Entities/Episode.h \
+    Entities/PathForMovies.h
 
 FORMS    += \
     MainWindow.ui \

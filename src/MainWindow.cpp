@@ -261,7 +261,7 @@ void MainWindow::addNewMovies()
 
     bool l_imported = false;
     int l_addedCount(0);
-    QStringList l_moviesPathList = databaseManager->getMoviesPaths(l_imported);
+    QList<PathForMovies> l_moviesPathList = databaseManager->getMoviesPaths(l_imported);
     QStringList l_authorizedSuffixList;
     l_authorizedSuffixList << "mkv"
                            << "avi"
@@ -271,8 +271,9 @@ void MainWindow::addNewMovies()
                            << "mov"
                            << "m4v";
 
-    foreach (QString l_moviesPath, l_moviesPathList) {
-        QDirIterator l_file(l_moviesPath, QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
+    foreach (PathForMovies l_moviesPath, l_moviesPathList) {
+        QDirIterator l_file(l_moviesPath.path(),
+                            QDir::NoDotAndDotDot | QDir::Files,QDirIterator::Subdirectories);
         while (l_file.hasNext()) {
             l_file.next();
             QString l_filePath = l_file.fileInfo().absoluteFilePath();
@@ -285,9 +286,14 @@ void MainWindow::addNewMovies()
                     Macaw::DEBUG("[MainWindow.updateApp()] Movie not already known");
                     Movie l_movie;
                     l_movie.setTitle(l_file.fileInfo().completeBaseName());
-                    l_movie.setFilePath(l_file.fileInfo().absoluteFilePath());
+                    l_movie.setFileAbsolutePath(l_file.fileInfo().absoluteFilePath());
+
+                    QString l_relativePath = l_movie.fileAbsolutePath();
+                    l_relativePath.remove(l_moviesPath.path());
+                    l_movie.setFileRelativePath(l_relativePath);
                     l_movie.setSuffix(l_fileSuffix);
-                    databaseManager->insertNewMovie(l_movie);
+                    l_movie.setSeries(false);
+                    databaseManager->insertNewMovie(l_movie, l_moviesPath.id());
                     l_addedCount++;
                     ServicesManager::instance()->requestTempStatusBarMessage("Movies imported: "+QString::number(l_addedCount));
                     if(l_addedCount == 5) {
@@ -298,11 +304,12 @@ void MainWindow::addNewMovies()
                 }
             }
         }
-        databaseManager->setMoviesPathImported(l_moviesPath,true);
+        databaseManager->setMoviesPathImported(l_moviesPath.path(),true);
     }
 
     QList<Movie> l_moviesToFetch = databaseManager->getMoviesNotImported();
     if (!l_moviesToFetch.isEmpty()) {
+        Macaw::DEBUG("[MainWindow] FetchingMetadata requested");
         emit startFetchingMetadata(l_moviesToFetch);
     }
     this->updatePannels();
