@@ -259,7 +259,7 @@ void MoviesPannel::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
     Macaw::DEBUG("[MoviesPannel.startMovie()] Opened movie: " + l_movie.fileAbsolutePath());
 
 
-    if (!databaseManager->getMediaPlayerPath().compare("")) {
+    if (databaseManager->getMediaPlayerPath() != "") {
         QString l_executeMediaPlayerPath;
         #ifdef Q_OS_LINUX
             l_executeMediaPlayerPath = QString("source \"%1\"")

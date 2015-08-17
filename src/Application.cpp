@@ -139,6 +139,7 @@ void Application::on_startFetchingMetadata(const QList<Movie> &movieList)
 void Application::on_fethMetadataJobDone()
 {
     m_fetchMetadata->deleteLater();
+    emit updateMainWindow();
 }
 
 /**
