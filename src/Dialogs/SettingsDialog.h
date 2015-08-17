@@ -25,16 +25,16 @@
 #include "Application.h"
 
 namespace Ui {
-class SettingsWindow;
+class SettingsDialog;
 }
 
-class SettingsWindow : public QDialog
+class SettingsDialog : public QDialog
 {
 Q_OBJECT
 
 public:
-    explicit SettingsWindow(QWidget *parent = 0);
-    ~SettingsWindow();
+    explicit SettingsDialog(QWidget *parent = 0);
+    ~SettingsDialog();
 
 public slots:
     void on_browseButton_clicked();
@@ -51,9 +51,9 @@ private slots:
     void on_playerClearButton_clicked();
 
 private:
-    Ui::SettingsWindow *m_ui;
-    void addToKnownPathList(QString path);
+    Ui::SettingsDialog *m_ui;
+    void addToknownPathCollection(QString path);
 
 };
 
-#endif // SETTINGSWINDOW_H
+#endif // SettingsDialog_H

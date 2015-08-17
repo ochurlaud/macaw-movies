@@ -24,7 +24,9 @@
 #include <QtCore>
 #include <QtSql>
 
+#include "enumerations.h"
 #include "include_var.h"
+
 #include "MacawDebug.h"
 #include "Entities/Episode.h"
 #include "Entities/Movie.h"

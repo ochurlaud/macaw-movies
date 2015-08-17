@@ -48,7 +48,6 @@ SOURCES += main.cpp \
     ServicesManager.cpp \
     Dialogs/PeopleDialog.cpp \
     Dialogs/MovieDialog.cpp \
-    Dialogs/SettingsWindow.cpp \
     Entities/Movie.cpp \
     Entities/People.cpp \
     Entities/Playlist.cpp \
@@ -64,7 +63,8 @@ SOURCES += main.cpp \
     Entities/Entity.cpp \
     Entities/Series.cpp \
     Entities/Episode.cpp \
-    Entities/PathForMovies.cpp
+    Entities/PathForMovies.cpp \
+    Dialogs/SettingsDialog.cpp
 
 HEADERS  += \
     include_var.h \
@@ -75,7 +75,6 @@ HEADERS  += \
     ServicesManager.h \
     Dialogs/MovieDialog.h \
     Dialogs/PeopleDialog.h \
-    Dialogs/SettingsWindow.h \
     Entities/Movie.h \
     Entities/People.h \
     Entities/Playlist.h \
@@ -91,18 +90,20 @@ HEADERS  += \
     Entities/Entity.h \
     Entities/Series.h \
     Entities/Episode.h \
-    Entities/PathForMovies.h
+    Entities/PathForMovies.h \
+    Dialogs/SettingsDialog.h \
+    enumerations.h
 
 FORMS    += \
     MainWindow.ui \
     Dialogs/MovieDialog.ui \
     Dialogs/PeopleDialog.ui \
-    Dialogs/SettingsWindow.ui \
     FetchMetadata/FetchMetadataDialog.ui \
     MainWindowWidgets/LeftPannel.ui \
     MainWindowWidgets/MoviesPannel.ui \
     MainWindowWidgets/MetadataPannel.ui \
-    MainWindowWidgets/SeriesPannel.ui
+    MainWindowWidgets/SeriesPannel.ui \
+    Dialogs/SettingsDialog.ui
 
 TRANSLATIONS += \
     locales/macaw_fr.ts \

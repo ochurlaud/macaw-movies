@@ -37,7 +37,6 @@ public:
     void setToWatchState(const bool state) { m_toWatchState = state; }
     DatabaseManager* databaseManager() { return m_databaseManager; }
 
-
 signals:
     void requestPannelsUpdate();
     void requestTempStatusBarMessage(QString message, int time = 0);

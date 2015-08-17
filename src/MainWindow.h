@@ -27,7 +27,7 @@
 
 #include "Dialogs/MovieDialog.h"
 #include "Dialogs/PeopleDialog.h"
-#include "Dialogs/SettingsWindow.h"
+#include "Dialogs/SettingsDialog.h"
 #include "Entities/Movie.h"
 #include "Entities/Playlist.h"
 #include "Entities/Tag.h"

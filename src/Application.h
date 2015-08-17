@@ -22,6 +22,7 @@
 
 #include <QApplication>
 
+#include "enumerations.h"
 #include "include_var.h"
 
 #include "DatabaseManager.h"
@@ -31,27 +32,6 @@
 #include "Entities/Movie.h"
 #include "FetchMetadata/FetchMetadata.h"
 #include "FetchMetadata/FetchMetadataDialog.h"
-
-namespace Macaw
-{
-    enum fields {
-        ObjectId = Qt::UserRole,
-        ObjectType = Qt::UserRole+1,
-        PeopleType = Qt::UserRole+2
-    };
-    enum typeElement {
-        None,
-        isMovie,
-        isPeople,
-        isTag,
-        isPlaylist
-    };
-    enum movieOrSeries {
-        movies,
-        series
-    };
-
-}
 
 class MovieDebug;
 class MainWindow;

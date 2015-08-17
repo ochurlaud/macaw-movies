@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->metadataPannelLayout->addWidget(m_metadataPannel);
     m_ui->moviesButton->setFlat(true);
     m_ui->moviesButton->setChecked(true);
-    m_moviesOrSeries = Macaw::movies;
+    m_moviesOrSeries = Macaw::movie;
 
     ServicesManager *servicesManager = ServicesManager::instance();
     connect(servicesManager, SIGNAL(requestPannelsUpdate()),
@@ -78,15 +78,15 @@ MainWindow::~MainWindow()
 
 /**
  * @brief Call and shows the settings window.
- * Calls the SettingsWindow class and waits until it closes to handle the results.
+ * Calls the SettingsDialog class and waits until it closes to handle the results.
  */
 void MainWindow::on_actionEdit_Settings_triggered()
 {
-    Macaw::DEBUG_IN("[MainWindow] Enters showSettingsWindow()");
-    SettingsWindow *l_settingsWindow = new SettingsWindow;
-    l_settingsWindow->show();
-    QObject::connect(l_settingsWindow,SIGNAL(closeAndSave()), this, SLOT(addNewMovies()));
-    Macaw::DEBUG_OUT("[MainWindow] Exits showSettingsWindow()");
+    Macaw::DEBUG_IN("[MainWindow] Enters showSettingsDialog()");
+    SettingsDialog *l_SettingsDialog = new SettingsDialog;
+    l_SettingsDialog->show();
+    QObject::connect(l_SettingsDialog,SIGNAL(closeAndSave()), this, SLOT(addNewMovies()));
+    Macaw::DEBUG_OUT("[MainWindow] Exits showSettingsDialog()");
 }
 
 /**
@@ -122,7 +122,7 @@ void MainWindow::on_moviesButton_clicked()
         connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
                 this, SLOT(fillMetadataPannel(const Movie&)));
         m_metadataPannel->hide();
-        m_moviesOrSeries = Macaw::movies;
+        m_moviesOrSeries = Macaw::movie;
 
         this->updatePannels();
     }
@@ -147,7 +147,7 @@ void MainWindow::on_seriesButton_clicked()
         connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
                 this, SLOT(fillMetadataPannel(const Movie&)));
         m_metadataPannel->hide();
-        m_moviesOrSeries = Macaw::series;
+        m_moviesOrSeries = Macaw::show;
 
         this->updatePannels();
     }
@@ -292,7 +292,16 @@ void MainWindow::addNewMovies()
                     l_relativePath.remove(l_moviesPath.path());
                     l_movie.setFileRelativePath(l_relativePath);
                     l_movie.setSuffix(l_fileSuffix);
-                    l_movie.setSeries(false);
+
+                    if (!l_moviesPath.hasMovies())
+                    {
+                        l_movie.setSeries(true);
+                    }
+                    else if (!l_moviesPath.hasShows())
+                    {
+                        l_movie.setSeries(false);
+                    }
+
                     databaseManager->insertNewMovie(l_movie, l_moviesPath.id());
                     l_addedCount++;
                     ServicesManager::instance()->requestTempStatusBarMessage("Movies imported: "+QString::number(l_addedCount));
@@ -304,7 +313,7 @@ void MainWindow::addNewMovies()
                 }
             }
         }
-        databaseManager->setMoviesPathImported(l_moviesPath.path(),true);
+        databaseManager->setMoviesPathImported(l_moviesPath.path(), true);
     }
 
     QList<Movie> l_moviesToFetch = databaseManager->getMoviesNotImported();

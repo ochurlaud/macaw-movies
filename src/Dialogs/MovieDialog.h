@@ -22,7 +22,7 @@
 
 #include <QDialog>
 
-#include "Application.h"
+#include "enumerations.h"
 #include "PeopleDialog.h"
 
 #include "Entities/Movie.h"
