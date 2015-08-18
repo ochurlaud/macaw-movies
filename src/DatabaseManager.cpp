@@ -337,8 +337,9 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
             if (!m_db.tables().contains("path_list")) {
                 Macaw::DEBUG_IN("[DatabaseManager] upgrade path_list table");
                 l_ret &= createTablePathList(l_query);
-                l_ret &= l_query.exec("INSERT INTO path_list SELECT * FROM paths_list");
+                l_ret &= l_query.exec("INSERT INTO path_list(id, movies_path, imported) SELECT id, movies_path, imported FROM paths_list");
                 l_ret &= l_query.exec("DROP TABLE paths_list");
+                l_ret &= l_query.exec("UPDATE path_list SET type = 1");
                 if(!l_ret)
                 {
                     Macaw::DEBUG(l_query.lastError().text());
@@ -732,7 +733,8 @@ bool DatabaseManager::createTablePathList(QSqlQuery &query)
 {
     query.prepare("CREATE TABLE IF NOT EXISTS path_list("
                   "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                  "movies_path VARCHAR(255) UNIQUE,"
+                  "movies_path VARCHAR(255) UNIQUE, "
+                  "type INTEGER, "
                   "imported BOOLEAN DEFAULT 0"
                   ")");
 
@@ -811,14 +813,15 @@ int DatabaseManager::createTag(QString name)
 /**
  * @brief Adds a movies directory
  *
- * @param QString moviesPath: containing the path to the movies directory
+ * @param PathForMovies moviesPath: containing the path to the movies directory
  * @return true if the paths list have been updated correctly
  */
-bool DatabaseManager::addMoviesPath(QString moviesPath)
+bool DatabaseManager::addMoviesPath(PathForMovies moviesPath)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("INSERT INTO path_list (movies_path) VALUES (:movies_path)");
-    l_query.bindValue(":movies_path", moviesPath);
+    l_query.prepare("INSERT INTO path_list (movies_path, type) VALUES (:movies_path, :type)");
+    l_query.bindValue(":movies_path", moviesPath.path());
+    l_query.bindValue(":type", moviesPath.type());
 
     if(!l_query.exec())
     {
@@ -890,6 +893,33 @@ bool DatabaseManager::setMoviesPathImported(QString moviesPath, bool imported)
 }
 
 /**
+ * @brief Update a movies directory
+ *
+ * @param PathForMovies moviesPath: containing the path to the movies directory
+ * @return true if the paths list have been updated correctly
+ */
+bool DatabaseManager::updateMoviesPath(PathForMovies moviesPath)
+{
+    QSqlQuery l_query(m_db);
+    l_query.prepare("UPDATE path_list "
+                    "SET movies_path=:movies_path, type=:type "
+                    "WHERE id=:id");
+    l_query.bindValue(":movies_path", moviesPath.path());
+    l_query.bindValue(":type", moviesPath.type());
+    l_query.bindValue(":id", moviesPath.id());
+
+    if(!l_query.exec())
+    {
+        Macaw::DEBUG("[DatabaseManager] In updateMoviesPath():");
+        Macaw::DEBUG(l_query.lastError().text());
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * @brief Get the movies directory having the id `id`
  * @param id
  * @return QString containing the path of this directory
@@ -943,6 +973,11 @@ QList<PathForMovies> DatabaseManager::getMoviesPaths(bool imported)
     }
 
     return l_moviesPathList;
+}
+
+bool DatabaseManager::existMoviesPath(PathForMovies moviesPath)
+{
+    return !this->getMoviesPathById(moviesPath.id()).isEmpty();
 }
 
 bool DatabaseManager::deleteMoviesPath(PathForMovies moviesPath)

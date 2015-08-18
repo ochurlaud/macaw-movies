@@ -16,8 +16,12 @@ namespace Macaw
         isPlaylist
     };
     enum movieOrShow {
-        movie = 1,
-        show = 2
+        movie = 0,
+        show = 1
+    };
+    enum contents {
+        hasMovies = 0b01,
+        hasShows = 0b10
     };
 
 }

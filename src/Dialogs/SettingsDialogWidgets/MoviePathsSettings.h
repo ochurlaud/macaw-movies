@@ -17,37 +17,40 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SETTINGWINDOW_H
-#define SETTINGWINDOW_H
+#ifndef MOVIEPATHSSETTINGS_H
+#define MOVIEPATHSSETTINGS_H
 
-#include <QDialog>
+#include <QWidget>
 
 #include "ServicesManager.h"
-#include "Dialogs/SettingsDialogWidgets/MoviePathsSettings.h"
+#include "Dialogs/SettingsDialogWidgets/CenteredCheckbox.h"
+#include "Entities/PathForMovies.h"
 
 namespace Ui {
-class SettingsDialog;
+class MoviePathsSettings;
 }
 
-class SettingsDialog : public QDialog
+class MoviePathsSettings : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-    explicit SettingsDialog(QWidget *parent = 0);
-    ~SettingsDialog();
-
-signals:
-    void closeAndSave();
+    explicit MoviePathsSettings(QWidget *parent = 0);
+    ~MoviePathsSettings();
+    void saveSettings();
 
 private slots:
-    void on_buttonBox_accepted();
-    void on_playerBrowseButton_clicked();
-    void on_playerClearButton_clicked();
+    void on_browseButton_clicked();
+    void on_folderPathEdit_textChanged(const QString string);
+    void on_addButton_clicked();
+    void on_removeButton_clicked();
+    void updatedCheckboxes(int x, int y);
 
 private:
-    Ui::SettingsDialog *m_ui;
-    MoviePathsSettings *m_moviePathsTab;
+    Ui::MoviePathsSettings *m_ui;
+    void addToKnownPathCollection(PathForMovies moviePath);
+    void addPathFromEdit();
+    bool existsInPathCollection(QString path);
 };
 
-#endif // SettingsDialog_H
+#endif // MOVIEPATHSSETTINGS_H

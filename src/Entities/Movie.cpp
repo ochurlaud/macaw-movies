@@ -33,6 +33,7 @@ Movie::Movie()
     m_suffix = "";
     m_rank = 0;
     m_imported = false;
+    m_series = false;
 }
 
 int Movie::id() const

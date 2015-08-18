@@ -64,7 +64,9 @@ SOURCES += main.cpp \
     Entities/Series.cpp \
     Entities/Episode.cpp \
     Entities/PathForMovies.cpp \
-    Dialogs/SettingsDialog.cpp
+    Dialogs/SettingsDialog.cpp \
+    Dialogs/SettingsDialogWidgets/MoviePathsSettings.cpp \
+    Dialogs/SettingsDialogWidgets/CenteredCheckbox.cpp
 
 HEADERS  += \
     include_var.h \
@@ -92,7 +94,9 @@ HEADERS  += \
     Entities/Episode.h \
     Entities/PathForMovies.h \
     Dialogs/SettingsDialog.h \
-    enumerations.h
+    enumerations.h \
+    Dialogs/SettingsDialogWidgets/MoviePathsSettings.h \
+    Dialogs/SettingsDialogWidgets/CenteredCheckbox.h
 
 FORMS    += \
     MainWindow.ui \
@@ -103,7 +107,8 @@ FORMS    += \
     MainWindowWidgets/MoviesPannel.ui \
     MainWindowWidgets/MetadataPannel.ui \
     MainWindowWidgets/SeriesPannel.ui \
-    Dialogs/SettingsDialog.ui
+    Dialogs/SettingsDialog.ui \
+    Dialogs/SettingsDialogWidgets/MoviePathsSettings.ui
 
 TRANSLATIONS += \
     locales/macaw_fr.ts \

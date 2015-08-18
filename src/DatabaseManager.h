@@ -68,11 +68,13 @@ public:
     QString getMediaPlayerPath();
 
     // Insertions for paths, config
-    bool addMoviesPath(QString moviesPath);
+    bool addMoviesPath(PathForMovies moviesPath);
     bool addMediaPlayerPath(QString mediaPlayerPath);
+    bool updateMoviesPath(PathForMovies moviesPath);
     int createTag(QString name);
     bool setMoviesPathImported(QString moviesPath, bool imported);
     bool deleteMoviesPath(PathForMovies moviesPath);
+    bool existMoviesPath(PathForMovies moviesPath);
 
 signals:
     void orphanTagDetected(Tag &tag);

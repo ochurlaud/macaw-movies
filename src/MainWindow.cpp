@@ -289,22 +289,20 @@ void MainWindow::addNewMovies()
                     l_movie.setFileAbsolutePath(l_file.fileInfo().absoluteFilePath());
 
                     QString l_relativePath = l_movie.fileAbsolutePath();
-                    l_relativePath.remove(l_moviesPath.path());
+                    l_relativePath.remove(l_moviesPath.path()+"/");
                     l_movie.setFileRelativePath(l_relativePath);
                     l_movie.setSuffix(l_fileSuffix);
 
-                    if (!l_moviesPath.hasMovies())
-                    {
+                    if (!l_moviesPath.hasMovies()) {
                         l_movie.setSeries(true);
-                    }
-                    else if (!l_moviesPath.hasShows())
-                    {
+                    } else if (!l_moviesPath.hasShows()) {
                         l_movie.setSeries(false);
                     }
 
                     databaseManager->insertNewMovie(l_movie, l_moviesPath.id());
                     l_addedCount++;
-                    ServicesManager::instance()->requestTempStatusBarMessage("Movies imported: "+QString::number(l_addedCount));
+                    ServicesManager::instance()->requestTempStatusBarMessage("Movies imported: "
+                                                                             +QString::number(l_addedCount));
                     if(l_addedCount == 5) {
                         this->updatePannels();
                     }
