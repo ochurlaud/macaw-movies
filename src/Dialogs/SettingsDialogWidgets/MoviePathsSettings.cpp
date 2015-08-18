@@ -84,6 +84,8 @@ void MoviePathsSettings::saveSettings()
         bool l_shows = qobject_cast<CenteredCheckbox*>(m_ui->knownPathCollection->cellWidget(i,2))->isChecked();
 
         PathForMovies l_moviesPath(l_path,l_movies,l_shows);
+        l_moviesPath.setId(m_ui->knownPathCollection->item(i,3)->text().toInt());
+
         if (databaseManager->existMoviesPath(l_moviesPath)) {
             databaseManager->updateMoviesPath(l_moviesPath);
         }

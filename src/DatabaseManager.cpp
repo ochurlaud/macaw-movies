@@ -955,7 +955,7 @@ QList<PathForMovies> DatabaseManager::getMoviesPaths(bool imported)
     QList<PathForMovies> l_moviesPathList;
 
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT id, movies_path FROM path_list where imported=:imported");
+    l_query.prepare("SELECT id, movies_path, type FROM path_list where imported=:imported");
     l_query.bindValue(":imported", imported);
 
     if(!l_query.exec())
@@ -969,6 +969,7 @@ QList<PathForMovies> DatabaseManager::getMoviesPaths(bool imported)
         PathForMovies l_moviesPath;
         l_moviesPath.setId(l_query.value(0).toInt());
         l_moviesPath.setPath(l_query.value(1).toString());
+        l_moviesPath.setType(l_query.value(2).toInt());
         l_moviesPathList.append(l_moviesPath);
     }
 
