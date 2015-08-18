@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Name=Macaw-Movies
+GenericName=Media player
+Comment=Organize your movie collection.
+Name[fr]=Macaw-Movies
+GenericName[fr]=Organiseur de collection de films
+Comment[fr]=Organiser sa collection de films
+Exec=/usr/bin/macaw-movies
+Icon=macaw-movies
+Terminal=false
+Type=Application
+Categories=AudioVideo;
+MimeType=
+Keywords=Organizer;Video;Movies;
