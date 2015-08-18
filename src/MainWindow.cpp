@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->metadataPannelLayout->addWidget(m_metadataPannel);
     m_ui->moviesButton->setFlat(true);
     m_ui->moviesButton->setChecked(true);
-    m_moviesOrSeries = Macaw::movie;
+    m_moviesOrShows = Macaw::movie;
 
     ServicesManager *servicesManager = ServicesManager::instance();
     connect(servicesManager, SIGNAL(requestPannelsUpdate()),
@@ -105,7 +105,7 @@ void MainWindow::on_toWatchButton_clicked()
 
 /**
  * @brief Slot triggered when the moviesButton is clicked.
- * Shows the moviesPannel and disable the seriesPannel
+ * Shows the moviesPannel and disable the showsPannel
  */
 void MainWindow::on_moviesButton_clicked()
 {
@@ -114,40 +114,41 @@ void MainWindow::on_moviesButton_clicked()
         Macaw::DEBUG("[MainWindow] moviesButton clicked");
         m_ui->moviesButton->setFlat(true);
         m_ui->moviesButton->setChecked(true);
-        m_ui->seriesButton->setFlat(false);
-        m_ui->seriesButton->setChecked(false);
+        m_ui->showsButton->setFlat(false);
+        m_ui->showsButton->setChecked(false);
         delete m_mainPannel;
         m_mainPannel = new MoviesPannel;
         m_ui->mainPannelLayout->addWidget(m_mainPannel);
         connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
                 this, SLOT(fillMetadataPannel(const Movie&)));
         m_metadataPannel->hide();
-        m_moviesOrSeries = Macaw::movie;
+        m_moviesOrShows = Macaw::movie;
 
         this->updatePannels();
     }
 }
 
 /**
- * @brief Slot triggered when the seriesButton is clicked.
- * Shows the seriesPannel and disable the moviesPannel
+ * @brief Slot triggered when the showsButton is clicked.
+ * Shows the showsPannel and disable the moviesPannel
  */
-void MainWindow::on_seriesButton_clicked()
+void MainWindow::on_showsButton_clicked()
 {
-    m_ui->seriesButton->toggle();
-    if (!m_ui->seriesButton->isChecked()) {
-        Macaw::DEBUG("[MainWindow] seriesButton clicked");
-        m_ui->seriesButton->setFlat(true);
-        m_ui->seriesButton->setChecked(true);
+    m_ui->showsButton->toggle();
+    if (!m_ui->showsButton->isChecked()) {
+        Macaw::DEBUG("[MainWindow] showsButton clicked");
+        m_ui->showsButton->setFlat(true);
+        m_ui->showsButton->setChecked(true);
         m_ui->moviesButton->setFlat(false);
         m_ui->moviesButton->setChecked(false);
         delete m_mainPannel;
-        m_mainPannel = new SeriesPannel;
+
+        m_mainPannel = new ShowsPannel;
         m_ui->mainPannelLayout->addWidget(m_mainPannel);
         connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
                 this, SLOT(fillMetadataPannel(const Movie&)));
         m_metadataPannel->hide();
-        m_moviesOrSeries = Macaw::show;
+        m_moviesOrShows = Macaw::show;
 
         this->updatePannels();
     }
@@ -159,7 +160,7 @@ void MainWindow::on_seriesButton_clicked()
  * @param id of the leftPannel element
  * @return QList of movies to display
  */
-QList<Movie> MainWindow::moviesToDisplay(int id, bool movieOrSeries)
+QList<Movie> MainWindow::moviesToDisplay(int id, bool movieOrShow)
 {
     Macaw::DEBUG("[MainWindow] moviesToDisplay()");
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
@@ -167,26 +168,26 @@ QList<Movie> MainWindow::moviesToDisplay(int id, bool movieOrSeries)
     m_leftPannel->setSelectedId(id);
     if(m_leftPannel->selectedId() == 0) {
 
-        return databaseManager->getAllMovies(movieOrSeries);
+        return databaseManager->getAllMovies(movieOrShow);
     } else if(m_leftPannel->typeElement() == Macaw::isPeople) {
         if (m_leftPannel->selectedId() == -1) {
 
             return databaseManager->getMoviesWithoutPeople(m_leftPannel->typePeople(),
-                                                           movieOrSeries);
+                                                           movieOrShow);
         } else {
 
             return databaseManager->getMoviesByPeople(m_leftPannel->selectedId(),
                                                       m_leftPannel->typePeople(),
-                                                      movieOrSeries);
+                                                      movieOrShow);
         }
     } else if (m_leftPannel->typeElement() == Macaw::isTag) {
         if (m_leftPannel->selectedId() == -1) {
 
-            return databaseManager->getMoviesWithoutTag(movieOrSeries);
+            return databaseManager->getMoviesWithoutTag(movieOrShow);
         } else {
 
             return databaseManager->getMoviesByTag(m_leftPannel->selectedId(),
-                                                   movieOrSeries);
+                                                   movieOrShow);
         }
     }
     QList<Movie> l_emptyList;
@@ -219,7 +220,7 @@ void MainWindow::selfUpdate()
 void MainWindow::updateMainPannel()
 {
     Macaw::DEBUG("[MainWindow] updateMainWindow triggered");
-    QList<Movie> l_movieList = moviesToDisplay(m_leftPannel->selectedId(), m_moviesOrSeries);
+    QList<Movie> l_movieList = moviesToDisplay(m_leftPannel->selectedId(), m_moviesOrShows);
     m_mainPannel->fill(l_movieList);
 }
 
@@ -233,10 +234,10 @@ void MainWindow::updatePannels()
     QString l_text = m_ui->searchEdit->text();
 
     ServicesManager *servicesManager = ServicesManager::instance();
-    servicesManager->setMatchingMovieList(l_text, m_moviesOrSeries);
+    servicesManager->setMatchingMovieList(l_text, m_moviesOrShows);
 
     m_leftPannel->fill();
-    QList<Movie> l_movieList = moviesToDisplay(m_leftPannel->selectedId(), m_moviesOrSeries);
+    QList<Movie> l_movieList = moviesToDisplay(m_leftPannel->selectedId(), m_moviesOrShows);
     m_mainPannel->fill(l_movieList);
     Macaw::DEBUG_OUT("[MainWindow] Exits updatePannels()");
 }
@@ -294,9 +295,9 @@ void MainWindow::addNewMovies()
                     l_movie.setSuffix(l_fileSuffix);
 
                     if (!l_moviesPath.hasMovies()) {
-                        l_movie.setSeries(true);
+                        l_movie.setShow(true);
                     } else if (!l_moviesPath.hasShows()) {
-                        l_movie.setSeries(false);
+                        l_movie.setShow(false);
                     }
 
                     databaseManager->insertNewMovie(l_movie, l_moviesPath.id());

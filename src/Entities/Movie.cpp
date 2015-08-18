@@ -33,7 +33,7 @@ Movie::Movie()
     m_suffix = "";
     m_rank = 0;
     m_imported = false;
-    m_series = false;
+    m_show = false;
 }
 
 int Movie::id() const
@@ -76,14 +76,14 @@ void Movie::setReleaseDate(const QDate releaseDate)
     m_releaseDate = releaseDate;
 }
 
-bool Movie::isSeries() const
+bool Movie::isShow() const
 {
-    return m_series;
+    return m_show;
 }
 
-void Movie::setSeries(const bool series)
+void Movie::setShow(const bool show)
 {
-    m_series = series;
+    m_show = show;
 }
 
 QString Movie::country() const

@@ -32,7 +32,7 @@ public:
     explicit ServicesManager(QObject *parent = 0);
     static ServicesManager* instance();
     QList<Movie> matchingMovieList() const { return m_matchingMovieList; }
-    void setMatchingMovieList(const QString pattern, bool series);
+    void setMatchingMovieList(const QString pattern, bool shows);
     bool toWatchState() const { return m_toWatchState; }
     void setToWatchState(const bool state) { m_toWatchState = state; }
     DatabaseManager* databaseManager() { return m_databaseManager; }

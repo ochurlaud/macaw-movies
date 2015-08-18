@@ -59,14 +59,14 @@ SOURCES += main.cpp \
     MainWindowWidgets/MoviesPannel.cpp \
     MainWindowWidgets/MainPannel.cpp \
     MainWindowWidgets/MetadataPannel.cpp \
-    MainWindowWidgets/SeriesPannel.cpp \
     Entities/Entity.cpp \
-    Entities/Series.cpp \
     Entities/Episode.cpp \
     Entities/PathForMovies.cpp \
     Dialogs/SettingsDialog.cpp \
     Dialogs/SettingsDialogWidgets/MoviePathsSettings.cpp \
-    Dialogs/SettingsDialogWidgets/CenteredCheckbox.cpp
+    Dialogs/SettingsDialogWidgets/CenteredCheckbox.cpp \
+    Entities/Show.cpp \
+    MainWindowWidgets/ShowsPannel.cpp
 
 HEADERS  += \
     include_var.h \
@@ -88,15 +88,15 @@ HEADERS  += \
     MainWindowWidgets/MoviesPannel.h \
     MainWindowWidgets/MainPannel.h \
     MainWindowWidgets/MetadataPannel.h \
-    MainWindowWidgets/SeriesPannel.h \
     Entities/Entity.h \
-    Entities/Series.h \
     Entities/Episode.h \
     Entities/PathForMovies.h \
     Dialogs/SettingsDialog.h \
     enumerations.h \
     Dialogs/SettingsDialogWidgets/MoviePathsSettings.h \
-    Dialogs/SettingsDialogWidgets/CenteredCheckbox.h
+    Dialogs/SettingsDialogWidgets/CenteredCheckbox.h \
+    Entities/Show.h \
+    MainWindowWidgets/ShowsPannel.h
 
 FORMS    += \
     MainWindow.ui \
@@ -106,9 +106,9 @@ FORMS    += \
     MainWindowWidgets/LeftPannel.ui \
     MainWindowWidgets/MoviesPannel.ui \
     MainWindowWidgets/MetadataPannel.ui \
-    MainWindowWidgets/SeriesPannel.ui \
     Dialogs/SettingsDialog.ui \
-    Dialogs/SettingsDialogWidgets/MoviePathsSettings.ui
+    Dialogs/SettingsDialogWidgets/MoviePathsSettings.ui \
+    MainWindowWidgets/ShowsPannel.ui
 
 TRANSLATIONS += \
     locales/macaw_fr.ts \

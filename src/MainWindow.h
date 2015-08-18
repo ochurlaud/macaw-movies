@@ -35,7 +35,7 @@
 #include "MainWindowWidgets/MainPannel.h"
 #include "MainWindowWidgets/MetadataPannel.h"
 #include "MainWindowWidgets/MoviesPannel.h"
-#include "MainWindowWidgets/SeriesPannel.h"
+#include "MainWindowWidgets/ShowsPannel.h"
 
 class LeftPannel;
 class MainPannel;
@@ -69,7 +69,7 @@ private slots:
     void fillMetadataPannel(const Movie &movie);
     void putTempStatusBarMessage(QString message, int time);
     void on_moviesButton_clicked();
-    void on_seriesButton_clicked();
+    void on_showsButton_clicked();
 
 signals:
     void startFetchingMetadata(const QList<Movie>&);
@@ -79,7 +79,7 @@ private:
     LeftPannel *m_leftPannel;
     MainPannel *m_mainPannel;
     MetadataPannel *m_metadataPannel;
-    bool m_moviesOrSeries;
+    bool m_moviesOrShows;
 
     void readSettings();
     QList<Movie> moviesToDisplay(int id, bool movieOrSeries);

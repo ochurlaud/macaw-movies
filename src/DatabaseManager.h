@@ -55,7 +55,7 @@ public:
     bool createTableMoviesPlaylists(QSqlQuery&);
     bool createTableTags(QSqlQuery&);
     bool createTableMoviesTags(QSqlQuery&);
-    bool createTableSeries(QSqlQuery&);
+    bool createTableShow(QSqlQuery&);
     bool createTableEpisodes(QSqlQuery&);
     bool createTablePathList(QSqlQuery&);
     bool createTableConfig(QSqlQuery&);
@@ -84,17 +84,17 @@ signals:
 public:
     // Movies
     Movie getOneMovieById(const int id);
-    QList<Movie> getAllMovies(const bool series = false, const QString fieldOrder = "title");
-    QList<Movie> getMoviesByPeople(const int id, const int type, const bool series = false, const QString fieldOrder = "title");
-    QList<Movie> getMoviesByPeople(const People &people, const int type, const bool series = false, const QString fieldOrder = "title");
-    QList<Movie> getMoviesByTag(const int id, const bool series = false, const QString fieldOrder = "title");
-    QList<Movie> getMoviesByTag(const Tag &tag, const bool series = false, const QString fieldOrder = "title");
-    QList<Movie> getMoviesByPlaylist(const int id, const bool series = false, const QString fieldOrder = "title");
-    QList<Movie> getMoviesByPlaylist(const Playlist &playlist, const bool series = false, const QString fieldOrder = "title");
-    QList<Movie> getMoviesWithoutPeople(const int type, const bool series = false, const QString fieldOrder = "title");
-    QList<Movie> getMoviesWithoutTag(const bool series = false, const QString fieldOrder = "title");
-    QList<Movie> getMoviesByAny(const QString text, const bool series = false, const QString fieldOrder = "title");
-    QList<Movie> getMoviesNotImported(const bool series = false, const QString fieldOrder = "title");
+    QList<Movie> getAllMovies(const bool show = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPeople(const int id, const int type, const bool show = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPeople(const People &people, const int type, const bool show = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByTag(const int id, const bool show = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByTag(const Tag &tag, const bool show = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPlaylist(const int id, const bool show = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPlaylist(const Playlist &playlist, const bool show = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesWithoutPeople(const int type, const bool show = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesWithoutTag(const bool show = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByAny(const QString text, const bool show = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesNotImported(const bool show = false, const QString fieldOrder = "title");
 
     // Episodes
     Episode getOneEpisodeById(const int id);
@@ -111,9 +111,9 @@ public:
     QList<Episode> getEpisodesByAny(const QString text, const QString fieldOrder = "s.name, e.season, e.number");
     QList<Episode> getEpisodesNotImported(const QString fieldOrder = "s.name, e.season, e.number");
 */
-    // Series
-    Series getOneSeriesById(const int id);
-    QList<Series> getAllSeries(const QString fieldOrder = "name");
+    // show
+    Show getOneShowById(const int id);
+    QList<Show> getAllshow(const QString fieldOrder = "name");
 
     // People
     People getOnePeopleById(const int id);
@@ -140,7 +140,7 @@ public:
 
     // Does element exist ?
     bool existEpisode(const QString);
-    bool existSeries(const QString);
+    bool existshow(const QString);
     bool existMovie(const QString);
     bool existTag(const QString);
     bool existPeople(const QString name);
@@ -148,7 +148,7 @@ public:
 private:
     // Other functions for getters
     void setMovieToEpisode(Episode &episode);
-    void setSeriesToEpisode(Episode &episode);
+    void setshowToEpisode(Episode &episode);
     void setPeopleToMovie(Movie &movie);
     void setTagsToMovie(Movie &movie);
     void setMoviesToPlaylist(Playlist &playlist);
@@ -156,7 +156,7 @@ private:
     Episode hydrateEpisode(QSqlQuery &query, const Movie &movie);
     Movie hydrateMovie(QSqlQuery &query);
     People hydratePeople(QSqlQuery &query);
-    Series hydrateSeries(QSqlQuery &query);
+    Show hydrateShow(QSqlQuery &query);
     Tag hydrateTag(QSqlQuery &query);
     Playlist hydratePlaylist(QSqlQuery &query);
 
@@ -196,7 +196,7 @@ private:
     QSqlDatabase m_db;
     QString m_movieFields;
     QString m_episodeFields;
-    QString m_seriesFields;
+    QString m_showFields;
     QString m_peopleFields;
     QString m_tagFields;
 

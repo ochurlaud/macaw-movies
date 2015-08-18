@@ -66,14 +66,14 @@ void Episode::setSeason(const int season)
     m_season = season;
 }
 
-Series Episode::series() const
+Show Episode::show() const
 {
-    return m_series;
+    return m_show;
 }
 
-void Episode::setSeries(const Series &series)
+void Episode::setShow(const Show &show)
 {
-    m_series = series;
+    m_show = show;
 }
 
 bool Episode::operator== (const Episode &other)
@@ -81,7 +81,7 @@ bool Episode::operator== (const Episode &other)
     if ( this->id() == other.id() &&
          this->number() == other.number() &&
          this->season() == other.season() &&
-         this->series() == other.series() &&
+         this->show() == other.show() &&
          this->movie() == other.movie() )
     {
         return true;

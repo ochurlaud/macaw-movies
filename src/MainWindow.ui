@@ -121,12 +121,12 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="seriesButton">
+         <widget class="QPushButton" name="showsButton">
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="text">
-           <string>Series</string>
+           <string>TV Shows</string>
           </property>
           <property name="checkable">
            <bool>true</bool>

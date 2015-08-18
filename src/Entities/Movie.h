@@ -55,8 +55,8 @@ public:
     void setRank(const int rank);
     QDate releaseDate() const;
     void setReleaseDate(const QDate releaseDate);
-    bool isSeries() const;
-    void setSeries(const bool series);
+    bool isShow() const;
+    void setShow(const bool show);
     QString suffix() const;
     void setSuffix(const QString suffix);
     QString synopsis() const;
@@ -88,7 +88,7 @@ private:
     QString m_posterPath;
     int m_rank;
     QDate m_releaseDate;
-    bool m_series;
+    bool m_show;
     QString m_suffix;
     QString m_synopsis;
     QList<People> m_peopleList;

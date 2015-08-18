@@ -52,7 +52,7 @@ We should be able do add several metadata to each movie. To make it easily, the 
 * Prizes: Oscar, lion, etc (several possibilities) And for whom  (actor, actress, producer, director, writer, etc) (I)
 * Shooting places (several possibilities: Lyon, Paris, London....)
 
-### Complement for series
+### Complement for shows
 * Season
 * Name of the episode
 * Number of the episode

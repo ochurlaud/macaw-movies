@@ -40,17 +40,17 @@ DatabaseManager::DatabaseManager()
                     "m.suffix, "
                     "m.rank, "
                     "m.imported, "
-                    "m.series ";
+                    "m.show ";
 
     m_episodeFields = "e.id, "
                       "e.number, "
                       "e.season, "
-                      "e.id_series, "
+                      "e.id_show, "
                       "e.id_movie ";
 
-    m_seriesFields =  "s.id, "
-                      "s.name, "
-                      "s.finished ";
+    m_showFields =  "s.id, "
+                    "s.name, "
+                    "s.finished ";
 
     m_peopleFields = "p.id, "
                      "p.name, "
@@ -91,7 +91,7 @@ Movie DatabaseManager::hydrateMovie(QSqlQuery &query)
     l_movie.setSuffix(query.value(13).toString());
     l_movie.setRank(query.value(14).toInt());
     l_movie.setImported(query.value(14).toBool());
-    l_movie.setSeries(query.value(15).toBool());
+    l_movie.setShow(query.value(15).toBool());
     setTagsToMovie(l_movie);
     setPeopleToMovie(l_movie);
 
@@ -100,7 +100,7 @@ Movie DatabaseManager::hydrateMovie(QSqlQuery &query)
 
 
 /**
- * @brief Hydrates an episode (from series) from the database
+ * @brief Hydrates an episode (from a show) from the database
  *
  * @param QSqlQuery containing the data
  * @return Episode hydrated object
@@ -112,11 +112,11 @@ Episode DatabaseManager::hydrateEpisode(QSqlQuery &query)
     l_episode.setNumber(query.value(1).toInt());
     l_episode.setSeason(query.value(2).toInt());
 
-    Series l_series;
-    l_series.setId(query.value(5).toInt());
-    l_series.setName(query.value(6).toString());
-    l_series.setFinished(query.value(7).toBool());
-    l_episode.setSeries(l_series);
+    Show l_show;
+    l_show.setId(query.value(5).toInt());
+    l_show.setName(query.value(6).toString());
+    l_show.setFinished(query.value(7).toBool());
+    l_episode.setShow(l_show);
 
     setMovieToEpisode(l_episode);
 
@@ -124,7 +124,7 @@ Episode DatabaseManager::hydrateEpisode(QSqlQuery &query)
 }
 
 /**
- * @brief Hydrates an episode (from series) from the database, knowing the movie
+ * @brief Hydrates an episode (from Show) from the database, knowing the movie
  *
  * @param QSqlQuery containing the data
  * @return Episode hydrated object
@@ -136,11 +136,11 @@ Episode DatabaseManager::hydrateEpisode(QSqlQuery &query, const Movie &movie)
     l_episode.setNumber(query.value(1).toInt());
     l_episode.setSeason(query.value(2).toInt());
 
-    Series l_series;
-    l_series.setId(query.value(5).toInt());
-    l_series.setName(query.value(6).toString());
-    l_series.setFinished(query.value(7).toBool());
-    l_episode.setSeries(l_series);
+    Show l_show;
+    l_show.setId(query.value(5).toInt());
+    l_show.setName(query.value(6).toString());
+    l_show.setFinished(query.value(7).toBool());
+    l_episode.setShow(l_show);
 
     l_episode.setMovie(movie);
 
@@ -148,19 +148,19 @@ Episode DatabaseManager::hydrateEpisode(QSqlQuery &query, const Movie &movie)
 }
 
 /**
- * @brief Hydrates series from the database
+ * @brief Hydrates Show from the database
  *
  * @param QSqlQuery containing the data
- * @return Series hydrated object
+ * @return Show hydrated object
  */
-Series DatabaseManager::hydrateSeries(QSqlQuery &query)
+Show DatabaseManager::hydrateShow(QSqlQuery &query)
 {
-    Series l_series;
-    l_series.setId(query.value(0).toInt());
-    l_series.setName(query.value(1).toString());
-    l_series.setFinished(query.value(2).toBool());
+    Show l_show;
+    l_show.setId(query.value(0).toInt());
+    l_show.setName(query.value(1).toString());
+    l_show.setFinished(query.value(2).toBool());
 
-    return l_series;
+    return l_show;
 }
 
 /**
@@ -326,9 +326,9 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
                 }
             }
 
-            if (!m_db.record("movies").contains("series")) {
-                l_ret &= l_query.exec("ALTER TABLE movies ADD series BOOLEAN");
-                l_ret &= l_query.exec("UPDATE movies SET series = 0");
+            if (!m_db.record("movies").contains("show")) {
+                l_ret &= l_query.exec("ALTER TABLE movies ADD show BOOLEAN");
+                l_ret &= l_query.exec("UPDATE movies SET show = 0");
                 if(!l_ret)
                 {
                     Macaw::DEBUG(l_query.lastError().text());
@@ -406,7 +406,7 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
                 Macaw::DEBUG_OUT("[DatabaseManager] upgrade movies table finished");
             }
 
-            l_ret &= createTableSeries(l_query);
+            l_ret &= createTableShow(l_query);
             l_ret &= createTableEpisodes(l_query);
 
             if(l_ret) {
@@ -476,7 +476,7 @@ bool DatabaseManager::createTables()
             l_ret &= createTableMoviesPlaylists(l_query);
             l_ret &= createTableTags(l_query);
             l_ret &= createTableMoviesTags(l_query);
-            l_ret &= createTableSeries(l_query);
+            l_ret &= createTableShow(l_query);
             l_ret &= createTableEpisodes(l_query);
             l_ret &= createTablePathList(l_query);
             if (l_ret) {
@@ -511,7 +511,7 @@ bool DatabaseManager::createTableMovies(QSqlQuery &query)
                   "suffix VARCHAR(10), "
                   "rank INTEGER, "
                   "imported BOOLEAN, "
-                  "series BOOLEAN, "
+                  "show BOOLEAN, "
                   "UNIQUE (id_path, file_path) ON CONFLICT IGNORE "
                   ")");
 
@@ -684,16 +684,16 @@ bool DatabaseManager::createTableMoviesTags(QSqlQuery &query)
     return true;
 }
 
-bool DatabaseManager::createTableSeries(QSqlQuery &query)
+bool DatabaseManager::createTableShow(QSqlQuery &query)
 {
-    query.prepare("CREATE TABLE IF NOT EXISTS series("
+    query.prepare("CREATE TABLE IF NOT EXISTS show("
                   "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                   "name VARCHAR(255), "
                   "finished BOOLEAN"
                   ")");
 
     if (!query.exec()) {
-        Macaw::DEBUG("In createTableSeries:");
+        Macaw::DEBUG("In createTableShow:");
         Macaw::DEBUG(query.lastError().text());
 
         return false;
@@ -708,10 +708,10 @@ bool DatabaseManager::createTableEpisodes(QSqlQuery &query)
                   "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                   "number INTEGER, "
                   "season INTEGER, "
-                  "id_series INTEGER NOT NULL, "
+                  "id_show INTEGER NOT NULL, "
                   "id_movie INTEGER UNIQUE NOT NULL, "
                   "FOREIGN KEY(id_movie) REFERENCES movies ON DELETE CASCADE, "
-                  "FOREIGN KEY(id_series) REFERENCES series ON DELETE CASCADE "
+                  "FOREIGN KEY(id_show) REFERENCES show ON DELETE CASCADE "
                   ")");
 
     if (!query.exec()) {

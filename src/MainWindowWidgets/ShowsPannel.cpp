@@ -17,24 +17,24 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "SeriesPannel.h"
-#include "ui_SeriesPannel.h"
+#include "ShowsPannel.h"
+#include "ui_ShowsPannel.h"
 
-SeriesPannel::SeriesPannel(QWidget *parent) :
+ShowsPannel::ShowsPannel(QWidget *parent) :
     MainPannel(parent),
-    m_ui(new Ui::SeriesPannel)
+    m_ui(new Ui::ShowsPannel)
 {
     m_ui->setupUi(this);
 }
 
-SeriesPannel::~SeriesPannel()
+ShowsPannel::~ShowsPannel()
 {
     delete m_ui;
 }
 
-void SeriesPannel::fill(const QList<Movie> &movieList)
+void ShowsPannel::fill(const QList<Movie> &movieList)
 {
-    Macaw::DEBUG_IN("[SeriesPannel] Enters fill()");
+    Macaw::DEBUG_IN("[ShowsPannel] Enters fill()");
 
     m_ui->treeWidget->clear();
 
@@ -55,22 +55,22 @@ void SeriesPannel::fill(const QList<Movie> &movieList)
             }
         }
     }
-    Macaw::DEBUG_OUT("[SeriesPannel] Exits fill()");
+    Macaw::DEBUG_OUT("[ShowsPannel] Exits fill()");
 }
 
-void SeriesPannel::addEpisodeToPannel(const Episode &episode)
+void ShowsPannel::addEpisodeToPannel(const Episode &episode)
 {
     QStringList l_textValues (QString::number(episode.number()) + "- " + episode.movie().title());
     QTreeWidgetItem *l_episodeItem = new QTreeWidgetItem(l_textValues);
 
-    QList<QTreeWidgetItem*> l_seriesItemList = m_ui->treeWidget->findItems(episode.series().name(),
+    QList<QTreeWidgetItem*> l_showItemList = m_ui->treeWidget->findItems(episode.show().name(),
                                                                            Qt::MatchFixedString);
-    if (!l_seriesItemList.isEmpty()) {
-        QTreeWidgetItem* l_seriesItem = l_seriesItemList.at(0);
+    if (!l_showItemList.isEmpty()) {
+        QTreeWidgetItem* l_showItem = l_showItemList.at(0);
         bool l_seasonExists(false);
-        for (int i = 0 ; i < l_seriesItem->childCount() ; i++) {
-            if (l_seriesItem->child(i)->text(0) == QString::number(episode.season())) {
-                l_seriesItem->child(i)->addChild(l_episodeItem);
+        for (int i = 0 ; i < l_showItem->childCount() ; i++) {
+            if (l_showItem->child(i)->text(0) == QString::number(episode.season())) {
+                l_showItem->child(i)->addChild(l_episodeItem);
                 l_seasonExists = true;
                 break;
             }
@@ -79,16 +79,16 @@ void SeriesPannel::addEpisodeToPannel(const Episode &episode)
             QTreeWidgetItem *l_seasonItem = new QTreeWidgetItem();
             l_seasonItem->setText(0, QString::number(episode.season()));
             l_seasonItem->addChild(l_episodeItem);
-            l_seriesItem->addChild(l_seasonItem);
+            l_showItem->addChild(l_seasonItem);
         }
     } else {
-        QTreeWidgetItem *l_seriesItem = new QTreeWidgetItem();
-        l_seriesItem->setText(0, episode.series().name());
+        QTreeWidgetItem *l_showItem = new QTreeWidgetItem();
+        l_showItem->setText(0, episode.show().name());
         QTreeWidgetItem *l_seasonItem = new QTreeWidgetItem();
         l_seasonItem->setText(0, QString::number(episode.season()));
 
-        m_ui->treeWidget->addTopLevelItem(l_seriesItem);
-        l_seriesItem->addChild(l_seasonItem);
+        m_ui->treeWidget->addTopLevelItem(l_showItem);
+        l_showItem->addChild(l_seasonItem);
         l_seasonItem->addChild(l_episodeItem);
 
     }

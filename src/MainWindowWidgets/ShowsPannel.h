@@ -17,29 +17,34 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SERIES_H
-#define SERIES_H
+#ifndef SHOWSPANNEL_H
+#define SHOWSPANNEL_H
 
-#include "Entities/Entity.h"
-#include "Entities/Movie.h"
+#include <QWidget>
 
-class Series : public Entity
+#include "Application.h"
+
+#include "Entities/Episode.h"
+#include "MainWindowWidgets/MainPannel.h"
+
+namespace Ui {
+class ShowsPannel;
+}
+
+class ShowsPannel : public MainPannel
 {
+    Q_OBJECT
+
 public:
-    Series(QString const name = "");
-    bool isFinished() const;
-    void setFinished(const bool finished);
-/*
-    QList<Episode> EpisodeList() const;
-    void setEpisode(const QList<Episode> &episodeList);
-    void addEpisode(const Episode &episode);
-    void removeEpisode(const Episode &episode);
-    void updateEpisode(const Episode &episode);
-*/
+    explicit ShowsPannel(QWidget *parent = 0);
+    ~ShowsPannel();
+    void fill(const QList<Movie> &movieList);
+
 
 private:
-    bool m_finished;
-//    QList<Episode> m_episodeList;
+    Ui::ShowsPannel *m_ui;
+
+    void addEpisodeToPannel(const Episode &episode);
 };
 
-#endif // SERIES_H
+#endif // SHOWSPANNEL_H

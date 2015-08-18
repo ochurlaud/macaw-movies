@@ -20,10 +20,10 @@
 #ifndef EPISODE_H
 #define EPISODE_H
 
-#include "Entities/Series.h"
+#include "Entities/Show.h"
 #include "Entities/Movie.h"
 
-class Series;
+class Show;
 
 class Episode
 {
@@ -36,15 +36,15 @@ public:
     Movie movie() const;
     void setMovie(const Movie &movie);
     int season() const;
-    void setSeason(const int series);
-    Series series() const;
-    void setSeries(const Series &series);
+    void setSeason(const int season);
+    Show show() const;
+    void setShow(const Show &show);
     bool operator== (const Episode&);
     bool operator!= (const Episode&);
 
 private:
     int m_id;
-    Series m_series;
+    Show m_show;
     Movie m_movie;
     int m_season;
     int m_number;

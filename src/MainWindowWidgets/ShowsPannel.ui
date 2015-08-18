@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SeriesPannel</class>
- <widget class="QWidget" name="SeriesPannel">
+ <class>ShowsPannel</class>
+ <widget class="QWidget" name="ShowsPannel">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -24,7 +24,7 @@
     <widget class="QTreeWidget" name="treeWidget">
      <column>
       <property name="text">
-       <string notr="true">1</string>
+       <string notr="true">TV Shows</string>
       </property>
      </column>
     </widget>
