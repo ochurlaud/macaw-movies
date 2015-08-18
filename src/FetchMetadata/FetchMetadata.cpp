@@ -98,11 +98,16 @@ void FetchMetadata::initTimerDone()
     if (!m_fetchMetadataQuery->isInitialized()) {
         QMessageBox l_msgBox;
         l_msgBox.setIcon(QMessageBox::Critical);
+        l_msgBox.setWindowTitle("Internet connection error");
         l_msgBox.setText("Initialization of the connection to TMDb failed");
         l_msgBox.setInformativeText("Please check your internet connection or try again later...");
-        l_msgBox.setStandardButtons(QMessageBox::Ok);
-        if(l_msgBox.exec()) {
+        l_msgBox.setStandardButtons(QMessageBox::Abort|QMessageBox::Retry);
+        int l_ret = l_msgBox.exec();
+
+        if(l_ret == QMessageBox::Abort) {
             emit jobDone();
+        } else if (l_ret == QMessageBox::Retry) {
+            this->startProcess();
         }
     } else {
         this->startProcess();
@@ -232,6 +237,8 @@ void FetchMetadata::openFetchMetadataDialog(const Movie &movie, const QList<Movi
             this, SLOT(on_searchCanceled()));
     connect(m_fetchMetadataDialog, SIGNAL(dontAskUser()),
             this, SLOT(on_dontAskUser()));
+    connect(m_fetchMetadataDialog, SIGNAL(neverAskUser(Movie&)),
+            this, SLOT(on_neverAskUser(Movie&)));
     m_fetchMetadataDialog->show();
     Macaw::DEBUG("[FetchMetadata] Exits openFetchMetadataDialog");
 }
@@ -257,4 +264,12 @@ void FetchMetadata::networkError(QString error)
 void FetchMetadata::on_dontAskUser()
 {
     m_askUser = false;
+}
+
+void FetchMetadata::on_neverAskUser(Movie &movie)
+{
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
+    movie.setImported(true);
+    databaseManager->updateMovie(movie);
 }

@@ -124,21 +124,22 @@ void Application::on_startFetchingMetadata(const QList<Movie> &movieList)
 {
     Macaw::DEBUG("[Application] startFetchingMetadata called");
     if(m_fetchMetadata == NULL) {
+        Macaw::DEBUG("[Application] Create new FetchingMetadata");
         m_fetchMetadata = new FetchMetadata();
+        connect(m_fetchMetadata, SIGNAL(jobDone()),
+                this, SLOT(on_fethMetadataJobDone()));
     }
 
-    connect(m_fetchMetadata, SIGNAL(jobDone()),
-            this, SLOT(on_fethMetadataJobDone()));
     m_fetchMetadata->addMoviesToQueue(movieList);
 }
 
 /**
  * @brief Slot triggered when m_fetchMetadata has finished its job
- * Delete the pointer concerned.
  */
 void Application::on_fethMetadataJobDone()
 {
-    m_fetchMetadata->deleteLater();
+    delete m_fetchMetadata;
+    m_fetchMetadata = NULL;
     emit updateMainWindow();
 }
 

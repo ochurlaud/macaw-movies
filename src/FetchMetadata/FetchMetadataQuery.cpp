@@ -35,8 +35,8 @@ FetchMetadataQuery::FetchMetadataQuery(QObject *parent) :
 
 FetchMetadataQuery::~FetchMetadataQuery()
 {
-    delete m_networkManager;
-    delete m_networkManager2;
+    m_networkManager->deleteLater();
+    m_networkManager2->deleteLater();
 }
 
 void FetchMetadataQuery::sendInitRequest()

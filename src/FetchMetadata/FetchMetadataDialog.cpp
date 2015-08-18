@@ -113,3 +113,9 @@ void FetchMetadataDialog::on_dontAskButton_clicked()
     emit dontAskUser();
     m_ui->buttonBox->rejected();
 }
+
+void FetchMetadataDialog::on_neverAskButton_clicked()
+{
+    emit neverAskUser(m_movie);
+    m_ui->buttonBox->rejected();
+}
