@@ -88,7 +88,6 @@ QList<Movie> DatabaseManager::getAllMovies(const bool show, const QString fieldO
     }
 
     return l_movieList;
-
 }
 
 /**
@@ -250,6 +249,39 @@ QList<Movie> DatabaseManager::getMoviesByPlaylist(const Playlist &playlist,
     QList<Movie> l_movieList = getMoviesByPlaylist(playlist.id(), show, fieldOrder);
 
     return l_movieList;
+}
+
+/**
+ * @brief DatabaseManager::getMoviesByPath
+ * @param path
+ * @param fieldOrder
+ * @return
+ */
+QList<Movie> DatabaseManager::getMoviesByPath(const PathForMovies &path, const QString fieldOrder)
+{
+    QList<Movie> l_movieList;
+    QSqlQuery l_query(m_db);
+    l_query.prepare("SELECT " + m_movieFields +
+                    "FROM movies AS m "
+                    "WHERE id_path = :id_path "
+                    "ORDER BY " + fieldOrder);
+
+    l_query.bindValue(":id_path", path.id());
+
+    if (!l_query.exec())
+    {
+        Macaw::DEBUG("In getMoviesByPath():");
+        Macaw::DEBUG(l_query.lastError().text());
+    }
+
+    while(l_query.next())
+    {
+        Movie l_movie = hydrateMovie(l_query);
+        l_movieList.append(l_movie);
+    }
+
+    return l_movieList;
+
 }
 
 QList<Movie> DatabaseManager::getMoviesWithoutPeople(const int type,

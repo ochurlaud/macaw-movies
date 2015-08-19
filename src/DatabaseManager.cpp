@@ -999,18 +999,17 @@ bool DatabaseManager::existMoviesPath(PathForMovies moviesPath)
 
 bool DatabaseManager::deleteMoviesPath(PathForMovies moviesPath)
 {
-    QSqlQuery l_query(m_db);
-    l_query.prepare("DELETE FROM movies WHERE id_path = :id_path");
-    l_query.bindValue(":id_path", moviesPath.id());
+    QList<Movie> l_movieList = getMoviesByPath(moviesPath);
 
-    if(!l_query.exec())
-    {
-        Macaw::DEBUG("In removeMoviesPath(), deleting movies:");
-        Macaw::DEBUG(l_query.lastError().text());
+    foreach (Movie l_movie, l_movieList) {
+        if (!deleteMovie(l_movie))
+        {
 
-        return false;
+            return false;
+        }
     }
 
+    QSqlQuery l_query(m_db);
     l_query.prepare("DELETE FROM path_list WHERE movies_path LIKE :movies_path||'%'");
     l_query.bindValue(":movies_path", moviesPath.path());
     if(!l_query.exec())

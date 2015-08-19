@@ -91,6 +91,7 @@ public:
     QList<Movie> getMoviesByTag(const Tag &tag, const bool show = false, const QString fieldOrder = "title");
     QList<Movie> getMoviesByPlaylist(const int id, const bool show = false, const QString fieldOrder = "title");
     QList<Movie> getMoviesByPlaylist(const Playlist &playlist, const bool show = false, const QString fieldOrder = "title");
+    QList<Movie> getMoviesByPath(const PathForMovies &path, const QString fieldOrder = "title");
     QList<Movie> getMoviesWithoutPeople(const int type, const bool show = false, const QString fieldOrder = "title");
     QList<Movie> getMoviesWithoutTag(const bool show = false, const QString fieldOrder = "title");
     QList<Movie> getMoviesByAny(const QString text, const bool show = false, const QString fieldOrder = "title");
