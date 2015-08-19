@@ -48,7 +48,7 @@ void ServicesManager::pannelsUpdate()
  * @author Sébastien TOUZÉ <sebastien.touze@yahoo.fr>
  *
  * @param QString message
- * @param int time how long (in milliseconds) message shoud be showed.
+ * @param int time how long (in milliseconds) message should be shown.
  * If not givent time=0 and the message will persist until a new message is sent.
  */
 void ServicesManager::showTempStatusBarMessage(QString message, int time)

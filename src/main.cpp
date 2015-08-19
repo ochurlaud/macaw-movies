@@ -48,10 +48,10 @@ int main(int argv, char **args)
     l_parser.addVersionOption();
 
     // --authors option
-    const QCommandLineOption l_author(QStringList() << QStringLiteral("author"), QApplication::tr("Show author informations"));
+    const QCommandLineOption l_author(QStringList() << QStringLiteral("author"), QApplication::tr("Show author information"));
     l_parser.addOption(l_author);
     // --license option
-    const QCommandLineOption l_license(QStringList() << QStringLiteral("license"), QApplication::tr("Show license informations"));
+    const QCommandLineOption l_license(QStringList() << QStringLiteral("license"), QApplication::tr("Show license information"));
     l_parser.addOption(l_license);
     // --DEBUG option
     const QCommandLineOption l_debug(QStringList() << QStringLiteral("debug"), QApplication::tr("Define the debug mode"));

@@ -35,9 +35,6 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="windowTitle">
-   <string notr="true"/>
-  </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="topMargin">
     <number>0</number>

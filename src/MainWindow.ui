@@ -29,9 +29,6 @@
     <height>557</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string notr="true"/>
-  </property>
   <widget class="QWidget" name="globalWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">

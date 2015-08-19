@@ -782,8 +782,8 @@ bool DatabaseManager::createTableConfig(QSqlQuery &query)
 }
 
 /**
- * @brief add a new tag with specifed name to the database.
- * Returns the id of created tag, -1 if an error occured.
+ * @brief add a new tag with specified name to the database.
+ * Returns the id of created tag, -1 if an error occurred.
  * @param name new tag's name
  * @returns the id of newly created tag in the db, -1 if an error occurs
  */

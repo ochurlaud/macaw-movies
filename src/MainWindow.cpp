@@ -404,7 +404,7 @@ void MainWindow::on_actionAbout_triggered()
                            "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br />"
                            "See the GNU General Public License for more details."
                            "<br /><hr /><br />"
-                           "This application is still under active developpement, it may contain bugs. <br />"
+                           "This application is still under active development, it may contain bugs. <br />"
                            "If you find one please create an issue on "
                            "<a href='https://github.com/macaw-movies/macaw-movies/issues'>our GitHub space</a>"
                            ).arg(APP_NAME)

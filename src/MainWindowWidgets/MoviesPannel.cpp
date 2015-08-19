@@ -386,7 +386,7 @@ bool MoviesPannel::moveFileToTrash(QList<Movie> &movieList)
  * @brief searches and returns the right trash folder for GNU/Linux and OSX platforms
  *
  * This function chooses the right folder according to file location (local hard drive or external storage)
- * and the OS specificities. If an error occured an empty string is returned (and aDebug message is sent if debug is on).
+ * and the OS specificities. If an error occurred an empty string is returned (and aDebug message is sent if debug is on).
  *
  * @param movieFilePath the path to the movie's file to be moved to trash
  *
@@ -514,7 +514,7 @@ bool MoviesPannel::linux_moveFileToTrash(QString movieFilePath) {
         return false;
     }
 
-    Macaw::DEBUG("[MoviesPannel] Writting info to: " + l_targetMovieFileInfo.absoluteFilePath());
+    Macaw::DEBUG("[MoviesPannel] Writing info to: " + l_targetMovieFileInfo.absoluteFilePath());
 
     if(l_trashInfoFile.open(QIODevice::WriteOnly)) {
         Macaw::DEBUG("[MoviesPannel] Moving file FROM: "+movieFilePath+" TO: " + l_targetMovieFileFiles.absoluteFilePath());

@@ -187,7 +187,7 @@ void MoviePathsSettings::addPathFromEdit()
 bool MoviePathsSettings::existsInPathCollection(QString path)
 {
     if (!QDir(path).exists() || path.isEmpty()) {
-        m_ui->folderPathMessage->setText(tr("Choose an existant path"));
+        m_ui->folderPathMessage->setText(tr("Choose an existent path"));
 
         return true;
     } else {
