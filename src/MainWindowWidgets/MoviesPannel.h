@@ -53,6 +53,7 @@ private slots:
     void on_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
     void on_tableWidget_itemSelectionChanged();
     void addPlaylistMenu_triggered(QAction* action);
+    void on_actionGet_Metadata_triggered();
 
 private:
     Ui::MoviesPannel *m_ui;

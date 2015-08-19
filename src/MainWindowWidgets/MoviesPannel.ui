@@ -128,6 +128,11 @@
     <string>E</string>
    </property>
   </action>
+  <action name="actionGet_Metadata">
+   <property name="text">
+    <string>Get Metadata</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

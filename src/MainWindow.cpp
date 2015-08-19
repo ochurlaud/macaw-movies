@@ -36,6 +36,8 @@
 #include "MainWindowWidgets/MoviesPannel.h"
 #include "MainWindowWidgets/ShowsPannel.h"
 #include "Entities/PathForMovies.h"
+#include "Entities/Movie.h"
+
 
 #ifdef Q_OS_WIN
     #include "windows.h"
@@ -66,6 +68,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ui->moviesButton->setFlat(true);
     m_ui->moviesButton->setChecked(true);
     m_moviesOrShows = Macaw::movie;
+    connect(m_mainPannel, SIGNAL(startFetchingMetadata(QList<Movie>)),
+            this, SLOT(onStartFetchingMetadata(QList<Movie>)));
 
     ServicesManager *servicesManager = ServicesManager::instance();
     connect(servicesManager, SIGNAL(requestPannelsUpdate()),
@@ -102,7 +106,8 @@ void MainWindow::on_actionEdit_Settings_triggered()
     Macaw::DEBUG_IN("[MainWindow] Enters showSettingsDialog()");
     SettingsDialog *l_SettingsDialog = new SettingsDialog;
     l_SettingsDialog->show();
-    QObject::connect(l_SettingsDialog,SIGNAL(closeAndSave()), this, SLOT(addNewMovies()));
+    connect(l_SettingsDialog,SIGNAL(closeAndSave()),
+            this, SLOT(addNewMovies()));
     Macaw::DEBUG_OUT("[MainWindow] Exits showSettingsDialog()");
 }
 
@@ -138,6 +143,8 @@ void MainWindow::on_moviesButton_clicked()
         m_ui->mainPannelLayout->addWidget(m_mainPannel);
         connect(m_mainPannel, SIGNAL(fillMetadataPannel(Movie)),
                 this, SLOT(fillMetadataPannel(Movie)));
+        connect(m_mainPannel, SIGNAL(startFetchingMetadata(QList<Movie>)),
+                this, SLOT(onStartFetchingMetadata(QList<Movie>)));
         m_metadataPannel->hide();
         m_moviesOrShows = Macaw::movie;
 
@@ -164,6 +171,9 @@ void MainWindow::on_showsButton_clicked()
         m_ui->mainPannelLayout->addWidget(m_mainPannel);
         connect(m_mainPannel, SIGNAL(fillMetadataPannel(Movie)),
                 this, SLOT(fillMetadataPannel(Movie)));
+        connect(m_mainPannel, SIGNAL(startFetchingMetadata(QList<Movie>)),
+                this, SLOT(onStartFetchingMetadata(QList<Movie>)));
+
         m_metadataPannel->hide();
         m_moviesOrShows = Macaw::show;
 
@@ -234,11 +244,22 @@ void MainWindow::selfUpdate()
     this->updatePannels();
 }
 
+/**
+ * @brief MainWindow::updateMainPannel
+ */
 void MainWindow::updateMainPannel()
 {
     Macaw::DEBUG("[MainWindow] updateMainWindow triggered");
     QList<Movie> l_movieList = moviesToDisplay(m_leftPannel->selectedId(), m_moviesOrShows);
     m_mainPannel->fill(l_movieList);
+}
+
+/**
+ * @brief MainWindow::onStartFetchingMetadata
+ */
+void MainWindow::onStartFetchingMetadata(const QList<Movie> &movieList)
+{
+    emit startFetchingMetadata(movieList);
 }
 
 /**

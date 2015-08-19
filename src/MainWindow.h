@@ -57,6 +57,7 @@ private slots:
     void putTempStatusBarMessage(QString message, int time);
     void on_moviesButton_clicked();
     void on_showsButton_clicked();
+    void onStartFetchingMetadata(const QList<Movie> &movieList);
 
 signals:
     void startFetchingMetadata(const QList<Movie>&);

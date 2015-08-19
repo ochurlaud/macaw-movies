@@ -42,6 +42,7 @@ public:
 signals:
     void fillMetadataPannel(const Movie&);
     void updatePannels();
+    void startFetchingMetadata(const QList<Movie>&);
 
 protected:
     bool permanentlyDeleteFile(QFile *movieFileToDelete);

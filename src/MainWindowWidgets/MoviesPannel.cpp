@@ -51,6 +51,7 @@ MoviesPannel::MoviesPannel(QWidget *parent) :
                 this, SLOT(on_customContextMenuRequested(QPoint)));
 
     this->setHeaders();
+
     m_ui->tableWidget->addAction(m_ui->actionDelete);
     m_ui->tableWidget->addAction(m_ui->actionEdit_mainPannelMetadata);
 }
@@ -169,8 +170,8 @@ void MoviesPannel::on_customContextMenuRequested(const QPoint &point)
                                                         l_menu);
             l_actionAddInToWatch->setData(1);
 
-            connect(l_menu, SIGNAL(triggered(QAction)),
-                    this, SLOT(addPlaylistMenu_triggered(QAction)));
+            connect(l_menu, SIGNAL(triggered(QAction*)),
+                    this, SLOT(addPlaylistMenu_triggered(QAction*)));
 
             l_menu->addAction(l_actionAddInToWatch);
             m_ui->actionDelete->setText(tr("Move to trash"));
@@ -178,6 +179,7 @@ void MoviesPannel::on_customContextMenuRequested(const QPoint &point)
 
         l_menu->addAction(m_ui->actionEdit_mainPannelMetadata);
         l_menu->addAction(m_ui->actionDelete);
+        l_menu->addAction(m_ui->actionGet_Metadata);
         l_menu->exec(m_ui->tableWidget->mapToGlobal(point));
     }
 }
@@ -339,5 +341,25 @@ void MoviesPannel::addPlaylistMenu_triggered(QAction* action)
         Playlist l_playlist = databaseManager->getOnePlaylistById(l_actionId);
         l_playlist.addMovie(l_movie);
         databaseManager->updatePlaylist(l_playlist);
+    }
+}
+
+/**
+ * @brief Slot triggered when the metadata of a movie are asked to be get
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
+void MoviesPannel::on_actionGet_Metadata_triggered()
+{
+    Macaw::DEBUG("[MoviesPannel] actionGet_Metadata triggered");
+    QList<Movie> l_movieList;
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+    foreach (QTableWidgetItem *l_item, m_ui->tableWidget->selectedItems()) {
+        if (l_item->column() == 0) {
+            l_movieList.append(databaseManager->getOneMovieById(l_item->data(Macaw::ObjectId).toInt()));
+        }
+    }
+    if (!l_movieList.isEmpty()) {
+        emit startFetchingMetadata(l_movieList);
     }
 }
