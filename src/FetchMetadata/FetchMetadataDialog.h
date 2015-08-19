@@ -53,7 +53,7 @@ signals:
     void searchMovies(const QString newTitle);
     void searchCanceled();
     void dontAskUser();
-    void neverAskUser(Movie &movie);
+    void neverAskUser(Movie movie);
 
 private slots:
     void on_buttonBox_accepted();

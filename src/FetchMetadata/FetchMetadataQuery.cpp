@@ -226,6 +226,10 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
                 l_people.setType(People::Actor);
                 m_movie.addPeople(l_people);
                 m_peopleRequestQueue.append(l_personId);
+                if (l_personId != 0)
+                {
+                    m_peopleRequestQueue.append(l_personId);
+                }
                 Macaw::DEBUG("[FetchMetadataQuery] new Actor: "+ l_personName);
             }
 
@@ -238,7 +242,10 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
                     l_people.setId(l_personId);
                     l_people.setType(People::Director);
                     m_movie.addPeople(l_people);
-                    m_peopleRequestQueue.append(l_personId);
+                    if (l_personId != 0)
+                    {
+                        m_peopleRequestQueue.append(l_personId);
+                    }
                     Macaw::DEBUG("[FetchMetadataQuery] new Director: "+ l_personName);
                 } else if (l_job ==  "Producer") {
                     l_personId = l_jsonCrewArray.at(i).toObject().value("id").toInt();
@@ -247,6 +254,10 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
                     l_people.setType(People::Producer);
                     m_movie.addPeople(l_people);
                     m_peopleRequestQueue.append(l_personId);
+                    if (l_personId != 0)
+                    {
+                        m_peopleRequestQueue.append(l_personId);
+                    }
                     Macaw::DEBUG("[FetchMetadataQuery] new Producer: "+ l_personName);
                 }
             }
@@ -275,8 +286,6 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
     QByteArray l_receivedData = reply->readAll();
     reply->deleteLater();
 
-    emit(peopleResponse());
-
     QJsonDocument l_stream = QJsonDocument::fromJson(l_receivedData);
     if (!l_stream.isEmpty()) {
         QJsonObject l_jsonObject = l_stream.object();
@@ -303,6 +312,9 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
             m_peopleRequestProcessing.removeOne(l_tmdbID);
         }
     }    
+
+    emit(peopleResponse());
+
     // If all request are done, the object is fully constructed => send to FetchMetadata
     if (m_peopleRequestProcessing.isEmpty() && m_peopleRequestQueue.isEmpty()) {
         // We send a signal to tell the movie is hydrated

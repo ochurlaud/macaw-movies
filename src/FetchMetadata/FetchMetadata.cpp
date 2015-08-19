@@ -276,7 +276,7 @@ void FetchMetadata::on_dontAskUser()
     m_askUser = false;
 }
 
-void FetchMetadata::on_neverAskUser(Movie &movie)
+void FetchMetadata::on_neverAskUser(Movie movie)
 {
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 

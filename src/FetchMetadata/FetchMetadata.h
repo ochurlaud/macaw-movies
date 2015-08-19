@@ -57,7 +57,7 @@ private slots:
     void processPrimaryResponseDialog(const QList<Movie> &movieList);
     void on_searchCanceled();
     void on_dontAskUser();
-    void on_neverAskUser(Movie &movie);
+    void on_neverAskUser(Movie movie);
     void on_jobDone();
     void networkError(QString error);
 
