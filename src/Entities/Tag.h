@@ -20,14 +20,14 @@
 #ifndef TAG_H
 #define TAG_H
 
-#include <QtWidgets>
-
 #include "Entities/Entity.h"
+
+class QString;
 
 class Tag : public Entity
 {
 public:
-    Tag(const QString name = "");
+    explicit Tag(const QString name = "");
 
 };
 

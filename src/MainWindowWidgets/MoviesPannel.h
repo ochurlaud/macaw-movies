@@ -20,11 +20,13 @@
 #ifndef MOVIESPANNEL_H
 #define MOVIESPANNEL_H
 
-#include <QWidget>
-
-#include "Application.h"
-
 #include "MainWindowWidgets/MainPannel.h"
+
+class QFile;
+class QTableWidgetItem;
+
+class Movie;
+class Playlist;
 
 namespace Ui {
 class MoviesPannel;

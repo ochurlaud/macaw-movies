@@ -21,17 +21,15 @@
 #define DATABASEMANAGER_H
 
 #include <QObject>
-#include <QtCore>
-#include <QtSql>
+#include <QSqlDatabase>
 
-#include "enumerations.h"
-#include "include_var.h"
-
-#include "MacawDebug.h"
-#include "Entities/Episode.h"
-#include "Entities/Movie.h"
-#include "Entities/PathForMovies.h"
-#include "Entities/Playlist.h"
+class Episode;
+class Movie;
+class PathForMovies;
+class People;
+class Playlist;
+class Show;
+class Tag;
 
 /**
  * @brief Manages all the access to the database
@@ -77,8 +75,8 @@ public:
     bool existMoviesPath(PathForMovies moviesPath);
 
 signals:
-    void orphanTagDetected(Tag &tag);
-    void orphanPeopleDetected(People &people);
+    void orphanTagDetected(const Tag &tag);
+    void orphanPeopleDetected(const People &people);
 
 //// Getters - in DatabaseManager_getters.cpp
 public:

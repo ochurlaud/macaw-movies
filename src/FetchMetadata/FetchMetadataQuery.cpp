@@ -19,6 +19,18 @@
 
 #include "FetchMetadata/FetchMetadataQuery.h"
 
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QUrl>
+
+#include "Application.h"
+#include "MacawDebug.h"
+
 FetchMetadataQuery::FetchMetadataQuery(QObject *parent) :
     QObject(parent)
 {
@@ -199,7 +211,7 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
             m_movie.setReleaseDate(l_releaseDate);
 
             m_movie.setSynopsis(l_jsonObject.value("overview").toString());
-            if (l_jsonObject.value("poster_path").toString() != "") {
+            if (!l_jsonObject.value("poster_path").toString().isEmpty()) {
                 sendPosterRequest(l_jsonObject.value("poster_path").toString());
             }
 
@@ -319,7 +331,7 @@ void FetchMetadataQuery::on_posterRequestResponse(QNetworkReply *reply) {
     l_posterFile.close();
 }
 
-void FetchMetadataQuery::slotError(QNetworkReply::NetworkError error)
+void FetchMetadataQuery::slotError(int error)
 {
     Macaw::DEBUG("[FetchMetadataQuery] Error " + QString::number(error));
     emit(networkError(QString::number(error)));

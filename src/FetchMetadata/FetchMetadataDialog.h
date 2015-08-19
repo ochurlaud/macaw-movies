@@ -20,11 +20,15 @@
 #ifndef FETCHMETADATADIALOG_H
 #define FETCHMETADATADIALOG_H
 
-#include <QtGui>
-#include <QtWidgets>
+#include <QDialog>
 
-#include "Application.h"
 #include "Entities/Movie.h"
+
+template<class T> class QList;
+class QModelIndex;
+class QString;
+
+class Movie;
 
 namespace Ui {
 class FetchMetadataDialog;

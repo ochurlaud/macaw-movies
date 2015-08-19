@@ -17,9 +17,18 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "DatabaseManager.h"
 
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QVariant>
+
+#include "MacawDebug.h"
+#include "Entities/Episode.h"
+#include "Entities/Movie.h"
+#include "Entities/PathForMovies.h"
+#include "Entities/Playlist.h"
+#include "Entities/Show.h"
 
 /**
  * @brief Adds a movie to the database

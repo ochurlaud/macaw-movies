@@ -19,6 +19,19 @@
 
 #include "Application.h"
 
+#include <QDir>
+#include <QIcon>
+#include <QMessageBox>
+
+#include "include_var.h"
+
+#include "MacawDebug.h"
+#include "MainWindow.h"
+#include "ServicesManager.h"
+#include "Entities/People.h"
+#include "Entities/Tag.h"
+#include "FetchMetadata/FetchMetadata.h"
+
 /**
  * @brief Constructor
  */
@@ -45,12 +58,12 @@ int Application::exec()
     m_mainWindow = new MainWindow;
     m_fetchMetadata = NULL;
 
-    connect(databaseManager, SIGNAL(orphanTagDetected(Tag&)),
-            this, SLOT(askForOrphanTagDeletion(Tag&)));
-    connect(databaseManager, SIGNAL(orphanPeopleDetected(People&)),
-            this, SLOT(askForOrphanPeopleDeletion(People&)));
-    connect(m_mainWindow, SIGNAL(startFetchingMetadata(const QList<Movie>&)),
-            this, SLOT(on_startFetchingMetadata(const QList<Movie>&)));
+    connect(databaseManager, SIGNAL(orphanTagDetected(Tag)),
+            this, SLOT(askForOrphanTagDeletion(Tag)));
+    connect(databaseManager, SIGNAL(orphanPeopleDetected(People)),
+            this, SLOT(askForOrphanPeopleDeletion(People)));
+    connect(m_mainWindow, SIGNAL(startFetchingMetadata(QList<Movie>)),
+            this, SLOT(on_startFetchingMetadata(QList<Movie>)));
     connect(this, SIGNAL(updateMainWindow()),
             m_mainWindow, SLOT(selfUpdate()));
 
@@ -77,7 +90,7 @@ Application::~Application()
  *
  * @param orphanTag concerned by the choice
  */
-void Application::askForOrphanTagDeletion(Tag &orphanTag)
+void Application::askForOrphanTagDeletion(const Tag &orphanTag)
 {
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
@@ -99,7 +112,7 @@ void Application::askForOrphanTagDeletion(Tag &orphanTag)
  *
  * @param orphanPeople concerned by the choice
  */
-void Application::askForOrphanPeopleDeletion(People &orphanPeople)
+void Application::askForOrphanPeopleDeletion(const People &orphanPeople)
 {
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 

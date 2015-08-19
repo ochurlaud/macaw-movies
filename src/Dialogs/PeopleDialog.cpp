@@ -20,6 +20,10 @@
 #include "PeopleDialog.h"
 #include "ui_PeopleDialog.h"
 
+#include "MacawDebug.h"
+#include "ServicesManager.h"
+#include "Entities/Movie.h"
+
 PeopleDialog::PeopleDialog(int id, QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::PeopleDialog)

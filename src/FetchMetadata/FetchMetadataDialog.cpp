@@ -20,6 +20,11 @@
 #include "FetchMetadata/FetchMetadataDialog.h"
 #include "ui_FetchMetadataDialog.h"
 
+#include <QMessageBox>
+
+#include "enumerations.h"
+#include "MacawDebug.h"
+
 FetchMetadataDialog::FetchMetadataDialog(Movie movie, QList<Movie> moviesPropositionList, QWidget *parent):
     QDialog(parent),
     m_ui(new Ui::FetchMetadataDialog)
@@ -88,7 +93,7 @@ void FetchMetadataDialog::setMovieList(const QList<Movie> &movieList)
             QListWidgetItem *l_item = new QListWidgetItem;
             QString l_textItem = l_movie.title()
                     + " [" + QString::number(l_movie.releaseDate().year())
-                    + "]";
+                    + ']';
             l_item->setText(l_textItem);
             l_item->setData(Macaw::ObjectId, l_movie.id());
             m_ui->listWidget->addItem(l_item);

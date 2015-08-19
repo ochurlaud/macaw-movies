@@ -18,7 +18,9 @@
  */
 
 #include "PathForMovies.h"
-#include "QDebug"
+
+#include "enumerations.h"
+
 PathForMovies::PathForMovies(QString path, bool movies, bool shows) :
     m_id(0),
     m_path(path)

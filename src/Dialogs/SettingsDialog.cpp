@@ -20,6 +20,14 @@
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
 
+#include <QDir>
+#include <QFileDialog>
+
+#include "MacawDebug.h"
+#include "ServicesManager.h"
+#include "Dialogs/SettingsDialogWidgets/MoviePathsSettings.h"
+#include "Entities/Movie.h"
+
 /**
  * @brief Constructor
  * @param parent

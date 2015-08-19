@@ -20,6 +20,23 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
+#include <QDirIterator>
+#include <QMessageBox>
+#include <QSettings>
+
+#include "enumerations.h"
+#include "include_var.h"
+
+#include "MacawDebug.h"
+#include "ServicesManager.h"
+#include "Dialogs/SettingsDialog.h"
+#include "MainWindowWidgets/LeftPannel.h"
+#include "MainWindowWidgets/MainPannel.h"
+#include "MainWindowWidgets/MetadataPannel.h"
+#include "MainWindowWidgets/MoviesPannel.h"
+#include "MainWindowWidgets/ShowsPannel.h"
+#include "Entities/PathForMovies.h"
+
 #ifdef Q_OS_WIN
     #include "windows.h"
 #endif
@@ -57,8 +74,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(putTempStatusBarMessage(QString, int)));
     connect(m_leftPannel, SIGNAL(updateMainPannel()),
             this, SLOT(updateMainPannel()));
-    connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
-            this, SLOT(fillMetadataPannel(const Movie&)));
+    connect(m_mainPannel, SIGNAL(fillMetadataPannel(Movie)),
+            this, SLOT(fillMetadataPannel(Movie)));
     this->readSettings();
 
     this->setWindowTitle(APP_NAME);
@@ -119,8 +136,8 @@ void MainWindow::on_moviesButton_clicked()
         delete m_mainPannel;
         m_mainPannel = new MoviesPannel;
         m_ui->mainPannelLayout->addWidget(m_mainPannel);
-        connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
-                this, SLOT(fillMetadataPannel(const Movie&)));
+        connect(m_mainPannel, SIGNAL(fillMetadataPannel(Movie)),
+                this, SLOT(fillMetadataPannel(Movie)));
         m_metadataPannel->hide();
         m_moviesOrShows = Macaw::movie;
 
@@ -145,8 +162,8 @@ void MainWindow::on_showsButton_clicked()
 
         m_mainPannel = new ShowsPannel;
         m_ui->mainPannelLayout->addWidget(m_mainPannel);
-        connect(m_mainPannel, SIGNAL(fillMetadataPannel(const Movie&)),
-                this, SLOT(fillMetadataPannel(const Movie&)));
+        connect(m_mainPannel, SIGNAL(fillMetadataPannel(Movie)),
+                this, SLOT(fillMetadataPannel(Movie)));
         m_metadataPannel->hide();
         m_moviesOrShows = Macaw::show;
 
@@ -290,7 +307,7 @@ void MainWindow::addNewMovies()
                     l_movie.setFileAbsolutePath(l_file.fileInfo().absoluteFilePath());
 
                     QString l_relativePath = l_movie.fileAbsolutePath();
-                    l_relativePath.remove(l_moviesPath.path()+"/");
+                    l_relativePath.remove(l_moviesPath.path()+'/');
                     l_movie.setFileRelativePath(l_relativePath);
                     l_movie.setSuffix(l_fileSuffix);
 

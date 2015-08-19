@@ -21,15 +21,13 @@
 #define FETCH_H
 
 #include <QObject>
-#include <QLocale>
 
-#include "Application.h"
-#include "FetchMetadata/FetchMetadataQuery.h"
-#include "FetchMetadata/FetchMetadataDialog.h"
+#include "Entities/Movie.h"
 
-class FetchMetadataQuery;
+class Application;
 class FetchMetadataDialog;
-
+class FetchMetadataQuery;
+class Movie;
 
 class FetchMetadata : public QObject
 {

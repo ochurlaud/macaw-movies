@@ -20,6 +20,20 @@
 #include "MoviesPannel.h"
 #include "ui_MoviesPannel.h"
 
+#include <QAction>
+#include <QDesktopServices>
+#include <QDir>
+#include <QMenu>
+#include <QMessageBox>
+#include <QProcess>
+#include <QUrl>
+
+#include "enumerations.h"
+
+#include "MacawDebug.h"
+#include "ServicesManager.h"
+#include "Dialogs/MovieDialog.h"
+#include "Entities/Playlist.h"
 /**
  * @brief constructor
  * @author Olivier CHURLAUD <olivier@churlaud.com>
@@ -32,8 +46,8 @@ MoviesPannel::MoviesPannel(QWidget *parent) :
 {
     m_ui->setupUi(this);
     m_ui->tableWidget->setContentsMargins(0,0,0,0);
-    connect(m_ui->tableWidget, SIGNAL(customContextMenuRequested(const QPoint &)),
-                this, SLOT(on_customContextMenuRequested(const QPoint &)));
+    connect(m_ui->tableWidget, SIGNAL(customContextMenuRequested(QPoint)),
+                this, SLOT(on_customContextMenuRequested(QPoint)));
 
     this->setHeaders();
     m_ui->tableWidget->addAction(m_ui->actionDelete);
@@ -259,7 +273,7 @@ void MoviesPannel::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
     Macaw::DEBUG("[MoviesPannel.startMovie()] Opened movie: " + l_movie.fileAbsolutePath());
 
 
-    if (databaseManager->getMediaPlayerPath() != "") {
+    if (!databaseManager->getMediaPlayerPath().isEmpty()) {
         QString l_executeMediaPlayerPath;
         #ifdef Q_OS_LINUX
             l_executeMediaPlayerPath = QString("source \"%1\"")
@@ -494,8 +508,8 @@ bool MoviesPannel::linux_moveFileToTrash(QString movieFilePath) {
 
         //Change the filename of "movie.suffix" to "movie(i).suffix"
         l_trashName = (l_movieFileInfo.completeBaseName().isEmpty() ? "" : l_movieFileInfo.completeBaseName())
-                + "(" + QString::number(l_count) + ")" +
-                (l_movieFileInfo.suffix().isEmpty() ? "" : "." + l_movieFileInfo.suffix());
+                + '(' + QString::number(l_count) + ')' +
+                (l_movieFileInfo.suffix().isEmpty() ? "" : '.' + l_movieFileInfo.suffix());
 
         l_targetMovieFileInfo = QFileInfo(l_trashInfoPath + l_trashName + ".trashinfo");
         l_targetMovieFileFiles = QFileInfo(l_trashFilesPath + l_trashName);
@@ -522,8 +536,8 @@ bool MoviesPannel::linux_moveFileToTrash(QString movieFilePath) {
 
         if(moveFile) {
             l_trashInfoFile.write("[Trash Info]\n");
-            QString l_path = "Path=" + movieFilePath + "\n";
-            QString l_deletionDate = "DeletionDate=" + QDateTime::currentDateTime().toString(Qt::ISODate) + "\n";
+            QString l_path = "Path=" + movieFilePath + '\n';
+            QString l_deletionDate = "DeletionDate=" + QDateTime::currentDateTime().toString(Qt::ISODate) + '\n';
 
             l_trashInfoFile.write((char *)(l_path.toStdString().c_str()));
             l_trashInfoFile.write((char *)(l_deletionDate.toStdString().c_str()));
@@ -637,8 +651,8 @@ bool MoviesPannel::macosx_moveFileToTrash(QString movieFilePath) {
 
         //Change the filename of "movie.suffix" to "movie(i).suffix"
         l_trashName = (l_movieFileInfo.completeBaseName().isEmpty() ? "" : l_movieFileInfo.completeBaseName())
-                + "(" + QString::number(l_count) + ")" +
-                (l_movieFileInfo.suffix().isEmpty() ? "" : "." + l_movieFileInfo.suffix());
+                + '(' + QString::number(l_count) + ')' +
+                (l_movieFileInfo.suffix().isEmpty() ? "" : '.' + l_movieFileInfo.suffix());
 
         l_targetMovieFileFiles = QFileInfo(l_trashFilesPath + l_trashName);
     }

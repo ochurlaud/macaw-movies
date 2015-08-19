@@ -20,12 +20,9 @@
 #ifndef SHOWSPANNEL_H
 #define SHOWSPANNEL_H
 
-#include <QWidget>
+#include "MainPannel.h"
 
-#include "Application.h"
-
-#include "Entities/Episode.h"
-#include "MainWindowWidgets/MainPannel.h"
+class Episode;
 
 namespace Ui {
 class ShowsPannel;
@@ -43,7 +40,6 @@ public:
 
 private:
     Ui::ShowsPannel *m_ui;
-
     void addEpisodeToPannel(const Episode &episode);
 };
 

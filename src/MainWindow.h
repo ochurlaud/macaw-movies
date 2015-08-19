@@ -20,27 +20,13 @@
 #ifndef MainWindow_H
 #define MainWindow_H
 
-#include <QtGui>
-#include <QtWidgets>
-
-#include "Application.h"
-
-#include "Dialogs/MovieDialog.h"
-#include "Dialogs/PeopleDialog.h"
-#include "Dialogs/SettingsDialog.h"
-#include "Entities/Movie.h"
-#include "Entities/Playlist.h"
-#include "Entities/Tag.h"
-#include "MainWindowWidgets/LeftPannel.h"
-#include "MainWindowWidgets/MainPannel.h"
-#include "MainWindowWidgets/MetadataPannel.h"
-#include "MainWindowWidgets/MoviesPannel.h"
-#include "MainWindowWidgets/ShowsPannel.h"
+#include <QMainWindow>
 
 class LeftPannel;
 class MainPannel;
 class MetadataPannel;
 class MoviesPannel;
+class Movie;
 class SeriesPannel;
 
 namespace Ui {

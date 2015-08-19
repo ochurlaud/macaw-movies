@@ -21,7 +21,8 @@
 #define LEFTPANNEL_H
 
 #include <QWidget>
-#include "Application.h"
+
+class Entity;
 
 namespace Ui {
     class LeftPannel;

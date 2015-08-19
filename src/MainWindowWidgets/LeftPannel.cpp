@@ -20,6 +20,18 @@
 #include "LeftPannel.h"
 #include "ui_LeftPannel.h"
 
+#include <QMenu>
+
+#include "enumerations.h"
+
+#include "MacawDebug.h"
+#include "ServicesManager.h"
+#include "Dialogs/PeopleDialog.h"
+#include "Entities/Movie.h"
+#include "Entities/People.h"
+#include "Entities/Playlist.h"
+#include "Entities/Tag.h"
+
 /**
  * @brief Constructor
  * @author Olivier CHURLAUD <olivier@churlaud.com>
@@ -32,8 +44,8 @@ LeftPannel::LeftPannel(QWidget *parent) :
 {
     m_ui->setupUi(this);
     m_ui->listWidget->setContentsMargins(0,1,1,0);
-    connect(m_ui->listWidget, SIGNAL(customContextMenuRequested(const QPoint &)),
-            this, SLOT(on_customContextMenuRequested(const QPoint &)));
+    connect(m_ui->listWidget, SIGNAL(customContextMenuRequested(QPoint)),
+            this, SLOT(on_customContextMenuRequested(QPoint)));
     m_ui->listWidget->addAction(m_ui->actionEdit_leftPannelMetadata);
 
     m_selectedId = 0;
@@ -285,9 +297,9 @@ void LeftPannel::on_actionEdit_leftPannelMetadata_triggered()
                 connect(l_movieDialog, SIGNAL(destroyed()), servicesManager, SLOT(pannelsUpdate()));
                 l_movieDialog->show();
             } else if (l_typeElement == Macaw::isTag) {
-                qDebug() << "Tag !";
+                Macaw::DEBUG("Tag !");
             } else if (l_typeElement == Macaw::isPlaylist) {
-                qDebug() << "Playlist !";
+                Macaw::DEBUG("Playlist !");
             }
         }
     }

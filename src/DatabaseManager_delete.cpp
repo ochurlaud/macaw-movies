@@ -17,9 +17,20 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "DatabaseManager.h"
 
+#include <QApplication>
+#include <QDir>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QVariant>
+
+#include "MacawDebug.h"
+#include "Entities/Episode.h"
+#include "Entities/Movie.h"
+#include "Entities/PathForMovies.h"
+#include "Entities/Playlist.h"
+#include "Entities/Show.h"
 
 /**
  * @brief Remove a Movie from the database
@@ -52,7 +63,7 @@ bool DatabaseManager::deleteMovie(Movie &movie)
         }
     }
 
-    if (movie.posterPath() != "") {
+    if (!movie.posterPath().isEmpty()) {
         QDir l_posterPath(qApp->property("postersPath").toString());
         l_posterPath.remove(movie.posterPath());
     }

@@ -20,14 +20,14 @@
 #ifndef MAIN
 #define MAIN
 
-#include <QApplication>
+#include <QCommandLineParser>
 #include <QDir>
 #include <QTranslator>
 
+#include "include_var.h"
+
 #include "Application.h"
-#include "MainWindow.h"
 #include "MacawDebug.h"
-#include <iostream>
 
 int main(int argv, char **args)
 {

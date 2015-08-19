@@ -20,20 +20,24 @@
 #ifndef FETCHMETADATAQUERY_H
 #define FETCHMETADATAQUERY_H
 
-#include <QtNetwork>
-#include <QWidget>
+#include <QObject>
 
-#include "Application.h"
 #include "Entities/Movie.h"
 
+template<class T> class QList;
+class QNetworkAccessManager;
+class QNetworkReply;
+class QString;
+
 class Application;
+class Movie;
 
 class FetchMetadataQuery : public QObject
 {
     Q_OBJECT
 
 public:
-    FetchMetadataQuery(QObject *parent = 0);
+    explicit FetchMetadataQuery(QObject *parent = 0);
     ~FetchMetadataQuery();
     void sendInitRequest();
     void sendPrimaryRequest(QString title);
@@ -55,7 +59,7 @@ private slots:
     void on_peopleRequestResponse(QNetworkReply *reply);
     void on_posterRequestResponse(QNetworkReply *reply);
     void on_peopleResponse();
-    void slotError(QNetworkReply::NetworkError error);
+    void slotError(int error);
 
 private:
     QNetworkAccessManager *m_networkManager;

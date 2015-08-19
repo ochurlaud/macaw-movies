@@ -19,6 +19,9 @@
 
 #include "ServicesManager.h"
 
+#include "DatabaseManager.h"
+#include "Entities/Movie.h"
+
 Q_GLOBAL_STATIC(ServicesManager, servicesManager)
 
 ServicesManager::ServicesManager(QObject *parent) : QObject(parent)

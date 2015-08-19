@@ -20,6 +20,14 @@
 #include "MoviePathsSettings.h"
 #include "ui_MoviePathsSettings.h"
 
+#include <QDir>
+#include <QFileDialog>
+
+#include "MacawDebug.h"
+#include "ServicesManager.h"
+#include "Dialogs/SettingsDialogWidgets/CenteredCheckbox.h"
+#include "Entities/PathForMovies.h"
+
 MoviePathsSettings::MoviePathsSettings(QWidget *parent) :
     QWidget(parent),
     m_ui(new Ui::MoviePathsSettings)

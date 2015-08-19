@@ -17,13 +17,12 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SETTINGWINDOW_H
-#define SETTINGWINDOW_H
+#ifndef SETTINGDIALOG_H
+#define SETTINGDIALOG_H
 
 #include <QDialog>
 
-#include "ServicesManager.h"
-#include "Dialogs/SettingsDialogWidgets/MoviePathsSettings.h"
+class MoviePathsSettings;
 
 namespace Ui {
 class SettingsDialog;
@@ -50,4 +49,4 @@ private:
     MoviePathsSettings *m_moviePathsTab;
 };
 
-#endif // SettingsDialog_H
+#endif // SETTINGSDIALOG_H

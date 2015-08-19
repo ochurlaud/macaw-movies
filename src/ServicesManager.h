@@ -20,10 +20,13 @@
 #ifndef SERVICESMANAGER_H
 #define SERVICESMANAGER_H
 
-#include <QWidget>
+#include <QObject>
 
 #include "DatabaseManager.h"
 #include "Entities/Movie.h"
+
+class DatabaseManager;
+class Movie;
 
 class ServicesManager : public QObject
 {

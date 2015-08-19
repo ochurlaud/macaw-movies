@@ -19,6 +19,16 @@
 
 #include "FetchMetadata.h"
 
+#include <QEventLoop>
+#include <QMessageBox>
+#include <QTimer>
+
+#include "DatabaseManager.h"
+#include "MacawDebug.h"
+#include "ServicesManager.h"
+#include "FetchMetadata/FetchMetadataQuery.h"
+#include "FetchMetadata/FetchMetadataDialog.h"
+
 FetchMetadata::FetchMetadata(QObject *parent) :
     QObject(parent)
 {
@@ -73,11 +83,11 @@ void FetchMetadata::startProcess()
         if (!m_movieQueue.isEmpty()) {
             //Showing a message in staus bar on the processing status
             m_initialMovieQueueSize == 0 ? m_initialMovieQueueSize = m_movieQueue.size() : m_moviesProcessed++;
-            ServicesManager::instance()->requestTempStatusBarMessage("Movies fetched: "+QString::number(m_moviesProcessed) + "/"+QString::number(m_initialMovieQueueSize));
+            ServicesManager::instance()->requestTempStatusBarMessage("Movies fetched: "+QString::number(m_moviesProcessed) + '/' +QString::number(m_initialMovieQueueSize));
 
             m_movie = m_movieQueue.takeFirst();
-            connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(const QList<Movie>&)),
-                    this, SLOT(processPrimaryResponse(const QList<Movie>&)));
+            connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>)),
+                    this, SLOT(processPrimaryResponse(QList<Movie>)));
             connect(m_fetchMetadataQuery, SIGNAL(networkError(QString)),
                     this, SLOT(networkError(QString)));
 
@@ -129,8 +139,8 @@ void FetchMetadata::processPrimaryResponse(const QList<Movie> &movieList)
 {
     Macaw::DEBUG("[FetchMetadata] Signal from primary request received");
 
-    disconnect(m_fetchMetadataQuery, SIGNAL(primaryResponse(const QList<Movie>&)),
-            this, SLOT(processPrimaryResponse(const QList<Movie>&)));
+    disconnect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>)),
+            this, SLOT(processPrimaryResponse(QList<Movie>)));
 
     QList<Movie> l_accurateList;
 
@@ -167,8 +177,8 @@ void FetchMetadata::processMovieResponse(const Movie &receivedMovie)
     Macaw::DEBUG("[FetchMetadata] Signal from movie request received");
     DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
 
-    disconnect(m_fetchMetadataQuery, SIGNAL(movieResponse(const Movie&)),
-            this, SLOT(processMovieResponse(const Movie&)));
+    disconnect(m_fetchMetadataQuery, SIGNAL(movieResponse(Movie)),
+            this, SLOT(processMovieResponse(Movie)));
 
     // Do not set the id since receivedMovie's id is from TMDB
     m_movie.setTitle(receivedMovie.title());
@@ -205,16 +215,16 @@ void FetchMetadata::on_selectedMovie(const Movie &movie)
 
 void FetchMetadata::on_searchMovies(QString title)
 {
-    connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(const QList<Movie>&)),
-            this, SLOT(processPrimaryResponseDialog(const QList<Movie>&)));
+    connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>)),
+            this, SLOT(processPrimaryResponseDialog(QList<Movie>)));
 
     m_fetchMetadataQuery->sendPrimaryRequest(title);
 }
 
 void FetchMetadata::processPrimaryResponseDialog(const QList<Movie> &movieList)
 {
-    disconnect(m_fetchMetadataQuery, SIGNAL(primaryResponse(const QList<Movie>&)),
-                this, SLOT(processPrimaryResponseDialog(const QList<Movie>&)));
+    disconnect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>)),
+                this, SLOT(processPrimaryResponseDialog(QList<Movie>)));
 
     this->updateFetchMetadataDialog(movieList);
 }
@@ -229,16 +239,16 @@ void FetchMetadata::openFetchMetadataDialog(const Movie &movie, const QList<Movi
     Macaw::DEBUG("[FetchMetadata] Enters openFetchMetadataDialog");
 
     m_fetchMetadataDialog = new FetchMetadataDialog(movie, accurateList);
-    connect(m_fetchMetadataDialog, SIGNAL(selectedMovie(const Movie&)),
-            this, SLOT(on_selectedMovie(const Movie&)));
+    connect(m_fetchMetadataDialog, SIGNAL(selectedMovie(Movie)),
+            this, SLOT(on_selectedMovie(Movie)));
     connect(m_fetchMetadataDialog, SIGNAL(searchMovies(QString)),
             this, SLOT(on_searchMovies(QString)));
     connect(m_fetchMetadataDialog, SIGNAL(searchCanceled()),
             this, SLOT(on_searchCanceled()));
     connect(m_fetchMetadataDialog, SIGNAL(dontAskUser()),
             this, SLOT(on_dontAskUser()));
-    connect(m_fetchMetadataDialog, SIGNAL(neverAskUser(Movie&)),
-            this, SLOT(on_neverAskUser(Movie&)));
+    connect(m_fetchMetadataDialog, SIGNAL(neverAskUser(Movie)),
+            this, SLOT(on_neverAskUser(Movie)));
     m_fetchMetadataDialog->show();
     Macaw::DEBUG("[FetchMetadata] Exits openFetchMetadataDialog");
 }

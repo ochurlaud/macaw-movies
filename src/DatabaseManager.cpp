@@ -19,6 +19,22 @@
 
 #include "DatabaseManager.h"
 
+#include <QApplication>
+#include <QDir>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QVariant>
+
+#include "include_var.h"
+
+#include "MacawDebug.h"
+#include "Entities/Episode.h"
+#include "Entities/Movie.h"
+#include "Entities/PathForMovies.h"
+#include "Entities/Playlist.h"
+#include "Entities/Show.h"
+
 /**
  * @brief Constructor.
  * Opens the Database. If empty, create the schema.
@@ -395,8 +411,8 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
                             QSqlQuery l_query2(m_db);
                             l_ret &= l_query2.exec("UPDATE movies "
                                                    "SET file_path='"+l_moviePath_new+"', "+
-                                                   "id_path="+QString::number(l_idList.at(i))+" "+
-                                                   "WHERE file_path='"+l_moviePath+"'");
+                                                   "id_path="+QString::number(l_idList.at(i))+' '+
+                                                   "WHERE file_path='"+l_moviePath+'\'');
                             if(!l_ret){
                                 Macaw::DEBUG(l_query2.lastError().text());
                             }

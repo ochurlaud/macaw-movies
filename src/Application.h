@@ -22,21 +22,11 @@
 
 #include <QApplication>
 
-#include "enumerations.h"
-#include "include_var.h"
-
-#include "DatabaseManager.h"
-#include "MainWindow.h"
-#include "ServicesManager.h"
-
-#include "Entities/Movie.h"
-#include "FetchMetadata/FetchMetadata.h"
-#include "FetchMetadata/FetchMetadataDialog.h"
-
-class MovieDebug;
-class MainWindow;
 class FetchMetadata;
-class FetchMetadataDialog;
+class MainWindow;
+class Movie;
+class People;
+class Tag;
 
 /**
  * @brief The Application class. Core of the application
@@ -55,8 +45,8 @@ signals:
     void updateMainWindow();
 
 private slots:
-    void askForOrphanTagDeletion(Tag &orphanTag);
-    void askForOrphanPeopleDeletion(People &orphanPeople);
+    void askForOrphanTagDeletion(const Tag &orphanTag);
+    void askForOrphanPeopleDeletion(const People &orphanPeople);
     void on_startFetchingMetadata(const QList<Movie> &movieList);
     void on_fethMetadataJobDone();
     void on_fethMetadataUpdatedMovie();

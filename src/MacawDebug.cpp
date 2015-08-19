@@ -19,6 +19,8 @@
 
 #include "MacawDebug.h"
 
+#include <QtDebug>
+
 MacawDebug::MacawDebug():
     m_debug(false)
   , m_spaces(0)

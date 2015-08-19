@@ -20,15 +20,19 @@
 #ifndef PLAYLIST_H
 #define PLAYLIST_H
 
-#include <QWidget>
 
 #include "Entities/Entity.h"
 #include "Entities/Movie.h"
 
+class QDateTime;
+template<class T> class QList;
+
+class Movie;
+
 class Playlist : public Entity
 {
 public:
-    Playlist(const QString name = "");
+    explicit Playlist(const QString name = "");
     int rate() const;
     void setRate(const int rate);
     QDateTime creationDate() const;

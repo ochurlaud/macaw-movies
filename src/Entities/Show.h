@@ -21,12 +21,13 @@
 #define SHOW_H
 
 #include "Entities/Entity.h"
-#include "Entities/Movie.h"
+
+class QString;
 
 class Show : public Entity
 {
 public:
-    Show(QString const name = "");
+    explicit Show(QString const name = "");
     bool isFinished() const;
     void setFinished(const bool finished);
 /*

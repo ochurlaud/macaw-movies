@@ -19,6 +19,17 @@
 
 #include "DatabaseManager.h"
 
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QVariant>
+
+#include "MacawDebug.h"
+#include "Entities/Episode.h"
+#include "Entities/Movie.h"
+#include "Entities/PathForMovies.h"
+#include "Entities/Playlist.h"
+#include "Entities/Show.h"
+
 /**
  * @brief Gets the one movie that has the id `id`
  *
@@ -307,7 +318,7 @@ QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
 {
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
-    QStringList l_splittedText = text.split(" ");
+    QStringList l_splittedText = text.split(' ');
 
     QString l_queryText = "SELECT " + m_movieFields + " FROM movies AS m WHERE show = :show AND ";
     for( int i = 0 ; i < l_splittedText.size() ; i++)
@@ -317,8 +328,8 @@ QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
             l_queryText = l_queryText+ "AND ";
         }
         l_queryText = l_queryText
-                + "("
-                     "("
+                + '(' +
+                     '(' +
                            "m.title LIKE '%'||:text"+QString::number(i)+"||'%' OR m.original_title LIKE '%'||:text"+ QString::number(i) +"||'%' "
                       ") "
                   "OR ( "
@@ -451,10 +462,10 @@ QList<Episode> DatabaseManager::getEpisodesByMovies(QList<Movie> movieList)
                   "WHERE e.id_movie IN (";
 
     foreach (Movie l_movie, movieList) {
-        l_queryText += QString::number(l_movie.id()) +",";
+        l_queryText += QString::number(l_movie.id()) +',';
     }
 
-    if (l_queryText.endsWith(",")) {
+    if (l_queryText.endsWith(',')) {
         l_queryText.remove(l_queryText.count()-1,1);
     }
     l_queryText += ") ORDER BY s.name, e.season, e.number";
@@ -722,7 +733,7 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
     Macaw::DEBUG("[DatabaseManager] Enters getPeopleByAny");
     QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
-    QStringList l_splittedText = text.split(" ");
+    QStringList l_splittedText = text.split(' ');
 
     QString l_queryText = "SELECT " + m_peopleFields + " FROM people AS p WHERE ";
     for( int i = 0 ; i < l_splittedText.size() ; i++)
@@ -732,7 +743,7 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
             l_queryText += "AND ";
         }
     l_queryText = l_queryText
-            + "("
+            + '(' +
                     "p.name LIKE '%'||:text"+ QString::number(i) +"||'%' "
                  "OR ( "
                       "SELECT COUNT(*) "
@@ -918,7 +929,7 @@ QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString field
     Macaw::DEBUG("[DatabaseManager] Enters tagsByAny");
     QList<Tag> l_tagList;
     QSqlQuery l_query(m_db);
-    QStringList l_splittedText = text.split(" ");
+    QStringList l_splittedText = text.split(' ');
 
     QString l_queryText = "SELECT " + m_tagFields + " FROM tags AS t WHERE ";
     for (int i = 0 ; i < l_splittedText.size() ; i++)
@@ -928,8 +939,8 @@ QList<Tag> DatabaseManager::getTagsByAny(const QString text, const QString field
             l_queryText += "AND ";
         }
     l_queryText = l_queryText
-            + "("
-                    "("
+            + '(' +
+                    '(' +
                        "t.name LIKE '%'||:text"+ QString::number(i) +"||'%' "
                     ") "
                  "OR ( "
@@ -1155,7 +1166,7 @@ void DatabaseManager::setPeopleToMovie(Movie &movie)
 void DatabaseManager::setTagsToMovie(Movie &movie)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("SELECT " +m_tagFields+ " "
+    l_query.prepare("SELECT " + m_tagFields +
                     "FROM tags AS t, movies_tags AS tm "
                     "WHERE tm.id_movie = :id_movie AND tm.id_tag = t.id");
     l_query.bindValue(":id_movie", movie.id());

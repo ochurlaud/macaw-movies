@@ -20,14 +20,17 @@
 #ifndef PEOPLE_H
 #define PEOPLE_H
 
-#include <QtWidgets>
+#include <QDate>
 
 #include "Entities/Entity.h"
+
+class QDate;
+class QString;
 
 class People : public Entity
 {
 public:
-    People(const QString name = "");
+    explicit People(const QString name = "");
     QDate birthday() const;
     void setBirthday(const QDate birthday);
     QString biography() const;

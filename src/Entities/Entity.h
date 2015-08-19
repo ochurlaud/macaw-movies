@@ -20,12 +20,14 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include <QtWidgets>
+#include <QString>
+
+class QString;
 
 class Entity
 {
 public:
-    Entity(const QString name = "");
+    explicit Entity(const QString name = "");
     int id() const;
     void setId(int id);
     QString name() const;

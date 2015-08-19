@@ -22,9 +22,9 @@
 
 #include <QDialog>
 
-#include "Application.h"
-
 #include "Entities/People.h"
+
+class People;
 
 namespace Ui {
 class PeopleDialog;

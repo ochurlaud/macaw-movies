@@ -20,6 +20,8 @@
 #include "MetadataPannel.h"
 #include "ui_MetadataPannel.h"
 
+#include "MacawDebug.h"
+
 MetadataPannel::MetadataPannel(QWidget *parent) :
     QWidget(parent),
     m_ui(new Ui::MetadataPannel)
@@ -45,7 +47,7 @@ void MetadataPannel::fill(const Movie &movie)
     Macaw::DEBUG_IN("[MetadataPannel] Enters fill()");
 
     // without title, it means we don't want to show the metadata
-    if (m_movie.title() == "") {
+    if (m_movie.title().isEmpty()) {
         this->hide();
 
     } else {
@@ -119,7 +121,7 @@ void MetadataPannel::resizeEvent(QResizeEvent *event)
 void MetadataPannel::setPoster()
 {
     QPixmap l_poster;
-    if (m_movie.posterPath() != "")
+    if (!m_movie.posterPath().isEmpty())
     {
         QString l_posterPath = qApp->property("postersPath").toString()
                                + m_movie.posterPath();

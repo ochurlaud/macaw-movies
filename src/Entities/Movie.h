@@ -20,15 +20,22 @@
 #ifndef MOVIE_H
 #define MOVIE_H
 
-#include <QtWidgets>
+#include <QString>
 
 #include "Entities/People.h"
 #include "Entities/Tag.h"
 
+class QDate;
+template<class T> class QList;
+class QString;
+
+class People;
+class Tag;
+
 class  Movie
 {
 public:
-    Movie();
+    explicit Movie();
     int id() const;
     void setId(const int id);
     QString title() const;
@@ -94,7 +101,5 @@ private:
     QList<People> m_peopleList;
     QList<Tag> m_tagList;
 };
-
-Q_DECLARE_METATYPE(Movie)
 
 #endif // MOVIE_H

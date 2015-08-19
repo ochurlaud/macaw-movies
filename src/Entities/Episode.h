@@ -20,15 +20,16 @@
 #ifndef EPISODE_H
 #define EPISODE_H
 
-#include "Entities/Show.h"
 #include "Entities/Movie.h"
+#include "Entities/Show.h"
 
+class Movie;
 class Show;
 
 class Episode
 {
 public:
-    Episode();
+    explicit Episode();
     int id() const;
     void setId(const int id);
     int number() const;

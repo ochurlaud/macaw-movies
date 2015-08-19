@@ -20,16 +20,15 @@
 #ifndef MACAWDEBUG_H
 #define MACAWDEBUG_H
 
-#include <QtGui>
-#include <QtWidgets>
-
-#include <QtDebug>
+#include <QObject>
 
 /**
  * @brief Debug mode using qDebug()
  */
 class MacawDebug : public QObject
 {
+    Q_OBJECT
+
 public:
     MacawDebug();
     void print(const QString);

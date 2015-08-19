@@ -20,6 +20,15 @@
 #include "MovieDialog.h"
 #include "ui_MovieDialog.h"
 
+#include <QCompleter>
+#include <QMenu>
+
+#include "enumerations.h"
+
+#include "MacawDebug.h"
+#include "ServicesManager.h"
+#include "Dialogs/PeopleDialog.h"
+
 /**
  * @brief Constructor
  * @param id of the movie to edit
@@ -518,7 +527,7 @@ void MovieDialog::on_addNewTagButton_clicked()
 
     QString newTag =  m_ui->newTagLineEdit->text();
 
-    if (newTag != "" && newTag != " ") {
+    if (!newTag.isEmpty() && newTag != " ") {
         int newTagId = databaseManager->createTag(newTag);
 
         if(newTagId > 0)  {

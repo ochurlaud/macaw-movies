@@ -22,12 +22,10 @@
 
 #include <QString>
 
-#include "enumerations.h"
-
 class PathForMovies
 {
 public:
-    PathForMovies(QString path="", bool movies=true, bool shows=true);
+    explicit PathForMovies(QString path="", bool movies=true, bool shows=true);
     int id() const;
     void setId(const int id);
     QString path() const;

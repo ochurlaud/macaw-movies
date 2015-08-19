@@ -20,6 +20,11 @@
 #include "ShowsPannel.h"
 #include "ui_ShowsPannel.h"
 
+#include "MacawDebug.h"
+#include "ServicesManager.h"
+#include "Entities/Episode.h"
+#include "Entities/Playlist.h"
+
 ShowsPannel::ShowsPannel(QWidget *parent) :
     MainPannel(parent),
     m_ui(new Ui::ShowsPannel)

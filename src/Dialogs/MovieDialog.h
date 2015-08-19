@@ -22,10 +22,12 @@
 
 #include <QDialog>
 
-#include "enumerations.h"
-#include "PeopleDialog.h"
-
 #include "Entities/Movie.h"
+
+class QListWidget;
+
+class Movie;
+class People;
 
 namespace Ui {
 class MovieDialog;

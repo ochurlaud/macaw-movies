@@ -22,15 +22,14 @@
 
 #include <QWidget>
 
-#include "Entities/Movie.h"
-
+class Movie;
 
 class MainPannel : public QWidget
 {
     Q_OBJECT
 
 public:
-    MainPannel(QWidget *parent);
+    explicit MainPannel(QWidget *parent);
     virtual void fill(QList<Movie> const &movieList){ movieList.count(); }
 
 signals:

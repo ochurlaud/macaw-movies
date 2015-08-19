@@ -22,9 +22,9 @@
 
 #include <QWidget>
 
-#include "Application.h"
 #include "Entities/Movie.h"
-#include "Entities/People.h"
+
+class Movie;
 
 namespace Ui {
 class MetadataPannel;

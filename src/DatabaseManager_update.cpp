@@ -19,6 +19,17 @@
 
 #include "DatabaseManager.h"
 
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QVariant>
+
+#include "MacawDebug.h"
+#include "Entities/Episode.h"
+#include "Entities/Movie.h"
+#include "Entities/PathForMovies.h"
+#include "Entities/Playlist.h"
+#include "Entities/Show.h"
+
 /**
  * @brief Updates a movie from database
  *
@@ -338,7 +349,7 @@ bool DatabaseManager::updatePlaylist(Playlist &playlist)
     }
 
     // Deletion of the old linked elements
-    l_query.prepare("SELECT " + m_movieFields + " "
+    l_query.prepare("SELECT " + m_movieFields +
                     "FROM movies AS m, movies_playlists AS mpl "
                     "WHERE mpl.id_movie = m.id AND mpl.id_playlist = :id_playlist");
     l_query.bindValue(":id_playlist", playlist.id());

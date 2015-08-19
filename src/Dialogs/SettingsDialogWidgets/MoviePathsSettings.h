@@ -22,9 +22,7 @@
 
 #include <QWidget>
 
-#include "ServicesManager.h"
-#include "Dialogs/SettingsDialogWidgets/CenteredCheckbox.h"
-#include "Entities/PathForMovies.h"
+class PathForMovies;
 
 namespace Ui {
 class MoviePathsSettings;
