@@ -54,12 +54,6 @@ private:
     void setHeaders();
     void addMovieToPannel(const Movie &movie);
     void removeMovieFromPlaylist(const QList<Movie> &movieList, Playlist &playlist);
-    bool permanentlyDeleteFile(QFile *movieFileToDelete);
-    bool moveFileToTrash(QList<Movie> &movieList);
-    QString unix_findTrashFolder(QString movieFilePath);
-    bool linux_moveFileToTrash(QString movieFilePath);
-    bool windows_moveFileToTrash(QString movieFilePath);
-    bool macosx_moveFileToTrash(QString movieFilePath);
 };
 
 #endif // MOVIESPANNEL_H

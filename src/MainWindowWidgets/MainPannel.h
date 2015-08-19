@@ -22,6 +22,8 @@
 
 #include <QWidget>
 
+class QFile;
+
 class Movie;
 
 class MainPannel : public QWidget
@@ -36,6 +38,15 @@ signals:
     void fillMetadataPannel(const Movie&);
     void updatePannels();
 
+protected:
+    bool permanentlyDeleteFile(QFile *movieFileToDelete);
+    bool moveFileToTrash(QList<Movie> &movieList);
+
+private:
+    QString unix_findTrashFolder(QString movieFilePath);
+    bool linux_moveFileToTrash(QString movieFilePath);
+    bool windows_moveFileToTrash(QString movieFilePath);
+    bool macosx_moveFileToTrash(QString movieFilePath);
 };
 
 #endif // MAINPANNEL_H
