@@ -27,6 +27,11 @@
 class QDate;
 class QString;
 
+/**
+ * @brief The People class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class People : public Entity
 {
 public:

@@ -30,6 +30,8 @@ class Tag;
 
 /**
  * @brief The Application class. Core of the application
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 class Application : public QApplication
 {

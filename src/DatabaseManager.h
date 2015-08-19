@@ -33,6 +33,8 @@ class Tag;
 
 /**
  * @brief Manages all the access to the database
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 class DatabaseManager : public QObject
 {

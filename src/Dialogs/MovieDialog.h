@@ -35,6 +35,8 @@ class MovieDialog;
 
 /**
  * @brief Dialog to edit the metadata of a Movie
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 class MovieDialog : public QDialog
 {

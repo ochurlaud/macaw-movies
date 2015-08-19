@@ -32,6 +32,8 @@ class PeopleDialog;
 
 /**
  * @brief Dialog to edit the metadata of a People
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 class PeopleDialog : public QDialog
 {

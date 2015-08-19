@@ -28,6 +28,11 @@ namespace Ui {
     class LeftPannel;
 }
 
+/**
+ * @brief The LeftPannel class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class LeftPannel : public QWidget
 {
     Q_OBJECT

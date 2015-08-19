@@ -24,6 +24,11 @@
 
 class QCheckBox;
 
+/**
+ * @brief Class that provides a centered checkbox (without text)
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class CenteredCheckbox : public QWidget
 {
     Q_OBJECT

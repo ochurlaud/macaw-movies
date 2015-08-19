@@ -24,6 +24,7 @@
 
 /**
  * @brief Debug mode using qDebug()
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 class MacawDebug : public QObject
 {

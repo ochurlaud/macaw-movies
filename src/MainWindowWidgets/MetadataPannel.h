@@ -30,6 +30,13 @@ namespace Ui {
 class MetadataPannel;
 }
 
+/**
+ * @brief The MetadataPannel class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ * @author Sébastien TOUZÉ <sebastien.touze@yahoo.fr>
+ * @par Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class MetadataPannel : public QWidget
 {
     Q_OBJECT

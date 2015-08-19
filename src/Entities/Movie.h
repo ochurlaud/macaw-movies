@@ -32,6 +32,11 @@ class QString;
 class People;
 class Tag;
 
+/**
+ * @brief The Movie class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class  Movie
 {
 public:

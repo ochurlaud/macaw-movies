@@ -28,6 +28,13 @@ namespace Ui {
 class SettingsDialog;
 }
 
+/**
+ * @brief The SettingsDialog class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ * @author Jani RUTANEN <ni.m.rutanen@gmail.com>
+ * @par Maintainer Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class SettingsDialog : public QDialog
 {
 Q_OBJECT

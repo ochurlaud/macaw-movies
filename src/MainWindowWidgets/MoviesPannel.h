@@ -32,6 +32,11 @@ namespace Ui {
 class MoviesPannel;
 }
 
+/**
+ * @brief The MoviesPannel class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class MoviesPannel : public MainPannel
 {
     Q_OBJECT

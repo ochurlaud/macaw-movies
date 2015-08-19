@@ -27,7 +27,11 @@ class Episode;
 namespace Ui {
 class ShowsPannel;
 }
-
+/**
+ * @brief The ShowsPannel class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class ShowsPannel : public MainPannel
 {
     Q_OBJECT

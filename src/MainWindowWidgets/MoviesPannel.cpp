@@ -34,11 +34,12 @@
 #include "ServicesManager.h"
 #include "Dialogs/MovieDialog.h"
 #include "Entities/Playlist.h"
+
 /**
  * @brief constructor
- * @author Olivier CHURLAUD <olivier@churlaud.com>
- *
  * @param parent
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 MoviesPannel::MoviesPannel(QWidget *parent) :
     MainPannel(parent),
@@ -143,13 +144,14 @@ void MoviesPannel::fill(const QList<Movie> &movieList)
 /**
  * @brief Slot triggered when the context menu is requested.
  *
+ * @description
  * 1. Create the menu.
  * 2. Check that an editable element is selected
  * 3. Add actions on the menu
  * 4. Display it
  *
- * @author Olivier CHURLAUD <olivier@churlaud.com>
  * @param point: coordinates of the cursor when requested
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 void MoviesPannel::on_customContextMenuRequested(const QPoint &point)
 {
@@ -167,8 +169,8 @@ void MoviesPannel::on_customContextMenuRequested(const QPoint &point)
                                                         l_menu);
             l_actionAddInToWatch->setData(1);
 
-            QObject::connect(l_menu, SIGNAL(triggered(QAction*)),
-                                         this, SLOT(addPlaylistMenu_triggered(QAction*)));
+            connect(l_menu, SIGNAL(triggered(QAction)),
+                    this, SLOT(addPlaylistMenu_triggered(QAction)));
 
             l_menu->addAction(l_actionAddInToWatch);
             m_ui->actionDelete->setText(tr("Move to trash"));

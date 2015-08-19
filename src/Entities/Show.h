@@ -24,6 +24,11 @@
 
 class QString;
 
+/**
+ * @brief The Show class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com
+ */
 class Show : public Entity
 {
 public:

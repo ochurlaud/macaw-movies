@@ -24,6 +24,11 @@
 
 class QString;
 
+/**
+ * @brief The Tag class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class Tag : public Entity
 {
 public:

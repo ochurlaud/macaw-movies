@@ -29,6 +29,11 @@ class FetchMetadataDialog;
 class FetchMetadataQuery;
 class Movie;
 
+/**
+ * @brief The FetchMetadata class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class FetchMetadata : public QObject
 {
 Q_OBJECT

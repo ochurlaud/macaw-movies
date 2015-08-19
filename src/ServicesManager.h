@@ -28,6 +28,10 @@
 class DatabaseManager;
 class Movie;
 
+/**
+ * @brief The ServicesManager class
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class ServicesManager : public QObject
 {
     Q_OBJECT

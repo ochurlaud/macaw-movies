@@ -22,6 +22,11 @@
 
 #include <QString>
 
+/**
+ * @brief The PathForMovies class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class PathForMovies
 {
 public:

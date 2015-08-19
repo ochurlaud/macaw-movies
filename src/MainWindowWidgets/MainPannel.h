@@ -26,6 +26,11 @@ class QFile;
 
 class Movie;
 
+/**
+ * @brief The MainPannel class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class MainPannel : public QWidget
 {
     Q_OBJECT

@@ -35,6 +35,7 @@ class MainWindow;
 
 /**
  * @brief Implementation of the main window
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
  */
 class MainWindow : public QMainWindow
 {

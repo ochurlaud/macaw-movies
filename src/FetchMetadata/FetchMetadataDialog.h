@@ -34,6 +34,11 @@ namespace Ui {
 class FetchMetadataDialog;
 }
 
+/**
+ * @brief The FetchMetadataDialog class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class FetchMetadataDialog : public QDialog
 {
     Q_OBJECT

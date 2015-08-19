@@ -26,6 +26,11 @@
 class Movie;
 class Show;
 
+/**
+ * @brief The Episode class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class Episode
 {
 public:

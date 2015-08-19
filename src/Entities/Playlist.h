@@ -29,6 +29,11 @@ template<class T> class QList;
 
 class Movie;
 
+/**
+ * @brief The Playlist class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class Playlist : public Entity
 {
 public:

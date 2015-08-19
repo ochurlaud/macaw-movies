@@ -28,6 +28,11 @@ namespace Ui {
 class MoviePathsSettings;
 }
 
+/**
+ * @brief The MoviePathsSettings class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class MoviePathsSettings : public QWidget
 {
     Q_OBJECT

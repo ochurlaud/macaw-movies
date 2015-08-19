@@ -32,6 +32,13 @@ class QString;
 class Application;
 class Movie;
 
+/**
+ * @brief The FetchMetadataQuery class
+ *
+ * @author Olivier CHURLAUD <olivier@churlaud.com>
+ * @author Sébastien TOUZÉ <sebastien.touze@yahoo.fr>
+ * @par Olivier CHURLAUD <olivier@churlaud.com>
+ */
 class FetchMetadataQuery : public QObject
 {
     Q_OBJECT
