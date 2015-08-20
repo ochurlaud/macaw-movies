@@ -225,8 +225,7 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
                 l_people.setId(l_personId);
                 l_people.setType(People::Actor);
                 m_movie.addPeople(l_people);
-                m_peopleRequestQueue.append(l_personId);
-                if (l_personId != 0)
+                if (l_personId != 0  && !m_peopleRequestQueue.contains(l_personId))
                 {
                     m_peopleRequestQueue.append(l_personId);
                 }
@@ -242,7 +241,7 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
                     l_people.setId(l_personId);
                     l_people.setType(People::Director);
                     m_movie.addPeople(l_people);
-                    if (l_personId != 0)
+                    if (l_personId != 0 && !m_peopleRequestQueue.contains(l_personId))
                     {
                         m_peopleRequestQueue.append(l_personId);
                     }
@@ -253,8 +252,7 @@ void FetchMetadataQuery::on_movieRequestResponse(QNetworkReply *reply)
                     l_people.setId(l_personId);
                     l_people.setType(People::Producer);
                     m_movie.addPeople(l_people);
-                    m_peopleRequestQueue.append(l_personId);
-                    if (l_personId != 0)
+                    if (l_personId != 0 && !m_peopleRequestQueue.contains(l_personId))
                     {
                         m_peopleRequestQueue.append(l_personId);
                     }
@@ -290,7 +288,24 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
     if (!l_stream.isEmpty()) {
         QJsonObject l_jsonObject = l_stream.object();
         if (!l_jsonObject.isEmpty()) {
+            if (l_jsonObject.contains("status_code")
+                    && l_jsonObject.value("status_code").toInt() == 25) {
+                Macaw::DEBUG("[FetchMetadataQuery] To many request, wait 10s");
+                QTime dieTime = QTime::currentTime().addSecs(10);
+                  while (QTime::currentTime() < dieTime)
+                      QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+
+                  m_peopleRequestQueue.prepend(m_peopleRequestProcessing.takeLast());
+                  emit(peopleResponse());
+
+                  return ;
+            }
             int l_tmdbID = l_jsonObject.value("id").toInt();
+            if (l_tmdbID == 0) {
+                Macaw::DEBUG_IN("---THIS SHOULD NOT HAPPEN ! id = 0-----");
+                Macaw::DEBUG(l_receivedData);
+                Macaw::DEBUG_OUT("-------------");
+            }
             Macaw::DEBUG("[FetchMetadataQuery] Processing response for id=" +QString::number(l_tmdbID));
             l_people.setName(l_jsonObject.value("name").toString());
             l_people.setBiography(l_jsonObject.value("biography").toString());
@@ -309,6 +324,7 @@ void FetchMetadataQuery::on_peopleRequestResponse(QNetworkReply *reply)
             }
             m_movie.setPeopleList(l_peopleList);
             // Processing done, id removed from the list
+            Macaw::DEBUG("[FetchMetadataQuery] Processing done, ["+QString::number(l_tmdbID)+ "] removed from list");
             m_peopleRequestProcessing.removeOne(l_tmdbID);
         }
     }    
