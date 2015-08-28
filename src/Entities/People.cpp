@@ -23,6 +23,8 @@ People::People(const QString name) :
     Entity(name)
 {
     m_biography = "";
+    m_tmdbId = 0;
+    m_imported = false;
 }
 
 QDate People::birthday() const

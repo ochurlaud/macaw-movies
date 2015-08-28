@@ -56,6 +56,7 @@ DatabaseManager::DatabaseManager()
                     "m.suffix, "
                     "m.rank, "
                     "m.imported, "
+                    "m.id_tmdb, "
                     "m.show ";
 
     m_episodeFields = "e.id, "
@@ -71,7 +72,9 @@ DatabaseManager::DatabaseManager()
     m_peopleFields = "p.id, "
                      "p.name, "
                      "p.birthday, "
-                     "p.biography ";
+                     "p.biography, "
+                     "p.imported, "
+                     "p.id_tmdb ";
 
     m_tagFields = "t.id, "
                   "t.name ";
@@ -107,7 +110,8 @@ Movie DatabaseManager::hydrateMovie(QSqlQuery &query)
     l_movie.setSuffix(query.value(13).toString());
     l_movie.setRank(query.value(14).toInt());
     l_movie.setImported(query.value(14).toBool());
-    l_movie.setShow(query.value(15).toBool());
+    l_movie.setTmdbId(query.value(15).toInt());
+    l_movie.setShow(query.value(16).toBool());
     setTagsToMovie(l_movie);
     setPeopleToMovie(l_movie);
 
@@ -192,9 +196,12 @@ People DatabaseManager::hydratePeople(QSqlQuery &query)
     l_people.setName(query.value(1).toString());
     l_people.setBirthday(QDate::fromString(query.value(2).toString(), DATE_FORMAT));
     l_people.setBiography(query.value(3).toString());
-    if (query.value(4).isValid())
+    l_people.setImported(query.value(4).toBool());
+    l_people.setTmdbId(query.value(5).toInt());
+
+    if (query.value(6).isValid())
     {
-        l_people.setType(query.value(4).toInt());
+        l_people.setType(query.value(6).toInt());
     }
 
     return l_people;
@@ -342,6 +349,15 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
                 }
             }
 
+            if (!m_db.record("movies").contains("id_tmdb")) {
+                l_ret &= l_query.exec("ALTER TABLE movies ADD id_tmdb INTEGER");
+                l_ret &= l_query.exec("UPDATE movies SET id_tmdb = 0");
+                if(!l_ret)
+                {
+                    Macaw::DEBUG(l_query.lastError().text());
+                }
+            }
+
             if (!m_db.record("movies").contains("show")) {
                 l_ret &= l_query.exec("ALTER TABLE movies ADD show BOOLEAN");
                 l_ret &= l_query.exec("UPDATE movies SET show = 0");
@@ -367,6 +383,7 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
                 Macaw::DEBUG_IN("[DatabaseManager] upgrade people table");
                 l_ret &= l_query.exec("ALTER TABLE people ADD id_tmdb INTEGER");
                 l_ret &= l_query.exec("ALTER TABLE people ADD imported BOOLEAN");
+                l_ret &= l_query.exec("UPDATE people SET imported = 0, id_tmdb = 0");
                 if(!l_ret){
                     Macaw::DEBUG(l_query.lastError().text());
                 }
@@ -375,7 +392,6 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
             if (!m_db.record("movies").contains("id_path")) {
                 Macaw::DEBUG_IN("[DatabaseManager] upgrade movies table");
                 l_ret &= l_query.exec("ALTER TABLE movies ADD id_path INTEGER");
-                l_ret &= l_query.exec("ALTER TABLE movies ADD id_tmdb INTEGER");
                 if(!l_ret){
                     Macaw::DEBUG(l_query.lastError().text());
                 }
@@ -478,6 +494,7 @@ bool DatabaseManager::createTables()
     if (m_db.isOpen())
     {
         QSqlQuery l_query(m_db);
+        l_ret &= createTablePeople(l_query);
 
         if(m_db.tables().contains("config"))
         {

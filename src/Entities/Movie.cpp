@@ -34,6 +34,7 @@ Movie::Movie()
     m_rank = 0;
     m_imported = false;
     m_show = false;
+    m_tmdbId = 0;
 }
 
 int Movie::id() const
