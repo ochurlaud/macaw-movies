@@ -73,6 +73,8 @@ public:
     void setSuffix(const QString suffix);
     QString synopsis() const;
     void setSynopsis(const QString synopsis);
+    int tmdbId() const;
+    void setTmdbId(const int id);
     QList<People> peopleList() const;
     QList<People> peopleList(const int type) const;
     void setPeopleList(const QList<People> &peopleList);
@@ -83,6 +85,7 @@ public:
     void setTagList(const QList<Tag> &tagList);
     void addTag(const Tag &tag);
     void removeTag(const Tag &tag);
+
     bool operator== (const Movie &other);
     bool operator!= (const Movie &other);
 
@@ -105,6 +108,7 @@ private:
     QString m_synopsis;
     QList<People> m_peopleList;
     QList<Tag> m_tagList;
+    int m_tmdbId;
 };
 
 #endif // MOVIE_H

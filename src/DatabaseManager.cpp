@@ -363,9 +363,19 @@ bool DatabaseManager::upgradeDB(int fromVersion, int toVersion)
                 Macaw::DEBUG_OUT("[DatabaseManager] upgrade path_list table finished");
             }
 
+            if (!m_db.record("people").contains("id_tmdb")) {
+                Macaw::DEBUG_IN("[DatabaseManager] upgrade people table");
+                l_ret &= l_query.exec("ALTER TABLE people ADD id_tmdb INTEGER");
+                l_ret &= l_query.exec("ALTER TABLE people ADD imported BOOLEAN");
+                if(!l_ret){
+                    Macaw::DEBUG(l_query.lastError().text());
+                }
+            }
+
             if (!m_db.record("movies").contains("id_path")) {
                 Macaw::DEBUG_IN("[DatabaseManager] upgrade movies table");
                 l_ret &= l_query.exec("ALTER TABLE movies ADD id_path INTEGER");
+                l_ret &= l_query.exec("ALTER TABLE movies ADD id_tmdb INTEGER");
                 if(!l_ret){
                     Macaw::DEBUG(l_query.lastError().text());
                 }
@@ -527,6 +537,7 @@ bool DatabaseManager::createTableMovies(QSqlQuery &query)
                   "suffix VARCHAR(10), "
                   "rank INTEGER, "
                   "imported BOOLEAN, "
+                  "id_tmdb INTEGER, "
                   "show BOOLEAN, "
                   "UNIQUE (id_path, file_path) ON CONFLICT IGNORE "
                   ")");
@@ -552,7 +563,9 @@ bool DatabaseManager::createTablePeople(QSqlQuery &query)
                   "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, "
                   "name VARCHAR(200) NOT NULL, "
                   "birthday VARCHAR(10), "
-                  "biography TEXT"
+                  "biography TEXT, "
+                  "imported BOOLEAN, "
+                  "id_tmdb INTEGER"
                   ")");
 
     if (!query.exec()) {

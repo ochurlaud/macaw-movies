@@ -55,6 +55,26 @@ void People::setType(const int type)
     m_type = type;
 }
 
+int People::tmdbId() const
+{
+    return m_tmdbId;
+}
+
+void People::setTmdbId(const int id)
+{
+    m_tmdbId = id;
+}
+
+bool People::imported() const
+{
+    return m_imported;
+}
+
+void People::setImported(const bool imported)
+{
+    m_imported = imported;
+}
+
 bool People::operator== (const People &other)
 {
     if ( this->id() == other.id() &&

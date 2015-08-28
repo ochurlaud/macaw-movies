@@ -74,8 +74,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ServicesManager *servicesManager = ServicesManager::instance();
     connect(servicesManager, SIGNAL(requestPannelsUpdate()),
             this, SLOT(selfUpdate()));
-    connect(servicesManager, SIGNAL(requestTempStatusBarMessage(QString, int)),
-            this, SLOT(putTempStatusBarMessage(QString, int)));
+    connect(servicesManager, SIGNAL(requestTempStatusBarMessage(QString,int)),
+            this, SLOT(putTempStatusBarMessage(QString,int)));
     connect(m_leftPannel, SIGNAL(updateMainPannel()),
             this, SLOT(updateMainPannel()));
     connect(m_mainPannel, SIGNAL(fillMetadataPannel(Movie)),

@@ -17,8 +17,8 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SETTINGDIALOG_H
-#define SETTINGDIALOG_H
+#ifndef SETTINGSDIALOG_H
+#define SETTINGSDIALOG_H
 
 #include <QDialog>
 

@@ -17,6 +17,9 @@
  * along with Macaw-Movies.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef INCLUDE_VAR
+#define INCLUDE_VAR
+
 // software version major.minor.patch (eg: 1.3.2)
 #define VERSION_MAJOR "0"
 #define VERSION_MINOR "5"
@@ -28,3 +31,5 @@
 #define DB_VERSION 50
 #define APP_NAME "Macaw-Movies"
 #define APP_NAME_SMALL "macaw-movies"
+
+#endif // INCLUDE_VAR

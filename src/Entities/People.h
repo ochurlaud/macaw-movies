@@ -42,7 +42,10 @@ public:
     void setBiography(const QString biography);
     int type() const;
     void setType(const int type);
-
+    int tmdbId() const;
+    void setTmdbId(const int id);
+    bool imported() const;
+    void setImported(const bool imported);
     bool operator== (const People&);
     bool operator!= (const People&);
 
@@ -52,6 +55,8 @@ private:
     QDate m_birthday;
     QString m_biography;
     int m_type;
+    int m_tmdbId;
+    bool m_imported;
 };
 
 #endif // PEOPLE_H

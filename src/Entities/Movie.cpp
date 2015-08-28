@@ -136,6 +136,16 @@ void Movie::setSynopsis(const QString synopsis)
     m_synopsis = synopsis;
 }
 
+int Movie::tmdbId() const
+{
+    return m_tmdbId;
+}
+
+void Movie::setTmdbId(const int id)
+{
+    m_tmdbId = id;
+}
+
 QString Movie::posterPath() const
 {
     return m_posterPath;
