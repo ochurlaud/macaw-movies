@@ -50,7 +50,8 @@ bool DatabaseManager::updateMovie(Movie &movie)
                         "format = :format, "
                         "rank = :rank, "
                         "poster_path = :poster_path, "
-                        "imported = :imported "
+                        "imported = :imported, "
+                        "id_tmdb = :id_tmdb "
                     "WHERE id = :id");
     l_query.bindValue(":title", movie.title());
     l_query.bindValue(":original_title", movie.originalTitle());
@@ -62,6 +63,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
     l_query.bindValue(":rank", movie.rank());
     l_query.bindValue(":poster_path", movie.posterPath());
     l_query.bindValue(":imported", movie.isImported());
+    l_query.bindValue(":id_tmdb", movie.tmdbId());
     l_query.bindValue(":id", movie.id());
 
 
@@ -154,11 +156,15 @@ bool DatabaseManager::updatePeople(People &people)
     l_query.prepare("UPDATE people "
                     "SET name = :name, "
                         "birthday = :birthday, "
-                        "biography = :biography "
+                        "biography = :biography, "
+                        "imported = :imported, "
+                        "id_tmdb = :id_tmdb "
                     "WHERE id = :id");
     l_query.bindValue(":name", people.name());
     l_query.bindValue(":birthday",  people.birthday().toString(DATE_FORMAT));
     l_query.bindValue(":biography", people.biography());
+    l_query.bindValue(":imported", people.isImported());
+    l_query.bindValue(":id_tmdb", people.tmdbId());
     l_query.bindValue(":id", people.id());
 
     if (!l_query.exec())

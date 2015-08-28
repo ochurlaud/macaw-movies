@@ -44,7 +44,7 @@ public:
     void setType(const int type);
     int tmdbId() const;
     void setTmdbId(const int id);
-    bool imported() const;
+    bool isImported() const;
     void setImported(const bool imported);
     bool operator== (const People&);
     bool operator!= (const People&);

@@ -67,7 +67,7 @@ void People::setTmdbId(const int id)
     m_tmdbId = id;
 }
 
-bool People::imported() const
+bool People::isImported() const
 {
     return m_imported;
 }

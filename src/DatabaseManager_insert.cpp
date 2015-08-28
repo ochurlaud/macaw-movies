@@ -39,8 +39,41 @@
 bool DatabaseManager::insertNewMovie(Movie &movie, int moviesPathId)
 {
     QSqlQuery l_query(m_db);
-    l_query.prepare("INSERT INTO movies(title, original_title, release_date, country, duration, synopsis, id_path, file_path, poster_path, colored, format, suffix, rank, imported, show) "
-                    "VALUES (:title, :original_title, :release_date, :country, :duration, :synopsis, :id_path, :file_path, :poster_path, :colored, :format, :suffix, :rank, :imported, :show)");
+    l_query.prepare("INSERT INTO movies ("
+                                            "title, "
+                                            "original_title, "
+                                            "release_date, "
+                                            "country, "
+                                            "duration, "
+                                            "synopsis, "
+                                            "id_path, "
+                                            "file_path, "
+                                            "poster_path, "
+                                            "colored, "
+                                            "format, "
+                                            "suffix, "
+                                            "rank, "
+                                            "imported, "
+                                            "id_tmdb, "
+                                            "show"
+                                        ") VALUES ("
+                                            ":title, "
+                                            ":original_title, "
+                                            ":release_date, "
+                                            ":country, "
+                                            ":duration, "
+                                            ":synopsis, "
+                                            ":id_path, "
+                                            ":file_path, "
+                                            ":poster_path, "
+                                            ":colored, "
+                                            ":format, "
+                                            ":suffix, "
+                                            ":rank, "
+                                            ":imported, "
+                                            ":id_tmdb, "
+                                            ":show"
+                                        ")");
     l_query.bindValue(":title", movie.title());
     l_query.bindValue(":original_title", movie.originalTitle()   );
     l_query.bindValue(":release_date", movie.releaseDate().toString(DATE_FORMAT));
@@ -55,6 +88,7 @@ bool DatabaseManager::insertNewMovie(Movie &movie, int moviesPathId)
     l_query.bindValue(":suffix", movie.suffix());
     l_query.bindValue(":rank", movie.rank());
     l_query.bindValue(":imported", movie.isImported());
+    l_query.bindValue(":id_tmdb", movie.tmdbId());
     l_query.bindValue(":show", movie.isShow());
 
     if (!l_query.exec())
@@ -167,11 +201,25 @@ bool DatabaseManager::insertNewPeople(People &people)
             return false;
         }
     } else {
-        l_query.prepare("INSERT INTO people (name, birthday, biography) "
-                        "VALUES (:name, :birthday, :biography)");
+        l_query.prepare("INSERT INTO people ("
+                                                "name, "
+                                                "birthday, "
+                                                "biography, "
+                                                "imported, "
+                                                "id_tmdb "
+                                            ") VALUES ("
+                                                ":name, "
+                                                ":birthday, "
+                                                ":biography, "
+                                                ":imported, "
+                                                ":id_tmdb "
+                                            ")"
+                        );
         l_query.bindValue(":name", people.name());
         l_query.bindValue(":birthday", people.birthday().toString(DATE_FORMAT));
         l_query.bindValue(":biography", people.biography());
+        l_query.bindValue(":imported", people.isImported());
+        l_query.bindValue(":id_tmdb", people.tmdbId());
 
         if (!l_query.exec()) {
             Macaw::DEBUG("In insertNewPeople():");
