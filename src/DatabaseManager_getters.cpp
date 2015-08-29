@@ -83,7 +83,7 @@ QList<Movie> DatabaseManager::getAllMovies(const bool show, const QString fieldO
 
     while(l_query.next())
     {
-        Movie l_movie = hydrateMovie(l_query);
+        Movie l_movie = hydrateMovieOnly(l_query);
         l_movieList.append(l_movie);
     }
 
@@ -123,7 +123,7 @@ QList<Movie> DatabaseManager::getMoviesByPeople(const int id,
 
     while(l_query.next())
     {
-        Movie l_movie = hydrateMovie(l_query);
+        Movie l_movie = hydrateMovieOnly(l_query);
         l_movieList.append(l_movie);
     }
 
@@ -178,7 +178,7 @@ QList<Movie> DatabaseManager::getMoviesByTag(const int id,
 
     while(l_query.next())
     {
-        Movie l_movie = hydrateMovie(l_query);
+        Movie l_movie = hydrateMovieOnly(l_query);
         l_movieList.append(l_movie);
     }
 
@@ -229,7 +229,7 @@ QList<Movie> DatabaseManager::getMoviesByPlaylist(const int id,
 
     while(l_query.next())
     {
-        Movie l_movie = hydrateMovie(l_query);
+        Movie l_movie = hydrateMovieOnly(l_query);
         l_movieList.append(l_movie);
     }
 
@@ -276,7 +276,7 @@ QList<Movie> DatabaseManager::getMoviesByPath(const PathForMovies &path, const Q
 
     while(l_query.next())
     {
-        Movie l_movie = hydrateMovie(l_query);
+        Movie l_movie = hydrateMovieOnly(l_query);
         l_movieList.append(l_movie);
     }
 
@@ -308,7 +308,7 @@ QList<Movie> DatabaseManager::getMoviesWithoutPeople(const int type,
 
     while(l_query.next())
     {
-        Movie l_movie = hydrateMovie(l_query);
+        Movie l_movie = hydrateMovieOnly(l_query);
         l_movieList.append(l_movie);
     }
 
@@ -337,17 +337,25 @@ QList<Movie> DatabaseManager::getMoviesWithoutTag(const bool show, const QString
 
     while(l_query.next())
     {
-        Movie l_movie = hydrateMovie(l_query);
+        Movie l_movie = hydrateMovieOnly(l_query);
         l_movieList.append(l_movie);
     }
 
     return l_movieList;
 }
 
+/**
+ * @brief DatabaseManager::getMoviesByAny
+ * @param text
+ * @param show
+ * @param fieldOrder
+ * @return
+ */
 QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
                                              const bool show,
                                              const QString fieldOrder)
 {
+    // @TODO: too long
     QList<Movie> l_movieList;
     QSqlQuery l_query(m_db);
     QStringList l_splittedText = text.split(' ');
@@ -396,7 +404,7 @@ QList<Movie> DatabaseManager::getMoviesByAny(const QString text,
 
     while(l_query.next())
     {
-        Movie l_movie = hydrateMovie(l_query);
+        Movie l_movie = hydrateMovieOnly(l_query);
         l_movieList.append(l_movie);
     }
 
@@ -424,7 +432,7 @@ QList<Movie> DatabaseManager::getMoviesNotImported(const bool show, const QStrin
 
     while(l_query.next())
     {
-        Movie l_movie = hydrateMovie(l_query);
+        Movie l_movie = hydrateMovieOnly(l_query);
         l_movieList.append(l_movie);
     }
 
@@ -744,7 +752,7 @@ QList<People> DatabaseManager::getPeopleByName(const QString name,
 
     if (!l_query.exec())
     {
-        Macaw::DEBUG("In peopleByName(QString):");
+        Macaw::DEBUG("In getPeopleByName(QString):");
         Macaw::DEBUG(l_query.lastError().text());
     }
 
@@ -754,8 +762,39 @@ QList<People> DatabaseManager::getPeopleByName(const QString name,
         l_peopleList.append(l_people);
     }
 
-    Macaw::DEBUG("[DatabaseManager] peopleByName returns "
+    Macaw::DEBUG("[DatabaseManager] getPeopleByName returns "
           + QString::number(l_peopleList.count()) + " people");
+
+    return l_peopleList;
+}
+
+QList<People> DatabaseManager::getPeopleByMovie(const Movie &movie,
+                               int type,
+                               const QString fieldOrder)
+{
+    QList<People> l_peopleList;
+    QSqlQuery l_query(m_db);
+
+    l_query.prepare("SELECT " + m_peopleFields +
+                    "FROM people AS p, movies_people AS mp "
+                    "WHERE mp.id_people = p.id "
+                        "AND mp.type = :type "
+                        "AND mp.id_movie = :id_movie "
+                    "ORDER BY " + fieldOrder);
+    l_query.bindValue(":type", type);
+    l_query.bindValue(":id_movie", movie.id());
+
+    if (!l_query.exec())
+    {
+        Macaw::DEBUG("In getPeopleByMovie:");
+        Macaw::DEBUG(l_query.lastError().text());
+    }
+
+    while(l_query.next())
+    {
+        People l_people = hydratePeople(l_query);
+        l_peopleList.append(l_people);
+    }
 
     return l_peopleList;
 }
@@ -804,7 +843,7 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
 
     if (!l_query.exec())
     {
-        Macaw::DEBUG("In peopleByAny():");
+        Macaw::DEBUG("In getPeopleByAny():");
         Macaw::DEBUG(l_query.lastError().text());
     }
 
@@ -814,7 +853,7 @@ QList<People> DatabaseManager::getPeopleByAny(QString text, int type, QString fi
         l_peopleList.append(l_people);
     }
 
-    Macaw::DEBUG("[DatabaseManager] peopleByAny returns "
+    Macaw::DEBUG("[DatabaseManager] getPeopleByAny returns "
           + QString::number(l_peopleList.count()) + " people");
 
     return l_peopleList;

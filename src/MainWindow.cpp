@@ -226,13 +226,10 @@ QList<Movie> MainWindow::moviesToDisplay(int id, bool movieOrShow)
  * @brief Slot triggered when enter pressed in the search field
  * Call `updatePannels()`
  */
-void MainWindow::on_searchEdit_textChanged()
+void MainWindow::on_searchEdit_editingFinished()
 {
-    if (m_ui->searchEdit->text().count() > 3) {
-        Macaw::DEBUG("[MainWindow] editing finished on searchEdit");
-
-        this->updatePannels();
-    }
+    Macaw::DEBUG("[MainWindow] editing finished on searchEdit");
+    this->updatePannels();
 }
 
 /**

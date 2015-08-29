@@ -98,7 +98,7 @@ void LeftPannel::setElementIdList()
             {
                 case Macaw::isPeople:
                 {
-                    QList<People> l_peopleList = l_movie.peopleList(m_typePeople);
+                    QList<People> l_peopleList = databaseManager->getPeopleByMovie(l_movie, m_typePeople);
                     this->updateElementIdList(l_peopleList);
                     break;
                 }
@@ -155,6 +155,7 @@ void LeftPannel::fillListWidget()
         this->addEntityToListWidget(l_entity);
     }
 
+    // @TODO: this loop is too long
     foreach(int l_objectId, m_elementIdList) {
         if(l_objectId == -1) {
             // First space needed for sorting

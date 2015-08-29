@@ -122,6 +122,7 @@ public:
     People getOnePeopleByName(const QString name);
     QList<People> getPeopleUsedByType(const int type, const QString fieldOrder = "name");
     QList<People> getPeopleByName(const QString name, const QString fieldOrder = "name");
+    QList<People> getPeopleByMovie(const Movie &movie, int type, const QString fieldOrder = "name");
     QList<People> getPeopleByAny(const QString text, const int type, const QString fieldOrder = "name");
 
     // Tags
@@ -149,13 +150,13 @@ public:
 private:
     // Other functions for getters
     void setMovieToEpisode(Episode &episode);
-    void setshowToEpisode(Episode &episode);
     void setPeopleToMovie(Movie &movie);
     void setTagsToMovie(Movie &movie);
     void setMoviesToPlaylist(Playlist &playlist);
     Episode hydrateEpisode(QSqlQuery &query);
     Episode hydrateEpisode(QSqlQuery &query, const Movie &movie);
     Movie hydrateMovie(QSqlQuery &query);
+    Movie hydrateMovieOnly(QSqlQuery &query);
     People hydratePeople(QSqlQuery &query);
     Show hydrateShow(QSqlQuery &query);
     Tag hydrateTag(QSqlQuery &query);

@@ -85,12 +85,27 @@ DatabaseManager::DatabaseManager()
 }
 
 /**
- * @brief Hydrates a movie from the database
+ * @brief Hydrates a movie from the database and all the corresponding lists
  *
  * @param QSqlQuery containing the data
  * @return Movie hydrated object
  */
 Movie DatabaseManager::hydrateMovie(QSqlQuery &query)
+{
+    Movie l_movie = hydrateMovieOnly(query);
+    setTagsToMovie(l_movie);
+    setPeopleToMovie(l_movie);
+
+    return l_movie;
+}
+
+/**
+ * @brief Hydrates a movie from the database
+ *
+ * @param QSqlQuery containing the data
+ * @return Movie hydrated object
+ */
+Movie DatabaseManager::hydrateMovieOnly(QSqlQuery &query)
 {
     Movie l_movie;
     l_movie.setId(query.value(0).toInt());
@@ -112,12 +127,9 @@ Movie DatabaseManager::hydrateMovie(QSqlQuery &query)
     l_movie.setImported(query.value(14).toBool());
     l_movie.setTmdbId(query.value(15).toInt());
     l_movie.setShow(query.value(16).toBool());
-    setTagsToMovie(l_movie);
-    setPeopleToMovie(l_movie);
 
     return l_movie;
 }
-
 
 /**
  * @brief Hydrates an episode (from a show) from the database
