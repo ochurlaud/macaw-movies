@@ -226,11 +226,13 @@ QList<Movie> MainWindow::moviesToDisplay(int id, bool movieOrShow)
  * @brief Slot triggered when enter pressed in the search field
  * Call `updatePannels()`
  */
-void MainWindow::on_searchEdit_returnPressed()
+void MainWindow::on_searchEdit_textChanged()
 {
-    Macaw::DEBUG("[MainWindow] editing finished on searchEdit");
+    if (m_ui->searchEdit->text().count() > 3) {
+        Macaw::DEBUG("[MainWindow] editing finished on searchEdit");
 
-    this->updatePannels();
+        this->updatePannels();
+    }
 }
 
 /**
@@ -268,15 +270,12 @@ void MainWindow::onStartFetchingMetadata(const QList<Movie> &movieList)
 void MainWindow::updatePannels()
 {
     Macaw::DEBUG_IN("[MainWindow] Enters updatePannels()");
-
     QString l_text = m_ui->searchEdit->text();
 
     ServicesManager *servicesManager = ServicesManager::instance();
     servicesManager->setMatchingMovieList(l_text, m_moviesOrShows);
 
     m_leftPannel->fill();
-    QList<Movie> l_movieList = moviesToDisplay(m_leftPannel->selectedId(), m_moviesOrShows);
-    m_mainPannel->fill(l_movieList);
     Macaw::DEBUG_OUT("[MainWindow] Exits updatePannels()");
 }
 

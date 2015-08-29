@@ -122,7 +122,6 @@ void LeftPannel::setElementIdList()
  */
 template<typename T> void LeftPannel::updateElementIdList(const QList<T> &entityList)
 {
-    Macaw::DEBUG_IN("[LeftPannel] Enters updateElementIdList");
     if(entityList.isEmpty()
        && !m_elementIdList.contains(-1)
       ) {
@@ -133,8 +132,6 @@ template<typename T> void LeftPannel::updateElementIdList(const QList<T> &entity
             m_elementIdList.append(l_entity.id());
         }
     }
-
-    Macaw::DEBUG_OUT("[LeftPannel] Exits updateElementIdList");
 }
 
 /**
@@ -196,8 +193,6 @@ void LeftPannel::fillListWidget()
  */
 void LeftPannel::addEntityToListWidget(const Entity &entity)
 {
-    Macaw::DEBUG_IN("[LeftPannel] Enters addEntityToListWidget()");
-
     QListWidgetItem *l_item = new QListWidgetItem(entity.name());
     l_item->setData(Macaw::ObjectId, entity.id());
     l_item->setData(Macaw::ObjectType, m_typeElement);
@@ -208,7 +203,6 @@ void LeftPannel::addEntityToListWidget(const Entity &entity)
     }
 
     m_ui->listWidget->addItem(l_item);
-    Macaw::DEBUG_OUT("[LeftPannel] Exits addEntityToListWidget()");
 }
 
 /**

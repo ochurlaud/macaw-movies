@@ -50,7 +50,7 @@ private slots:
     void selfUpdate();
     void updateMainPannel();
     void addNewMovies();
-    void on_searchEdit_returnPressed();
+    void on_searchEdit_textChanged();
     void on_actionAbout_triggered();
     void closeEvent(QCloseEvent *event);
     void fillMetadataPannel(const Movie &movie);
