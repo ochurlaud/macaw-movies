@@ -775,7 +775,7 @@ QList<People> DatabaseManager::getPeopleByMovie(const Movie &movie,
     QList<People> l_peopleList;
     QSqlQuery l_query(m_db);
 
-    l_query.prepare("SELECT " + m_peopleFields +
+    l_query.prepare("SELECT " + m_peopleFields +", mp.type "
                     "FROM people AS p, movies_people AS mp "
                     "WHERE mp.id_people = p.id "
                         "AND mp.type = :type "

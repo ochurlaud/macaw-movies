@@ -143,8 +143,6 @@ bool DatabaseManager::addPeopleToMovie(People &people, Movie &movie, const int t
         return false;
     }
 
-    movie = getOneMovieById(movie.id());
-
     return true;
 }
 

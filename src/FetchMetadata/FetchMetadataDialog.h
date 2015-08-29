@@ -44,7 +44,7 @@ class FetchMetadataDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit FetchMetadataDialog(Movie movie, QList<Movie> moviesPropositionList, QWidget *parent = 0);
+    explicit FetchMetadataDialog(const Movie &movie, const QList<Movie> amoviesPropositionList, QWidget *parent = 0);
     ~FetchMetadataDialog();
     void setMovieList(const QList<Movie> &movieList);
 

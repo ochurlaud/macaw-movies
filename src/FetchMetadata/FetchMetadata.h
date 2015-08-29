@@ -42,16 +42,19 @@ public:
     explicit FetchMetadata(QObject *parent = 0);
     ~FetchMetadata();
     void addMoviesToQueue(const QList<Movie> &movieList);
+    void addPeopleToQueue(const QList<People> &peopleList);
 
 signals:
     void jobDone();
     void exitInitWaitingLoop();
     void updatedMovie();
+    void updatedPeople();
 
 private slots:
     void initTimerDone();
     void processPrimaryResponse(const QList<Movie> &movieList);
     void processMovieResponse(const Movie &receivedMovie);
+    void processPeopleResponse(const People &receivedMovie);
     void on_selectedMovie(const Movie &movie);
     void on_searchMovies(const QString title);
     void processPrimaryResponseDialog(const QList<Movie> &movieList);
@@ -70,7 +73,9 @@ private:
     FetchMetadataDialog *m_fetchMetadataDialog;
 
     Movie m_movie;
+    People m_people;
     QList<Movie> m_movieQueue;
+    QList<People> m_peopleQueue;
     bool m_askUser;
     bool m_running;
     int m_initialMovieQueueSize, m_moviesProcessed;
@@ -78,6 +83,8 @@ private:
     void openFetchMetadataDialog(const Movie &movie, const QList<Movie> &accurateList);
     void updateFetchMetadataDialog(const QList<Movie> &updatedList);
     void startProcess();
+    void startMovieProcess();
+    void startPeopleProcess();
 };
 
 #endif // FETCH_H

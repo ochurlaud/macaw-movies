@@ -57,7 +57,7 @@ signals:
     void primaryResponse(const QList<Movie>&);
     void movieResponse(const Movie&);
     void networkError(QString);
-    void peopleResponse();
+    void peopleResponse(const People&);
 
 private slots:
     void on_initRequestResponse(QNetworkReply *reply);
@@ -65,19 +65,17 @@ private slots:
     void on_movieRequestResponse(QNetworkReply *reply);
     void on_peopleRequestResponse(QNetworkReply *reply);
     void on_posterRequestResponse(QNetworkReply *reply);
-    void on_peopleResponse();
     void slotError(int error);
 
 private:
-    QNetworkAccessManager *m_networkManager;
-    QNetworkAccessManager *m_networkManager2;
+    QNetworkAccessManager *m_nmMovies;
+    QNetworkAccessManager *m_nmPeople;
+    QNetworkAccessManager *m_nmPosters;
     QString m_posterUrl;
     bool m_initialized;
     Application *m_app;
     Movie m_movie;
-    QList<int> m_peopleRequestQueue;
-    QList<int> m_peopleRequestProcessing;
-
+    People m_people;
 };
 
 #endif // FETCHMETADATAQUERY_H

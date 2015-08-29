@@ -28,6 +28,7 @@
 
 #include "Application.h"
 #include "MacawDebug.h"
+#include "Entities/Movie.h"
 
 int main(int argv, char **args)
 {

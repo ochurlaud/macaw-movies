@@ -57,12 +57,21 @@ void FetchMetadata::addMoviesToQueue(const QList<Movie> &movieList)
     Macaw::DEBUG("[FetchMetadata] Add movies to the queue list");
 
     m_movieQueue.append(movieList);
-    if (m_running == false) {
-        this->startProcess();
-        m_running = true;
+    if (m_movieQueue.count() == movieList.count()) {
+        this->startMovieProcess();
     }
 }
 
+void FetchMetadata::addPeopleToQueue(const QList<People> &peopleList)
+{
+    Macaw::DEBUG("[FetchMetadata] Add people to the queue list");
+
+    m_peopleQueue.append(peopleList);
+
+    if (m_peopleQueue.count() == peopleList.count()) {
+        this->startPeopleProcess();
+    }
+}
 void FetchMetadata::on_jobDone()
 {
      m_running = false;
@@ -80,24 +89,71 @@ void FetchMetadata::startProcess()
                 &l_initWaitingLoop, SLOT(quit()));
         l_initWaitingLoop.exec();
     } else {
-        if (!m_movieQueue.isEmpty()) {
-            //Showing a message in staus bar on the processing status
-            m_initialMovieQueueSize == 0 ? m_initialMovieQueueSize = m_movieQueue.size() : m_moviesProcessed++;
-            ServicesManager::instance()->requestTempStatusBarMessage("Movies fetched: "+QString::number(m_moviesProcessed) + '/' +QString::number(m_initialMovieQueueSize));
+        this->startMovieProcess();
+        this->startPeopleProcess();
+    }
+}
 
-            m_movie = m_movieQueue.takeFirst();
-            connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>)),
-                    this, SLOT(processPrimaryResponse(QList<Movie>)));
-            connect(m_fetchMetadataQuery, SIGNAL(networkError(QString)),
-                    this, SLOT(networkError(QString)));
+void FetchMetadata::startMovieProcess()
+{
+    Macaw::DEBUG("[FetchMetadata] Start the process of metadata fetching for Movies");
+    if (!m_fetchMetadataQuery->isInitialized()) {
+        this->startProcess();
 
-            QString l_cleanedTitle = cleanString(m_movie.title());
-            m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
+        return;
+    }
+    if (!m_movieQueue.isEmpty()) {
+        //Showing a message in status bar on the processing status
+        m_initialMovieQueueSize == 0 ? m_initialMovieQueueSize = m_movieQueue.size() : m_moviesProcessed++;
+        ServicesManager::instance()->requestTempStatusBarMessage("Movies fetched: "+QString::number(m_moviesProcessed) + '/' +QString::number(m_initialMovieQueueSize));
+
+        m_movie = m_movieQueue.takeFirst();
+
+        connect(m_fetchMetadataQuery, SIGNAL(primaryResponse(QList<Movie>)),
+                this, SLOT(processPrimaryResponse(QList<Movie>)));
+        connect(m_fetchMetadataQuery, SIGNAL(networkError(QString)),
+                this, SLOT(networkError(QString)));
+
+        QString l_cleanedTitle = cleanString(m_movie.title());
+        m_fetchMetadataQuery->sendPrimaryRequest(l_cleanedTitle);
+    } else {
+        // m_fetchMetadataQuery->deleteLater();
+        ServicesManager::instance()->requestTempStatusBarMessage("Movies fetching completed! ", 10000);
+        // id = 0 so we know that no movie is being processed
+        m_movie = Movie();
+    }
+}
+
+void FetchMetadata::startPeopleProcess()
+{
+    Macaw::DEBUG("[FetchMetadata] Start the process of metadata fetching for People");
+    if (!m_fetchMetadataQuery->isInitialized()) {
+        this->startProcess();
+
+        return;
+    }
+    if (m_people.id() != 0) {
+        Macaw::DEBUG("[FetchMetadata] A person is currently being processed." +QString::number(m_people.id()));
+
+        return;
+    }
+    if (!m_peopleQueue.isEmpty()) {
+        m_people = m_peopleQueue.takeFirst();
+        connect(m_fetchMetadataQuery, SIGNAL(peopleResponse(People)),
+                this, SLOT(processPeopleResponse(People)));
+
+        Macaw::DEBUG(QString::number(m_people.id()));
+        if (m_people.tmdbId() == 0 || m_people.id() == 0) {
+            // We don't take in account people added by users
+            this->startPeopleProcess();
         } else {
-            m_fetchMetadataQuery->deleteLater();
-            ServicesManager::instance()->requestTempStatusBarMessage("Movies fetching completed! ", 10000);
-            emit jobDone();
+            m_fetchMetadataQuery->sendPeopleRequest(m_people.tmdbId());
         }
+    } else {
+        // m_fetchMetadataQuery->deleteLater();
+        ServicesManager::instance()->requestTempStatusBarMessage("People fetching completed! ", 10000);
+        // id = 0 so we know that no people is being processed
+        m_people = People();
     }
 }
 
@@ -131,7 +187,7 @@ QString FetchMetadata::cleanString(QString title)
 
     QRegExp l_alphaOnly("(^['À-Ÿà-ÿA-Za-z]*$)");
     l_splittedTitle = l_splittedTitle.filter(l_alphaOnly);
-    QString po;
+
     return l_splittedTitle.join(" ");
 }
 
@@ -147,7 +203,9 @@ void FetchMetadata::processPrimaryResponse(const QList<Movie> &movieList)
     if(movieList.count() == 1) {
         l_accurateList = movieList;
     } else if(movieList.count() > 1) {
+
         foreach(Movie l_movie, movieList) {
+
             if(cleanString(l_movie.title()).compare(cleanString(m_movie.title()), Qt::CaseInsensitive) == 0) {
                 Macaw::DEBUG("[FetchMetadata] One title matches");
                 l_accurateList.append(l_movie);
@@ -160,15 +218,15 @@ void FetchMetadata::processPrimaryResponse(const QList<Movie> &movieList)
 
         connect(m_fetchMetadataQuery, SIGNAL(movieResponse(Movie)),
                 this, SLOT(processMovieResponse(Movie)));
-        Macaw::DEBUG("[FetchMetadata] Movie request to be sent");
-        m_fetchMetadataQuery->sendMovieRequest(l_movie.id());
+        Macaw::DEBUG("[FetchMetadata] Movie request to be sent ["+QString::number(l_movie.tmdbId())+"]");
+        m_fetchMetadataQuery->sendMovieRequest(l_movie.tmdbId());
     } else if (m_askUser) {
         if(l_accurateList.isEmpty()) {
             l_accurateList = movieList;
         }
         this->openFetchMetadataDialog(m_movie, l_accurateList);
     } else {
-        this->startProcess();
+        this->startMovieProcess();
     }
 }
 
@@ -191,13 +249,46 @@ void FetchMetadata::processMovieResponse(const Movie &receivedMovie)
     m_movie.setColored(receivedMovie.isColored());
     m_movie.setPeopleList(receivedMovie.peopleList());
     m_movie.setPosterPath(receivedMovie.posterPath().right(receivedMovie.posterPath().size()-1));
+    m_movie.setTmdbId(receivedMovie.tmdbId());
 
     m_movie.setImported(true);
 
-    databaseManager->updateMovie(m_movie);
-    emit updatedMovie();
-    this->startProcess();
+    if (databaseManager->updateMovie(m_movie)) {
+        m_movie = databaseManager->getOneMovieById(m_movie.id());
 
+        Macaw::DEBUG("**** "+QString::number(m_movie.peopleList().count()));
+        foreach (People p, m_movie.peopleList())
+        {
+            Macaw::DEBUG("**** "+QString::number(p.id()))   ;
+        }
+
+        // while updating the movie, the new people get id and the movie is reset to be aware of it.
+        // So we can directly append them to the queue
+        this->addPeopleToQueue(m_movie.peopleList());
+    }
+
+    emit updatedMovie();
+    this->startMovieProcess();
+}
+
+void FetchMetadata::processPeopleResponse(const People &receivedPeople)
+{
+    Macaw::DEBUG("[FetchMetadata] Signal from movie request received");
+    DatabaseManager *databaseManager = ServicesManager::instance()->databaseManager();
+
+    disconnect(m_fetchMetadataQuery, SIGNAL(peopleResponse(People)),
+            this, SLOT(processPeopleResponse(People)));
+
+    m_people.setBiography(receivedPeople.biography());
+    m_people.setBirthday(receivedPeople.birthday());
+    m_people.setName(receivedPeople.name());
+    m_people.setTmdbId(receivedPeople.tmdbId());
+
+    m_people.setImported(true);
+
+    databaseManager->updatePeople(m_people);
+    emit updatedPeople();
+    this->startPeopleProcess();
 }
 
 void FetchMetadata::on_searchCanceled()

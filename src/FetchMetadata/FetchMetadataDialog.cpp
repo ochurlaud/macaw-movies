@@ -25,7 +25,7 @@
 #include "enumerations.h"
 #include "MacawDebug.h"
 
-FetchMetadataDialog::FetchMetadataDialog(Movie movie, QList<Movie> moviesPropositionList, QWidget *parent):
+FetchMetadataDialog::FetchMetadataDialog(const Movie &movie, QList<Movie> amoviesPropositionList, QWidget *parent):
     QDialog(parent),
     m_ui(new Ui::FetchMetadataDialog)
 {
@@ -38,14 +38,13 @@ FetchMetadataDialog::FetchMetadataDialog(Movie movie, QList<Movie> moviesProposi
     m_ui->lineEdit->setText(m_movie.title());
     m_ui->moviePathLabel->setText(m_movie.fileAbsolutePath());
 
-    setMovieList(moviesPropositionList);
+    this->setMovieList(amoviesPropositionList);
 }
 
 FetchMetadataDialog::~FetchMetadataDialog()
 {
     delete m_ui;
 }
-
 
 void FetchMetadataDialog::on_buttonBox_accepted()
 {
@@ -56,7 +55,8 @@ void FetchMetadataDialog::on_buttonBox_accepted()
     else
     {
         int tmdbID = m_ui->listWidget->selectedItems().at(0)->data(Macaw::ObjectId).toInt();
-        m_movie.setId(tmdbID);
+        m_movie.setTmdbId(tmdbID);
+
         emit(selectedMovie(m_movie));
         this->accept();
     }
@@ -65,7 +65,7 @@ void FetchMetadataDialog::on_buttonBox_accepted()
 void FetchMetadataDialog::on_listWidget_doubleClicked(const QModelIndex &index)
 {
     int tmdbID = index.data(Macaw::ObjectId).toInt();
-    m_movie.setId(tmdbID);
+    m_movie.setTmdbId(tmdbID);
     emit(selectedMovie(m_movie));
     this->accept();
 }
@@ -95,7 +95,7 @@ void FetchMetadataDialog::setMovieList(const QList<Movie> &movieList)
                     + " [" + QString::number(l_movie.releaseDate().year())
                     + ']';
             l_item->setText(l_textItem);
-            l_item->setData(Macaw::ObjectId, l_movie.id());
+            l_item->setData(Macaw::ObjectId, l_movie.tmdbId());
             m_ui->listWidget->addItem(l_item);
         }
     }

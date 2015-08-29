@@ -78,12 +78,16 @@ bool DatabaseManager::updateMovie(Movie &movie)
     // Insertions/Updates of the linked elements
     foreach (People l_people, movie.peopleList())
     {
+        movie.removePeople(l_people);
         updatePeopleInMovie(l_people, movie, l_people.type());
+        movie.addPeople(l_people);
     }
 
     foreach (Tag l_tag, movie.tagList())
     {
+        movie.removeTag(l_tag);
         updateTagInMovie(l_tag, movie);
+        movie.addTag(l_tag);
     }
 
     // Deletion of the old linked elements
@@ -136,6 +140,7 @@ bool DatabaseManager::updateMovie(Movie &movie)
             }
         }
     }
+    movie = getOneMovieById(movie.id());
 
     Macaw::DEBUG("[DatabaseManager] Movie updated");
 
@@ -190,7 +195,7 @@ bool DatabaseManager::updatePeopleInMovie(People &people,
                                           Movie &movie,
                                           const int type)
 {
-    // If the id is 0, then the director doesn't exist
+    // If the id is 0, then the person doesn't exist
     if (people.id() == 0)
     {
         Macaw::DEBUG("People not known");
