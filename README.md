@@ -1,5 +1,9 @@
 # Macaw-Movies
 
+```
+/\ This project is no longer in development. It's kept here as an archive only. /\
+```
+
 Movies organizer. Qt/C++/Sqlite
 
 *This application is a movie organizer. It helps to order, choose and find back a movie in his collection.*
@@ -7,11 +11,6 @@ Movies organizer. Qt/C++/Sqlite
 *The program is written in C++, with the Qt framework. It will be released for Linux, Windows and Mac OS X*
 
 ## 1. Contribute
-
-Any help is welcome !!!
-Please read this before doing a pull-request:
-* [Code rules](https://community.kde.org/Macaw-Movies/Development/Code_Rules)
-* [Contributing](https://community.kde.org/Macaw-Movies/Development/Contributing)
 
 ## 2. Presentation of the project
 
